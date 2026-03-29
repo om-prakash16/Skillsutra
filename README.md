@@ -1,101 +1,90 @@
 <div align="center">
+  <img src="https://img.shields.io/badge/Solana-14F195?style=for-the-badge&logo=solana&logoColor=white" alt="Solana" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
   <img src="https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js" alt="Next.js" />
-  <img src="https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/React-19-blue?style=for-the-badge&logo=react" alt="React" />
-  <img src="https://img.shields.io/badge/TailwindCSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/Framer_Motion-Latest-ff69b4?style=for-the-badge&logo=framer" alt="Framer Motion" />
+  <img src="https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white" alt="LangChain" />
+  <img src="https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
   
   <br />
+  <br />
 
-  <h1>🚀 NextGenCareers</h1>
-  <h3>The Ultimate Premium Job Portal Ecosystem</h3>
+  <h1>🚀 Skillsutra</h1>
+  <h3>The Ultimate AI-Powered Web3 Talent Marketplace</h3>
   
   <p align="center">
-    <b>A high-performance, aesthetically stunning job and company directory built with the bleeding-edge Next.js 15, React 19, and Framer Motion.</b>
+    <b>A disruptive decentralized SaaS platform merging Artificial Intelligence (LangChain + OpenAI) with Solana Web3 to guarantee immutable resume verification, dynamic skill NFTs, and flawless job matching.</b>
   </p>
 
-  <div flex align="center">
-    <img src="https://img.shields.io/github/stars/om-prakash16/job-portal?style=social" alt="Stars" />
-    <img src="https://img.shields.io/github/forks/om-prakash16/job-portal?style=social" alt="Forks" />
-    <img src="https://img.shields.io/github/license/om-prakash16/job-portal?style=flat-square" alt="License" />
-  </div>
 </div>
 
 ---
 
-## 🌟 Vision
+## 🌟 The Vision
 
-NextGenCareers is not just a job board; it's a premium talent matching ecosystem designed for the modern web. We combine blazing-fast performance with a sophisticated design language to connect world-class companies with top-tier talent.
+**Skillsutra** bridges the trust gap between elite candidates and world-class companies. By moving resumes from static PDFs into dynamic, AI-verified, on-chain assets, we make the hiring process completely transparent, verifiable, and instantly matched.
 
-## ✨ Key Features
+> *LinkedIn shows claims. Skillsutra proves skills.*
 
-- **🎭 Motion-First UI**: Seamless, staggered entry animations and scroll-reveal effects powered by Framer Motion.
-- **🎯 Intelligent Search**: Multi-parameter job search with real-time filtering by category, location, and seniority.
-- **🏢 Enterprise Directory**: Comprehensive company profiles with real-time hiring status and culture insights.
-- **⚡ Peak Performance**: Leveraging Next.js 15 Server Components and Lenis for buttery-smooth scrolling.
-- **🔐 Secure Auth Ecosystem**: Robust multi-role authentication (Admin, Company, Candidate) with persistent sessions.
-- **🌗 Adaptive Dark Mode**: A meticulously crafted dark theme that respects system preferences and reduces eye strain.
+## 🏆 Hackathon-Winning Features
 
-## 🛠 Tech Stack
+### 🧠 Advanced AI Agentic Engine
+- **Intelligent Job Matching:** Vector embeddings via LangChain score candidate profiles against job postings instantly (e.g., "94% Match").
+- **Resume Parser:** FastAPI + OpenAI pipeline effortlessly converts messy PDF resumes into cleanly structured JSON metadata.
+- **AI Mentor Routing:** An embeddings-based recommendation engine connects candidates with senior Web3 mentors based on real-time skill gaps.
 
-| Category | Technology |
-| :--- | :--- |
-| **Framework** | [Next.js 15](https://nextjs.org/) (App Router) |
-| **Core** | [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/) |
-| **Styling** | [Tailwind CSS 4](https://tailwindcss.com/), [Shadcn UI](https://ui.shadcn.com/) |
-| **Animation** | [Framer Motion](https://www.framer.com/motion/), [Tailwind Animate](https://github.com/jamiebuilds/tailwind-animate) |
-| **Scrolling** | [Lenis](https://lenis.studiofreight.com/) |
-| **Icons** | [Lucide React](https://lucide.dev/) |
+### ⛓️ Solana Blockchain Integration
+- **Dynamic Skill NFTs:** SBTs (Soulbound Tokens) whose IPFS metadata evolves and updates on-chain as the candidate completes micro-jobs and expands their GitHub repository.
+- **On-Chain Project Ledger:** Immutable proof-of-work hashes securely tying candidates to confirmed git commits.
+- **Zero-Friction Smart Contracts:** Anchor-based escrow system for micro-jobs, enabling companies to lock USDC bounties and algorithmically disburse them upon task completion.
 
-## 🚀 Quick Start
+### 📊 Modern Web3 SaaS Architecture
+- **Dual-State Storage:** Immutable cryptographic verification permanently locked on Solana; intensive UI rendering and candidate data flawlessly scaled on Supabase PostgreSQL.
+- **Micro-Job Marketplace:** Complete hiring pipeline bridging standard full-time roles with modular, bounty-driven freelance gigs.
+- **Proof-of-Work Ranking:** Cumulative scoring algorithms calculating GitHub traction, peer referrals, and Web3 interactions.
 
-### 1. Clone & Install
-```bash
-git clone git@github.com:om-prakash16/job-portal.git
-cd job-portal
-npm install
-```
+---
 
-### 2. Configure Environment
-Create a `.env.local` file in the root directory:
-```env
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-```
-
-### 3. Launch Development Server
-```bash
-npm run dev
-```
-Navigate to [http://localhost:3000](http://localhost:3000) to see the magic.
-
-## 📁 Repository Structure
+## 📁 Monorepo Structure
 
 ```text
-src/
-├── app/           # Next.js App Router (Pages & Routes)
-├── components/    # Atomic UI components & Feature modules
-├── context/       # Global State (Auth, Theme)
-├── hooks/         # Custom React Hooks
-├── lib/           # Utility functions & API definitions
-└── types/         # TypeScript definitions
+Skillsutra/
+├── web/                     # Next.js 14 Frontend (App Router, Tailwind, Shadcn UI)
+├── server/                  # Python FastAPI AI Backend (LangChain, Pydantic)
+├── programs/                # Rust Anchor Smart Contracts (Solana Web3 state handling)
+├── database/                # Supabase PostgreSQL schema migrations
+└── docker-compose.yml       # Production-ready orchestration
 ```
 
-## 🤝 Contributing
+## 🚀 Quick Setup
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+1. **Deploy the Database**
+   Import the dual-state database blueprint via `/database/migrations/001_init.sql` into Supabase.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. **Boot the AI Backend**
+   ```bash
+   cd server
+   python -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   uvicorn main:app --reload
+   ```
 
-## 📝 License
+3. **Launch the Client App**
+   ```bash
+   cd web
+   npm install
+   npm run dev
+   ```
 
-Distributed under the MIT License. See `LICENSE` for more information.
+4. **Deploy Smart Contracts (Localnet)**
+   ```bash
+   cd programs
+   anchor build
+   anchor deploy
+   ```
 
 ---
 
 <p align="center">
-  Built with ❤️ by <a href="https://github.com/om-prakash16">Om Prakash</a>
+  Engineered with ❤️ for decentralized hiring.
 </p>

@@ -10,6 +10,12 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/context/auth-context"
 import { motion, AnimatePresence } from "framer-motion"
+import dynamic from "next/dynamic"
+
+const WalletMultiButton = dynamic(
+  async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+  { ssr: false }
+) as React.FC<any>;
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -103,6 +109,7 @@ export function Navbar() {
                 {/* Actions */}
                 <div className="hidden md:flex items-center gap-4">
                     <ThemeToggle />
+                    <WalletMultiButton style={{ height: '36px', padding: '0 16px', fontSize: '14px', borderRadius: '8px' }} />
                     {!user ? (
                         <>
                             <Link href="/auth/login">
@@ -167,6 +174,7 @@ export function Navbar() {
                 {/* Mobile Menu */}
                 <div className="md:hidden flex items-center gap-4">
                     <ThemeToggle />
+                    <WalletMultiButton style={{ height: '36px', padding: '0 12px', fontSize: '12px', borderRadius: '8px' }} />
                     <Sheet>
                         <SheetTrigger asChild>
                             <Button variant="ghost" size="icon">

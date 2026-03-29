@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/auth-context";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { QueryProvider } from "@/components/providers/query-provider";
+import { WalletProvider } from "@/components/providers/wallet-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 
@@ -31,16 +32,18 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <QueryProvider>
-            <AuthProvider>
-              <SmoothScroll />
-              <Navbar />
-              <div className="flex-1 w-full relative">
-                {children}
-              </div>
-              <Footer />
-            </AuthProvider>
-          </QueryProvider>
+          <WalletProvider>
+            <QueryProvider>
+              <AuthProvider>
+                <SmoothScroll />
+                <Navbar />
+                <div className="flex-1 w-full relative">
+                  {children}
+                </div>
+                <Footer />
+              </AuthProvider>
+            </QueryProvider>
+          </WalletProvider>
           <Toaster position="top-center" richColors />
         </ThemeProvider>
       </body>
