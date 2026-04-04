@@ -7,6 +7,12 @@ from api.db_routes import router as db_router
 from api.admin_routes import router as admin_router
 from api.schema_routes import router as schema_router
 from api.config_routes import router as config_router
+from api.company_routes import router as company_router
+from api.staff_routes import router as staff_router
+from api.user_routes import router as user_router
+from api.quiz_routes import router as quiz_router
+from api.portfolio_routes import router as portfolio_router
+from api.reputation_routes import router as reputation_router
 
 app = FastAPI(
     title="Skillsutra Web3 API",
@@ -30,9 +36,15 @@ app.include_router(db_router, prefix="/api/v1/db", tags=["Database"])
 app.include_router(admin_router, prefix="/api/v1/admin", tags=["Admin"])
 app.include_router(schema_router, prefix="/api/v1/schema", tags=["Schema"])
 app.include_router(config_router, prefix="/api/v1/config", tags=["Config"])
+app.include_router(company_router, prefix="/api/v1", tags=["Company"])
+app.include_router(staff_router, prefix="/api/v1", tags=["Staff"])
+app.include_router(user_router, prefix="/api/v1/user", tags=["User"])
+app.include_router(quiz_router, prefix="/api/v1/quiz", tags=["Quiz"])
+app.include_router(portfolio_router, prefix="/api/v1/portfolio", tags=["Portfolio"])
+app.include_router(reputation_router, prefix="/api/v1/reputation", tags=["Reputation"])
 
 # Root endpoint
 @app.get("/")
 def read_root():
-    return {"message": "Welcome to the SkillProof AI API"}
+    return {"message": "Welcome to the Skillsutra API"}
 

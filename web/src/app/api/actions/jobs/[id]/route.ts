@@ -14,9 +14,9 @@ import {
 } from "@solana/web3.js"
 import { supabase } from "@/lib/supabaseClient"
 
-export const GET = async (req: Request, { params }: { params: { id: string } }) => {
+export const GET = async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
     try {
-        const jobId = params.id
+        const { id: jobId } = await params
         const { data: job, error } = await supabase
             .from('jobs')
             .select('*')
@@ -37,6 +37,7 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
                     {
                         label: "Verify & Apply",
                         href: `/api/actions/jobs/${jobId}`,
+                        type: "transaction"
                     }
                 ]
             }
@@ -50,9 +51,9 @@ export const GET = async (req: Request, { params }: { params: { id: string } }) 
 
 export const OPTIONS = GET;
 
-export const POST = async (req: Request, { params }: { params: { id: string } }) => {
+export const POST = async (req: Request, { params }: { params: Promise<{ id: string }> }) => {
     try {
-        const jobId = params.id
+        const { id: jobId } = await params
         const body: ActionPostRequest = await req.json()
 
         let account: PublicKey
@@ -83,6 +84,7 @@ export const POST = async (req: Request, { params }: { params: { id: string } })
             fields: {
                 transaction,
                 message: `Application for '${jobId}' submitted to Skillsutra Network.`,
+                type: "transaction",
             },
         })
 

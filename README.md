@@ -43,44 +43,60 @@
 
 ---
 
-## 📁 Monorepo Structure
+## 📁 Professional Monorepo Structure
 
 ```text
 Skillsutra/
-├── web/                     # Next.js 14 Frontend (App Router, Tailwind, Shadcn UI)
-├── server/                  # Python FastAPI AI Backend (LangChain, Pydantic)
-├── programs/                # Rust Anchor Smart Contracts (Solana Web3 state handling)
-├── database/                # Supabase PostgreSQL schema migrations
-└── docker-compose.yml       # Production-ready orchestration
+├── web/                     # Next.js Frontend (Port: 3011)
+├── server/                  # FastAPI AI Backend (Port: 8011)
+├── programs/                # Rust Anchor Smart Contracts
+├── database/                # Schema Migrations
+├── Makefile                 # Unified Command Runner
+└── .env.example             # Global Environment Template
 ```
 
-## 🚀 Quick Setup
+## 🚀 Quick Setup (Professional Isolation)
 
-1. **Deploy the Database**
-   Import the dual-state database blueprint via `/database/migrations/001_init.sql` into Supabase.
+This project uses **non-default ports** (3011/8011) to prevent conflicts with your other local projects.
 
-2. **Boot the AI Backend**
-   ```bash
-   cd server
-   python -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
-   uvicorn main:app --reload
-   ```
+### 1. Automated Setup
+The easiest way to get started is using the provided **Makefile**:
 
-3. **Launch the Client App**
-   ```bash
-   cd web
-   npm install
-   npm run dev
-   ```
+```bash
+# Install all dependencies (Web & Server)
+make install
 
-4. **Deploy Smart Contracts (Localnet)**
-   ```bash
-   cd programs
-   anchor build
-   anchor deploy
-   ```
+# Start both development servers (Next.js & FastAPI)
+make dev
+```
+
+### 2. Manual Boot (Specific Ports)
+
+- **AI Backend (8011)**:
+  ```bash
+  cd server
+  uvicorn main:app --reload --port 8011
+  ```
+
+- **Client App (3011)**:
+  ```bash
+  cd web
+  npm run dev  # Automatically uses -p 3011
+  ```
+
+### 3. Docker Orchestration
+```bash
+# Start all services with unique container names
+make docker-up
+```
+
+## 🛡️ Isolation & Conflict Prevention
+
+To maintain a professional multi-project workflow, Skillsutra follows these rules:
+1. **Port 3011**: Reserved for Skillsutra Web.
+2. **Port 8011**: Reserved for Skillsutra API.
+3. **Container Prefix**: All Docker assets use the `skillsutra_` prefix.
+4. **Network**: Isolated in `skillsutra_talent_network`.
 
 ---
 

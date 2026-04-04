@@ -1,7 +1,6 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
-import { getTalentProfiles } from "@/lib/mock-api/talent"
+import { TALENT_DATA } from "@/lib/mock-api/talent"
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
@@ -12,10 +11,8 @@ import { useState } from "react"
 
 export default function TalentBrowsingPage() {
     const [searchTerm, setSearchTerm] = useState("")
-    const { data: talents, isLoading } = useQuery({
-        queryKey: ["talentProfiles"],
-        queryFn: getTalentProfiles
-    })
+    const talents = TALENT_DATA
+
 
     const filteredTalent = talents?.filter(talent =>
         talent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -23,13 +20,6 @@ export default function TalentBrowsingPage() {
         talent.skills.some(skill => skill.toLowerCase().includes(searchTerm.toLowerCase()))
     )
 
-    if (isLoading) {
-        return (
-            <div className="flex h-[50vh] w-full items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-        )
-    }
 
     return (
         <div className="space-y-8">
