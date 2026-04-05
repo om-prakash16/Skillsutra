@@ -1,0 +1,65 @@
+﻿venv\Scripts\python : 
+Traceback (most recent 
+call last):
+At line:1 char:12
++ cd server; 
+venv\Scripts\python 
+main.py > 
+startup_error.log 2>&1
++            ~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo        
+      : NotSpecified: (T  
+  raceback (most recent   
+  call last)::String)     
+[], RemoteException
+    + FullyQualifiedError 
+   Id : NativeCommandErr  
+  or
+ 
+  File "E:\Project\Ram\ser
+ver\main.py", line 5, in 
+<module>
+    from 
+modules.auth.router 
+import router as 
+auth_router
+  File "E:\Project\Ram\ser
+ver\modules\auth\router.py
+", line 2, in <module>
+    from 
+modules.auth.service 
+import 
+verify_solana_signature, 
+create_access_token, 
+get_current_user
+  File "E:\Project\Ram\ser
+ver\modules\auth\service.p
+y", line 8, in <module>
+    from core.supabase 
+import get_supabase
+  File "E:\Project\Ram\ser
+ver\core\supabase.py", 
+line 19, in <module>
+    print("\u2705 
+Supabase connected 
+successfully!")
+    ~~~~~^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Om prakas
+h\AppData\Local\Programs\P
+ython\Python313\Lib\encodi
+ngs\cp1252.py", line 19, 
+in encode
+    return codecs.charmap_
+encode(input,self.errors,e
+ncoding_table)[0]
+           ~~~~~~~~~~~~~~~
+~~~~~~^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^
+UnicodeEncodeError: 
+'charmap' codec can't 
+encode character '\u2705' 
+in position 0: character 
+maps to <undefined>

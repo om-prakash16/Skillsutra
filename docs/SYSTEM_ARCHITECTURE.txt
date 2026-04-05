@@ -1,0 +1,188 @@
+# SkillProof AI - System Architecture Overview
+
+This document provides a complete blueprint for the SkillProof AI platform, unifying the AI services, dynamic schema system, NFT verification layer, and job marketplace into a single cohesive architecture.
+
+---
+
+## SECTION 1 — High-Level Architecture
+
+The SkillProof AI platform utilizes a "Dual-State Architecture" combining high-performance Web2 technologies with verifiable Web3 infrastructure.
+
+*   **Frontend Layer**: Built with **Next.js 14**, Tailwind CSS, and shadcn/ui. Responsible for delivering a premium, highly responsive user interface, managing local state, initiating wallet connections, and orchestrating user interactions.
+*   **API Layer**: Built with **FastAPI (Python)** and Pydantic. Acts as the central nervous system, handling request routing, data validation, business logic execution, and communication with external sub-systems.
+*   **AI Service Layer**: Powered by **LangChain**, integrating directly into the FastAPI backend. Responsible for parsing resumes, calculating skill scores, generating semantic matches between candidates and jobs, and dynamically generating reputation insights.
+*   **Database Layer**: Hosted on **Supabase PostgreSQL**. Acts as the primary off-chain source of truth for fast, editable data including dynamic schemas, user profiles, AI scores, and configuration states.
+*   **Storage Layer**: Utilizes **IPFS** for decentralized metadata storage. Ensures that JSON snapshots of profile and skill data are immutable and publicly accessible to support on-chain verification.
+*   **Blockchain Layer**: Built on the **Solana** blockchain using **Anchor** smart contracts and the **Metaplex** standard. Handles the issuance of NFTs representing skills and identities, leveraging on-chain records for tamper-proof verification of credentials and activity hashes.
+*   **Indexing Layer**: Utilizes **Helius or Shyft API** to monitor and index Solana transactions, feeding finality states back into the backend for real-time dashboard observability.
+
+---
+
+## SECTION 2 — Component Diagram Description
+
+The system comprises interconnected but distinct physical and logical components:
+
+*   **Next.js Frontend**: The client-side application running in the user's browser, handling routing and rendering.
+*   **FastAPI Backend**: The server-side Python application exposing REST endpoints to the frontend.
+*   **AI Engine**: A logical component within the FastAPI backend managing LLM integrations and scoring models.
+*   **Supabase Database**: The relational data store containing structured application data and RBAC enforcement via RLS policies.
+*   **IPFS Storage**: The decentralized file system holding metadata JSON payloads and candidate documents.
+*   **Solana Programs**: The on-chain smart contracts (created via Anchor) where transaction instructions for NFT minting and state anchoring are executed.
+
+**Communication Flow**:
+The frontend makes synchronous HTTP requests to the FastAPI backend. The backend asynchronously communicates with Supabase (via PostgREST/SQL APIs), IPFS (via Pinata/native gateways), and the AI Engine (via LangChain). For blockchain interactions, the backend prepares metadata and CIDs, while the frontend leverages a local wallet adapter to sign and submit transactions directly to the Solana RPC. Finality is confirmed via the Indexer (Helius/Shyft) communicating back to the backend.
+
+---
+
+## SECTION 3 — Module Interaction Flow
+
+1.  **User Interaction**: The user interacts with the Next.js frontend (e.g., submitting an application or updating a profile).
+2.  **API Call**: The frontend calls the corresponding FastAPI endpoint, transmitting the requested payload.
+3.  **FastAPI Processing**:
+    *   **Data Storage**: The backend validates the payload using Pydantic and stores the editable or transactional data in Supabase.
+    *   **AI Invocation**: If the interaction involves skills or scoring, the backend calls the AI services to generate scores and insights.
+    *   **Metadata Generation**: The backend formats the verified data into a Metaplex-compliant JSON structure.
+    *   **IPFS Upload**: The backend uploads the JSON metadata to IPFS and retrieves the unique Content Identifier (CID).
+    *   **Transaction Preparation**: The backend returns the CID and necessary instruction parameters to the frontend.
+4.  **Blockchain Execution**: The frontend prompts the user's wallet to sign the transaction, updating the Solana smart contract with the new CID or state hash.
+
+---
+
+## SECTION 4 — Core Modules
+
+*   **Authentication System**: Integrates Solana wallet adapters with JWT session validation, linking cryptographic identity to Supabase user records.
+*   **Dynamic Profile Schema System**: A metadata-driven engine where admins can define custom profile fields and validation rules without code changes.
+*   **AI Scoring Engine**: Analyzes textual inputs and historical data to assign quantifiable scores to skills and job match probabilities.
+*   **NFT Minting System**: Orchestrates the creation of Metaplex NFTs representing verifiable digital identities and individual skill achievements.
+*   **Job Marketplace System**: Handles the lifecycle of job postings from creation to application, including AI-driven candidate discovery.
+*   **Search Engine**: Provides high-performance, indexed querying of candidate profiles and job listings.
+*   **Notification System**: Dispatches real-time alerts across the platform for application updates, incoming messages, and sync statuses.
+*   **Admin Panel**: A centralized dashboard for platform operators to manage dynamic schemas, feature flags, and observe blockchain activity.
+*   **Company Panel**: A tailored dashboard for recruiters to post jobs, review AI-scored applicants, and record hiring decisions.
+*   **Staff Panel**: Interface for internal team members to perform moderation and manual verifications.
+
+---
+
+## SECTION 5 — Data Flow Example: Profile Update & Sync
+
+1.  **User edits profile**: The candidate modifies their professional details on the Next.js frontend.
+2.  **Data saved in Supabase**: The backend writes the updated `dynamic_profile_data` to the PostgreSQL database.
+3.  **Metadata JSON generated**: The Data Sync Manager compiles the new profile state into a structured JSON snapshot.
+4.  **Metadata uploaded to IPFS**: The JSON is pinned to IPFS.
+5.  **CID stored in database**: The new CID is recorded in the `metadata_versions` table, and the sync status is marked as `pending`.
+6.  **User syncs profile**: The user clicks the "Sync to Blockchain" button on the frontend.
+7.  **Solana transaction updates NFT CID**: The frontend wallet signs a transaction modifying the on-chain NFT metadata URI to point to the new IPFS CID.
+8.  **Status updated**: The indexing system detects the finalized transaction and updates the Supabase `sync_status` to `synced`.
+
+---
+
+## SECTION 6 — AI Integration Flow
+
+1.  **Data Transmission**: Structured profile data, plain text resumes, or job descriptions are transmitted from the backend to the AI Engine.
+2.  **Processing via LangChain**: The AI Engine processes the data using defined chains and prompt templates.
+3.  **AI Generation**:
+    *   **Skill Score**: Quantitative evaluation of a candidate's proficiency based on evidence.
+    *   **Job Match Score**: Percentage representation of resonance between a profile and job requirements.
+    *   **Recommendations**: Actionable career pathing or skill improvement suggestions.
+4.  **Storage**: The resulting scores and insights are parsed via Pydantic and committed to the `ai_scores` table in Supabase.
+
+---
+
+## SECTION 7 — Job Application Flow
+
+1.  **Company creates job**: A recruiter authors a listing via the Company Panel.
+2.  **Job stored in Supabase**: The core details are saved in the `jobs` table.
+3.  **AI indexes job skills**: The AI Engine extracts key requirements and updates semantic search vectors.
+4.  **User applies**: A candidate submits their profile and cover letter against the job ID.
+5.  **Application stored in Supabase**: The backend creates a record in the `applications` table, triggering an initial AI match evaluation.
+6.  **Application reference stored on Solana**: A cryptographic hash of the application state is anchored on-chain to prevent tampering and provide verifiable proof of submission.
+
+---
+
+## SECTION 8 — Sync Manager Flow
+
+1.  **Detect profile changes**: Row-level database triggers or application logic identifies a mutation in user data.
+2.  **Generate metadata**: The backend compiles a new metadata payload.
+3.  **Upload to IPFS**: The payload is pinned, generating a new CID.
+4.  **Update CID on Solana**: A user-approved transaction writes the new CID to the blockchain.
+5.  **Update sync status**: The backend `TransactionMonitorService` confirms finality and transitions the `sync_status` table from `pending` to `synced`.
+
+---
+
+## SECTION 9 — Database Overview
+
+The Supabase PostgreSQL database handles the rapid off-chain state. Key tables include:
+*   `users`: Core identity linking wallet addresses to platform IDs.
+*   `roles`: Definition of permissions (Admin, Company, Candidate, Staff).
+*   `profile_schema`: Admin-defined templates for what constitutes a profile.
+*   `dynamic_profile_data`: User-submitted data adhering to the `profile_schema`.
+*   `jobs`: Marketplace listings containing requirements and salary details.
+*   `applications`: Relationships linking users to jobs, containing statuses and candidate submittals.
+*   `ai_scores`: Caching layer for LLM-generated evaluations.
+*   `feature_flags`: Boolean toggles for dynamic platform configuration.
+*   `notifications`: Queue for user alerts.
+*   `activity_logs`: Audit trail for systemic and administrative actions.
+*   `nft_records`: Local index mapping wallet ownership to minted Solana tokens.
+*   `metadata_versions`: History tracking for IPFS CID revisions.
+*   `sync_status`: State definitions tracking off-chain to on-chain parity.
+
+---
+
+## SECTION 10 — Security Layers
+
+*   **Wallet Authentication**: Initial login relies on cryptographic signatures confirming wallet ownership.
+*   **JWT Session Validation**: Backend secures API routes utilizing short-lived access tokens mapped to wallet identities.
+*   **Role-Based Permissions**: Supabase Row-Level Security (RLS) ensures users can only read/write data permitted by their assigned role.
+*   **Schema Validation**: Pydantic models in FastAPI strictly enforce incoming data structures, mitigating injection attacks.
+*   **Transaction Verification**: Blockchain interactions require dual-verification; the frontend initiates the action, but the backend uses Indexers to confirm successful execution before granting platform credit.
+
+---
+
+## SECTION 11 — Deployment Architecture
+
+The system is deployed via containerization on **Oracle Cloud Infrastructure (OCI)**:
+*   **Frontend Container**: Next.js optimized production build serving static assets and server-side rendering.
+*   **Backend Container**: Uvicorn running the FastAPI application, exposed via reverse proxy.
+*   **Database Connection**: Containers connect securely to managed Supabase instances using pooled connection strings.
+*   **IPFS Integration**: Backend utilizes external services (e.g., Pinata API) to abstract IFPS node management.
+*   **Environment Structure**: Separated `.env` configurations for Development, Staging, and Production deployments.
+
+---
+
+## SECTION 12 — Scalability Strategy
+
+*   **Modular Backend Services**: FastAPI routers divide the monolith into domain-specific modules (AI, Profile, Jobs), facilitating eventual microservice extraction.
+*   **Separate AI Service**: LLM runs are offloaded to asynchronous background tasks to prevent blocking API responses during heavy inference workloads.
+*   **Cached AI Responses**: Expensive computations are cached in the `ai_scores` and related tables to ensure rapid frontend delivery on subsequent requests.
+*   **Indexed Search Tables**: Supabase indexes (such as pgvector for AI semantic search) guarantee sub-second discovery latency even as candidate volumes scale.
+
+---
+
+## SECTION 13 — Hackathon MVP Scope
+
+To maintain focus and velocity, the Minimum Viable Product isolates these core modules:
+*   **Wallet Login**: Primary authentication mechanism.
+*   **Dynamic Profile**: The ability to build customized candidate profiles using central schemas.
+*   **AI Scoring**: Baseline resume-to-job matching implementation.
+*   **Profile NFT**: Generation of the initial verifiable identity NFT.
+*   **Job Posting**: Essential tools for companies to list roles.
+*   **Job Apply**: Mechanism to submit candidate data to job listings.
+*   **Admin Schema Control**: Unlocking SaaS extensibility without deployment updates.
+
+---
+
+## SECTION 14 — Future SaaS Expansion
+
+*   **Team Accounts**: Allowing multiple recruiter seats under a single company umbrella with shared billing and permissions.
+*   **Subscription Billing**: Integration for tiered SaaS pricing supporting fiat and crypto gateways.
+*   **Enterprise API Access**: Giving external systems ability to programmatically query verified talent directly from database/blockchain via scoped API keys.
+*   **White-Label Platform**: Offering the full dual-state stack to independent talent networks or private enterprise recruiting hubs.
+
+---
+
+## SECTION 15 — Constraints
+
+*   **Avoid Changing Tech Stack**: Strictly adhere to Next.js, FastAPI, Supabase, IPFS, and Solana. Do not introduce new overarching frameworks.
+*   **Ensure Compatibility with Solana NFT Metadata**: Metadata schemas strictly match Metaplex JSON standards.
+*   **Maintain Modular Architecture**: Code structure must silo logic properly to avoid tightly coupled systems that slow down future refactoring.
+*   **Avoid Tightly Coupled Components**: Synchronous requests from frontend must not be blocked by slow blockchain finality. The asynchronous Data Sync Manager handles all lag gracefully.
