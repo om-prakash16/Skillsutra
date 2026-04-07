@@ -47,6 +47,27 @@ class JobResponse(JobBase):
     class Config:
         from_attributes = True
 
+class JobUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    required_skills: Optional[List[str]] = None
+    experience_level: Optional[str] = None
+    salary_range: Optional[str] = None
+    job_type: Optional[str] = None
+    employment_type: Optional[str] = None
+    deadline: Optional[datetime] = None
+    min_reputation_score: Optional[int] = None
+    dynamic_fields: Optional[Dict[str, Any]] = None
+
+class JobApplicationRequest(BaseModel):
+    job_id: str
+    candidate_wallet: str
+
+class JobApplicationResponse(BaseModel):
+    id: str
+    status: str
+    ai_match_score: float
+
 class ApplicationBase(BaseModel):
     job_id: str
     candidate_id: str
