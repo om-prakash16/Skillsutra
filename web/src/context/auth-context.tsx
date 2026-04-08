@@ -96,7 +96,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(true)
         try {
             const walletAddress = publicKey.toBase58()
-            const message = `Login to SkillProof AI\n\nWallet: ${walletAddress}\nTimestamp: ${Date.now()}`
+            const message = `Login to this best hiring tool\n\nWallet: ${walletAddress}\nTimestamp: ${Date.now()}`
             const encodedMessage = new TextEncoder().encode(message)
             const signature = await signMessage(encodedMessage)
             

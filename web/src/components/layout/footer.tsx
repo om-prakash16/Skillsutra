@@ -12,7 +12,7 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
 
     if (isDashboard && !forceVisible) return null
 
-    const siteName = getVal("global", "site_name", "SkillProof AI")
+    const siteName = getVal("global", "site_name", "this best hiring tool")
     const copyright = getVal("global", "copyright", `© ${new Date().getFullYear()} ${siteName}. All rights reserved.`)
     const columns = getJson("footer", "columns") || []
     const socialLinks = getJson("footer", "social_links") || []

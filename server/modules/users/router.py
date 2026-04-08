@@ -48,7 +48,7 @@ async def upload_profile_file(file: UploadFile = File(...), current_user = Depen
     return {
         "status": "success",
         "filename": file.filename,
-        "url": f"https://skillproof.ai/storage/profiles/{current_user['id']}/{file.filename}"
+        "url": f"https://this-best-hiring-tool.ai/storage/profiles/{current_user['id']}/{file.filename}"
     }
 
 # --- Portfolio Endpoints ---

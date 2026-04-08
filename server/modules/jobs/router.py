@@ -10,6 +10,7 @@ from modules.jobs.models import (
     JobSchemaFieldResponse,
     ApplicationCreate, ApplicationResponse
 )
+from core.supabase import get_supabase
 from core.postgres import get_db_connection
 from modules.notifications.service import NotificationService
 
@@ -18,14 +19,14 @@ job_service = JobService()
 
 # --- Company Endpoints ---
 
-@router.get("/jobs/list")
+@router.get("/list")
 async def list_jobs(user_id: Optional[str] = None):
     """
     SECTION 10: Public job board with dynamic AI scores for candidates.
     """
     return await job_service.get_jobs_with_scores(user_id)
 
-@router.get("/jobs/details/{job_id}")
+@router.get("/details/{job_id}")
 async def get_job_details(job_id: str):
     """
     SECTION 10: Job detail view.
@@ -34,7 +35,7 @@ async def get_job_details(job_id: str):
 
 # --- Job Posting Endpoints ---
 
-@router.post("/jobs/create", response_model=JobResponse)
+@router.post("/create", response_model=JobResponse)
 async def create_job(job: JobCreate, user = Depends(get_current_user)):
     """
     SECTION 10: Create a job post. 
@@ -42,7 +43,7 @@ async def create_job(job: JobCreate, user = Depends(get_current_user)):
     result = await job_service.create_job(job.model_dump())
     return JobResponse(id=result["id"], **result)
 
-@router.post("/jobs/apply", response_model=ApplicationResponse)
+@router.post("/apply", response_model=ApplicationResponse)
 async def apply_to_job(data: ApplicationCreate, user = Depends(get_current_user)):
     """
     SECTION 10: Application submission + AI match scoring.
@@ -50,19 +51,19 @@ async def apply_to_job(data: ApplicationCreate, user = Depends(get_current_user)
     result = await job_service.apply_to_job(data.job_id, data.candidate_id)
     return ApplicationResponse(id=result["id"], **result)
 
-@router.get("/applications/user")
+@router.get("/user")
 async def get_user_applications(user_id: str):
     """
     SECTION 10: Candidate's application tracking.
     """
     db = get_supabase()
     response = db.table("applications") \
-        .select("*, jobs(title, companies(company_name))") \
+        .select("*, jobs(title, companies(name))") \
         .eq("candidate_id", user_id) \
         .execute()
     return response.data
 
-@router.get("/applications/company/{company_id}")
+@router.get("/company/{company_id}")
 async def get_company_applications(company_id: str):
     """
     SECTION 10: Recruiter's applicant list.
@@ -71,7 +72,7 @@ async def get_company_applications(company_id: str):
 
 # --- Job Application Endpoints ---
 
-@router.post("/jobs/apply", response_model=ApplicationResponse)
+@router.post("/apply", response_model=ApplicationResponse)
 async def apply_to_job(data: ApplicationCreate, user = Depends(get_current_user)):
     """
     Submits an application and triggers high-fidelity AI matching.
@@ -97,22 +98,8 @@ async def apply_to_job(data: ApplicationCreate, user = Depends(get_current_user)
     
     return ApplicationResponse(id=result["id"], status=result["status"], ai_match_score=result["ai_match_score"], **data.model_dump())
 
-@router.get("/applications/user")
-async def get_user_applications(wallet: str):
-    """
-    Fetch all applications for a specific candidate.
-    """
-    conn = get_db_connection()
-    cur = conn.cursor()
-    try:
-        cur.execute("SELECT * FROM applications WHERE candidate_wallet = %s", (wallet,))
-        rows = cur.fetchall()
-        return [{"id": str(r[0]), "status": r[4], "ai_score": r[5]} for r in rows]
-    finally:
-        cur.close()
-        conn.close()
 
-@router.patch("/applications/{app_id}/status")
+@router.patch("/{app_id}/status")
 async def update_app_status(app_id: str, status: str, recruiter = Depends(require_permission("job.moderate"))):
     """
     Step 13: Recruiter Action (Shortlist, Hire, Reject).

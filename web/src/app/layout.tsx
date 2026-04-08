@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Outfit } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -13,7 +13,6 @@ import { CMSProvider } from "@/context/cms-context";
 import { API_BASE_URL } from "@/lib/api/api-client";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export async function generateMetadata(): Promise<Metadata> {
   try {
@@ -25,13 +24,13 @@ export async function generateMetadata(): Promise<Metadata> {
     }, {});
 
     return {
-      title: seo.default_title || "SkillProof AI | Standardizing Global Talent",
+      title: seo.default_title || "this best hiring tool | Standardizing Global Talent",
       description: seo.default_description || "High-assurance career verification and sovereign professional identity.",
       keywords: seo.keywords || "blockchain, ai hiring, solana",
     };
   } catch (e) {
     return {
-      title: "SkillProof AI | Standardizing Global Talent",
+      title: "this best hiring tool | Standardizing Global Talent",
       description: "High-assurance career verification and sovereign professional identity.",
     };
   }
@@ -44,7 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
-      <body className={`${inter.variable} ${outfit.variable} antialiased font-sans bg-background text-foreground`}>
+      <body className={`${inter.variable} antialiased font-sans bg-background text-foreground`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

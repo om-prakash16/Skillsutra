@@ -43,7 +43,7 @@ export function Navbar() {
         { href: "/talent", label: "Talent" },
     ]
 
-    const siteName = getVal("global", "site_name", "SkillProof AI")
+    const siteName = getVal("global", "site_name", "this best hiring tool")
     const logoLabel = siteName.split("Skill")
 
     const isDashboard = pathname?.startsWith("/user") || pathname?.startsWith("/company") || pathname?.startsWith("/admin")

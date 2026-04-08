@@ -69,7 +69,7 @@ export default function CandidateDashboardLayout({
                         </div>
                         <div className="flex flex-col">
                             <span className="text-xl font-bold font-heading tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/70 group-hover:from-primary group-hover:to-primary/80 transition-all duration-500">
-                                Skillsutra
+                                this best hiring tool
                             </span>
                             <span className="text-[9px] uppercase tracking-[0.3em] text-primary/60 font-bold">User Panel</span>
                         </div>

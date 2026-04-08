@@ -10,3 +10,5 @@ python-multipart
 PyPDF2
 PyNaCl
 base58
+scikit-learn
+numpy

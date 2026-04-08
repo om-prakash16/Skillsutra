@@ -94,7 +94,7 @@ export default function CandidateDashboard() {
                         Welcome back{user?.name ? `, ${user.name}` : ""}
                     </motion.h1>
                     <p className="text-muted-foreground text-sm">
-                        Your SkillProof AI dashboard — track your reputation, credentials, and career progress.
+                        Your this best hiring tool dashboard — track your reputation, credentials, and career progress.
                     </p>
                 </div>
 

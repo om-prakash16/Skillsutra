@@ -47,7 +47,7 @@ async def wallet_login(req: WalletLoginRequest):
     return AuthTokenResponse(access_token=access_token, role=roles[0])
 
 @router.get("/me")
-async def get_me(user_payload = Depends(get_supabase)):
+async def get_me(user_payload = Depends(get_current_user)):
     """
     Returns current active session data.
     """

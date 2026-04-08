@@ -8,7 +8,7 @@
   <br />
   <br />
 
-  <h1>🚀 Skillsutra</h1>
+  <h1>🚀 this best hiring tool</h1>
   <h3>The Ultimate AI-Powered Web3 Talent Marketplace</h3>
   
   <p align="center">
@@ -21,9 +21,9 @@
 
 ## 🌟 The Vision
 
-**Skillsutra** bridges the trust gap between elite candidates and world-class companies. By moving resumes from static PDFs into dynamic, AI-verified, on-chain assets, we make the hiring process completely transparent, verifiable, and instantly matched.
+**this best hiring tool** bridges the trust gap between elite candidates and world-class companies. By moving resumes from static PDFs into dynamic, AI-verified, on-chain assets, we make the hiring process completely transparent, verifiable, and instantly matched.
 
-> *LinkedIn shows claims. Skillsutra proves skills.*
+> *LinkedIn shows claims. this best hiring tool proves skills.*
 
 ## 🏆 Hackathon-Winning Features
 
@@ -46,7 +46,7 @@
 ## 📁 Professional Monorepo Structure
 
 ```text
-Skillsutra/
+this best hiring tool/
 ├── web/                     # Next.js Frontend (Port: 3011)
 ├── server/                  # FastAPI AI Backend (Port: 8011)
 ├── programs/                # Rust Anchor Smart Contracts
@@ -92,11 +92,11 @@ make docker-up
 
 ## 🛡️ Isolation & Conflict Prevention
 
-To maintain a professional multi-project workflow, Skillsutra follows these rules:
-1. **Port 3011**: Reserved for Skillsutra Web.
-2. **Port 8011**: Reserved for Skillsutra API.
-3. **Container Prefix**: All Docker assets use the `skillsutra_` prefix.
-4. **Network**: Isolated in `skillsutra_talent_network`.
+To maintain a professional multi-project workflow, this best hiring tool follows these rules:
+1. **Port 3011**: Reserved for this best hiring tool Web.
+2. **Port 8011**: Reserved for this best hiring tool API.
+3. **Container Prefix**: All Docker assets use the `the-best-hiring-tool_` prefix.
+4. **Network**: Isolated in `the-best-hiring-tool_talent_network`.
 
 ---
 

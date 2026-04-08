@@ -28,7 +28,7 @@ export const GET = async (req: Request, { params }: { params: Promise<{ id: stri
         }
 
         const payload: ActionGetResponse = {
-            icon: "https://skillsutra.vercel.app/og-image.png", // Placeholder
+            icon: "https://the-best-hiring-tool.vercel.app/og-image.png", // Placeholder
             title: `Apply: ${job.title}`,
             description: `Verify your skills and apply for the ${job.title} position at ${job.company_name} directly from Twitter.`,
             label: "Apply Now",
@@ -83,7 +83,7 @@ export const POST = async (req: Request, { params }: { params: Promise<{ id: str
         const payload: ActionPostResponse = await createPostResponse({
             fields: {
                 transaction,
-                message: `Application for '${jobId}' submitted to Skillsutra Network.`,
+                message: `Application for '${jobId}' submitted to this best hiring tool Network.`,
                 type: "transaction",
             },
         })

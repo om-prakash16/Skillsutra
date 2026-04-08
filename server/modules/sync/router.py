@@ -6,6 +6,8 @@ from core.supabase import get_supabase
 from pydantic import BaseModel
 import uuid
 
+from .service import SyncService
+
 router = APIRouter()
 sync_service = SyncService()
 

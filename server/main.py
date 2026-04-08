@@ -18,7 +18,7 @@ from modules.admin.router import router as admin_router
 from modules.cms.router import router as cms_router
 
 app = FastAPI(
-    title="SkillProof AI Enterprise API",
+    title="this best hiring tool Enterprise API",
     description="Unified modular API for Web3 AI Hiring & SaaS Workforce Management",
     version="3.0.0"
 )
@@ -52,7 +52,7 @@ app.include_router(cms_router, prefix="/api/v1/cms", tags=["CMS Orchestration"])
 def read_root():
     return {
         "status": "online",
-        "platform": "SkillProof AI",
+        "platform": "this best hiring tool",
         "api_version": "3.0.0",
         "modules": 14,
         "docs": "/docs"

@@ -1,5 +1,5 @@
 /**
- * SkillProof AI Enterprise API Client
+ * this best hiring tool Enterprise API Client
  * Unified modular orchestration for 14 high-assurance SaaS modules.
  */
 

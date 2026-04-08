@@ -23,3 +23,10 @@ class AIScoreResponse(BaseModel):
 class SkillGapResponse(BaseModel):
     missing_skills: List[str]
     learning_roadmap: List[str]
+
+class ParsedResume(BaseModel):
+    skills: List[str] = Field(description="List of extracted technical and soft skills")
+    role: str = Field(description="Primary professional role identified")
+    skill_score: float = Field(description="AI-calculated skill score from 0-100")
+    missing_skills: List[str] = Field(description="Top 3 missing skills for the identified role")
+    summary: str = Field(description="Executive summary and career recommendations")

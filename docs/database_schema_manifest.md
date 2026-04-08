@@ -1,6 +1,6 @@
-# SkillProof AI: Database Schema Manifest & Relationships
+# this best hiring tool: Database Schema Manifest & Relationships
 
-This document outlines the **Master Relational Architecture** of the SkillProof AI platform. The schema is designed for high-assurance, multi-tenant SaaS operations while maintaining a verifiable link to the Solana blockchain.
+This document outlines the **Master Relational Architecture** of the this best hiring tool platform. The schema is designed for high-assurance, multi-tenant SaaS operations while maintaining a verifiable link to the Solana blockchain.
 
 ## 🏛️ Core Entity Relationships
 

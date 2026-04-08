@@ -11,7 +11,7 @@ import { useState } from "react"
 const mockNFTs = [
     {
         type: "profile",
-        name: "SkillProof AI — Profile",
+        name: "this best hiring tool — Profile",
         symbol: "PROOF",
         image: "🪪",
         level: "Verified",
@@ -20,12 +20,12 @@ const mockNFTs = [
             { trait_type: "Category", value: "profile" },
             { trait_type: "Version", value: "3" },
             { trait_type: "Soulbound", value: "true" },
-            { trait_type: "Issuer", value: "SkillProof AI" },
+            { trait_type: "Issuer", value: "this best hiring tool" },
         ]
     },
     {
         type: "skill",
-        name: "SkillProof — Rust Developer",
+        name: "this best hiring tool — Rust Developer",
         symbol: "SKILL",
         image: "🦀",
         level: "Silver",
@@ -39,7 +39,7 @@ const mockNFTs = [
     },
     {
         type: "skill",
-        name: "SkillProof — Solana Expert",
+        name: "this best hiring tool — Solana Expert",
         symbol: "SKILL",
         image: "⚡",
         level: "Gold",
@@ -53,7 +53,7 @@ const mockNFTs = [
     },
     {
         type: "skill",
-        name: "SkillProof — TypeScript Pro",
+        name: "this best hiring tool — TypeScript Pro",
         symbol: "SKILL",
         image: "💎",
         level: "Silver",
@@ -67,7 +67,7 @@ const mockNFTs = [
     },
     {
         type: "skill",
-        name: "SkillProof — Python Dev",
+        name: "this best hiring tool — Python Dev",
         symbol: "SKILL",
         image: "🐍",
         level: "Gold",
@@ -219,7 +219,7 @@ export default function NFTCredentialsPage() {
                                                 variant="outline"
                                                 size="sm"
                                                 className="flex-1 rounded-xl text-xs border-white/10"
-                                                onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(`https://skillproof.ai/verify/${nft.mint}`); toast.success("Share link copied!") }}
+                                                onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(`https://this-best-hiring-tool.ai/verify/${nft.mint}`); toast.success("Share link copied!") }}
                                             >
                                                 <Share2 className="w-3 h-3 mr-1" />Share
                                             </Button>

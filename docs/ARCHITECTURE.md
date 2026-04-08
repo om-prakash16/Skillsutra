@@ -1,6 +1,6 @@
-# SkillProof AI: Scalable SaaS Architecture
+# this best hiring tool: Scalable SaaS Architecture
 
-SkillProof AI is architected as a high-performance, modular monorepo that bridges the gap between traditional SaaS (Supabase/FastAPI) and Web3 (Solana/IPFS).
+this best hiring tool is architected as a high-performance, modular monorepo that bridges the gap between traditional SaaS (Supabase/FastAPI) and Web3 (Solana/IPFS).
 
 ## 🏛️ Project Structure
 
@@ -21,7 +21,7 @@ A modular Python backend designed for independent service scaling.
 
 ### `contracts/` (Solana Anchor Programs)
 Verifiable professional state on-chain.
-- **`programs/skillproof/`**: Core Anchor program for credential issuance.
+- **`programs/this-best-hiring-tool/`**: Core Anchor program for credential issuance.
 - **`instructions/`**: Atomic instructions for minting and metadata updates.
 
 ---

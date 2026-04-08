@@ -22,25 +22,32 @@ class JobMatcher:
         """
         Ranks jobs by semantic similarity to the user profile.
         """
-        profile_text = f"{profile_data.get('full_name')} {profile_data.get('bio')} {profile_data.get('skills')}"
+        # 1. Handle empty profile or jobs
+        if not profile_data or not job_list:
+            return [{"job_id": j.get("id"), "title": j.get("title"), "match_score": 0.0} for j in job_list]
+
+        profile_text = f"{profile_data.get('full_name', '')} {profile_data.get('bio', '')} {profile_data.get('skills', '')}"
         profile_vec = await self.get_embedding(profile_text)
         
         results = []
         for job in job_list:
-            job_text = f"{job.get('title')} {job.get('description')} {job.get('requirements')}"
+            job_text = f"{job.get('title', '')} {job.get('description', '')} {job.get('skills_required', '')}"
             job_vec = await self.get_embedding(job_text)
             
-            # Using sklearn for cosine similarity
-            similarity = cosine_similarity(
-                [profile_vec], 
-                [job_vec]
-            )[0][0]
+            # 2. Using sklearn for cosine similarity with error handling
+            try:
+                similarity = cosine_similarity(
+                    [profile_vec], 
+                    [job_vec]
+                )[0][0]
+            except Exception:
+                similarity = 0.0
             
             results.append({
                 "job_id": job.get("id"),
                 "title": job.get("title"),
-                "match_score": round(similarity * 100, 2)
+                "match_score": round(float(similarity) * 100, 2)
             })
             
-        # Sort by match score descending
+        # 3. Sort by match score descending
         return sorted(results, key=lambda x: x["match_score"], reverse=True)
