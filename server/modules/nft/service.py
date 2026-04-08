@@ -14,7 +14,7 @@ class NFTService:
 
     async def generate_profile_metadata(self, user_id: str, attributes: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
-        SECTION 2: Generate profile metadata JSON.
+        Generate profile metadata JSON.
         """
         db = get_supabase()
         user_data = db.table("users").select("*").eq("id", user_id).single().execute().data
@@ -31,14 +31,14 @@ class NFTService:
             }
         }
         
-        # SECTION 5: Store metadata version before pinning
+        # Store metadata version before pinning
         await self.save_metadata_version(user_id, "profile", metadata)
         
         return metadata
 
     async def generate_skill_metadata(self, user_id: str, skill_name: str, score: int, level: str) -> Dict[str, Any]:
         """
-        SECTION 3: Generate skill certificate metadata JSON.
+        Generate skill certificate metadata JSON.
         """
         metadata = {
             "name": f"{skill_name} Skill Certificate",
@@ -53,7 +53,7 @@ class NFTService:
             ]
         }
         
-        # SECTION 5: Store metadata version
+        # Store metadata version
         await self.save_metadata_version(user_id, "skill", metadata)
         
         return metadata
@@ -117,7 +117,7 @@ class NFTService:
 
     async def check_skill_verification(self, user_id: str, skill_name: str) -> Optional[Dict[str, Any]]:
         """
-        SECTION 6: Verifies quiz completion before minting.
+        Verifies quiz completion before minting.
         """
         db = get_supabase()
         # Mock check: find successful quiz results for this skill

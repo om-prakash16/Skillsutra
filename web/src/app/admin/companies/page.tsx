@@ -120,7 +120,14 @@ export default function CompanyModeration() {
                 >
                   <TableCell className="px-6 py-5">
                       <div className="flex flex-col">
-                          <span className="font-bold text-white tracking-tight">{company.name}</span>
+                          <div className="flex items-center gap-2">
+                            <span className="font-bold text-white tracking-tight">{company.name}</span>
+                            {company.verified ? (
+                                <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+                            ) : (
+                                <Badge variant="outline" className="text-[8px] h-4 bg-amber-500/10 text-amber-500 border-amber-500/20 font-black">PENDING</Badge>
+                            )}
+                          </div>
                           <span className="text-[10px] font-mono text-white/30 uppercase mt-1">{company.id.substring(0,8)}...</span>
                       </div>
                   </TableCell>
@@ -132,11 +139,29 @@ export default function CompanyModeration() {
                   <TableCell>
                       {company.website ? (
                           <a href={company.website} target="_blank" className="text-xs text-primary hover:underline flex items-center gap-1 group">
-                              Visit <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                               Visit <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                           </a>
                       ) : <span className="text-xs text-white/20 italic">No link</span>}
                   </TableCell>
                   <TableCell className="text-right px-6 space-x-2">
+                    {!company.verified && (
+                        <Button 
+                            variant="outline" 
+                            size="sm" 
+                            className="h-9 px-3 text-[10px] font-black uppercase tracking-tighter bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 hover:text-primary transition-all"
+                            onClick={async () => {
+                                try {
+                                    await api.admin.verifyCompany(company.id);
+                                    toast.success("Organization verified.");
+                                    fetchCompanies();
+                                } catch (err) {
+                                    toast.error("Verification failed.");
+                                }
+                            }}
+                        >
+                            Verify Entity
+                        </Button>
+                    )}
                     <Button variant="ghost" size="icon" className="h-9 w-9 text-white/40 hover:text-white hover:bg-white/10 transition-colors">
                       <Edit className="w-4 h-4" />
                     </Button>

@@ -31,7 +31,7 @@ export default function CreateCompany() {
 
       const data = await res.json();
       if (res.ok) {
-        toast.success("Organization created successfully!");
+        toast.success("Organization created! It is now pending administrator approval.");
         router.push(`/dashboard/company/team?id=${data.company_id}`);
       } else {
         throw new Error(data.detail || "Failed to create company");

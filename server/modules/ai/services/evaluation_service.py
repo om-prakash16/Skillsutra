@@ -17,7 +17,7 @@ class EvaluationService:
 
     async def analyze_resume(self, profile_data: Dict[str, Any]) -> AIAnalysisResponse:
         """
-        SECTION 2: Resume Analysis.
+        Resume Analysis.
         Extracts strengths, gaps, and recommendations from structured profile data.
         """
         if not self.llm:
@@ -62,7 +62,7 @@ class EvaluationService:
 
     async def calculate_skill_score(self, skills: List[str]) -> float:
         """
-        SECTION 3: Skill Score Calculation (0-100).
+        Skill Score Calculation (0-100).
         """
         if not skills: return 0.0
         # Basic heuristic: breadth and known high-value skill presence
@@ -71,7 +71,7 @@ class EvaluationService:
 
     async def calculate_proof_score(self, user_id: str, profile_data: Dict[str, Any]) -> AIScoreResponse:
         """
-        SECTION 4: Proof Score (Important).
+        Proof Score (Important).
         Formula: 0.4 * skill_score + 0.3 * project_score + 0.3 * experience_score.
         """
         # Calculate individual components (0-100)
@@ -111,7 +111,7 @@ class EvaluationService:
 
     async def skill_gap_analysis(self, profile_data: Dict[str, Any], target_role: str) -> SkillGapResponse:
         """
-        SECTION 5: Skill Gap Analysis.
+        Skill Gap Analysis.
         """
         if not self.llm:
             return SkillGapResponse(missing_skills=["FastAPI", "Docker"], learning_roadmap=["Watch FastAPI tutorials", "Study Docker networking"])

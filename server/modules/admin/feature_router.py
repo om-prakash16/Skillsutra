@@ -19,7 +19,7 @@ async def get_all_features(
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
-    SECTION 7: Fetch all feature flags and their current status.
+    Fetch all feature flags and their current status.
     """
     return await feature_service.list_all_features()
 

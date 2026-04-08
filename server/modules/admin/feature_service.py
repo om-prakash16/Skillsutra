@@ -9,7 +9,7 @@ class FeatureFlagService:
     @staticmethod
     async def is_enabled(feature_name: str, force_refresh: bool = False) -> bool:
         """
-        SECTION 4: High-performance check for feature status.
+        High-performance check for feature status.
         """
         global _FEATURE_CACHE
         if feature_name in _FEATURE_CACHE and not force_refresh:
@@ -25,7 +25,7 @@ class FeatureFlagService:
     @staticmethod
     async def list_all_features() -> List[Dict[str, Any]]:
         """
-        SECTION 6: Fetch all features for admin dashboard.
+        Fetch all features for admin dashboard.
         """
         db = get_supabase()
         response = db.table("feature_flags").select("*").order("category", desc=False).execute()

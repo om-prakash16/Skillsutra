@@ -5,6 +5,7 @@ class WalletLoginRequest(BaseModel):
     wallet_address: str
     message: str
     signature: str
+    requested_role: Optional[str] = "USER"
 
 class AuthTokenResponse(BaseModel):
     access_token: str

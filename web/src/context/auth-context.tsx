@@ -6,6 +6,7 @@ import { toast } from "sonner"
 import { supabase } from "@/lib/supabaseClient"
 import type { Session, AuthChangeEvent } from "@supabase/supabase-js"
 import { useWallet } from "@solana/wallet-adapter-react"
+import { useWalletModal } from "@solana/wallet-adapter-react-ui"
 
 type UserRole = "user" | "company" | "admin"
 
@@ -23,7 +24,7 @@ interface User {
 interface AuthContextType {
     user: User | null
     isLoading: boolean
-    walletLogin: () => Promise<void>
+    walletLogin: (role?: string) => Promise<void>
     logout: () => void
 }
 
@@ -86,10 +87,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, [])
 
     const { publicKey, signMessage, connected, disconnect } = useWallet()
+    const { setVisible } = useWalletModal()
 
-    const walletLogin = async () => {
+    const walletLogin = async (role: string = "user") => {
         if (!publicKey || !signMessage) {
-            toast.error("Wallet not connected or doesn't support signing")
+            setVisible(true)
             return
         }
 
@@ -111,7 +113,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 body: JSON.stringify({
                     wallet_address: walletAddress,
                     message: message,
-                    signature: signatureHex
+                    signature: signatureHex,
+                    requested_role: role
                 })
             })
 

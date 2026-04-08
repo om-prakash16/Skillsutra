@@ -28,7 +28,7 @@ class UpdateMetadataRequest(BaseModel):
 @router.post("/mint-profile")
 async def mint_profile(data: MintProfileRequest):
     """
-    SECTION 8: Generate profile metadata and pin to IPFS.
+    Generate profile metadata and pin to IPFS.
     """
     metadata = await nft_service.generate_profile_metadata(data.user_id, data.attributes)
     cid = await nft_service.upload_to_ipfs(metadata)
@@ -84,7 +84,7 @@ async def update_metadata(data: UpdateMetadataRequest):
 @router.get("/user-nfts")
 async def get_user_nfts(user_id: str):
     """
-    SECTION 8: Fetch all NFT records for a candidate.
+    Fetch all NFT records for a candidate.
     """
     db = get_supabase()
     response = db.table("nft_records").select("*").eq("user_id", user_id).execute()
@@ -93,7 +93,7 @@ async def get_user_nfts(user_id: str):
 @router.post("/register")
 async def register_nft(user_id: str, mint: str, nft_type: str, cid: str):
     """
-    SECTION 4: Callback to store successful on-chain transaction.
+    Callback to store successful on-chain transaction.
     """
     await nft_service.register_nft(user_id, mint, nft_type, cid)
     return {"status": "registered"}

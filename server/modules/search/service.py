@@ -30,7 +30,7 @@ class SearchService:
             # Full text search using tsquery
             sb = sb.text_search("search_vector", query)
             
-        # SECTION 4: AI Ranking (Proof Score Descending)
+        # AI Ranking (Proof Score Descending)
         sb = sb.order("proof_score", desc=True)
         
         response = sb.execute()

@@ -10,14 +10,14 @@ job_service = JobService()
 @router.get("/user")
 async def get_user_applications(current_user = Depends(get_current_user)):
     """
-    SECTION 10: Fetch all applications for the current candidate.
+    Fetch all applications for the current candidate.
     """
     return await job_service.get_user_applications(current_user["id"])
 
 @router.get("/company")
 async def get_company_applications(company_id: str, current_user = Depends(get_current_user)):
     """
-    SECTION 10: Fetch all applications for a specific company (Recruiter view).
+    Fetch all applications for a specific company (Recruiter view).
     """
     return await job_service.get_company_applications(company_id)
 
@@ -28,7 +28,7 @@ async def update_application_status(
     recruiter = Depends(require_permission("job.moderate"))
 ):
     """
-    SECTION 10: Update application status (Shortlist, Hire, Reject).
+    Update application status (Shortlist, Hire, Reject).
     Triggers notifications and activity logs.
     """
     result = await job_service.update_application_status(

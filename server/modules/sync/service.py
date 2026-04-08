@@ -10,7 +10,7 @@ class SyncService:
 
     async def trigger_metadata_sync(self, user_id: uuid.UUID, entity_type: str, entity_id: Optional[uuid.UUID] = None):
         """
-        SECTION 3: Orchestrates IPFS pinning and pending state management.
+        Orchestrates IPFS pinning and pending state management.
         """
         db = get_supabase()
         
@@ -68,7 +68,7 @@ class SyncService:
 
     async def mark_sync_failed(self, user_id: uuid.UUID, entity_type: str, error: str):
         """
-        SECTION 7: Handle synchronization failures.
+        Handle synchronization failures.
         """
         db = get_supabase()
         db.table("sync_status") \

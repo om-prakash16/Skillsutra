@@ -1,6 +1,6 @@
 /**
- * this best hiring tool Enterprise API Client
- * Unified modular orchestration for 14 high-assurance SaaS modules.
+ * API Client
+ * Central binding for all backend service calls.
  */
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
@@ -26,8 +26,7 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
     return response.json();
 }
 
-// --- 13 High-Assurance API Modules ---
-
+// API module bindings
 export const api = {
     auth: {
         login: (wallet: string, signature: string) => fetchWithAuth("/auth/wallet-login", { method: "POST", body: JSON.stringify({ wallet, signature }) }),
@@ -98,6 +97,7 @@ export const api = {
         updateFeature: (data: any) => fetchWithAuth("/admin/features/update", { method: "POST", body: JSON.stringify(data) }),
         getSettings: () => fetchWithAuth("/admin/settings"),
         getCompanies: () => fetchWithAuth("/admin/companies"),
+        verifyCompany: (id: string) => fetchWithAuth(`/admin/companies/${id}/verify`, { method: "PATCH" }),
         deleteCompany: (id: string) => fetchWithAuth(`/admin/companies/${id}`, { method: "DELETE" }),
         getAllJobs: () => fetchWithAuth("/admin/all-jobs"),
         deleteJob: (id: string) => fetchWithAuth(`/admin/jobs/${id}`, { method: "DELETE" }),

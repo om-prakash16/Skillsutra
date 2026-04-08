@@ -16,7 +16,7 @@ async def get_notifications(
     limit: int = 50
 ):
     """
-    SECTION 5: Fetch notifications for the current authenticated user.
+    Fetch notifications for the current authenticated user.
     """
     return await notification_service.get_user_notifications(current_user["id"], limit=limit)
 
@@ -26,7 +26,7 @@ async def mark_notification_read(
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
-    SECTION 5: Mark a specific notification as read.
+    Mark a specific notification as read.
     """
     await notification_service.mark_as_read(notification_id, current_user["id"])
     return {"status": "success"}
@@ -37,7 +37,7 @@ async def get_activity_history(
     limit: int = 50
 ):
     """
-    SECTION 5: Fetch personal activity logs for the current user.
+    Fetch personal activity logs for the current user.
     """
     db = get_supabase()
     response = db.table("activity_logs") \

@@ -11,7 +11,7 @@ router = APIRouter()
 @router.get("/schema")
 async def get_profile_schema():
     """
-    SECTION 4: Fetch dynamic schema fields for profile rendering.
+    Fetch dynamic schema fields for profile rendering.
     """
     db = get_supabase()
     response = db.table("profile_schema").select("*").order("display_order").execute()
@@ -20,7 +20,7 @@ async def get_profile_schema():
 @router.get("/")
 async def get_user_profile(current_user = Depends(get_current_user)):
     """
-    SECTION 5: Fetch current logged-in user profile JSON.
+    Fetch current logged-in user profile JSON.
     """
     db = get_supabase()
     response = db.table("dynamic_profile_data").select("*").eq("user_id", current_user["id"]).single().execute()
@@ -29,7 +29,7 @@ async def get_user_profile(current_user = Depends(get_current_user)):
 @router.post("/update")
 async def update_profile(data: Dict[str, Any], current_user = Depends(get_current_user)):
     """
-    SECTION 5: Update dynamic profile JSON data.
+    Update dynamic profile JSON data.
     """
     db = get_supabase()
     response = db.table("dynamic_profile_data").upsert({
@@ -42,7 +42,7 @@ async def update_profile(data: Dict[str, Any], current_user = Depends(get_curren
 @router.post("/upload-file")
 async def upload_profile_file(file: UploadFile = File(...), current_user = Depends(get_current_user)):
     """
-    SECTION 4: Upload resume or profile image to Supabase storage.
+    Upload resume or profile image to Supabase storage.
     """
     # In a real app: upload to bucket and return public URL
     return {
@@ -56,7 +56,7 @@ async def upload_profile_file(file: UploadFile = File(...), current_user = Depen
 @router.get("/portfolio")
 async def get_portfolio(user_id: Optional[str] = None, current_user = Depends(get_current_user)):
     """
-    SECTION 7: Fetch candidate portfolio (projects, external links).
+    Fetch candidate portfolio (projects, external links).
     """
     target_id = user_id or current_user["id"]
     db = get_supabase()

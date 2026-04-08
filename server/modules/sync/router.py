@@ -22,7 +22,7 @@ async def trigger_profile_sync(
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
-    SECTION 8: Trigger the Supabase -> IPFS metadata generation workflow.
+    Trigger the Supabase -> IPFS metadata generation workflow.
     """
     return await sync_service.trigger_metadata_sync(
         user_id=uuid.UUID(current_user["id"]),
@@ -49,7 +49,7 @@ async def confirm_blockchain_sync(
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
-    SECTION 10: Transition status to SYNCED after Solana transaction.
+    Transition status to SYNCED after Solana transaction.
     """
     return await sync_service.finalize_blockchain_sync(
         user_id=uuid.UUID(current_user["id"]),

@@ -17,7 +17,7 @@ async def get_user_analytics(
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
-    SECTION 8: Personal career growth metrics and AI score trends.
+    Personal career growth metrics and AI score trends.
     """
     return await analytics_service.get_user_analytics(uuid.UUID(current_user["id"]))
 
@@ -26,7 +26,7 @@ async def get_company_analytics(
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
-    SECTION 8: Recruitment pipeline and job performance metrics.
+    Recruitment pipeline and job performance metrics.
     """
     # In a real app: verify user belongs to a company
     return await analytics_service.get_company_analytics(uuid.UUID(current_user["id"]))
@@ -36,7 +36,7 @@ async def get_admin_analytics(
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """
-    SECTION 8: Global SaaS health and system-wide growth metrics.
+    Global SaaS health and system-wide growth metrics.
     """
     # In a real app: check for 'admin' role
     return await analytics_service.get_admin_analytics()

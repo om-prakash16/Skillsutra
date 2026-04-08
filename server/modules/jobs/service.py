@@ -10,7 +10,7 @@ class JobService:
 
     async def create_job(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        SECTION 2: Create a job post.
+        Create a job post.
         """
         db = get_supabase()
         if not db:
@@ -34,7 +34,7 @@ class JobService:
 
     async def get_jobs_with_scores(self, user_id: str) -> List[Dict[str, Any]]:
         """
-        SECTION 4: Public job board with AI match score preview.
+        Public job board with AI match score preview.
         """
         db = get_supabase()
         if not db: return []
@@ -69,7 +69,7 @@ class JobService:
 
     async def get_job_details(self, job_id: str) -> Dict[str, Any]:
         """
-        SECTION 10: Fetch job details with company info.
+        Fetch job details with company info.
         """
         db = get_supabase()
         if not db: return {}
@@ -141,7 +141,7 @@ class JobService:
 
     async def update_application_status(self, app_id: str, status: str) -> Dict[str, Any]:
         """
-        SECTION 6: Update application status (Shortlist, Hire, etc.)
+        Update application status (Shortlist, Hire, etc.)
         """
         db = get_supabase()
         if not db: return {}
@@ -172,7 +172,7 @@ class JobService:
 
     async def get_company_applications(self, company_id: str) -> List[Dict[str, Any]]:
         """
-        SECTION 10: Fetch all applications for a company's jobs.
+        Fetch all applications for a company's jobs.
         """
         db = get_supabase()
         if not db: return []

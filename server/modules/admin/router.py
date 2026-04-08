@@ -33,7 +33,7 @@ class UserUpdate(BaseModel):
 @router.get("/users")
 async def get_all_users(user = Depends(require_permission("user.promote"))):
     """
-    SECTION 1: Fetch all platform users for moderation.
+    Fetch all platform users for moderation.
     """
     db = get_supabase()
     response = db.table("users").select("*").order("created_at", desc=True).execute()
@@ -42,7 +42,7 @@ async def get_all_users(user = Depends(require_permission("user.promote"))):
 @router.patch("/users/{wallet}")
 async def update_user(wallet: str, update: UserUpdate, user = Depends(require_permission("user.promote"))):
     """
-    SECTION 1: Admin capability to promote users to COMPANY or ADMIN.
+    Admin capability to promote users to COMPANY or ADMIN.
     """
     db = get_supabase()
     update_data = {k: v for k, v in update.model_dump().items() if v is not None}
@@ -54,7 +54,7 @@ async def update_user(wallet: str, update: UserUpdate, user = Depends(require_pe
 @router.get("/schema")
 async def get_admin_schema(user = Depends(require_permission("manage_schema"))):
     """
-    SECTION 4: Fetch the complete dynamic profile schema.
+    Fetch the complete dynamic profile schema.
     """
     db = get_supabase()
     response = db.table("profile_schema").select("*").order("display_order").execute()
@@ -63,7 +63,7 @@ async def get_admin_schema(user = Depends(require_permission("manage_schema"))):
 @router.post("/schema")
 async def create_schema_field(field: SchemaFieldCreate, user = Depends(require_permission("manage_schema"))):
     """
-    SECTION 4: Add a new dynamic field to the profile schema.
+    Add a new dynamic field to the profile schema.
     """
     db = get_supabase()
     response = db.table("profile_schema").insert(field.model_dump()).execute()
@@ -72,7 +72,7 @@ async def create_schema_field(field: SchemaFieldCreate, user = Depends(require_p
 @router.patch("/schema/{field_id}")
 async def update_schema_field(field_id: str, field: Dict[str, Any], user = Depends(require_permission("manage_schema"))):
     """
-    SECTION 4: Update a dynamic field's label or validation rules.
+    Update a dynamic field's label or validation rules.
     """
     db = get_supabase()
     response = db.table("profile_schema").update(field).eq("id", field_id).execute()
@@ -83,7 +83,7 @@ async def update_schema_field(field_id: str, field: Dict[str, Any], user = Depen
 @router.get("/skills")
 async def get_skill_taxonomy():
     """
-    SECTION 10: Fetch the platform's standardized skill categories.
+    Fetch the platform's standardized skill categories.
     """
     db = get_supabase()
     response = db.table("skill_categories").select("*").execute()
@@ -92,7 +92,7 @@ async def get_skill_taxonomy():
 @router.post("/skills")
 async def create_skill_category(category: Dict[str, Any], user = Depends(require_permission("manage_schema"))):
     """
-    SECTION 10: Add a new skill category to the platform taxonomy.
+    Add a new skill category to the platform taxonomy.
     """
     db = get_supabase()
     response = db.table("skill_categories").insert(category).execute()
@@ -103,7 +103,7 @@ async def create_skill_category(category: Dict[str, Any], user = Depends(require
 @router.get("/features")
 async def get_feature_flags():
     """
-    SECTION 11: Fetch all dynamic feature flags and their states.
+    Fetch all dynamic feature flags and their states.
     """
     db = get_supabase()
     response = db.table("feature_flags").select("*").execute()
@@ -112,7 +112,7 @@ async def get_feature_flags():
 @router.post("/features/update")
 async def update_feature_flag(feature: FeatureToggleRequest, user = Depends(require_permission("manage_flags"))):
     """
-    SECTION 11: Toggle AI, Web3, or Marketplace features in real-time.
+    Toggle AI, Web3, or Marketplace features in real-time.
     """
     db = get_supabase()
     response = db.table("feature_flags").update({
@@ -126,7 +126,7 @@ async def update_feature_flag(feature: FeatureToggleRequest, user = Depends(requ
 @router.get("/settings")
 async def get_platform_settings():
     """
-    SECTION 10: Fetch global AI configuration and tuning parameters.
+    Fetch global AI configuration and tuning parameters.
     """
     db = get_supabase()
     response = db.table("platform_settings").select("*").execute()
@@ -135,7 +135,7 @@ async def get_platform_settings():
 @router.post("/settings")
 async def update_settings(setting: PlatformSettingRequest, user = Depends(require_permission("manage_flags"))):
     """
-    SECTION 10: Update AI resonance thresholds or platform-wide variables.
+    Update AI resonance thresholds or platform-wide variables.
     """
     db = get_supabase()
     response = db.table("platform_settings").update({
@@ -143,7 +143,7 @@ async def update_settings(setting: PlatformSettingRequest, user = Depends(requir
     }).eq("setting_key", setting.setting_key).execute()
     return {"status": "success", "data": response.data}
 
-# --- UNIFIED CRUD ORCHESTRATION ('God Mode') ---
+# User Account Orchestration
 
 @router.get("/companies")
 async def admin_get_companies(user = Depends(require_permission("admin.access"))):
@@ -155,6 +155,16 @@ async def admin_delete_company(company_id: str, user = Depends(require_permissio
     db = get_supabase()
     db.table("companies").delete().eq("id", company_id).execute()
     return {"status": "purged"}
+
+@router.patch("/companies/{company_id}/verify")
+async def admin_verify_company(company_id: str, user = Depends(require_permission("admin.access"))):
+    """
+    Administrative Verification.
+    Sets the 'verified' flag to TRUE for the target company.
+    """
+    db = get_supabase()
+    response = db.table("companies").update({"verified": True}).eq("id", company_id).execute()
+    return {"status": "verified", "data": response.data}
 
 @router.get("/all-jobs")
 async def admin_get_all_jobs(user = Depends(require_permission("admin.access"))):

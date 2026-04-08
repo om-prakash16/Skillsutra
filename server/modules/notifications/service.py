@@ -13,7 +13,7 @@ class NotificationService:
         metadata: Optional[Dict[str, Any]] = None
     ):
         """
-        SECTION 1: Create a new persistent notification in the database.
+        Create a new persistent notification in the database.
         """
         db = get_supabase()
         if not db: return None
@@ -58,7 +58,7 @@ class NotificationService:
     @staticmethod
     async def get_user_notifications(user_id: UUID, limit: int = 20) -> List[Dict[str, Any]]:
         """
-        SECTION 5: Fetch notifications for a specific user.
+        Fetch notifications for a specific user.
         """
         db = get_supabase()
         if not db: return []
@@ -73,7 +73,7 @@ class NotificationService:
     @staticmethod
     async def mark_as_read(notification_id: UUID, user_id: UUID):
         """
-        SECTION 5: Mark a notification as read.
+        Mark a notification as read.
         """
         db = get_supabase()
         if not db: return

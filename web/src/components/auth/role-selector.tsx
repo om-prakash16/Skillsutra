@@ -1,6 +1,7 @@
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { User, Building2, Zap } from "lucide-react"
+import { User, Building2, CheckCircle2 } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 interface RoleSelectorProps {
     value: string
@@ -10,34 +11,61 @@ interface RoleSelectorProps {
 export function RoleSelector({ value, onChange }: RoleSelectorProps) {
     return (
         <RadioGroup defaultValue={value} onValueChange={onChange} className="grid grid-cols-2 gap-4">
-            <div>
+            <div className="relative">
                 <RadioGroupItem value="user" id="user" className="peer sr-only" />
                 <Label
                     htmlFor="user"
-                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-all"
+                    className={cn(
+                        "flex flex-col items-center justify-center rounded-2xl border-2 p-6 cursor-pointer transition-all duration-300 relative overflow-hidden",
+                        value === "user" 
+                            ? "border-primary bg-primary/10 shadow-[0_0_20px_rgba(var(--primary),0.15)]" 
+                            : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20"
+                    )}
                 >
-                    <User className="mb-3 h-6 w-6" />
-                    Job Seeker
+                    {value === "user" && (
+                        <CheckCircle2 className="absolute top-3 right-3 w-5 h-5 text-primary animate-in zoom-in duration-300" />
+                    )}
+                    <div className={cn(
+                        "p-3 rounded-xl mb-3 transition-colors",
+                        value === "user" ? "bg-primary text-white" : "bg-white/5 text-muted-foreground"
+                    )}>
+                        <User className="w-6 h-6" />
+                    </div>
+                    <span className={cn(
+                        "font-black tracking-tight",
+                        value === "user" ? "text-white" : "text-muted-foreground"
+                    )}>
+                        Job Seeker
+                    </span>
                 </Label>
             </div>
-            <div>
+
+            <div className="relative">
                 <RadioGroupItem value="company" id="company" className="peer sr-only" />
                 <Label
                     htmlFor="company"
-                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer transition-all"
+                    className={cn(
+                        "flex flex-col items-center justify-center rounded-2xl border-2 p-6 cursor-pointer transition-all duration-300 relative overflow-hidden",
+                        value === "company" 
+                            ? "border-primary bg-primary/10 shadow-[0_0_20px_rgba(var(--primary),0.15)]" 
+                            : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20"
+                    )}
                 >
-                    <Building2 className="mb-3 h-6 w-6" />
-                    Company
-                </Label>
-            </div>
-            <div className="col-span-2">
-                <RadioGroupItem value="admin" id="admin" className="peer sr-only" />
-                <Label
-                    htmlFor="admin"
-                    className="flex flex-row items-center justify-center gap-3 rounded-md border-2 border-dashed border-primary/20 bg-primary/5 p-4 hover:bg-primary/10 hover:border-primary/40 peer-data-[state=checked]:border-primary transition-all cursor-pointer"
-                >
-                    <Zap className="h-5 w-5 text-primary" />
-                    <span className="font-bold text-xs uppercase tracking-widest text-primary/80">Dev: System Admin</span>
+                    {value === "company" && (
+                        <CheckCircle2 className="absolute top-3 right-3 w-5 h-5 text-primary animate-in zoom-in duration-300" />
+                    )}
+                    <div className={cn(
+                        "p-3 rounded-xl mb-3 transition-colors",
+                        value === "company" ? "bg-primary text-white" : "bg-white/5 text-muted-foreground"
+                    )}>
+                        <Building2 className="w-6 h-6" />
+                    </div>
+                    <span className={cn(
+                        "font-black tracking-tight",
+                        value === "company" ? "text-white" : "text-muted-foreground"
+                    )}>
+                        Company
+                    </span>
                 </Label>
             </div>
         </RadioGroup>

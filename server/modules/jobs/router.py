@@ -22,14 +22,14 @@ job_service = JobService()
 @router.get("/list")
 async def list_jobs(user_id: Optional[str] = None):
     """
-    SECTION 10: Public job board with dynamic AI scores for candidates.
+    Public job board with dynamic AI scores for candidates.
     """
     return await job_service.get_jobs_with_scores(user_id)
 
 @router.get("/details/{job_id}")
 async def get_job_details(job_id: str):
     """
-    SECTION 10: Job detail view.
+    Job detail view.
     """
     return await job_service.get_job_details(job_id)
 
@@ -38,7 +38,7 @@ async def get_job_details(job_id: str):
 @router.post("/create", response_model=JobResponse)
 async def create_job(job: JobCreate, user = Depends(get_current_user)):
     """
-    SECTION 10: Create a job post. 
+    Create a job post. 
     """
     result = await job_service.create_job(job.model_dump())
     return JobResponse(id=result["id"], **result)
@@ -81,7 +81,7 @@ async def apply_to_job(data: ApplicationCreate, user = Depends(get_current_user)
 @router.get("/user")
 async def get_user_applications(user_id: str):
     """
-    SECTION 10: Candidate's application tracking.
+    Candidate's application tracking.
     """
     db = get_supabase()
     if not db: return []
@@ -94,7 +94,7 @@ async def get_user_applications(user_id: str):
 @router.get("/company/{company_id}")
 async def get_company_applications(company_id: str):
     """
-    SECTION 10: Recruiter's applicant list.
+    Recruiter's applicant list.
     """
     return await job_service.get_company_applications(company_id)
 

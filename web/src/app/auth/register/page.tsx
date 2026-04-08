@@ -1,197 +1,73 @@
 "use client"
 
 import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { registerSchema, RegisterValues } from "@/lib/validations/auth"
 import { useAuth } from "@/context/auth-context"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { RoleSelector } from "@/components/auth/role-selector"
 import Link from "next/link"
-import { Briefcase, Loader2, Eye, EyeOff } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
-
+import { Briefcase, Loader2, ArrowRight } from "lucide-react"
+import { motion } from "framer-motion"
 
 export default function RegisterPage() {
-    const { register } = useAuth()
+    const { walletLogin } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
-    const [showPassword, setShowPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [selectedRole, setSelectedRole] = useState("user")
 
-    const form = useForm<RegisterValues>({
-        resolver: zodResolver(registerSchema),
-        defaultValues: {
-            role: "user",
-            name: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-        },
-    })
-
-    async function onSubmit(data: RegisterValues) {
+    async function handleRegister() {
         setIsLoading(true)
         try {
-            await register(data.name, data.email, data.password, data.role)
+            await walletLogin(selectedRole)
         } catch {
-            // Error toast is already shown by auth-context
+            // Error managed by context
         } finally {
             setIsLoading(false)
         }
     }
 
     return (
-        <Card className="border-border/50 shadow-xl backdrop-blur-sm bg-background/95">
-            <CardHeader className="space-y-1 items-center text-center">
-                <CardTitle className="text-2xl font-bold font-heading">Create an account</CardTitle>
-                <CardDescription>
-                    Choose your role and start your journey
+        <Card className="border-border/50 shadow-2xl backdrop-blur-xl bg-background/95 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full" />
+            
+            <CardHeader className="space-y-2 items-center text-center pb-8 border-b border-border/50">
+                <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-primary/10 border border-primary/20 mb-2">
+                    <Briefcase className="w-8 h-8 text-primary" />
+                </div>
+                <CardTitle className="text-3xl font-black font-heading tracking-tight italic">Initialize Identity</CardTitle>
+                <CardDescription className="max-w-[280px]">
+                    Select your organizational role and securely anchor your profile to the Solana network.
                 </CardDescription>
             </CardHeader>
-            <CardContent>
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="role"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <RoleSelector value={field.value} onChange={field.onChange} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
 
-                        <FormField
-                            control={form.control}
-                            name="name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Full Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="John Doe" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
+            <CardContent className="pt-8 space-y-8">
+                <div className="space-y-4">
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Identity Selection</label>
+                    <RoleSelector value={selectedRole} onChange={setSelectedRole} />
+                </div>
 
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="m@example.com" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <div className="relative">
-                                            <Input 
-                                                type={showPassword ? "text" : "password"} 
-                                                className="pr-12 bg-white/5 border-white/10 rounded-xl focus:ring-primary/20 h-12 transition-all"
-                                                {...field} 
-                                            />
-                                            <motion.button
-                                                type="button"
-                                                whileHover={{ scale: 1.1 }}
-                                                whileTap={{ scale: 0.9 }}
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-muted-foreground/60 hover:text-primary transition-colors bg-white/5 rounded-lg border border-white/5 hover:border-primary/20"
-                                            >
-                                                <AnimatePresence mode="wait">
-                                                    <motion.div
-                                                        key={showPassword ? "eye-off" : "eye"}
-                                                        initial={{ opacity: 0, rotate: -30 }}
-                                                        animate={{ opacity: 1, rotate: 0 }}
-                                                        exit={{ opacity: 0, rotate: 30 }}
-                                                        transition={{ duration: 0.15 }}
-                                                    >
-                                                        {showPassword ? (
-                                                            <EyeOff className="h-4 w-4" />
-                                                        ) : (
-                                                            <Eye className="h-4 w-4" />
-                                                        )}
-                                                    </motion.div>
-                                                </AnimatePresence>
-                                            </motion.button>
-
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="confirmPassword"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Confirm Password</FormLabel>
-                                    <FormControl>
-                                        <div className="relative">
-                                            <Input 
-                                                type={showConfirmPassword ? "text" : "password"} 
-                                                className="pr-12 bg-white/5 border-white/10 rounded-xl focus:ring-primary/20 h-12 transition-all"
-                                                {...field} 
-                                            />
-                                            <motion.button
-                                                type="button"
-                                                whileHover={{ scale: 1.1 }}
-                                                whileTap={{ scale: 0.9 }}
-                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-muted-foreground/60 hover:text-primary transition-colors bg-white/5 rounded-lg border border-white/5 hover:border-primary/20"
-                                            >
-                                                <AnimatePresence mode="wait">
-                                                    <motion.div
-                                                        key={showConfirmPassword ? "eye-off" : "eye"}
-                                                        initial={{ opacity: 0, rotate: -30 }}
-                                                        animate={{ opacity: 1, rotate: 0 }}
-                                                        exit={{ opacity: 0, rotate: 30 }}
-                                                        transition={{ duration: 0.15 }}
-                                                    >
-                                                        {showConfirmPassword ? (
-                                                            <EyeOff className="h-4 w-4" />
-                                                        ) : (
-                                                            <Eye className="h-4 w-4" />
-                                                        )}
-                                                    </motion.div>
-                                                </AnimatePresence>
-                                            </motion.button>
-
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-
-                        <Button className="w-full" type="submit" disabled={isLoading}>
-                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                            Create Account
-                        </Button>
-                    </form>
-                </Form>
+                <div className="space-y-4">
+                    <Button 
+                        className="w-full h-14 text-lg font-black bg-white text-black hover:bg-neutral-200 transition-all rounded-2xl gap-3 shadow-[0_8px_30px_rgb(255,255,255,0.1)] group-hover:shadow-[0_8px_30px_rgb(255,255,255,0.2)]" 
+                        onClick={handleRegister} 
+                        disabled={isLoading}
+                    >
+                        {isLoading ? (
+                            <Loader2 className="w-6 h-6 animate-spin" />
+                        ) : (
+                            <>
+                                REGISTER WITH WALLET 
+                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </>
+                        )}
+                    </Button>
+                    <p className="text-[10px] text-center text-muted-foreground/60 px-4">
+                        By registering, you are anchoring your cryptographic identity to this best hiring tool protocols.
+                    </p>
+                </div>
             </CardContent>
-            <CardFooter className="justify-center text-sm text-muted-foreground">
-                Already have an account? <Link href="/auth/login" className="text-primary hover:underline ml-1 font-medium">Log in</Link>
+
+            <CardFooter className="justify-center text-sm text-muted-foreground border-t border-border/50 bg-white/[0.02] py-4">
+                Already have an identity? <Link href="/auth/login" className="text-primary hover:underline ml-1 font-bold">Log in</Link>
             </CardFooter>
         </Card>
     )

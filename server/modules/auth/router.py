@@ -26,14 +26,26 @@ async def wallet_login(req: WalletLoginRequest):
     if response.data:
         user = response.data[0]
     else:
-        # Create User
-        create_resp = db.table("users").insert({"wallet_address": req.wallet_address}).execute()
+        # Create User with requested role metadata
+        create_resp = db.table("users").insert({
+            "wallet_address": req.wallet_address,
+            "role": req.requested_role.upper() # Store normalized role
+        }).execute()
+        
         if not create_resp.data:
             raise HTTPException(status_code=500, detail="Failed to create user record")
+        
         user = create_resp.data[0]
         
-        # Assign default USER role
-        role_resp = db.table("roles").select("id").eq("role_name", "USER").single().execute()
+        # Mapping requested role to database role names
+        target_role = "USER"
+        if req.requested_role.upper() == "COMPANY":
+            target_role = "COMPANY"
+        elif req.requested_role.upper() == "ADMIN":
+            target_role = "ADMIN"
+
+        # Assign role in user_roles link table
+        role_resp = db.table("roles").select("id").eq("role_name", target_role).single().execute()
         if role_resp.data:
             db.table("user_roles").insert({"user_id": user["id"], "role_id": role_resp.data["id"]}).execute()
 

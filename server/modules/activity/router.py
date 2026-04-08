@@ -14,7 +14,7 @@ async def get_activity_logs(
     current_user = Depends(require_permission("view_analytics"))
 ):
     """
-    SECTION 13: Fetch platform activity logs with filtering.
+    Fetch platform activity logs with filtering.
     """
     conn = get_db_connection()
     cur = conn.cursor()

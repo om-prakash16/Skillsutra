@@ -17,7 +17,7 @@ async def search_candidates(
     query: Optional[str] = Query(None)
 ):
     """
-    SECTION 7: High-performance candidate discovery with AI ranking.
+    High-performance candidate discovery with AI ranking.
     """
     return await search_service.search_candidates(
         skills=skills,
@@ -34,7 +34,7 @@ async def search_jobs(
     query: Optional[str] = Query(None)
 ):
     """
-    SECTION 7: High-performance job search with dynamic filtering.
+    High-performance job search with dynamic filtering.
     """
     return await search_service.search_jobs(
         skills=skills,

@@ -8,7 +8,7 @@ router = APIRouter()
 @router.post("/create")
 async def create_company(req: CompanyCreate, user = Depends(get_current_user)):
     """
-    SECTION 6: Company Account Creation.
+    Company Account Creation.
     Creates a new company workspace and assigns the user as OWNER.
     """
     db = get_supabase()
@@ -42,7 +42,7 @@ async def create_company(req: CompanyCreate, user = Depends(get_current_user)):
 @router.post("/invite-member")
 async def invite_member(req: CompanyInvite, user = Depends(get_current_user)):
     """
-    SECTION 7: Team Member Invitations.
+    Team Member Invitations.
     """
     db = get_supabase()
     user_id = user.get("sub")

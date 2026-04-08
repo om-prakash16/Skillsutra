@@ -7,7 +7,7 @@ class AnalyticsService:
     @staticmethod
     async def get_user_analytics(user_id: uuid.UUID) -> Dict[str, Any]:
         """
-        SECTION 2: User-specific career growth analytics.
+        User-specific career growth analytics.
         """
         db = get_supabase()
         
@@ -33,7 +33,7 @@ class AnalyticsService:
     @staticmethod
     async def get_company_analytics(company_id: uuid.UUID) -> Dict[str, Any]:
         """
-        SECTION 3: Company-specific recruitment analytics.
+        Company-specific recruitment analytics.
         """
         db = get_supabase()
         
@@ -58,7 +58,7 @@ class AnalyticsService:
     @staticmethod
     async def get_admin_analytics() -> Dict[str, Any]:
         """
-        SECTION 4: Global platform growth metrics.
+        Global platform growth metrics.
         """
         db = get_supabase()
         
