@@ -14,7 +14,7 @@ import { toast } from "sonner"
 import { useAuth } from "@/context/auth-context"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8011/api/v1"
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"
 
 const mockProjects = [
     { id: "1", project_name: "DeFi Yield Aggregator", github_link: "https://github.com/demo/defi-agg", description: "Cross-chain yield optimization protocol.", tech_stack: ["Rust", "Solana", "React", "TypeScript"], ai_score: 94, on_chain_hash: "0x7f8e2a1b3c4d...", created_at: "2026-04-01" },

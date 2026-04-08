@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 import { useState } from "react"
 import Link from "next/link"
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8011/api/v1"
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"
 
 const mockJobs = [
     {

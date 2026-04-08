@@ -8,9 +8,9 @@ install:
 # Start both services locally (for development)
 # This uses the specific ports defined: 3011 (Web) and 8011 (Server)
 dev:
-	# Running web on 3011 and server on 8011
+	# Running web on 3000 and server on 8000
 	powershell -Command "Start-Process cmd -ArgumentList '/k cd web && npm run dev'"
-	powershell -Command "Start-Process cmd -ArgumentList '/k cd server && uvicorn main:app --reload --port 8011'"
+	powershell -Command "Start-Process cmd -ArgumentList '/k cd server && uvicorn main:app --reload --port 8000'"
 
 # Docker commands
 docker-up:

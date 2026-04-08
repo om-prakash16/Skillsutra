@@ -23,7 +23,7 @@ import { SyncStatusBadge } from "@/components/blockchain/SyncStatusBadge"
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8011/api/v1"
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"
 
 const statCards = [
     { label: "Reputation Score", value: "742", max: "/1000", icon: Trophy, color: "from-amber-500/20 to-amber-600/5", iconColor: "text-amber-500", href: "/dashboard/candidate/reputation" },

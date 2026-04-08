@@ -47,17 +47,17 @@
 
 ```text
 this best hiring tool/
-├── web/                     # Next.js Frontend (Port: 3011)
-├── server/                  # FastAPI AI Backend (Port: 8011)
+├── web/                     # Next.js Frontend (Port: 3000)
+├── server/                  # FastAPI AI Backend (Port: 8000)
 ├── programs/                # Rust Anchor Smart Contracts
 ├── database/                # Schema Migrations
 ├── Makefile                 # Unified Command Runner
 └── .env.example             # Global Environment Template
 ```
 
-## 🚀 Quick Setup (Professional Isolation)
+## 🚀 Quick Setup
 
-This project uses **non-default ports** (3011/8011) to prevent conflicts with your other local projects.
+Standard ports (3000/8000) are used for local development.
 
 ### 1. Automated Setup
 The easiest way to get started is using the provided **Makefile**:
@@ -70,18 +70,16 @@ make install
 make dev
 ```
 
-### 2. Manual Boot (Specific Ports)
-
-- **AI Backend (8011)**:
+- **AI Backend (8000)**:
   ```bash
   cd server
-  uvicorn main:app --reload --port 8011
+  uvicorn main:app --reload --port 8000
   ```
 
-- **Client App (3011)**:
+- **Client App (3000)**:
   ```bash
   cd web
-  npm run dev  # Automatically uses -p 3011
+  npm run dev
   ```
 
 ### 3. Docker Orchestration
@@ -93,10 +91,11 @@ make docker-up
 ## 🛡️ Isolation & Conflict Prevention
 
 To maintain a professional multi-project workflow, this best hiring tool follows these rules:
-1. **Port 3011**: Reserved for this best hiring tool Web.
-2. **Port 8011**: Reserved for this best hiring tool API.
+1. **Port 3000**: Standard Next.js development port.
+2. **Port 8000**: Standard FastAPI/Uvicorn port.
 3. **Container Prefix**: All Docker assets use the `the-best-hiring-tool_` prefix.
 4. **Network**: Isolated in `the-best-hiring-tool_talent_network`.
+
 
 ---
 

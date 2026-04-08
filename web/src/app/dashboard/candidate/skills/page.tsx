@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { useAuth } from "@/context/auth-context"
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8011/api/v1"
+const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"
 
 const availableSkills = [
     { name: "Rust", category: "Systems", color: "from-orange-500/20 to-orange-600/5" },
