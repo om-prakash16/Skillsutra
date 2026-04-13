@@ -29,20 +29,13 @@ async def update_application_status(
 ):
     """
     Update application status (Shortlist, Hire, Reject).
-    Triggers notifications and activity logs.
+    Triggers notifications and activity logs via JobService.
     """
+    # The JobService now handles notifications and activity logging internally
     result = await job_service.update_application_status(
-        application_id=application_id, 
-        new_status=status, 
-        recruiter_id=recruiter["id"]
-    )
-    
-    # Notify Candidate
-    await NotificationService.create_event_notification(
-        user_id=result["candidate_id"],
-        type="application_status",
-        title="Application Status Updated",
-        message=f"Your application status for {result['job_title']} has been updated to: {status}"
+        app_id=application_id, 
+        status=status, 
+        recruiter_id=recruiter.get("sub") or recruiter.get("id")
     )
     
     return result

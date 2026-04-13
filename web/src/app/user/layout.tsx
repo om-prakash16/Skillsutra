@@ -1,9 +1,4 @@
-"use client"
-
-import { Sidebar } from "@/components/layout/sidebar"
-import { useAuth } from "@/context/auth-context"
-import { redirect } from "next/navigation"
-import { Footer } from "@/components/layout/footer"
+import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 
 export default function UserLayout({
     children,
@@ -18,6 +13,7 @@ export default function UserLayout({
         <div className="flex min-h-screen bg-muted/20">
             <Sidebar role="user" className="hidden lg:flex" />
             <main className="flex-1 w-full pt-16">
+                <Breadcrumbs />
                 <div className="container mx-auto p-8 max-w-6xl min-h-[calc(100vh-200px)]">
                     {children}
                 </div>

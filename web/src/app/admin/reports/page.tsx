@@ -34,10 +34,8 @@ export default function ModerationCenter() {
     const fetchReports = async () => {
         setIsLoading(true)
         try {
-            if (api.staff.getReports) {
-                const data = await api.staff.getReports?.(`status=${filter === 'all' ? '' : filter.toUpperCase()}`) || [];
-                setReports(Array.isArray(data) ? data : []);
-            }
+            const data = await api.admin.getReports(`status=${filter === 'all' ? '' : filter.toUpperCase()}`) || [];
+            setReports(Array.isArray(data) ? data : []);
         } catch (err) {
             toast.error("Failed to load moderation queue.")
         } finally {
@@ -45,9 +43,19 @@ export default function ModerationCenter() {
         }
     }
 
-    const handleAction = (id: string, action: 'dismiss' | 'block') => {
-        toast.info(`Protocol ${action.toUpperCase()} executed for ${id}`)
-        setReports(prev => prev.filter(r => r.id !== id))
+    const handleAction = async (id: string, action: 'RESOLVED' | 'DISMISSED', block = false) => {
+        try {
+            await api.admin.resolveReport({
+                report_id: id,
+                status: action,
+                admin_notes: `Resolved as ${action} via terminal.`,
+                block_user: block
+            });
+            toast.success(`Protocol ${action} executed for incident ${id.substring(0,8)}`)
+            fetchReports();
+        } catch (err) {
+            toast.error("Failed to propagate administrative decision.");
+        }
     }
 
     const filteredReports = reports.filter(r => filter === "all" || r.status === filter)
@@ -149,10 +157,10 @@ export default function ModerationCenter() {
                                         </TableCell>
                                         <TableCell className="text-right px-8">
                                             <div className="flex items-center justify-end gap-2">
-                                                <Button variant="ghost" size="icon" className="h-10 w-10 text-emerald-500/50 hover:text-emerald-500 hover:bg-emerald-500/10 border border-emerald-500/10" onClick={() => handleAction(report.id, 'dismiss')}>
+                                                <Button variant="ghost" size="icon" className="h-10 w-10 text-emerald-500/50 hover:text-emerald-500 hover:bg-emerald-500/10 border border-emerald-500/10" onClick={() => handleAction(report.id, 'DISMISSED')}>
                                                     <CheckCircle2 className="w-5 h-5" />
                                                 </Button>
-                                                <Button variant="ghost" size="icon" className="h-10 w-10 text-rose-500/50 hover:text-rose-500 hover:bg-rose-500/10 border border-rose-500/10" onClick={() => handleAction(report.id, 'block')}>
+                                                <Button variant="ghost" size="icon" className="h-10 w-10 text-rose-500/50 hover:text-rose-500 hover:bg-rose-500/10 border border-rose-500/10" onClick={() => handleAction(report.id, 'RESOLVED', true)}>
                                                     <XCircle className="w-5 h-5" />
                                                 </Button>
                                                 <Button variant="ghost" size="icon" className="h-10 w-10 text-white/20 hover:text-white hover:bg-white/10 border border-white/10">

@@ -27,8 +27,6 @@ import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
 export default function AdminSettingsPage() {
-    // In a real app, we'd fetch from 'platform_settings' table
-    // For this demonstration, we'll use local state to show the UI richness
     const [localSettings, setLocalSettings] = useState<any>({
         maintenance_mode: false,
         ai_moderation_enabled: true,
@@ -41,12 +39,45 @@ export default function AdminSettingsPage() {
     })
 
     const [isSaving, setIsSaving] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        fetchSettings();
+    }, []);
+
+    const fetchSettings = async () => {
+        setIsLoading(true);
+        try {
+            const data = await api.admin.getSettings();
+            if (Array.isArray(data)) {
+                const settingsObj: any = {};
+                data.forEach((s: any) => {
+                    // Try to parse JSON values if they look like booleans or objects
+                    let val = s.setting_value;
+                    if (val === "true") val = true;
+                    if (val === "false") val = false;
+                    settingsObj[s.setting_key] = val;
+                });
+                setLocalSettings((prev: any) => ({ ...prev, ...settingsObj }));
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleSave = async () => {
         setIsSaving(true);
         try {
-            // Mock sync to db
-            await new Promise(r => setTimeout(r, 1000));
+            // In a real app, we might send the whole object or individual updates
+            // Our backend currently handles single setting updates in a loop or bulk
+            for (const [key, value] of Object.entries(localSettings)) {
+                await api.admin.updateSettings({
+                    setting_key: key,
+                    setting_value: String(value)
+                });
+            }
             toast.success("Identity protocols updated and synced to mesh.");
         } catch (err) {
             toast.error(`Sync failure`);

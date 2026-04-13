@@ -2,13 +2,14 @@
 
 import { useQuery } from "@tanstack/react-query"
 import { motion } from "framer-motion"
-import { Briefcase, MapPin, DollarSign, Sparkles, Search, Filter, ArrowUpRight, Clock } from "lucide-react"
+import { Briefcase, MapPin, DollarSign, Sparkles, Search, Filter, ArrowUpRight, Clock, Loader2, Info, Brain } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { useState } from "react"
 import Link from "next/link"
+import { api } from "@/lib/api/api-client"
 
 const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"
 
@@ -79,29 +80,51 @@ export default function JobListingsPage() {
     const [search, setSearch] = useState("")
     const [filter, setFilter] = useState<"all" | "90+" | "80+" | "remote">("all")
 
-    const filtered = mockJobs
+    const { data: jobs, isLoading } = useQuery({
+        queryKey: ["jobs", filter],
+        queryFn: async () => {
+            const userId = "pending" // Should be dynamic
+            const data = await api.jobs.list(userId)
+            return Array.isArray(data) ? data : []
+        }
+    })
+
+    const filtered = (jobs || [])
         .filter(job => {
-            if (search && !job.title.toLowerCase().includes(search.toLowerCase()) && !job.company.toLowerCase().includes(search.toLowerCase())) return false
-            if (filter === "90+" && job.match_score < 90) return false
-            if (filter === "80+" && job.match_score < 80) return false
-            if (filter === "remote" && job.location !== "Remote") return false
+            const matchScore = job.ai_match_percentage || 0
+            if (search && !job.title.toLowerCase().includes(search.toLowerCase()) && !job.company?.name?.toLowerCase().includes(search.toLowerCase())) return false
+            if (filter === "90+" && matchScore < 90) return false
+            if (filter === "80+" && matchScore < 80) return false
+            if (filter === "remote" && job.job_type !== "remote") return false
             return true
         })
-        .sort((a, b) => b.match_score - a.match_score)
+
+    if (isLoading) {
+        return (
+            <div className="flex h-[60vh] w-full flex-col items-center justify-center gap-4">
+                <Loader2 className="h-10 w-10 animate-spin text-primary opacity-50" />
+                <p className="text-[10px] uppercase tracking-[0.3em] font-black text-white/20">Syncing Proof Rankings...</p>
+            </div>
+        )
+    }
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-8 animate-in fade-in duration-700">
             {/* Header */}
-            <div className="space-y-2">
-                <motion.h1
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-3xl font-black font-heading tracking-tight flex items-center gap-3"
-                >
-                    <Briefcase className="w-8 h-8 text-primary" />
-                    AI Job Matches
-                </motion.h1>
-                <p className="text-muted-foreground text-sm">Jobs ranked by AI compatibility with your verified skill profile.</p>
+            <div className="space-y-4">
+                <div className="flex items-center gap-2">
+                    <Badge variant="outline" className="text-[10px] uppercase font-black px-3 py-1 border-primary/20 text-primary">Live Talent Network</Badge>
+                </div>
+                <div className="space-y-2">
+                    <motion.h1
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-4xl md:text-5xl font-black font-heading tracking-tighter uppercase italic"
+                    >
+                        Proof <span className="text-primary">Rankings</span>
+                    </motion.h1>
+                    <p className="text-muted-foreground text-sm max-w-xl">Every opportunity is weighted by your technical Proof Score. Discover roles where your verified skills have the highest resonance.</p>
+                </div>
             </div>
 
             {/* Search + Filters */}
@@ -122,67 +145,85 @@ export default function JobListingsPage() {
                         onClick={() => setFilter(f)}
                         className={cn("rounded-xl h-12 font-medium capitalize", filter !== f && "border-white/10 bg-white/5")}
                     >
-                        {f === "all" ? "All Jobs" : f === "remote" ? "Remote Only" : `${f} Match`}
+                        {f === "all" ? "All Jobs" : f === "remote" ? "Remote Only" : `${f} Proof`}
                     </Button>
                 ))}
             </div>
 
             {/* Job Cards */}
             <div className="space-y-4">
-                {filtered.map((job, i) => (
-                    <motion.div
-                        key={job.id}
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.06 }}
-                    >
-                        <Link href={`/dashboard/candidate/jobs/${job.id}`}>
-                            <div className="group p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md hover:border-white/20 hover:shadow-lg transition-all cursor-pointer">
-                                <div className="flex flex-col md:flex-row md:items-center gap-4">
-                                    {/* Match Score Badge */}
-                                    <div className={cn(
-                                        "w-16 h-16 rounded-2xl flex items-center justify-center font-black text-xl shrink-0 border",
-                                        job.match_score >= 90 ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
-                                        job.match_score >= 80 ? "bg-blue-500/10 text-blue-500 border-blue-500/20" :
-                                        "bg-amber-500/10 text-amber-500 border-amber-500/20"
-                                    )}>
-                                        {job.match_score}%
-                                    </div>
+                {filtered.map((job, i) => {
+                    const matchScore = job.ai_match_percentage || 0
+                    return (
+                        <motion.div
+                            key={job.id}
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: i * 0.05 }}
+                        >
+                            <Link href={`/dashboard/candidate/jobs/${job.id}`}>
+                                <div className="group p-6 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md hover:border-primary/30 hover:shadow-2xl hover:shadow-primary/5 transition-all cursor-pointer relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    
+                                    <div className="flex flex-col md:flex-row md:items-start gap-6 relative z-10">
+                                        {/* Match Score Badge */}
+                                        <div className="flex flex-col items-center gap-1 shrink-0">
+                                            <div className={cn(
+                                                "w-16 h-16 rounded-2xl flex items-center justify-center font-black text-xl shrink-0 border",
+                                                matchScore >= 90 ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20 shadow-emerald-500/10 shadow-lg" :
+                                                matchScore >= 80 ? "bg-blue-500/10 text-blue-500 border-blue-500/20 shadow-blue-500/10 shadow-lg" :
+                                                "bg-amber-500/10 text-amber-500 border-amber-500/20"
+                                            )}>
+                                                {matchScore}%
+                                            </div>
+                                            <p className="text-[8px] font-black uppercase tracking-widest text-white/20">Proof</p>
+                                        </div>
 
-                                    {/* Job Info */}
-                                    <div className="flex-1 space-y-2">
-                                        <div className="flex items-center gap-3 flex-wrap">
-                                            <h3 className="text-lg font-bold group-hover:text-primary transition-colors">{job.title}</h3>
-                                            <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wider">{job.job_type}</Badge>
+                                        {/* Job Info */}
+                                        <div className="flex-1 space-y-4">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-3 flex-wrap">
+                                                    <h3 className="text-xl font-black italic tracking-tight uppercase group-hover:text-primary transition-colors">{job.title}</h3>
+                                                    <Badge variant="secondary" className="bg-white/5 border-white/10 text-[10px] font-black uppercase tracking-widest px-3">{job.job_type}</Badge>
+                                                </div>
+                                                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground font-medium italic">
+                                                    <span className="flex items-center gap-1.5 text-white/50"><Briefcase className="w-3.5 h-3.5" />{job.companies?.name || "Global Tech"}</span>
+                                                    <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" />{job.location}</span>
+                                                    <span className="flex items-center gap-1.5"><DollarSign className="w-3.5 h-3.5" />{job.salary_range || "Competitive"}</span>
+                                                    <span className="flex items-center gap-1.5 opacity-50"><Clock className="w-3.5 h-3.5" />Posted Recently</span>
+                                                </div>
+                                            </div>
+
+                                            {/* AI Match Insight */}
+                                            {job.match_reason && (
+                                                <div className="bg-primary/5 rounded-xl p-3 border border-primary/10 flex items-start gap-3">
+                                                    <Brain className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                                                    <p className="text-xs italic text-white/70 leading-relaxed font-medium">"{job.match_reason}"</p>
+                                                </div>
+                                            )}
+
+                                            <div className="flex items-center gap-2 flex-wrap pt-1">
+                                                {job.skills_required?.map((skill: string) => (
+                                                    <Badge
+                                                        key={skill}
+                                                        variant="outline"
+                                                        className="bg-white/5 border-white/5 text-[10px] font-bold tracking-tight px-3"
+                                                    >
+                                                        {skill}
+                                                    </Badge>
+                                                ))}
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                                            <span className="flex items-center gap-1"><Briefcase className="w-3.5 h-3.5" />{job.company}</span>
-                                            <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" />{job.location}</span>
-                                            <span className="flex items-center gap-1"><DollarSign className="w-3.5 h-3.5" />{job.salary_range}</span>
-                                            <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" />{job.posted}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 flex-wrap pt-1">
-                                            {job.required_skills.map(skill => (
-                                                <Badge
-                                                    key={skill}
-                                                    variant={job.missing_skills.includes(skill) ? "destructive" : "secondary"}
-                                                    className={cn(
-                                                        "text-[10px] font-bold",
-                                                        !job.missing_skills.includes(skill) && "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
-                                                    )}
-                                                >
-                                                    {job.missing_skills.includes(skill) && "✗ "}{skill}
-                                                </Badge>
-                                            ))}
+
+                                        <div className="h-10 w-10 rounded-full border border-white/10 flex items-center justify-center group-hover:border-primary/50 group-hover:bg-primary/10 transition-all ml-auto">
+                                            <ArrowUpRight className="w-5 h-5 text-muted-foreground/30 group-hover:text-primary" />
                                         </div>
                                     </div>
-
-                                    <ArrowUpRight className="w-5 h-5 text-muted-foreground/30 group-hover:text-primary transition-all shrink-0" />
                                 </div>
-                            </div>
-                        </Link>
-                    </motion.div>
-                ))}
+                            </Link>
+                        </motion.div>
+                    )
+                })}
             </div>
 
             {filtered.length === 0 && (

@@ -53,14 +53,17 @@ export const api = {
         create: (data: any) => fetchWithAuth("/jobs/create", { method: "POST", body: JSON.stringify(data) }),
         list: () => fetchWithAuth("/jobs/list"),
         details: (id: string) => fetchWithAuth(`/jobs/details/${id}`),
+        discovery: (jobId: string) => fetchWithAuth(`/jobs/${jobId}/discovery`),
         apply: (jobId: string) => fetchWithAuth("/jobs/apply", { method: "POST", body: JSON.stringify({ job_id: jobId }) }),
         save: (jobId: string) => fetchWithAuth("/jobs/save", { method: "POST", body: JSON.stringify({ job_id: jobId }) }),
         unsave: (jobId: string) => fetchWithAuth(`/jobs/unsave/${jobId}`, { method: "DELETE" }),
-        getSaved: () => fetchWithAuth("/jobs/saved")
+        getSaved: () => fetchWithAuth("/jobs/saved"),
+        listCompanyJobs: (companyId: string) => fetchWithAuth(`/jobs/company-metrics/${companyId}`),
+        submitAssessment: (id: string, data: any) => fetchWithAuth(`/jobs/applications/${id}/submit-assessment`, { method: "PATCH", body: JSON.stringify(data) })
     },
     applications: {
         user: () => fetchWithAuth("/applications/user"),
-        company: (id: string) => fetchWithAuth(`/applications/company?company_id=${id}`),
+        company: (id: string, jobId?: string) => fetchWithAuth(`/jobs/company/${id}${jobId ? `?job_id=${jobId}` : ""}`),
         updateStatus: (id: string, status: string) => fetchWithAuth("/applications/status", { method: "PATCH", body: JSON.stringify({ application_id: id, status }) })
     },
     nft: {
@@ -107,14 +110,26 @@ export const api = {
         getFeatures: () => fetchWithAuth("/admin/features"),
         updateFeature: (data: any) => fetchWithAuth("/admin/features/update", { method: "POST", body: JSON.stringify(data) }),
         getSettings: () => fetchWithAuth("/admin/settings"),
+        updateSettings: (data: any) => fetchWithAuth("/admin/settings", { method: "POST", body: JSON.stringify(data) }),
+        getBlockchainTransactions: () => fetchWithAuth("/admin/blockchain/transactions"),
         getCompanies: () => fetchWithAuth("/admin/companies"),
         verifyCompany: (id: string) => fetchWithAuth(`/admin/companies/${id}/verify`, { method: "PATCH" }),
         deleteCompany: (id: string) => fetchWithAuth(`/admin/companies/${id}`, { method: "DELETE" }),
         getAllJobs: () => fetchWithAuth("/admin/all-jobs"),
         deleteJob: (id: string) => fetchWithAuth(`/admin/jobs/${id}`, { method: "DELETE" }),
         getAllApplications: () => fetchWithAuth("/admin/all-applications"),
+        getSkills: () => fetchWithAuth("/admin/skills"),
+        createSkill: (data: any) => fetchWithAuth("/admin/skills", { method: "POST", body: JSON.stringify(data) }),
+        getReports: (params: string) => fetchWithAuth(`/admin/reports?${params}`),
+        resolveReport: (data: any) => fetchWithAuth("/admin/reports/resolve", { method: "PATCH", body: JSON.stringify(data) }),
         getSubscriptions: () => fetchWithAuth("/admin/subscriptions"),
-        updateSubscription: (id: string, data: any) => fetchWithAuth(`/admin/subscriptions/${id}`, { method: "PATCH", body: JSON.stringify(data) })
+        updateSubscription: (id: string, data: any) => fetchWithAuth(`/admin/subscriptions/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+        getSkillFlags: (status?: string) => fetchWithAuth(`/admin/skill-flags${status ? `?status=${status}` : ""}`),
+        reviewSkillFlag: (id: string, data: any) => fetchWithAuth(`/admin/skill-flags/review/${id}`, { method: "POST", body: JSON.stringify(data) }),
+        getTickets: (status?: string) => fetchWithAuth(`/admin/tickets${status ? `?status=${status}` : ""}`),
+        updateTicket: (id: string, data: any) => fetchWithAuth(`/admin/tickets/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+        getAuditLogs: () => fetchWithAuth("/admin/audit-logs"),
+        flagUser: (data: any) => fetchWithAuth("/admin/users/flag", { method: "POST", body: JSON.stringify(data) }),
     },
     cms: {
         all: () => fetchWithAuth("/cms"),
@@ -140,19 +155,4 @@ export const api = {
         getRooms: () => fetchWithAuth("/chat/rooms"),
         getHistory: (roomId: string) => fetchWithAuth(`/chat/history/${roomId}`),
     },
-    staff: {
-        getUsers: (params: string) => fetchWithAuth(`/staff-ops/staff/users?${params}`),
-        flagUser: (data: any) => fetchWithAuth("/staff-ops/staff/flag-user", { method: "POST", body: JSON.stringify(data) }),
-        getJobs: (params: string) => fetchWithAuth(`/staff-ops/staff/jobs?${params}`),
-        updateJobStatus: (id: string, data: any) => fetchWithAuth(`/staff-ops/staff/jobs/${id}/status`, { method: "PATCH", body: JSON.stringify(data) }),
-        getReports: (params: string) => fetchWithAuth(`/staff-ops/reports?${params}`),
-        resolveReport: (data: any) => fetchWithAuth("/staff-ops/resolve-report", { method: "POST", body: JSON.stringify(data) }),
-        getTickets: (params: string) => fetchWithAuth(`/staff-ops/staff/tickets?${params}`),
-        createTicket: (data: any) => fetchWithAuth("/staff-ops/staff/tickets", { method: "POST", body: JSON.stringify(data) }),
-        updateTicket: (id: string, data: any) => fetchWithAuth(`/staff-ops/staff/tickets/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
-        getNftLogs: (params: string) => fetchWithAuth(`/staff-ops/staff/nft-logs?${params}`),
-        flagSkill: (data: any) => fetchWithAuth("/staff-ops/staff/skill-flags", { method: "POST", body: JSON.stringify(data) }),
-        approveSkill: (id: string, data: any) => fetchWithAuth(`/staff-ops/staff/approve-skill?flag_id=${id}`, { method: "POST", body: JSON.stringify(data) }),
-        getAuditLogs: (params: string) => fetchWithAuth(`/staff-ops/staff/audit-logs?${params}`)
-    }
 };

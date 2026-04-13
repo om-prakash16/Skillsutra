@@ -21,9 +21,9 @@ class IdentityService:
         if not sb: raise Exception("DB unavailable")
         
         response = sb.table("connections").insert({
-            "user_id": user_id,
-            "connected_user_id": target_user_id,
-            "status": "PENDING"
+            "requester_id": user_id,
+            "target_id": target_user_id,
+            "status": "pending"
         }).execute()
         
         return response.data[0] if response.data else {}
@@ -32,14 +32,21 @@ class IdentityService:
         sb = get_supabase()
         if not sb: return []
         
-        # Unified list of accepted connections (both ways)
-        resp1 = sb.table("connections").select("connected_user_id, users!connections_connected_user_id_fkey(full_name, wallet_address)") \
-            .eq("user_id", user_id).eq("status", "ACCEPTED").execute()
+        # Fetch connections where user is requester OR target
+        resp1 = sb.table("connections").select("*, target:users!target_id(full_name, wallet_address)") \
+            .eq("requester_id", user_id).eq("status", "accepted").execute()
         
-        resp2 = sb.table("connections").select("user_id, users!connections_user_id_fkey(full_name, wallet_address)") \
-            .eq("connected_user_id", user_id).eq("status", "ACCEPTED").execute()
+        resp2 = sb.table("connections").select("*, requester:users!requester_id(full_name, wallet_address)") \
+            .eq("target_id", user_id).eq("status", "accepted").execute()
             
-        return (resp1.data or []) + (resp2.data or [])
+        # Format results consistently
+        connections = []
+        for c in (resp1.data or []):
+            connections.append({"user_id": c["target_id"], "profile": c["target"]})
+        for c in (resp2.data or []):
+            connections.append({"user_id": c["requester_id"], "profile": c["requester"]})
+            
+        return connections
 
     # --- History (Work & Education) ---
     async def get_user_timeline(self, user_id: str) -> Dict[str, Any]:

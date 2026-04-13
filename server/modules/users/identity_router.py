@@ -6,7 +6,7 @@ from modules.users.identity_service import IdentityService
 router = APIRouter()
 identity_service = IdentityService()
 
-@router.post("/privacy")
+@router.post("/profile/privacy")
 async def update_privacy(visibility: str = Body(..., embed=True), current_user = Depends(get_current_user)):
     """
     Control profile visibility (public, private, recruiters_only).
@@ -38,14 +38,12 @@ async def get_connections(current_user = Depends(get_current_user)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@router.get("/timeline/{user_id}")
+@router.get("/connections/timeline/{user_id}")
 async def get_timeline(user_id: str, current_user = Depends(get_current_user)):
     """
     Fetch education and work history timeline.
-    Privacy rules are applied here in a production environment.
     """
     try:
-        # Step 14: Apply specialized privacy gating logic
         return await identity_service.get_user_timeline(user_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

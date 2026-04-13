@@ -52,8 +52,7 @@ export default function BlockchainDashboard() {
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await fetch("http://localhost:8000/blockchain/transactions");
-        const json = await response.json();
+        const json = await api.admin.getBlockchainTransactions();
         setData(Array.isArray(json) ? json : []);
       } catch (error) {
         console.error("Failed to fetch transactions:", error);

@@ -60,26 +60,50 @@ class NFTService:
 
     async def save_metadata_version(self, user_id: str, nft_type: str, metadata: Dict[str, Any]):
         """
-        Store version history in database.
+        Store version history in the database.
+        Calculates the next version number for this specific entity type.
         """
         db = get_supabase()
-        # Mock CID before pinning
-        temp_cid = "QmTemp" + hashlib.sha256(json.dumps(metadata).encode()).hexdigest()[:20]
+        
+        # Fetch current latest version
+        latest_resp = db.table("metadata_versions") \
+            .select("version_number") \
+            .eq("user_id", user_id) \
+            .eq("entity_type", nft_type) \
+            .order("version_number", desc=True) \
+            .limit(1) \
+            .execute()
+        
+        next_version = 1
+        if latest_resp.data:
+            next_version = (latest_resp.data[0].get("version_number") or 0) + 1
+
+        # Mock CID for pinning simulation
+        metadata_json = json.dumps(metadata, sort_keys=True)
+        cid = "Qm" + hashlib.sha256(metadata_json.encode()).hexdigest()[:44]
         
         db.table("metadata_versions").insert({
             "user_id": user_id,
-            "nft_type": nft_type,
-            "cid": temp_cid,
-            "metadata_json": metadata
+            "entity_type": nft_type,
+            "cid": cid,
+            "metadata_json": metadata,
+            "version_number": next_version
         }).execute()
+        
+        return cid
 
     async def upload_to_ipfs(self, metadata: Dict[str, Any]) -> str:
         """
-        Pins the metadata to IPFS and returns the CID.
+        Simulates pinning the metadata to IPFS via Pinata.
+        In a production environment, this would call Pinata's REST API.
         """
+        # Verification of Pinata credentials
+        if not self.pinata_key or not self.pinata_secret:
+            # Fallback to local hash-based CID for demo
+            pass
+            
         metadata_json = json.dumps(metadata, sort_keys=True)
         cid = "Qm" + hashlib.sha256(metadata_json.encode()).hexdigest()[:44]
-        # Real pinning logic would be added here
         return cid
 
     async def register_nft(self, user_id: str, mint: str, nft_type: str, cid: str):

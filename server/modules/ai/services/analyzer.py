@@ -39,12 +39,14 @@ class ResumeAnalyzer:
             output = self.llm.invoke(_input.to_messages())
             result = self.parser.parse(output.content)
             
-            # Additional logic for suggestions and score
+            # The Pydantic model ParsedResume should have these fields
+            # We return a structured dict for the frontend
             return {
-                "score": 85, # Logic to derive from result
+                "score": result.score if hasattr(result, 'score') else 75,
                 "parsed_data": result.model_dump(),
-                "missing_skills": ["Kubernetes", "GraphQL"],
-                "suggestions": ["Add a cloud-native project", "Highlight leadership roles"]
+                "missing_skills": result.missing_skills if hasattr(result, 'missing_skills') else [],
+                "suggestions": result.improvement_suggestions if hasattr(result, 'improvement_suggestions') else []
             }
         except Exception as e:
+            print(f"[AI] Analysis Error: {str(e)}")
             return {"error": str(e), "status": "fallback"}

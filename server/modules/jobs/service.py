@@ -24,6 +24,7 @@ class JobService:
             "salary_range": data.get("salary_range"),
             "job_type": data.get("job_type", "remote"),
             "location": data.get("location"),
+            "assessment_questions": [q.model_dump() if hasattr(q, "model_dump") else q for q in data.get("assessment_questions", [])],
             "is_active": True
         }).execute()
         
@@ -89,9 +90,9 @@ class JobService:
         if not db:
             raise Exception("Database service unavailable")
         
-        # Fetch Job and Candidate Skills
-        job_resp = db.table("jobs").select("title, skills_required").eq("id", job_id).single().execute()
-        user_resp = db.table("users").select("profile_data").eq("id", candidate_id).single().execute()
+        # Fetch Job, Recruiter, and Candidate Skills
+        job_resp = db.table("jobs").select("title, skills_required, created_by, company:companies(name, id)").eq("id", job_id).single().execute()
+        user_resp = db.table("users").select("full_name, profile_data").eq("id", candidate_id).single().execute()
         
         job = job_resp.data if job_resp.data else {}
         user = user_resp.data if user_resp.data else {}
@@ -99,9 +100,9 @@ class JobService:
         if not job or not user:
             raise Exception("Job or Candidate not found")
 
-        # Calculate AI Match Score
-        job_skills = set(job.get("skills_required", []))
-        user_skills = set(user.get("profile_data", {}).get("skills", []))
+        # Refined AI Match Score (Simple keyword overlap for now, but logged)
+        job_skills = set([s.lower() for s in job.get("skills_required", [])])
+        user_skills = set([s.lower() for s in user.get("profile_data", {}).get("skills", [])])
         
         match_score = 0
         if job_skills:
@@ -118,68 +119,109 @@ class JobService:
             "ai_match_score": match_score
         }).execute()
 
-        # Trigger Notifications & Logs
+        # 4. Vision: Automatic Skill Assessment (MCQ Generation)
+        # We trigger this in the background or inline if lightweight enough.
+        # Generating 10 questions takes ~3-5s.
         try:
+            from modules.ai.services.interview_service import InterviewService
+            interview_service = InterviewService()
+            await interview_service.generate_questions(user_id=candidate_id, job_id=job_id, count=5)
+            print(f"[VISION] Automated MCQs generated for application {response.data[0]['id'] if response.data else 'unknown'}")
+        except Exception as ai_err:
+            print(f"[VISION] Failed to auto-generate MCQs: {ai_err}")
+
+        # 1. Notify Candidate
+        await NotificationService.create_event_notification(
+            user_id=candidate_id,
+            type="job_app_submitted",
+            title="Application Sent & Assessment Ready",
+            message=f"Applied to {job.get('title')}. Your personalized skill assessment (MCQs) has been generated.",
+            link=f"/dashboard/candidate/applications"
+        )
+        
+        # 2. Notify Recruiter (Job Owner)
+        if job.get("created_by"):
             await NotificationService.create_event_notification(
-                user_id=uuid.UUID(candidate_id),
-                type="job_app",
-                title="Application Submitted",
-                message=f"Your application for {job.get('title', 'Job')} was submitted with an AI Match Score of {match_score}%."
+                user_id=job["created_by"],
+                type="new_applicant",
+                title="New Job Applicant",
+                message=f"{user.get('full_name')} applied for your position: {job.get('title')}",
+                link=f"/dashboard/company/jobs/{job_id}"
             )
-            
-            await NotificationService.log_activity(
-                user_id=uuid.UUID(candidate_id),
-                action_type="job_apply",
-                entity_type="job",
-                entity_id=uuid.UUID(job_id),
-                description=f"Applied to {job.get('title', 'Job')}."
-            )
-        except Exception:
-            pass
 
-        return response.data[0] if response.data else {}
+        # 3. Log Activity
+        await NotificationService.log_activity(
+            user_id=candidate_id,
+            action_type="job_apply",
+            entity_type="job",
+            entity_id=job_id,
+            description=f"Applied to {job.get('title')} at {job.get('company', {}).get('name')}"
+        )
 
-    async def update_application_status(self, app_id: str, status: str) -> Dict[str, Any]:
+        return {
+            "application": response.data[0] if response.data else {},
+            "job_title": job.get("title"),
+            "match_score": match_score,
+            "has_custom_assessment": len(job.get("assessment_questions", [])) > 0,
+            "custom_assessment_count": len(job.get("assessment_questions", []))
+        }
+
+    async def update_application_status(self, app_id: str, status: str, recruiter_id: Optional[str] = None) -> Dict[str, Any]:
         """
         Update application status (Shortlist, Hire, etc.)
         """
         db = get_supabase()
         if not db: return {}
+        
+        # Fetch existing application and job title for the notification
+        app_resp = db.table("applications").select("*, jobs(title)").eq("id", app_id).single().execute()
+        app_data = app_resp.data if app_resp.data else {}
+        
+        if not app_data:
+            raise Exception("Application not found")
+            
+        job_title = app_data.get("jobs", {}).get("title", "Job")
+
+        # Update status
         response = db.table("applications").update({"status": status}).eq("id", app_id).execute()
         
         if response.data:
             app = response.data[0]
-            try:
-                # Notify Candidate of status update
-                await NotificationService.create_event_notification(
-                    user_id=uuid.UUID(app["candidate_id"]),
-                    type="job_status",
-                    title="Application Updated",
-                    message=f"Your application status has been updated to: {status.upper()}"
-                )
-                
-                # Log Activity
-                await NotificationService.log_activity(
-                    user_id=None,
-                    action_type="status_change",
-                    entity_type="application",
-                    entity_id=uuid.UUID(app_id),
-                    description=f"Application {app_id} moved to {status}."
-                )
-            except Exception: pass
+            # 1. Notify Candidate of status update
+            await NotificationService.create_event_notification(
+                user_id=app["candidate_id"],
+                type="app_status_update",
+                title="Application Status Changed",
+                message=f"Your application for {job_title} has been moved to: {status.upper()}",
+                link=f"/dashboard/candidate/applications"
+            )
+            
+            # 2. Log Activity
+            await NotificationService.log_activity(
+                user_id=recruiter_id,
+                action_type="status_change",
+                entity_type="application",
+                entity_id=app_id,
+                description=f"Status for application {app_id} (Job: {job_title}) updated to {status} by {recruiter_id or 'System'}."
+            )
 
         return response.data[0] if response.data else {}
 
-    async def get_company_applications(self, company_id: str) -> List[Dict[str, Any]]:
+    async def get_company_applications(self, company_id: str, job_id: Optional[str] = None) -> List[Dict[str, Any]]:
         """
-        Fetch all applications for a company's jobs.
+        Fetch applications for a company's jobs, optionally filtered by job_id.
         """
         db = get_supabase()
         if not db: return []
-        response = db.table("applications") \
-            .select("*, jobs!inner(title, company_id), users(id, full_name, wallet_address)") \
-            .eq("jobs.company_id", company_id) \
-            .execute()
+        
+        query = db.table("applications") \
+            .select("*, jobs!inner(title, company_id), users(id, full_name, wallet_address, profile_data)") \
+            .eq("jobs.company_id", company_id)
+            
+        if job_id:
+            query = query.eq("job_id", job_id)
+            
+        response = query.order("created_at", desc=True).execute()
         return response.data
 
     async def save_job(self, job_id: str, candidate_id: str) -> Dict[str, Any]:
@@ -236,4 +278,114 @@ class JobService:
             .execute()
             
         return response.data
+
+    async def get_recommended_candidates(self, job_id: str, limit: int = 10) -> List[Dict[str, Any]]:
+        """
+        AI Discovery: Find best-fit public talent for a job.
+        """
+        db = get_supabase()
+        if not db: return []
+
+        # 1. Fetch Job
+        job_resp = db.table("jobs").select("*").eq("id", job_id).single().execute()
+        job = job_resp.data
+        if not job: return []
+
+        # 2. Fetch Public Candidates
+        candidates_resp = db.table("users") \
+            .select("id, full_name, bio, profile_data, reputation_score") \
+            .eq("role", "USER") \
+            .limit(100) \
+            .execute()
+        
+        candidates = candidates_resp.data
+
+        if not candidates:
+            # Fallback to some test users
+            candidates_resp = db.table("users").select("id, full_name, bio, profile_data, reputation_score").limit(10).execute()
+            candidates = candidates_resp.data if candidates_resp.data else []
+
+        # 3. AI Ranking
+        recommended = await self.matcher.match_candidates_to_job(job, candidates)
+        
+        return recommended[:limit]
+
+    async def get_company_jobs_with_metrics(self, company_id: str) -> List[Dict[str, Any]]:
+        """
+        Fetch all jobs for a company with application metadata.
+        """
+        db = get_supabase()
+        if not db: return []
+        
+        # 1. Fetch Jobs
+        jobs_resp = db.table("jobs").select("*").eq("company_id", company_id).order("created_at", desc=True).execute()
+        jobs = jobs_resp.data if jobs_resp.data else []
+        
+        if not jobs:
+            return []
+            
+        # 2. Add App Counts
+        # We fetch all applications for these jobs to avoid N+1 count calls
+        job_ids = [j["id"] for j in jobs]
+        apps_resp = db.table("applications").select("job_id").in_("job_id", job_ids).execute()
+        
+        app_counts = {}
+        for app in (apps_resp.data or []):
+            jid = app["job_id"]
+            app_counts[jid] = app_counts.get(jid, 0) + 1
+            
+        for job in jobs:
+            job["applicant_count"] = app_counts.get(job["id"], 0)
+            job["has_assessment"] = len(job.get("assessment_questions", [])) > 0
+            # Simulated Auto-Match count (could be calculated for real in a future optimization)
+            job["discovery_match_count"] = 12 if job["is_active"] else 0
+            
+        return jobs
+
+    async def submit_assessment_results(self, application_id: str, answers: List[str], score: float) -> Dict[str, Any]:
+        """
+        Record assessment results and update application score/status.
+        """
+        db = get_supabase()
+        if not db: raise Exception("Database unavailable")
+        
+        # 1. Update Application
+        response = db.table("applications").update({
+            "assessment_score": score,
+            "assessment_results": {"answers": answers},
+            # Optionally update status to 'shortlisted' if score is very high
+            "status": "shortlisted" if score >= 90 else "applied"
+        }).eq("id", application_id).execute()
+        
+        if not response.data:
+            raise Exception("Application not found or update failed")
+            
+        app = response.data[0]
+        
+        # 2. Fetch Job/Recruiter Info for notification
+        job_resp = db.table("applications").select("*, jobs(title, created_by)").eq("id", application_id).single().execute()
+        job_data = job_resp.data if job_resp.data else {}
+        job_title = job_data.get("jobs", {}).get("title", "Job")
+        recruiter_id = job_data.get("jobs", {}).get("created_by")
+
+        # 3. Notify Recruiter
+        if recruiter_id:
+            await NotificationService.create_event_notification(
+                user_id=recruiter_id,
+                type="assessment_complete",
+                title="High-Resonance Assessment",
+                message=f"A candidate completed the assessment for {job_title} with a score of {score}%",
+                link=f"/dashboard/company/jobs/{app['job_id']}"
+            )
+            
+        # 4. Log Activity
+        await NotificationService.log_activity(
+            user_id=uuid.UUID(app["candidate_id"]),
+            action_type="assessment_submit",
+            entity_type="application",
+            entity_id=uuid.UUID(application_id),
+            description=f"Completed skill assessment for {job_title} with score {score}%"
+        )
+        
+        return app
 

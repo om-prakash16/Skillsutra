@@ -18,7 +18,6 @@ from modules.cms.router import router as cms_router
 from modules.career.router import router as career_router
 from modules.users.identity_router import router as identity_router
 from modules.chat.router import router as chat_router
-from modules.admin.staff_router import router as staff_router
 
 app = FastAPI(
     title="Best Hiring Tool",
@@ -50,10 +49,8 @@ app.include_router(sync_router, prefix="/api/v1/sync", tags=["Sync"])
 app.include_router(admin_router, prefix="/api/v1/admin", tags=["Admin"])
 app.include_router(cms_router, prefix="/api/v1/cms", tags=["CMS"])
 app.include_router(career_router, prefix="/api/v1/career", tags=["Career Planning"])
-app.include_router(identity_router, prefix="/api/v1/connections", tags=["Networking"])
-app.include_router(identity_router, prefix="/api/v1/profile", tags=["Professional Identity"])
+app.include_router(identity_router, prefix="/api/v1", tags=["Networking & Identity"])
 app.include_router(chat_router, prefix="/api/v1/chat", tags=["Community Chat"])
-app.include_router(staff_router, prefix="/api/v1/staff-ops", tags=["Staff & Moderation"])
 
 
 @app.get("/")

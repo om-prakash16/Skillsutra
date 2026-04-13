@@ -6,23 +6,26 @@ from core.supabase import get_supabase
 class NotificationService:
     @staticmethod
     async def create_event_notification(
-        user_id: UUID,
+        user_id: Any,
         type: str,
         title: str,
         message: str,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
+        link: Optional[str] = None
     ):
         """
         Create a new persistent notification in the database.
         """
         db = get_supabase()
         if not db: return None
+        
         notification_data = {
             "user_id": str(user_id),
             "type": type,
             "title": title,
             "message": message,
             "metadata": metadata or {},
+            "link": link,
             "status": "unread"
         }
         
@@ -31,32 +34,35 @@ class NotificationService:
 
     @staticmethod
     async def log_activity(
-        user_id: Optional[UUID],
+        user_id: Optional[Any],
         action_type: str,
         entity_type: Optional[str] = None,
-        entity_id: Optional[UUID] = None,
+        entity_id: Optional[Any] = None,
         description: Optional[str] = None,
-        tx_hash: Optional[str] = None
+        tx_hash: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None
     ):
         """
-        Record a system or user activity log.
+        Record a persistent activity log for user history.
         """
         db = get_supabase()
         if not db: return None
+        
         log_data = {
             "user_id": str(user_id) if user_id else None,
             "action_type": action_type,
             "entity_type": entity_type,
             "entity_id": str(entity_id) if entity_id else None,
             "description": description,
-            "tx_hash": tx_hash
+            "tx_hash": tx_hash,
+            "metadata": metadata or {}
         }
         
         response = db.table("activity_logs").insert(log_data).execute()
         return response.data[0] if response.data else None
 
     @staticmethod
-    async def get_user_notifications(user_id: UUID, limit: int = 20) -> List[Dict[str, Any]]:
+    async def get_user_notifications(user_id: Any, limit: int = 20) -> List[Dict[str, Any]]:
         """
         Fetch notifications for a specific user.
         """

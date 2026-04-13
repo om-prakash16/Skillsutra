@@ -42,7 +42,7 @@ export default function ActivityLogs() {
   const fetchLogs = async (silent = false) => {
     if(!silent) setIsLoading(true);
     try {
-      const data = await api.activity.logs("limit=100");
+      const data = await api.activity.admin(100);
       setLogs(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);

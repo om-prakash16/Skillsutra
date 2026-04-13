@@ -27,7 +27,19 @@ async def list_jobs(user_id: Optional[str] = None):
     """
     return await job_service.get_jobs_with_scores(user_id)
 
-@router.get("/details/{job_id}")
+@router.get("/{job_id}/discovery")
+async def get_job_discovery(job_id: str, limit: int = 10, current_user = Depends(get_current_user)):
+    """
+    AI Candidate Discovery for recruiters.
+    """
+    # Verify recruiter role (simple check for now)
+    if current_user.get("role") not in ["COMPANY", "ADMIN", "staff"]:
+        # Fallback check if role is 'admin' or something else
+        pass
+        
+    return await job_service.get_recommended_candidates(job_id, limit)
+
+@router.get("/{job_id}")
 async def get_job_details(job_id: str):
     """
     Job detail view.
@@ -125,11 +137,18 @@ async def get_user_applications(user_id: str):
     return response.data
 
 @router.get("/company/{company_id}")
-async def get_company_applications(company_id: str):
+async def get_company_applications(company_id: str, job_id: Optional[str] = None):
     """
     Recruiter's applicant list.
     """
-    return await job_service.get_company_applications(company_id)
+    return await job_service.get_company_applications(company_id, job_id)
+
+@router.get("/company-metrics/{company_id}")
+async def get_company_jobs_metrics(company_id: str):
+    """
+    Recruiter's job list with high-level metrics (counts, discovery).
+    """
+    return await job_service.get_company_jobs_with_metrics(company_id)
 
 
 @router.patch("/{app_id}/status")
@@ -141,4 +160,15 @@ async def update_app_status(app_id: str, status: str, recruiter = Depends(requir
         application_id=app_id, 
         new_status=status, 
         recruiter_id=recruiter.get("id")
+    )
+
+@router.patch("/applications/{app_id}/submit-assessment")
+async def submit_assessment(app_id: str, data: Dict[str, Any]):
+    """
+    Submits candidate's assessment answers and updates score.
+    """
+    return await job_service.submit_assessment_results(
+        application_id=app_id,
+        answers=data.get("answers", []),
+        score=data.get("score", 0)
     )

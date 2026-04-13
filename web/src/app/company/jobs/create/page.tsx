@@ -1,7 +1,7 @@
 "use client"
 
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, useFieldArray } from "react-hook-form"
 import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,11 +23,19 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+} from "@/components/ui/accordion"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Loader2 } from "lucide-react"
+import { ArrowLeft, Loader2, Plus, Trash2, Brain, Sparkles, HelpCircle } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
 import { toast } from "sonner"
+import { cn } from "@/lib/utils"
+import { api } from "@/lib/api/api-client"
 
 const formSchema = z.object({
     title: z.string().min(2, {
@@ -49,6 +57,12 @@ const formSchema = z.object({
         required_error: "Please select experience level.",
     }),
     salary: z.string().optional(),
+    assessment_questions: z.array(z.object({
+        question_text: z.string().min(5, "Question must be at least 5 chars"),
+        options: z.array(z.string().min(1, "Option cannot be empty")).length(4, "Exactly 4 options required"),
+        correct_option_index: z.coerce.number().min(0).max(3),
+        points: z.coerce.number().min(1).max(100).default(10)
+    })).default([])
 })
 
 export default function CreateJobPage() {
@@ -63,18 +77,37 @@ export default function CreateJobPage() {
             skills: "",
             location: "",
             salary: "",
+            assessment_questions: []
         },
+    })
+
+    const { fields, append, remove } = useFieldArray({
+        control: form.control,
+        name: "assessment_questions"
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         setIsLoading(true)
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500))
-
-        console.log(values)
-        toast.success("Job posted successfully!")
-        setIsLoading(false)
-        router.push("/company/jobs")
+        try {
+            const payload = {
+                ...values,
+                required_skills: values.skills.split(",").map(s => s.trim()).filter(Boolean),
+                job_type: values.type,
+                experience_level: values.experience,
+                company_id: "pending" // Should be derived from recruiter profile context
+            }
+            
+            const response = await api.jobs.create(payload)
+            console.log("[DEBUG] Job created:", response)
+            
+            toast.success("Job post with custom assessment published!")
+            router.push("/company/jobs")
+        } catch (err: any) {
+            console.error("Failed to post job", err)
+            toast.error(err.message || "Failed to post job. Please try again.")
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -225,13 +258,120 @@ export default function CreateJobPage() {
                                 )}
                             />
 
-                            <div className="flex justify-end gap-4 pt-4">
+                            <div className="space-y-4 pt-4 border-t border-white/5">
+                                <div className="flex items-center justify-between">
+                                    <div className="space-y-0.5">
+                                        <h3 className="text-sm font-bold flex items-center gap-2 tracking-tight">
+                                            <Brain className="w-4 h-4 text-primary" />
+                                            Custom Assessment
+                                        </h3>
+                                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">Verify specific technical requirements</p>
+                                    </div>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => append({ question_text: "", options: ["", "", "", ""], correct_option_index: 0, points: 10 })}
+                                        className="h-9 px-4 border-white/10 hover:bg-white/5 text-[10px] uppercase font-black tracking-widest gap-2"
+                                    >
+                                        <Plus className="w-3 h-3" /> Add Challenge
+                                    </Button>
+                                </div>
+
+                                {fields.length > 0 ? (
+                                    <Accordion type="single" collapsible className="space-y-3">
+                                        {fields.map((field, index) => (
+                                            <AccordionItem key={field.id} value={field.id} className="border border-white/10 rounded-xl px-4 bg-white/[0.02] overflow-hidden">
+                                                <div className="flex items-center gap-3 py-1">
+                                                    <AccordionTrigger className="flex-1 hover:no-underline py-3">
+                                                        <div className="flex items-center gap-3 text-left">
+                                                            <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-black">{index + 1}</div>
+                                                            <span className="text-sm font-medium truncate max-w-[300px]">
+                                                                {form.watch(`assessment_questions.${index}.question_text`) || "Draft Question..."}
+                                                            </span>
+                                                        </div>
+                                                    </AccordionTrigger>
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        onClick={() => remove(index)}
+                                                        className="h-8 w-8 text-rose-500/50 hover:text-rose-500 hover:bg-rose-500/10"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                                <AccordionContent className="pt-0 pb-6 space-y-4">
+                                                    <FormField
+                                                        control={form.control}
+                                                        name={`assessment_questions.${index}.question_text`}
+                                                        render={({ field }) => (
+                                                            <FormItem>
+                                                                <FormLabel className="text-[10px] uppercase tracking-widest text-muted-foreground font-black">The Question</FormLabel>
+                                                                <FormControl>
+                                                                    <Input placeholder="e.g. Which of the following is a key feature of Rust's ownership system?" {...field} className="bg-white/5" />
+                                                                </FormControl>
+                                                                <FormMessage />
+                                                            </FormItem>
+                                                        )}
+                                                    />
+
+                                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                        {[0, 1, 2, 3].map((optIndex) => (
+                                                            <FormField
+                                                                key={optIndex}
+                                                                control={form.control}
+                                                                name={`assessment_questions.${index}.options.${optIndex}`}
+                                                                render={({ field }) => (
+                                                                    <FormItem>
+                                                                        <FormLabel className="text-[10px] uppercase tracking-widest text-muted-foreground flex items-center justify-between">
+                                                                            <span>Option {String.fromCharCode(65 + optIndex)}</span>
+                                                                            {form.watch(`assessment_questions.${index}.correct_option_index`) === optIndex && (
+                                                                                <span className="text-emerald-500 flex items-center gap-1 font-black italic tracking-tighter"><Sparkles className="w-2.5 h-2.5" /> Correct Answer</span>
+                                                                            )}
+                                                                        </FormLabel>
+                                                                        <div className="flex items-center gap-2">
+                                                                            <FormControl>
+                                                                                <Input {...field} className={cn("bg-white/5", form.watch(`assessment_questions.${index}.correct_option_index`) === optIndex && "border-emerald-500/50 ring-1 ring-emerald-500/20")} />
+                                                                            </FormControl>
+                                                                            <Button
+                                                                                type="button"
+                                                                                variant="ghost"
+                                                                                size="icon"
+                                                                                onClick={() => form.setValue(`assessment_questions.${index}.correct_option_index`, optIndex)}
+                                                                                className={cn(
+                                                                                    "h-10 w-10 shrink-0 border border-white/5",
+                                                                                    form.watch(`assessment_questions.${index}.correct_option_index`) === optIndex ? "bg-emerald-500 text-white" : "hover:bg-white/5 text-muted-foreground"
+                                                                                )}
+                                                                            >
+                                                                                {String.fromCharCode(65 + optIndex)}
+                                                                            </Button>
+                                                                        </div>
+                                                                        <FormMessage />
+                                                                    </FormItem>
+                                                                )}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </AccordionContent>
+                                            </AccordionItem>
+                                        ))}
+                                    </Accordion>
+                                ) : (
+                                    <div className="border border-dashed border-white/10 rounded-2xl p-8 text-center bg-white/[0.01]">
+                                        <HelpCircle className="w-8 h-8 mx-auto mb-3 text-white/10" />
+                                        <p className="text-xs text-muted-foreground italic">No custom challenges added. Only AI-generated MCQs will be used.</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex justify-end gap-4 pt-8">
                                 <Link href="/company/jobs">
-                                    <Button type="button" variant="ghost">Cancel</Button>
+                                    <Button type="button" variant="ghost" className="uppercase text-[10px] font-black tracking-widest">Cancel</Button>
                                 </Link>
-                                <Button type="submit" disabled={isLoading}>
+                                <Button type="submit" disabled={isLoading} className="h-12 px-8 shadow-xl shadow-primary/20">
                                     {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                                    Create Job Post
+                                    <span className="uppercase text-[10px] font-black tracking-[0.2em]">Deploy Pulse</span>
                                 </Button>
                             </div>
                         </form>

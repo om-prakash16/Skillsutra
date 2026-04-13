@@ -31,7 +31,7 @@ const statCards = [
     { label: "Verified Skills", value: "4", sub: "NFTs minted", icon: Shield, color: "from-emerald-500/20 to-emerald-600/5", iconColor: "text-emerald-500", href: "/dashboard/candidate/skills" },
     { label: "Portfolio Projects", value: "6", sub: "Avg score: 88", icon: FolderGit2, color: "from-violet-500/20 to-violet-600/5", iconColor: "text-violet-500", href: "/dashboard/candidate/portfolio" },
     { label: "NFT Credentials", value: "7", sub: "1 Profile + 4 Skills", icon: Gem, color: "from-pink-500/20 to-pink-600/5", iconColor: "text-pink-500", href: "/dashboard/candidate/nfts" },
-    { label: "AI Match Score", value: "92%", sub: "Top match: Rust Dev", icon: Brain, color: "from-cyan-500/20 to-cyan-600/5", iconColor: "text-cyan-500", href: "/dashboard/candidate/jobs" },
+    { label: "AI Proof Score", value: "92%", sub: "Technical capability index", icon: Brain, color: "from-cyan-500/20 to-cyan-600/5", iconColor: "text-cyan-500", href: "/dashboard/candidate/jobs" },
 ]
 
 const quickActions = [
@@ -53,10 +53,28 @@ export default function CandidateDashboard() {
     const { user } = useAuth()
     const [syncStatus, setSyncStatus] = useState<any>({ current_state: "not_initialized" })
     const [isSyncing, setIsSyncing] = useState(false)
+    const [analytics, setAnalytics] = useState<any>(null)
+    const [activity, setActivity] = useState<any[]>([])
 
     useEffect(() => {
+        const token = localStorage.getItem("auth_token")
+        const headers = token ? { Authorization: `Bearer ${token}` } : {}
+
+        // Fetch analytics
+        fetch(`${API}/analytics/user`, { headers })
+            .then(res => res.json())
+            .then(setAnalytics)
+            .catch(console.error)
+
+        // Fetch recent activity
+        fetch(`${API}/activity/user?limit=5`, { headers })
+            .then(res => res.json())
+            .then(data => setActivity(Array.isArray(data) ? data : []))
+            .catch(console.error)
+
+        // Fetch sync status
         if (user?.id) {
-            fetch(`${API}/sync/status/${user.id}`)
+            fetch(`${API}/sync/status`, { headers })
                 .then(res => res.json())
                 .then(data => setSyncStatus(data))
                 .catch(err => console.error("Failed to fetch sync status", err))
@@ -67,10 +85,10 @@ export default function CandidateDashboard() {
         if (!user?.id) return
         setIsSyncing(true)
         try {
+            const token = localStorage.getItem("auth_token")
             const res = await fetch(`${API}/sync/profile`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_id: user.id })
+                headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) }
             })
             const data = await res.json()
             setSyncStatus(data)
@@ -79,6 +97,23 @@ export default function CandidateDashboard() {
         } finally {
             setIsSyncing(false)
         }
+    }
+
+    const statCards = [
+        { label: "Reputation Score", value: analytics?.skill_improvement ? Math.round(analytics.skill_improvement * 48) : "—", max: "/1000", icon: Trophy, color: "from-amber-500/20 to-amber-600/5", iconColor: "text-amber-500", href: "/dashboard/candidate/reputation" },
+        { label: "Active Applications", value: analytics?.total_applications ?? "—", sub: `${Math.round((analytics?.interview_rate || 0))}% interview rate`, icon: Briefcase, color: "from-blue-500/20 to-blue-600/5", iconColor: "text-blue-500", href: "/dashboard/candidate/applications" },
+        { label: "Verified Skills", value: analytics?.skills_count ?? "—", sub: "NFTs minted on-chain", icon: Shield, color: "from-emerald-500/20 to-emerald-600/5", iconColor: "text-emerald-500", href: "/dashboard/candidate/skills" },
+        { label: "Profile Views", value: analytics?.profile_views ?? "—", sub: "Recruiter impressions", icon: FolderGit2, color: "from-violet-500/20 to-violet-600/5", iconColor: "text-violet-500", href: "/dashboard/candidate/portfolio" },
+        { label: "Saved Jobs", value: analytics?.total_saved ?? "—", sub: "Curated opportunities", icon: Gem, color: "from-pink-500/20 to-pink-600/5", iconColor: "text-pink-500", href: "/dashboard/candidate/jobs" },
+        { label: "AI Proof Score", value: analytics?.ai_proof_score ? `${analytics.ai_proof_score}%` : "—", sub: "Calculated from technical depth", icon: Brain, color: "from-cyan-500/20 to-cyan-600/5", iconColor: "text-cyan-500", href: "/dashboard/candidate/jobs" },
+    ]
+
+    const getActivityType = (eventType: string) => {
+        if (!eventType) return "neutral"
+        const t = eventType.toLowerCase()
+        if (t.includes("success") || t.includes("mint") || t.includes("verify") || t.includes("create")) return "success"
+        if (t.includes("apply") || t.includes("view") || t.includes("save")) return "info"
+        return "neutral"
     }
 
     return (
@@ -195,20 +230,44 @@ export default function CandidateDashboard() {
                         <Sparkles className="w-4 h-4 text-primary/40" />
                     </div>
                     <div className="space-y-3">
-                        {recentActivity.map((item, i) => (
-                            <div key={i} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-all">
+                        {(!analytics?.recent_activity || analytics.recent_activity.length === 0) ? (
+                            <div className="text-center py-8 text-white/20 text-xs font-medium italic">
+                                No recent activity. Start by applying to a job or taking a skill quiz.
+                            </div>
+                        ) : analytics.recent_activity.map((item: any, i: number) => (
+                            <div key={i} className="flex items-center gap-4 p-3 rounded-xl hover:bg-white/5 transition-all group">
                                 <div className={cn(
                                     "w-2 h-2 rounded-full shrink-0",
-                                    item.type === "success" ? "bg-emerald-500" :
-                                    item.type === "info" ? "bg-blue-500" : "bg-muted-foreground/30"
+                                    getActivityType(item.event_type) === "success" ? "bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" :
+                                    getActivityType(item.event_type) === "info" ? "bg-blue-500" : "bg-muted-foreground/30"
                                 )} />
-                                <p className="text-sm flex-1">{item.text}</p>
-                                <span className="text-xs text-muted-foreground whitespace-nowrap">{item.time}</span>
+                                <p className="text-sm flex-1 font-medium text-white/70 group-hover:text-white transition-colors capitalize">{item.description.replace(/_/g, ' ')}</p>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-white/20">
+                                    {item.created_at ? new Date(item.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "—"}
+                                </span>
                             </div>
                         ))}
                     </div>
                 </motion.div>
             </div>
+
+            {/* Vision Footer */}
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8 }}
+                className="pt-10 flex flex-col items-center gap-4 text-center"
+            >
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/5 border border-emerald-500/10">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500/60">Secured by SkillProof Protocol</span>
+                </div>
+                <div className="flex items-center gap-6 opacity-20">
+                    <div className="h-px w-20 bg-gradient-to-r from-transparent to-white" />
+                    <Lock className="w-4 h-4" />
+                    <div className="h-px w-20 bg-gradient-to-l from-transparent to-white" />
+                </div>
+            </motion.div>
         </div>
     )
 }

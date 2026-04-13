@@ -27,24 +27,20 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-const mockTrendData = [
-  { name: 'Mon', users: 4000, jobs: 2400 },
-  { name: 'Tue', users: 3000, jobs: 1398 },
-  { name: 'Wed', users: 2000, jobs: 9800 },
-  { name: 'Thu', users: 2780, jobs: 3908 },
-  { name: 'Fri', users: 1890, jobs: 4800 },
-  { name: 'Sat', users: 2390, jobs: 3800 },
-  { name: 'Sun', users: 3490, jobs: 4300 },
-];
 
 export default function AdminDashboardOverview() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [now, setNow] = useState("");
 
   useEffect(() => {
     fetchAnalytics();
     const interval = setInterval(fetchAnalytics, 10000);
-    return () => clearInterval(interval);
+    // Live clock
+    const tick = () => setNow(new Date().toLocaleTimeString('en-US', { hour12: false }));
+    tick();
+    const clock = setInterval(tick, 1000);
+    return () => { clearInterval(interval); clearInterval(clock); };
   }, []);
 
   const fetchAnalytics = async () => {
@@ -84,12 +80,12 @@ export default function AdminDashboardOverview() {
           desc: "Active hiring opportunities"
       },
       { 
-          label: "Synthesized NFTs", 
-          value: stats?.totals?.events ? Math.round(stats.totals.events / 4.5) : 342, 
+          label: "Total Applications", 
+          value: stats?.totals?.applications || 0, 
           trend: "+8.9%", 
           icon: Fingerprint, 
           color: "amber",
-          desc: "On-chain verification tokens"
+          desc: "Platform-wide candidacies"
       }
   ];
 
@@ -104,6 +100,9 @@ export default function AdminDashboardOverview() {
               <Badge variant="outline" className="border-rose-500/30 text-rose-500 bg-rose-500/5 px-4 font-black tracking-widest text-[9px] uppercase">
                 System Status: Operational
               </Badge>
+              {now && (
+                <span className="font-mono text-[10px] font-black text-white/20 tracking-widest">{now} UTC+5:30</span>
+              )}
           </div>
           <h1 className="text-5xl md:text-6xl font-black font-heading tracking-tighter text-white uppercase italic flex items-center gap-6">
             Global <span className="text-rose-500">Surveillance</span> 
@@ -114,9 +113,11 @@ export default function AdminDashboardOverview() {
           </p>
         </div>
         <div className="flex gap-4">
-            <Button size="lg" className="h-16 px-8 bg-white text-black hover:bg-neutral-200 font-black tracking-tighter uppercase transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-white/5">
-                <Activity className="w-5 h-5 mr-3" /> System Audit
-            </Button>
+            <Link href="/admin/logs">
+                <Button size="lg" className="h-16 px-8 bg-white text-black hover:bg-neutral-200 font-black tracking-tighter uppercase transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-white/5">
+                    <Activity className="w-5 h-5 mr-3" /> System Audit
+                </Button>
+            </Link>
         </div>
       </div>
 
@@ -237,31 +238,37 @@ export default function AdminDashboardOverview() {
                   <CardDescription className="text-[10px] uppercase font-black tracking-widest text-white/30">7-Day Moving Average for Users & Jobs</CardDescription>
               </CardHeader>
               <CardContent className="p-8 h-[400px]">
-                  <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart
-                          data={mockTrendData}
-                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                      >
-                          <defs>
-                              <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                                  <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.8}/>
-                                  <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
-                              </linearGradient>
-                              <linearGradient id="colorJobs" x1="0" y1="0" x2="0" y2="1">
-                                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-                                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                              </linearGradient>
-                          </defs>
-                          <XAxis dataKey="name" stroke="#ffffff40" tick={{fill: '#ffffff80', fontSize: 12}} />
-                          <YAxis stroke="#ffffff40" tick={{fill: '#ffffff80', fontSize: 12}} />
-                          <Tooltip 
-                              contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
-                              itemStyle={{ color: '#fff', fontWeight: 'bold' }}
-                          />
-                          <Area type="monotone" dataKey="users" stroke="#f43f5e" fillOpacity={1} fill="url(#colorUsers)" />
-                          <Area type="monotone" dataKey="jobs" stroke="#10b981" fillOpacity={1} fill="url(#colorJobs)" />
-                      </AreaChart>
-                  </ResponsiveContainer>
+                  {loading ? (
+                      <div className="flex items-center justify-center h-full">
+                          <Loader2 className="w-10 h-10 animate-spin text-indigo-500/30" />
+                      </div>
+                  ) : (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <AreaChart
+                            data={stats?.trends || []}
+                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                        >
+                            <defs>
+                                <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.8}/>
+                                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
+                                </linearGradient>
+                                <linearGradient id="colorJobs" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                                </linearGradient>
+                            </defs>
+                            <XAxis dataKey="name" stroke="#ffffff40" tick={{fill: '#ffffff80', fontSize: 12}} />
+                            <YAxis stroke="#ffffff40" tick={{fill: '#ffffff80', fontSize: 12}} />
+                            <Tooltip 
+                                contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                                itemStyle={{ color: '#fff', fontWeight: 'bold' }}
+                            />
+                            <Area type="monotone" dataKey="users" stroke="#f43f5e" fillOpacity={1} fill="url(#colorUsers)" />
+                            <Area type="monotone" dataKey="jobs" stroke="#10b981" fillOpacity={1} fill="url(#colorJobs)" />
+                        </AreaChart>
+                    </ResponsiveContainer>
+                  )}
               </CardContent>
           </Card>
 
@@ -272,22 +279,24 @@ export default function AdminDashboardOverview() {
                  <Globe className="w-5 h-5 text-rose-500" /> Operational Nexus
               </h3>
               
-              <div className="grid grid-cols-1 gap-4">
+              <div className="grid grid-cols-1 gap-3">
                   {[
                       { label: "Entity Registry", href: "/admin/users", icon: Users, color: "#f43f5e", count: stats?.totals?.users },
                       { label: "Partner Matrix", href: "/admin/companies", icon: Building2, color: "#6366f1", count: stats?.totals?.companies },
-                      { label: "Meta-Schema", href: "/admin/schema", icon: Database, color: "#10b981" },
-                      { label: "Feature Flags", href: "/admin/features", icon: Zap, color: "#f59e0b" },
-                      { label: "Digital Identity", href: "/admin/blockchain", icon: Fingerprint, color: "#3b82f6" }
+                      { label: "Network Load", href: "/admin/jobs", icon: Briefcase, color: "#10b981", count: stats?.totals?.jobs },
+                      { label: "Applications", href: "/admin/applications", icon: ShieldCheck, color: "#f59e0b", count: stats?.totals?.applications },
+                      { label: "Audit Stream", href: "/admin/logs", icon: Database, color: "#06b6d4" },
+                      { label: "Digital Identity", href: "/admin/blockchain", icon: Fingerprint, color: "#3b82f6" },
+                      { label: "Moderation Queue", href: "/admin/reports", icon: ShieldAlert, color: "#ef4444" },
                   ].map((link) => (
                       <Link key={link.label} href={link.href}>
                           <Card className="bg-white/5 border-white/10 hover:border-white/20 hover:bg-white/[0.08] transition-all cursor-pointer group backdrop-blur-lg">
-                              <CardContent className="p-5 flex items-center justify-between">
-                                  <div className="flex items-center gap-4">
-                                      <div className={`p-2.5 rounded-xl border transition-transform group-hover:scale-110`} style={{ backgroundColor: `${link.color}11`, borderColor: `${link.color}22` }}>
-                                          <link.icon className={`w-5 h-5`} style={{ color: link.color }} />
+                              <CardContent className="p-4 flex items-center justify-between">
+                                  <div className="flex items-center gap-3">
+                                      <div className="p-2 rounded-xl border transition-transform group-hover:scale-110" style={{ backgroundColor: `${link.color}11`, borderColor: `${link.color}22` }}>
+                                          <link.icon className="w-4 h-4" style={{ color: link.color }} />
                                       </div>
-                                      <span className="font-bold text-white tracking-tight">{link.label}</span>
+                                      <span className="font-bold text-white tracking-tight text-sm">{link.label}</span>
                                   </div>
                                   {link.count !== undefined ? (
                                       <Badge variant="outline" className="font-mono text-[10px] bg-white/5 border-white/10">{link.count}</Badge>
@@ -298,13 +307,15 @@ export default function AdminDashboardOverview() {
                   ))}
               </div>
 
-              <Card className="p-8 rounded-3xl bg-rose-500/10 border border-rose-500/20 flex flex-col items-center gap-6 text-center">
-                  <ShieldAlert className="w-10 h-10 text-rose-500" />
-                  <div className="space-y-1">
-                      <h4 className="text-lg font-black italic uppercase">Override Authority</h4>
-                      <p className="text-[10px] text-rose-500/70 font-medium italic">Security protocols are active. All administrative actions are logged to the immutable ledger.</p>
-                  </div>
-              </Card>
+              <Link href="/admin/reports">
+                  <Card className="p-6 rounded-3xl bg-rose-500/10 border border-rose-500/20 flex flex-col items-center gap-4 text-center hover:bg-rose-500/15 transition-all cursor-pointer group">
+                      <ShieldAlert className="w-9 h-9 text-rose-500 group-hover:scale-110 transition-transform" />
+                      <div className="space-y-1">
+                          <h4 className="text-sm font-black italic uppercase">Override Authority</h4>
+                          <p className="text-[9px] text-rose-500/70 font-medium italic">Security protocols are active. All actions are immutably logged.</p>
+                      </div>
+                  </Card>
+              </Link>
           </div>
       </div>
     </div>

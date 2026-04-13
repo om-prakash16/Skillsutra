@@ -14,6 +14,7 @@ import dynamic from "next/dynamic"
 import { Sidebar } from "@/components/layout/sidebar"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { useCMS } from "@/context/cms-context"
+import { CommandSearch } from "@/components/layout/command-search"
 
 const WalletMultiButton = dynamic(
   async () => (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
@@ -112,6 +113,7 @@ export function Navbar() {
 
                 {/* Actions */}
                 <div className="hidden md:flex items-center gap-4">
+                    <CommandSearch />
                     <ThemeToggle />
                     <NotificationBell />
                     <WalletMultiButton style={{ height: '36px', padding: '0 16px', fontSize: '14px', borderRadius: '8px' }} />

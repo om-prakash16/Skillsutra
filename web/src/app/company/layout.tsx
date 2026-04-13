@@ -1,5 +1,4 @@
-"use client"
-
+import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 import { Sidebar } from "@/components/layout/sidebar"
 import { useAuth } from "@/context/auth-context"
 import { useRouter } from "next/navigation"
@@ -36,6 +35,7 @@ export default function CompanyLayout({
         <div className="flex min-h-screen bg-muted/20">
             <Sidebar role="company" className="hidden lg:flex" />
             <main className="flex-1 w-full pt-16">
+                <Breadcrumbs />
                 <div className="container mx-auto p-4 md:p-8 max-w-7xl w-full">
                     {children}
                 </div>

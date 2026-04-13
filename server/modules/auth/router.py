@@ -33,10 +33,20 @@ async def wallet_login(req: WalletLoginRequest):
     else:
         # First time this wallet has connected — create the account.
         uid = str(uuid.uuid4())
+        # Truncate wallet for a default name
+        default_name = f"User {req.wallet_address[:6]}"
+        
         created = db.table("users").insert({
             "id": uid,
             "wallet_address": req.wallet_address,
-            # 'role' column is not in public.users, we use the user_roles table
+            "full_name": default_name,
+            "profile_data": {
+                "skills": [],
+                "education": [],
+                "experience": [],
+                "bio": "",
+                "proof_score": 0
+            }
         }).execute()
 
         if not created.data:

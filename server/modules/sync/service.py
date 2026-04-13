@@ -10,32 +10,28 @@ class SyncService:
 
     async def trigger_metadata_sync(self, user_id: uuid.UUID, entity_type: str, entity_id: Optional[uuid.UUID] = None):
         """
-        Orchestrates IPFS pinning and pending state management.
+        Orchestrates simulated IPFS pinning and pending state management.
         """
         db = get_supabase()
         
-        # Fetch current data for metadata generation
+        # 1. Fetch current data for metadata generation
         if entity_type == 'profile':
-            user_data = db.table("users").select("*").eq("id", str(user_id)).single().execute().data
-            # In a real app: format resume/skills into Metaplex JSON
+            user_resp = db.table("users").select("*").eq("id", str(user_id)).single().execute()
+            user_data = user_resp.data if user_resp.data else {}
             metadata = await self.nft_service.generate_profile_metadata(str(user_id), [])
+        elif entity_type == 'skill' and entity_id:
+            # Simulated skill metadata logic
+            metadata = await self.nft_service.generate_skill_metadata(str(user_id), "Advanced Logic", 92, "Expert")
         else:
-            # Handle other entity types (skill, project)
-            metadata = {}
+            metadata = {"name": "Credential Meta", "type": entity_type}
 
-        # Upload to IPFS
+        # 2. Upload to IPFS (Simulated)
         cid = await self.nft_service.upload_to_ipfs(metadata)
         
-        # Store in metadata_versions (trigger handles version_number)
-        db.table("metadata_versions").insert({
-            "user_id": str(user_id),
-            "entity_type": entity_type,
-            "entity_id": str(entity_id) if entity_id else None,
-            "cid": cid,
-            "metadata_json": metadata
-        }).execute()
+        # 3. Store in metadata_versions
+        await self.nft_service.save_metadata_version(str(user_id), entity_type, metadata)
         
-        # Mark Sync Status as PENDING
+        # 4. Mark Sync Status as PENDING
         db.table("sync_status").upsert({
             "user_id": str(user_id),
             "entity_type": entity_type,
@@ -43,7 +39,7 @@ class SyncService:
             "current_state": "pending",
             "latest_cid": cid,
             "updated_at": "now()"
-        }, on_conflict="user_id, entity_type, entity_id").execute()
+        }).execute()
         
         return {"status": "pending", "cid": cid}
 

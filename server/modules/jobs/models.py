@@ -23,6 +23,13 @@ class CompanyResponse(CompanyBase):
     class Config:
         from_attributes = True
 
+class AssessmentQuestion(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    question_text: str
+    options: List[str]
+    correct_option_index: int
+    points: int = 10
+
 class JobBase(BaseModel):
     title: str
     description: str
@@ -33,6 +40,7 @@ class JobBase(BaseModel):
     employment_type: str = "full-time" # full-time | part-time | contract | internship
     deadline: Optional[datetime] = None
     min_reputation_score: int = 0
+    assessment_questions: List[AssessmentQuestion] = []
     dynamic_fields: Dict[str, Any] = {}
 
 class JobCreate(JobBase):
@@ -67,6 +75,7 @@ class JobApplicationResponse(BaseModel):
     id: str
     status: str
     ai_match_score: float
+    assessment_score: Optional[float] = None
 
 class ApplicationBase(BaseModel):
     job_id: str
@@ -79,6 +88,8 @@ class ApplicationResponse(ApplicationBase):
     id: str
     status: str # applied | shortlisted | interview | hired | rejected
     ai_match_score: float
+    assessment_score: Optional[float] = None
+    assessment_results: Optional[Dict[str, Any]] = None
     created_at: Optional[datetime] = None
 
     class Config:

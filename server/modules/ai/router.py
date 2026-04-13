@@ -10,9 +10,9 @@ from pydantic import BaseModel
 router = APIRouter()
 ai_service = AIService()
 
-# Include sub-routers
-router.include_router(quiz_router, prefix="/quiz", tags=["Quiz"])
-router.include_router(interview_router, prefix="/interview", tags=["Interview Prep"])
+# Include sub-routers (no extra prefix to match frontend api-client)
+router.include_router(quiz_router, tags=["Quiz"])
+router.include_router(interview_router, tags=["Interview Prep"])
 
 class ProfileAnalysisRequest(BaseModel):
     profile_data: Dict[str, Any]
@@ -26,7 +26,7 @@ class SkillRecommendationResponse(BaseModel):
 @router.post("/analyze-profile")
 async def analyze_profile_insights(req: ProfileAnalysisRequest, current_user = Depends(get_current_user)):
     """
-    resume and profile analysis via Gemini 1.5.
+    Resume and profile analysis via Gemini 1.5.
     """
     return await ai_service.analyze_resume(req.profile_data)
 
@@ -35,7 +35,7 @@ async def get_proof_scores(user_id: Optional[str] = None, current_user = Depends
     """
     Fetch current Proof Score and competency metrics.
     """
-    target_id = user_id or current_user["id"]
+    target_id = user_id or current_user.get("sub")
     return await ai_service.get_user_scores(target_id)
 
 @router.post("/recommend-skills", response_model=SkillRecommendationResponse)
@@ -43,7 +43,7 @@ async def recommend_skills(current_user = Depends(get_current_user)):
     """
     AI-driven skill gap analysis and growth suggestions.
     """
-    return await ai_service.generate_skill_suggestions(current_user["id"])
+    return await ai_service.generate_skill_suggestions(current_user.get("sub"))
 
 # Assessment & Quizzes
 

@@ -46,20 +46,75 @@ class JobMatcher:
             job_text = " ".join([p for p in job_parts if p.strip()]).strip() or "General Job"
             job_vec = await self.get_embedding(job_text)
             
-            # Using sklearn for cosine similarity with error handling
             try:
-                similarity = cosine_similarity(
-                    [profile_vec], 
-                    [job_vec]
-                )[0][0]
+                similarity = cosine_similarity([profile_vec], [job_vec])[0][0]
             except Exception:
                 similarity = 0.0
             
+            match_score = round(float(similarity) * 100, 2)
+            
+            # Match reason
+            job_skills = set([s.lower() for s in job.get("skills_required", [])])
+            cand_skills = set([s.lower() for s in profile_data.get("skills", [])])
+            shared = list(job_skills.intersection(cand_skills))
+            reason = f"Matches your expertise in {', '.join(shared[:2])}" if shared else "High semantic overlap with your background."
+
             results.append({
                 "job_id": job.get("id"),
                 "title": job.get("title"),
-                "match_score": round(float(similarity) * 100, 2)
+                "match_score": match_score,
+                "match_reason": reason
             })
             
-        # Sort by match score descending
+        return sorted(results, key=lambda x: x["match_score"], reverse=True)
+
+    async def match_candidates_to_job(self, job_data: Dict[str, Any], candidate_list: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Ranks candidates by semantic similarity to a specific job.
+        Used for the 'Recruiter Discovery' feature.
+        """
+        if not job_data or not candidate_list:
+            return []
+
+        # Extract and clean job text
+        job_parts = [
+            str(job_data.get('title', '')),
+            str(job_data.get('description', '')),
+            ", ".join(job_data.get('skills_required', [])) if isinstance(job_data.get('skills_required'), list) else str(job_data.get('skills_required', ''))
+        ]
+        job_text = " ".join([p for p in job_parts if p.strip()]).strip() or "General Job Opening"
+        job_vec = await self.get_embedding(job_text)
+
+        results = []
+        for candidate in candidate_list:
+            profile = candidate.get("profile_data", {})
+            candidate_parts = [
+                str(candidate.get('full_name', '')),
+                str(candidate.get('bio', '')),
+                ", ".join(profile.get('skills', [])) if isinstance(profile.get('skills'), list) else str(profile.get('skills', ''))
+            ]
+            candidate_text = " ".join([p for p in candidate_parts if p.strip()]).strip() or "Anonymous Talent"
+            candidate_vec = await self.get_embedding(candidate_text)
+
+            try:
+                similarity = cosine_similarity([job_vec], [candidate_vec])[0][0]
+            except Exception:
+                similarity = 0.0
+
+            match_score = round(float(similarity) * 100, 2)
+            
+            job_skills = set([s.lower() for s in job_data.get("skills_required", [])])
+            cand_skills = set([s.lower() for s in profile.get("skills", [])])
+            shared = list(job_skills.intersection(cand_skills))
+            reason = f"Strong semantic match with focus on {', '.join(shared[:2])}" if shared else "High conceptual alignment with job requirements."
+
+            results.append({
+                "candidate_id": candidate.get("id"),
+                "full_name": candidate.get("full_name"),
+                "match_score": match_score,
+                "match_reason": reason,
+                "skills": profile.get("skills", []),
+                "reputation": candidate.get("reputation_score", 0)
+            })
+
         return sorted(results, key=lambda x: x["match_score"], reverse=True)

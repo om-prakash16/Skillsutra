@@ -2,11 +2,12 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Facebook, Twitter, Instagram, Linkedin, Briefcase, Mail, ArrowRight, Zap, CheckCircle2 } from "lucide-react"
-import { motion } from "framer-motion"
+import { Facebook, Twitter, Instagram, Linkedin, Briefcase, Mail, ArrowRight, Zap, CheckCircle2, Globe, ArrowUp, ShieldCheck, Cpu, Database, Landmark, ShoppingCart, Activity } from "lucide-react"
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { useCMS } from "@/context/cms-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { useState, useEffect } from "react"
 
 export function Footer({ forceVisible }: { forceVisible?: boolean }) {
     const pathname = usePathname()
@@ -17,6 +18,30 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
 
     const siteName = getVal("global", "site_name", "SkillProof AI")
     const copyright = getVal("global", "copyright", `© ${new Date().getFullYear()} ${siteName}. All rights reserved.`)
+    
+    const [showBackToTop, setShowBackToTop] = useState(false)
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setShowBackToTop(window.scrollY > 400)
+        }
+        window.addEventListener("scroll", handleScroll)
+        return () => window.removeEventListener("scroll", handleScroll)
+    }, [])
+
+    const scrollToTop = () => {
+        window.scrollTo({ top: 0, behavior: "smooth" })
+    }
+
+    const sectors = [
+        { name: "Fintech", icon: <Landmark className="w-4 h-4" /> },
+        { name: "Artificial Intelligence", icon: <Cpu className="w-4 h-4" /> },
+        { name: "Cybersecurity", icon: <ShieldCheck className="w-4 h-4" /> },
+        { name: "E-commerce", icon: <ShoppingCart className="w-4 h-4" /> },
+        { name: "Healthcare", icon: <Activity className="w-4 h-4" /> },
+        { name: "Data Science", icon: <Database className="w-4 h-4" /> },
+        { name: "Web3 & Blockchain", icon: <Zap className="w-4 h-4" /> }
+    ]
     
     // Professional Fallback Columns if CMS is empty
     const defaultColumns = [
@@ -67,9 +92,26 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
     ]
 
     return (
-        <footer className="relative bg-background pt-24 pb-12 overflow-hidden border-t border-primary/10">
+        <footer className="relative bg-background pt-8 pb-12 overflow-hidden border-t border-primary/10">
+            {/* Market Sectors Marquee */}
+            <div className="w-full border-b border-border/50 pb-8 mb-16 overflow-hidden">
+                <div className="container mx-auto px-4 mb-6">
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold text-center">Standardizing Talent Across Global Sectors</p>
+                </div>
+                <div className="flex gap-12 whitespace-nowrap animate-marquee">
+                    {[...sectors, ...sectors].map((sector, i) => (
+                        <div key={i} className="flex items-center gap-3 text-muted-foreground/60 hover:text-primary transition-colors cursor-default group">
+                            <div className="p-2 rounded-lg bg-muted/30 group-hover:bg-primary/10 transition-colors">
+                                {sector.icon}
+                            </div>
+                            <span className="text-sm font-medium tracking-tight uppercase">{sector.name}</span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
             {/* Ambient background glows */}
-            <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 h-80 bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-40 right-0 -mr-20 w-80 h-80 bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
             <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
 
             <div className="container mx-auto px-4 relative z-10">
@@ -82,8 +124,8 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
                             </div>
                             <span className="text-2xl font-bold font-heading tracking-tight">{siteName}</span>
                         </Link>
-                        <p className="text-muted-foreground leading-relaxed text-lg">
-                            {getVal("global", "footer_tagline", "The enterprise-grade infrastructure for global hiring and verified professional identities.")}
+                        <p className="text-muted-foreground leading-relaxed text-lg italic">
+                            {getVal("global", "footer_tagline", "Synchronizing global intelligence through verified proof. No more resume inflation. No more keywords without skills.")}
                         </p>
                         <div className="flex gap-4">
                             {socialLinks.map((social: any) => (
@@ -108,23 +150,35 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
                     </div>
 
                     <div className="lg:pl-12">
-                        <div className="bg-muted/30 backdrop-blur-xl border border-primary/10 rounded-3xl p-8 relative overflow-hidden group">
+                        <div className="bg-gradient-to-br from-muted/50 to-background backdrop-blur-xl border border-primary/10 rounded-3xl p-8 relative overflow-hidden group shadow-2xl shadow-primary/5">
                             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                <Mail className="w-24 h-24 -mr-8 -mt-8 rotate-12" />
+                                <Mail className="w-24 h-24 -mr-8 -mt-8 rotate-12 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold mb-2 relative z-10">Stay ahead of the curve</h3>
-                            <p className="text-muted-foreground mb-6 relative z-10">Get the latest platform updates, hiring trends, and career tips delivered to your inbox.</p>
+                            <div className="flex flex-col mb-6 relative z-10">
+                                <h3 className="text-xl font-bold mb-1">Stay ahead of the curve</h3>
+                                <div className="flex items-center gap-2">
+                                    <div className="flex -space-x-2">
+                                        {[1,2,3].map(i => (
+                                            <div key={i} className="w-5 h-5 rounded-full border-2 border-background bg-muted overflow-hidden">
+                                                <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i+10}`} alt="user" className="w-full h-full" />
+                                            </div>
+                                        ))}
+                                    </div>
+                                    <span className="text-xs text-muted-foreground font-medium">Join 10,000+ talent experts</span>
+                                </div>
+                            </div>
+                            <p className="text-muted-foreground mb-6 relative z-10 text-sm">Get the latest platform updates, hiring trends, and career tips delivered to your inbox.</p>
                             <form className="flex flex-col sm:flex-row gap-3 relative z-10" onSubmit={(e) => e.preventDefault()}>
                                 <Input 
                                     placeholder="Enter your email" 
-                                    className="bg-background/50 border-border focus:ring-primary h-12 rounded-xl"
+                                    className="bg-background/80 border-border focus:ring-primary h-12 rounded-xl transition-all focus:shadow-[0_0_15px_rgba(var(--primary),0.1)]"
                                 />
-                                <Button className="h-12 px-8 rounded-xl bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all font-semibold group">
-                                    Subscribe
+                                <Button className="h-12 px-8 rounded-xl bg-primary hover:bg-primary/90 shadow-lg shadow-primary/20 transition-all font-semibold group whitespace-nowrap">
+                                    Subscribe Now
                                     <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </Button>
                             </form>
-                            <p className="text-[10px] text-muted-foreground mt-4 uppercase tracking-widest font-bold">No spam. Just high-signal insights.</p>
+                            <p className="text-[10px] text-muted-foreground mt-4 uppercase tracking-[0.2em] font-bold opacity-60">Verified high-signal insights only.</p>
                         </div>
                     </div>
                 </div>
@@ -152,32 +206,51 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
                 </div>
 
                 {/* Tier 3: Bottom Bar */}
-                <div className="pt-12 flex flex-col md:flex-row justify-between items-center gap-8">
+                <div className="pt-12 flex flex-col md:flex-row justify-between items-center gap-8 relative">
                     <div className="flex flex-col md:flex-row items-center gap-6">
                         <p className="text-sm text-muted-foreground">
                             {copyright}
                         </p>
-                        <div className="flex items-center gap-2 px-3 py-1 transparent bg-success/5 border border-success/20 rounded-full">
+                        <div className="flex items-center gap-2 px-4 py-1.5 bg-success/5 border border-success/20 rounded-full group cursor-help">
                             <motion.div 
-                                className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"
-                                animate={{ opacity: [1, 0.4, 1] }}
+                                className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]"
+                                animate={{ opacity: [1, 0.4, 1], scale: [1, 1.2, 1] }}
                                 transition={{ duration: 2, repeat: Infinity }}
                             />
-                            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">All Systems Operational</span>
+                            <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Network Status: Nominal</span>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-8">
-                        <div className="hidden md:flex items-center gap-2 text-xs text-muted-foreground">
-                            <span className="opacity-50">Powered by</span>
-                            <span className="font-bold tracking-tighter flex items-center gap-1 text-foreground">
-                                <Zap className="w-3 h-3 text-primary fill-primary" />
-                                SkillProof AI Core
-                            </span>
+                        <div className="hidden md:flex items-center gap-6">
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer group/lang">
+                                <Globe className="w-3.5 h-3.5 group-hover/lang:text-primary transition-colors" />
+                                <span>English (Global)</span>
+                            </div>
+                            <div className="w-px h-3 bg-border" />
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <span className="opacity-50">Powered by</span>
+                                <span className="font-bold tracking-tighter flex items-center gap-1 text-foreground">
+                                    <Zap className="w-3 h-3 text-primary fill-primary" />
+                                    SkillProof AI Core
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex gap-4">
-                            {/* Additional utility links or mini-socials if needed */}
-                        </div>
+                        
+                        <AnimatePresence>
+                            {showBackToTop && (
+                                <motion.button
+                                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                                    onClick={scrollToTop}
+                                    className="p-3 rounded-xl bg-primary text-primary-foreground shadow-xl shadow-primary/20 hover:bg-primary/90 transition-all z-50 group"
+                                    aria-label="Back to top"
+                                >
+                                    <ArrowUp className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
+                                </motion.button>
+                            )}
+                        </AnimatePresence>
                     </div>
                 </div>
             </div>

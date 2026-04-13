@@ -12,6 +12,7 @@ import { motion } from "framer-motion";
 export default function TaxonomyManager() {
     const [skills, setSkills] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [newSkill, setNewSkill] = useState("");
     const [parentId, setParentId] = useState("");
 
     useEffect(() => {
@@ -20,7 +21,7 @@ export default function TaxonomyManager() {
 
     const fetchTaxonomy = async () => {
         try {
-            const data = await api.admin.getSkills?.() || []; 
+            const data = await api.admin.getSkills() || []; 
             setSkills(Array.isArray(data) ? data : []);
         } catch (err) {
             console.error(err);
@@ -33,8 +34,9 @@ export default function TaxonomyManager() {
     const handleAddSkill = async () => {
         if (!newSkill.trim()) return;
         try {
-            await api.admin.createSkill?.({ 
-                category_name: newSkill,
+            await api.admin.createSkill({ 
+                label: newSkill,
+                slug: newSkill.toLowerCase().replace(/\s+/g, '-'),
                 parent_id: parentId || null
             });
             setNewSkill("");
