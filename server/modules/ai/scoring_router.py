@@ -149,11 +149,20 @@ async def _calc_project_score(db, wallet: str) -> float:
 
 
 async def _calc_github_score(db, wallet: str) -> float:
-    """Score based on GitHub activity (simplified)."""
+    """Score based on deep GitHub AST forensic activity."""
     response = db.table("users").select("dynamic_fields") \
         .eq("wallet_address", wallet).single().execute()
-    if response.data and response.data.get("dynamic_fields", {}).get("github_handle"):
-        return 65.0  # Placeholder — would call GitHub API
+    
+    if response.data:
+        github_handle = response.data.get("dynamic_fields", {}).get("github_handle")
+        if github_handle:
+            from modules.ai.services.github_service import github_scanner
+            metrics = await github_scanner.analyze_repositories(github_handle)
+            # Pull the synthetic combination
+            comp = metrics["metrics"].get("architectural_complexity_handling", 50)
+            qual = metrics["metrics"].get("code_quality_index", 50)
+            return (comp + qual) / 2.0
+            
     return 0.0
 
 

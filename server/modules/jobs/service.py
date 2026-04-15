@@ -162,6 +162,7 @@ class JobService:
         from core.events import bus
         from modules.auth.handlers import JOB_APPLIED
         await bus.emit(JOB_APPLIED, {
+            "user_id": candidate_id,
             "email": user.get("email"),
             "name": user.get("full_name"),
             "job_title": job.get("title"),
@@ -225,7 +226,7 @@ class JobService:
         if not db: return []
         
         query = db.table("applications") \
-            .select("*, jobs!inner(title, company_id), users(id, full_name, wallet_address, profile_data)") \
+            .select("*, jobs!inner(title, company_id), users(id, full_name, wallet_address, profile_data, user_identities(id_status))") \
             .eq("jobs.company_id", company_id)
             
         if job_id:

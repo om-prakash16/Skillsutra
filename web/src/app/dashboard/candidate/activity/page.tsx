@@ -1,167 +1,192 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import {
-    Activity, Briefcase, Eye, TrendingUp, Zap,
-    FileText, Clock, ArrowUpRight, Loader2,
+import { motion, AnimatePresence } from "framer-motion"
+import { 
+    Activity, 
+    Zap, 
+    ShieldCheck, 
+    ShieldAlert, 
+    UserPlus, 
+    Briefcase, 
+    ArrowRight,
+    Loader2,
+    Clock,
+    Search,
+    Satellite,
+    Terminal,
+    Hash
 } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { api } from "@/lib/api/api-client"
+import { useAuth } from "@/context/auth-context"
+import { cn } from "@/lib/utils"
 
-const EVENT_ICONS: Record<string, any> = {
-    applied_job: Briefcase,
-    updated_profile: FileText,
-    viewed_profile: Eye,
-    skill_verified: Zap,
-    default: Activity,
-}
-
-function timeAgo(dateStr: string) {
-    const diff = Date.now() - new Date(dateStr).getTime()
-    const mins = Math.floor(diff / 60000)
-    if (mins < 1) return "just now"
-    if (mins < 60) return `${mins}m ago`
-    const hours = Math.floor(mins / 60)
-    if (hours < 24) return `${hours}h ago`
-    return `${Math.floor(hours / 24)}d ago`
-}
-
-export default function CandidateActivityPage() {
+export default function MissionLogPage() {
+    const { user } = useAuth()
     const [events, setEvents] = useState<any[]>([])
-    const [stats, setStats] = useState<any>(null)
     const [loading, setLoading] = useState(true)
+    const [filter, setFilter] = useState("")
 
-    const load = async () => {
+    useEffect(() => {
+        if (user) fetchActivity()
+    }, [user])
+
+    const fetchActivity = async () => {
+        setLoading(true)
         try {
-            const [timeline, insights] = await Promise.all([
-                api.activity.user(30),
-                api.analytics.user(),
-            ])
-            setEvents(Array.isArray(timeline) ? timeline : [])
-            setStats(insights)
-        } catch (err) {
-            console.error("[activity] load failed:", err)
+            const data = await api.activity.user(50)
+            setEvents(data || [])
+        } catch (e) {
+            console.error("Telemetry sync failure", e)
         } finally {
             setLoading(false)
         }
     }
 
-    useEffect(() => {
-        load()
-        const interval = setInterval(load, 30000)
-        return () => clearInterval(interval)
-    }, [])
-
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center h-96">
-                <Loader2 className="w-8 h-8 animate-spin text-primary/40" />
-            </div>
-        )
+    const getEventIcon = (type: string) => {
+        switch (type) {
+            case 'registration': return <UserPlus className="w-5 h-5 text-primary" />
+            case 'job_apply': return <Briefcase className="w-5 h-5 text-emerald-500" />
+            case 'identity_verified': return <ShieldCheck className="w-5 h-5 text-emerald-500" />
+            case 'identity_rejected': return <ShieldAlert className="w-5 h-5 text-rose-500" />
+            case 'assessment_submit': return <Zap className="w-5 h-5 text-amber-500" />
+            default: return <Satellite className="w-5 h-5 text-white/40" />
+        }
     }
 
+    const filteredEvents = events.filter(e => 
+        e.description?.toLowerCase().includes(filter.toLowerCase()) || 
+        e.event_type?.toLowerCase().includes(filter.toLowerCase())
+    )
+
     return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div className="space-y-1">
-                <motion.h1
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="text-3xl font-black font-heading tracking-tight flex items-center gap-3"
-                >
-                    <Activity className="w-8 h-8 text-primary" />
-                    Activity Feed
-                </motion.h1>
-                <p className="text-muted-foreground text-sm">
-                    Your recent actions and platform interactions. Updates every 30 seconds.
-                </p>
-            </div>
-
-            {/* Quick stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {[
-                    { label: "Applications", value: stats?.total_applications ?? 0, icon: Briefcase, color: "text-blue-400", glow: "group-hover:shadow-blue-500/20" },
-                    { label: "Profile Views", value: stats?.profile_views ?? 0, icon: Eye, color: "text-emerald-400", glow: "group-hover:shadow-emerald-500/20" },
-                    { label: "Skill Growth", value: `${stats?.skill_improvement ?? 0}%`, icon: TrendingUp, color: "text-amber-400", glow: "group-hover:shadow-amber-500/20" },
-                    { label: "Interview Rate", value: `${stats?.interview_rate ?? 0}%`, icon: ArrowUpRight, color: "text-violet-400", glow: "group-hover:shadow-violet-500/20" },
-                ].map((stat, i) => (
-                    <motion.div
-                        key={stat.label}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="group relative p-5 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md hover:bg-white/[0.04] transition-all duration-300 hover:border-white/20"
-                    >
-                        <div className={cn("absolute inset-0 rounded-2xl transition-shadow duration-300", stat.glow)} />
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-2 mb-3">
-                                <div className={cn("p-1.5 rounded-lg bg-white/5", stat.color)}>
-                                    <stat.icon className="w-4 h-4" />
-                                </div>
-                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">
-                                    {stat.label}
-                                </span>
-                            </div>
-                            <p className="text-3xl font-black tracking-tight">{stat.value}</p>
-                        </div>
-                    </motion.div>
-                ))}
-            </div>
-
-            {/* Timeline */}
-            <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/60">
-                        Recent Activity
-                    </h2>
-                    <div className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
+        <div className="max-w-5xl mx-auto space-y-12 pb-20">
+            {/* Telemetry Header */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-10">
+                <div className="space-y-4">
+                    <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary tracking-widest uppercase font-black text-[10px] px-4 py-1">
+                        Operational Telemetry: Mission Log
+                    </Badge>
+                    <h1 className="text-5xl font-black italic tracking-tighter uppercase text-white leading-none">
+                        Activity <span className="text-primary text-opacity-80">Ledger.</span>
+                    </h1>
+                    <p className="text-muted-foreground text-lg max-w-xl font-medium">
+                        Real-time visualization of your platform interactions, trust milestones, and decentralized verification events.
+                    </p>
                 </div>
+                <div className="flex items-center gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-xl">
+                    <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />
+                        <Input 
+                            placeholder="Filter signals..." 
+                            value={filter}
+                            onChange={e => setFilter(e.target.value)}
+                            className="bg-transparent border-none pl-10 h-10 w-48 text-xs font-mono"
+                        />
+                    </div>
+                    <Button onClick={fetchActivity} variant="ghost" size="icon" className="h-10 w-10 text-white/40 hover:text-white">
+                        <Activity className={cn("w-5 h-5", loading && "animate-pulse")} />
+                    </Button>
+                </div>
+            </div>
 
-                {events.length === 0 ? (
-                    <div className="text-center py-20 rounded-3xl border border-dashed border-white/5 bg-white/[0.01]">
-                        <p className="text-muted-foreground text-sm font-medium">
-                            No activity yet. Start by exploring new jobs.
-                        </p>
-                    </div>
-                ) : (
-                    <div className="relative space-y-3 before:absolute before:left-[27px] before:top-2 before:bottom-2 before:w-px before:bg-gradient-to-b before:from-primary/20 before:via-primary/5 before:to-transparent">
-                        {events.map((event, i) => {
-                            const Icon = EVENT_ICONS[event.event_type] || EVENT_ICONS.default
-                            return (
-                                <motion.div
-                                    key={event.id}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.03 }}
-                                    className="group relative flex items-start gap-5 p-4 rounded-2xl border border-transparent hover:border-white/5 hover:bg-white/[0.02] transition-all duration-200"
-                                >
-                                    <div className="relative z-10 p-2.5 rounded-xl bg-background border border-white/10 group-hover:border-primary/50 transition-colors shrink-0 shadow-xl">
-                                        <Icon className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-                                    </div>
-                                    <div className="flex-1 min-w-0 pt-1">
-                                        <p className="text-sm font-bold text-foreground/90 group-hover:text-foreground transition-colors leading-snug">
-                                            {event.description}
-                                        </p>
-                                        <div className="flex items-center gap-2 mt-2">
-                                            <Badge variant="outline" className="text-[9px] font-black uppercase tracking-wider h-4 bg-white/5 border-white/10 text-muted-foreground/70 group-hover:text-primary group-hover:border-primary/30 transition-all">
-                                                {event.event_type?.replace(/_/g, " ")}
+            {/* Event Timeline */}
+            <div className="relative">
+                {/* Vertical Line */}
+                <div className="absolute left-8 top-0 bottom-0 w-px bg-gradient-to-b from-primary/20 via-white/5 to-transparent" />
+
+                <div className="space-y-8">
+                    {loading ? (
+                        [1,2,3,4].map(i => (
+                            <div key={i} className="flex gap-8 items-start opacity-20 animate-pulse pl-4">
+                                <div className="w-8 h-8 rounded-full bg-white/20 shrink-0 mt-1" />
+                                <div className="space-y-2 flex-1 pt-2">
+                                    <div className="h-4 w-48 bg-white/20 rounded" />
+                                    <div className="h-3 w-32 bg-white/10 rounded" />
+                                </div>
+                            </div>
+                        ))
+                    ) : filteredEvents.length === 0 ? (
+                        <div className="py-24 text-center space-y-4">
+                            <Terminal className="w-12 h-12 text-white/5 mx-auto" />
+                            <p className="text-white/20 font-black italic uppercase tracking-widest text-xs font-mono">
+                                {filter ? "No signals detected matching current search vector." : "No operational activity recorded in history."}
+                            </p>
+                        </div>
+                    ) : (
+                        filteredEvents.map((event, idx) => (
+                            <motion.div 
+                                key={event.id}
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: idx * 0.05 }}
+                                className="flex gap-8 items-start group pl-4"
+                            >
+                                <div className="relative z-10 w-8 h-8 rounded-full bg-black border border-white/10 flex items-center justify-center group-hover:border-primary/40 transition-colors shrink-0 mt-1 shadow-2xl">
+                                    <div className="absolute -inset-1 bg-primary/20 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="relative z-10 w-1.5 h-1.5 rounded-full bg-white/20 group-hover:bg-primary transition-colors" />
+                                </div>
+                                <div className="flex-1 space-y-1 pt-0.5">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-[10px] font-mono font-black uppercase tracking-[0.2em] text-white/20">
+                                                [{new Date(event.created_at).toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' })}]
+                                            </span>
+                                            <Badge variant="ghost" className="bg-white/5 text-[9px] font-black uppercase tracking-widest px-2 py-0 h-5 border-none text-white/40 group-hover:text-primary transition-colors">
+                                                {event.event_type}
                                             </Badge>
-                                            {event.entity_type && (
-                                                <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">{event.entity_type}</span>
-                                            )}
                                         </div>
+                                        <span className="text-[9px] font-mono text-white/10 italic">#TX-{event.id.slice(0, 8)}</span>
                                     </div>
-                                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/40 shrink-0 pt-1.5">
-                                        <Clock className="w-3 h-3" />
-                                        {timeAgo(event.created_at)}
+                                    <p className="text-white font-medium text-lg tracking-tight group-hover:translate-x-1 transition-transform inline-flex items-center gap-3">
+                                        {getEventIcon(event.event_type)}
+                                        {event.description}
+                                    </p>
+                                    <div className="flex items-center gap-6 pt-1">
+                                        <p className="text-xs text-muted-foreground/60 flex items-center gap-1.5 italic">
+                                            <Clock className="w-3 h-3" /> {new Date(event.created_at).toLocaleDateString()}
+                                        </p>
+                                        {event.metadata?.tx_hash && (
+                                            <p className="text-[10px] font-mono text-primary/40 flex items-center gap-1.5">
+                                                <Hash className="w-3 h-3" /> {event.metadata.tx_hash.slice(0,12)}...
+                                            </p>
+                                        )}
                                     </div>
-                                </motion.div>
-                            )
-                        })}
+                                </div>
+                            </motion.div>
+                        ))
+                    )}
+                </div>
+            </div>
+
+            {/* Footer Insights */}
+            <div className="pt-20 grid grid-cols-1 md:grid-cols-2 gap-8 opacity-20 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700">
+                <Card className="bg-white/5 border-white/5 backdrop-blur-sm p-8 rounded-[2rem] space-y-4">
+                    <div className="flex items-center gap-4 h-12">
+                        <div className="p-3 bg-primary/10 rounded-2xl">
+                             <Satellite className="w-6 h-6 text-primary" />
+                        </div>
+                        <h3 className="text-lg font-black italic uppercase tracking-widest">Global Sync</h3>
                     </div>
-                )}
+                    <p className="text-xs text-muted-foreground leading-relaxed italic">
+                        Every interaction on the platform is mirrored in our centralized activity ledger. High-value trust events are additionally hashed to the Solana blockchain for immutable proof.
+                    </p>
+                </Card>
+                <Card className="bg-white/5 border-white/5 backdrop-blur-sm p-8 rounded-[2rem] space-y-4">
+                    <div className="flex items-center gap-4 h-12">
+                        <div className="p-3 bg-emerald-500/10 rounded-2xl">
+                             <ShieldCheck className="w-6 h-6 text-emerald-500" />
+                        </div>
+                        <h3 className="text-lg font-black italic uppercase tracking-widest text-emerald-500">Reputation Nexus</h3>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed italic">
+                        Your activity log contributes to your overall Personnel Resonance. Maintaining a consistent record of verified skills and applications increases your ranking in recruiter searches.
+                    </p>
+                </Card>
             </div>
         </div>
     )

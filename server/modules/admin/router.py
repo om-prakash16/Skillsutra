@@ -392,11 +392,40 @@ async def admin_get_blockchain_transactions(user = Depends(require_permission("a
     return results
 # -- Skill Verification Moderation --
 
-@router.get("/verification-queue")
-async def get_verification_queue(user = Depends(require_permission("admin.access"))):
-    """List all pending verification requests."""
+# -- Identity Verification Queue --
+
+class IDVerifyAction(BaseModel):
+    user_id: str
+    status: str  # verified | rejected
+    reason: Optional[str] = None
+
+@router.get("/identity-queue")
+async def get_identity_queue(status: str = "pending", user = Depends(require_permission("admin.access"))):
+    """List all pending/processed identity verification requests."""
     db = get_supabase()
-    return db.table("moderation_queue").select("*").eq("status", "pending").execute().data
+    return db.table("user_identities") \
+        .select("*, users(full_name, wallet_address)") \
+        .eq("id_status", status) \
+        .order("created_at", desc=True) \
+        .execute().data
+
+@router.patch("/identity/verify")
+async def verify_user_identity(action: IDVerifyAction, user = Depends(require_permission("admin.access"))):
+    """Approve or reject a user's identity proof."""
+    from modules.users.identity_proof_service import IdentityProofService
+    proof_service = IdentityProofService()
+    
+    result = await proof_service.verify_identity(
+        user_id=action.user_id,
+        admin_id=user.get("sub", ""),
+        status=action.status,
+        reason=action.reason
+    )
+    
+    await _write_staff_audit(user.get("sub", ""), f"identity_{action.status}", "user_identity", action.user_id, {"reason": action.reason})
+    
+    return {"status": "success", "data": result}
+
 
 @router.patch("/verification/{entry_id}/approve")
 async def approve_verification(entry_id: str, user = Depends(require_permission("admin.access"))):

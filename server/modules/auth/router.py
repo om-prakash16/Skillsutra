@@ -59,9 +59,9 @@ async def wallet_login(req: WalletLoginRequest):
         # Emit event for new registration (side effects like welcome email)
         await bus.emit(USER_CREATED, {
             "user_id": user["id"],
-            "wallet": user["wallet_address"],
-            "name": user["full_name"],
-            "email": user.get("email") # Might be null at first sync
+            "email": user.get("email"),
+            "name": user.get("full_name"),
+            "wallet": req.wallet_address
         })
 
     # Pull existing roles for this user

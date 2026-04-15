@@ -146,6 +146,8 @@ export const api = {
         getTimeline: (userId: string) => fetchWithAuth(`/connections/timeline/${userId}`),
         requestConnection: (targetUserId: string) => fetchWithAuth("/connections/request", { method: "POST", body: JSON.stringify({ target_user_id: targetUserId }) }),
         getConnections: () => fetchWithAuth("/connections/list"),
+        submit: (data: { id_type: string, document_url: string }) => fetchWithAuth("/profile/identity/submit", { method: "POST", body: JSON.stringify(data) }),
+        getStatus: (userId?: string) => fetchWithAuth(`/profile/identity/status${userId ? `?user_id=${userId}` : ""}`),
     },
     interview: {
         generate: (jobId: string, count: number = 10) => fetchWithAuth("/ai/generate-interview-questions", { method: "POST", body: JSON.stringify({ job_id: jobId, count }) }),

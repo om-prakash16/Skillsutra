@@ -1,7 +1,11 @@
-import uuid
 from typing import Dict, Any, Optional
 from core.supabase import get_supabase
+from core.events import bus
 from modules.notifications.service import NotificationService
+
+# Event Constants
+IDENTITY_VERIFIED = "IDENTITY_VERIFIED"
+IDENTITY_REJECTED = "IDENTITY_REJECTED"
 
 class IdentityProofService:
     @staticmethod
@@ -48,7 +52,22 @@ class IdentityProofService:
         
         response = db.table("user_identities").update(update_data).eq("user_id", user_id).execute()
         
-        # Notify User
+        # Get user info for event
+        user_resp = db.table("users").select("full_name, email").eq("id", user_id).single().execute()
+        user_data = user_resp.data if user_resp.data else {}
+
+        # Emit Global Event
+        event_name = IDENTITY_VERIFIED if status == "verified" else IDENTITY_REJECTED
+        await bus.emit(event_name, {
+            "user_id": user_id,
+            "email": user_data.get("email"),
+            "name": user_data.get("full_name"),
+            "status": status,
+            "reason": reason,
+            "user_id": user_id
+        })
+
+        # Notify User (Internal)
         msg = f"Your identity verification was {status}."
         if status == "rejected" and reason:
             msg += f" Reason: {reason}"

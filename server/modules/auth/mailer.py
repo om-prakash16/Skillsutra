@@ -53,6 +53,40 @@ class MailerService:
         return await MailerService._execute_delivery(email, subject, html_content)
 
     @staticmethod
+    async def send_verification_email(email: str, name: str, status: str, reason: Optional[str] = None):
+        """Notify a user about their identity verification status."""
+        is_success = status == "verified"
+        subject = "Identity Verified | Reputation Sync Complete" if is_success else "Identity Check | Action Required"
+        
+        status_color = "#10b981" if is_success else "#f43f5e"
+        status_text = "VERIFIED" if is_success else "REJECTED"
+        
+        html_content = f"""
+        <div style="background-color: #020202; color: #ffffff; padding: 40px; font-family: sans-serif; border-radius: 20px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <span style="background: {status_color}20; color: {status_color}; padding: 8px 16px; border-radius: 99px; font-size: 10px; font-weight: 900; letter-spacing: 2px;">{status_text}</span>
+            </div>
+            <h1 style="color: #6366f1; font-weight: 900; letter-spacing: -1px; text-align: center;">Identity Nexus Update.</h1>
+            <p style="font-size: 18px; color: #a1a1aa; text-align: center;">Hello {name},</p>
+            <p style="line-height: 1.6; color: #d4d4d8; text-align: center;">
+                {
+                    "Your identity has been successfully verified. A 'Verified' badge has been issued to your profile, increasing your <b>Personnel Resonance</b> for all hiring missions."
+                    if is_success else 
+                    f"Our administrative review detected an issue with your identity submission. <br/><br/><b>Reason:</b> {reason or 'Invalid document quality.'}"
+                }
+            </p>
+            {
+                "" if is_success else 
+                '<div style="text-align: center; margin-top: 30px;"><a href="#" style="background: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 12px; font-weight: bold;">Resubmit Identification</a></div>'
+            }
+            <p style="margin-top: 40px; font-size: 12px; color: #3f3f46; text-align: center;">
+                Trusted Identity Protocol | SkillProof AI
+            </p>
+        </div>
+        """
+        return await MailerService._execute_delivery(email, subject, html_content)
+
+    @staticmethod
     async def _execute_delivery(to_email: str, subject: str, html: str):
         """
         Internal delivery engine.

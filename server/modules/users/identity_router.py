@@ -2,9 +2,36 @@ from fastapi import APIRouter, HTTPException, Depends, Body
 from typing import List, Dict, Any, Optional
 from modules.auth.service import get_current_user
 from modules.users.identity_service import IdentityService
+from modules.users.identity_proof_service import IdentityProofService
 
 router = APIRouter()
 identity_service = IdentityService()
+proof_service = IdentityProofService()
+
+@router.post("/profile/identity/submit")
+async def submit_id(id_type: str = Body(..., embed=True), document_url: str = Body(..., embed=True), current_user = Depends(get_current_user)):
+    """
+    Submit hardware/identity proof for verification.
+    """
+    try:
+        return await proof_service.submit_identity(current_user["sub"], id_type, document_url)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/profile/identity/status")
+async def get_id_status(user_id: Optional[str] = None, current_user = Depends(get_current_user)):
+    """
+    Check verification status.
+    """
+    try:
+        target_uid = user_id or current_user["sub"]
+        # Standard implementation would fetch from user_identities
+        from core.supabase import get_supabase
+        sb = get_supabase()
+        res = sb.table("user_identities").select("*").eq("user_id", target_uid).execute()
+        return res.data[0] if res.data else {"id_status": "not_started"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/profile/privacy")
 async def update_privacy(visibility: str = Body(..., embed=True), current_user = Depends(get_current_user)):

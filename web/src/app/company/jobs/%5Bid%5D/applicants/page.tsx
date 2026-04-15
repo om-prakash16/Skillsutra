@@ -32,7 +32,8 @@ import {
     UserCircle,
     CheckCircle2,
     XCircle,
-    Cpu
+    Cpu,
+    Activity
 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
@@ -164,7 +165,12 @@ export default function PersonnelResonanceArchive() {
                                                             <p className="text-[10px] font-mono font-bold text-white/30 lowercase tracking-tighter">
                                                                 {app.users?.wallet_address?.slice(0, 6)}...{app.users?.wallet_address?.slice(-4)}
                                                             </p>
-                                                            <ShieldCheck className="w-3 h-3 text-primary/60" />
+                                                            {app.users?.user_identities?.id_status === 'verified' && (
+                                                                <div className="flex items-center gap-1 bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                                                                    <ShieldCheck className="w-2.5 h-2.5 text-primary" />
+                                                                    <span className="text-[8px] font-black uppercase tracking-widest text-primary">Verified</span>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                     </div>
                                                 </div>

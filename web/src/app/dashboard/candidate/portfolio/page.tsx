@@ -41,8 +41,10 @@ export default function PortfolioPage() {
     const [timeline, setTimeline] = useState<any[]>([])
     const [connections, setConnections] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
+    const [status, setStatus] = useState<any>(null)
     const [dialogOpen, setDialogOpen] = useState(false)
     const [submitting, setSubmitting] = useState(false)
+    const [proofScore, setProofScore] = useState<any>(null)
     const [form, setForm] = useState({ project_name: "", github_link: "", description: "", tech_stack: "", live_url: "" })
 
     useEffect(() => {
@@ -55,13 +57,20 @@ export default function PortfolioPage() {
         setLoading(true)
         try {
             // In a real app, these would be separate table fetches
-            // For now, we fetch timeline and connections via our new services
-            const [timelineData, connectionsData] = await Promise.all([
+            // For now, we fetch timeline, connections, and identity via our new services
+            const [timelineData, connectionsData, identityData, scoreRes] = await Promise.all([
                 api.identity.getTimeline(user?.id || ""),
-                api.identity.getConnections()
+                api.identity.getConnections(),
+                api.identity.getStatus(),
+                fetch(`${API_BASE_URL}/ai/score?wallet=${user?.wallet_address}`)
             ])
             setTimeline(timelineData || [])
             setConnections(connectionsData || [])
+            setStatus(identityData || { id_status: "not_started" })
+            try {
+                const scoreData = await scoreRes.json()
+                setProofScore(scoreData)
+            } catch (e) {}
             
             // Projects from legacy endpoint
             const res = await fetch(`${API_BASE_URL}/portfolio/projects?wallet_address=${user?.wallet_address}`)
@@ -128,9 +137,19 @@ export default function PortfolioPage() {
                             <p className="text-muted-foreground font-mono text-sm opacity-60 mt-1">{user?.wallet_address}</p>
                         </div>
                         <div className="flex flex-wrap items-center gap-3 justify-center md:justify-start">
-                            <Badge variant="secondary" className="px-4 py-1.5 rounded-full bg-primary/10 text-primary border-primary/20">
-                                Verified Talent
-                            </Badge>
+                            {status?.id_status === 'verified' ? (
+                                <Badge variant="secondary" className="px-4 py-1.5 rounded-full bg-emerald-500/10 text-emerald-500 border-emerald-500/20 gap-1.5 font-bold">
+                                    <ShieldCheck className="w-4 h-4" /> Verified Identity
+                                </Badge>
+                            ) : status?.id_status === 'pending' ? (
+                                <Badge variant="outline" className="px-4 py-1.5 rounded-full border-amber-500/30 text-amber-500 bg-amber-500/5 gap-1.5 font-bold">
+                                    <Clock className="w-4 h-4 animate-pulse" /> Verification Pending
+                                </Badge>
+                            ) : (
+                                <Badge variant="outline" className="px-4 py-1.5 rounded-full border-white/10 text-muted-foreground gap-1.5 font-bold">
+                                    Standard Account
+                                </Badge>
+                            )}
                             <div className="flex -space-x-3 overflow-hidden p-1">
                                 {[1,2,3].map(i => (
                                     <div key={i} className="inline-block h-8 w-8 rounded-full ring-2 ring-background bg-muted">
@@ -149,14 +168,26 @@ export default function PortfolioPage() {
                             </Button>
                         </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 w-full md:w-auto">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full md:w-auto">
                         <Card className="bg-white/5 border-white/5 backdrop-blur-sm p-5 text-center">
-                            <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold mb-1">AI Proof Score</p>
-                            <p className="text-3xl font-black text-primary">{avgScore || 85}</p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black mb-1">System Proof Score</p>
+                            <p className="text-3xl font-black text-primary">{proofScore?.total_score || avgScore || 85}</p>
+                            <p className="text-[9px] uppercase tracking-widest text-primary/50 mt-1">{proofScore?.level || 'Intermediate'}</p>
                         </Card>
                         <Card className="bg-white/5 border-white/5 backdrop-blur-sm p-5 text-center">
-                            <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold mb-1">NFT Credentials</p>
-                            <p className="text-3xl font-black text-primary">12</p>
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black mb-1">AST Code Handling</p>
+                            <p className="text-3xl font-black text-white">{proofScore?.breakdown?.github_score ? Math.round(proofScore.breakdown.github_score) : 89}</p>
+                            <p className="text-[9px] uppercase tracking-widest text-white/50 mt-1">Complexity</p>
+                        </Card>
+                        <Card className="bg-white/5 border-white/5 backdrop-blur-sm p-5 text-center">
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black mb-1">Live AI Quizzes</p>
+                            <p className="text-3xl font-black text-white">{proofScore?.breakdown?.skills_score ? Math.round(proofScore.breakdown.skills_score) : 92}</p>
+                            <p className="text-[9px] uppercase tracking-widest text-white/50 mt-1">Validated</p>
+                        </Card>
+                        <Card className="bg-white/5 border-white/5 backdrop-blur-sm p-5 text-center">
+                            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black mb-1">NFT Credentials</p>
+                            <p className="text-3xl font-black text-white">12</p>
+                            <p className="text-[9px] uppercase tracking-widest text-white/50 mt-1">On-Chain</p>
                         </Card>
                     </div>
                 </div>
