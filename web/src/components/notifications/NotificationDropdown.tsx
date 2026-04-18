@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils"
 interface Notification {
     id: string
     type: 'job' | 'nft' | 'system' | 'verify'
-    title: str
-    message: str
-    time: str
+    title: string
+    message: string
+    time: string
     isRead: boolean
 }
 

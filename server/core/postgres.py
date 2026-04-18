@@ -1,17 +1,17 @@
 """
 Best Hiring Tool Database Connection Bridge.
 Provides a unified gateway to the database using Supabase.
-Initially, it mocks the psycopg2 cursor interface to allow existing 
+Initially, it mocks the psycopg2 cursor interface to allow existing
 legacy route logic to function without complete refactoring.
 """
-import os
-import json
+
 from core.supabase import get_supabase
+
 
 class MockCursor:
     def __init__(self, db):
         self.db = db
-        self.description = [("id",), ("name",)] # Minimal mock
+        self.description = [("id",), ("name",)]  # Minimal mock
         self.last_row = None
 
     def execute(self, query, params=None):
@@ -43,6 +43,7 @@ class MockCursor:
     def close(self):
         pass
 
+
 class MockConnection:
     def __init__(self):
         self.db = get_supabase()
@@ -58,6 +59,7 @@ class MockConnection:
 
     def close(self):
         pass
+
 
 def get_db_connection():
     """Returns a connection-like object for database operations."""

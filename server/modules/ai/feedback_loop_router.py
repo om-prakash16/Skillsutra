@@ -2,6 +2,7 @@
 Hiring Feedback Learning Loop Router.
 Endpoints for recording hires, submitting reviews, and tracking model improvement.
 """
+
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from typing import Optional
@@ -33,8 +34,7 @@ class PerformanceReviewRequest(BaseModel):
 
 @router.post("/record-hire")
 async def record_hiring_event(
-    req: HiringEventRequest,
-    current_user=Depends(get_current_user)
+    req: HiringEventRequest, current_user=Depends(get_current_user)
 ):
     """Record a new hire for 90-day feedback tracking."""
     return feedback_service.record_hiring_event(
@@ -42,14 +42,13 @@ async def record_hiring_event(
         job_id=req.job_id,
         company_id=req.company_id,
         match_percentage=req.match_percentage,
-        proof_score=req.proof_score
+        proof_score=req.proof_score,
     )
 
 
 @router.post("/submit-review")
 async def submit_performance_review(
-    req: PerformanceReviewRequest,
-    current_user=Depends(get_current_user)
+    req: PerformanceReviewRequest, current_user=Depends(get_current_user)
 ):
     """Submit 90-day performance review. Updates Proof-Score and triggers model training."""
     return feedback_service.process_performance_review(
@@ -60,14 +59,14 @@ async def submit_performance_review(
         culture_rating=req.culture_rating,
         overall_rating=req.overall_rating,
         would_rehire=req.would_rehire,
-        comments=req.comments
+        comments=req.comments,
     )
 
 
 @router.get("/pending-reviews")
 async def get_pending_reviews(
     company_id: str = Query(..., description="Company ID"),
-    current_user=Depends(get_current_user)
+    current_user=Depends(get_current_user),
 ):
     """Get all hires due for 90-day performance review."""
     return {"pending_reviews": feedback_service.get_pending_reviews(company_id)}

@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 import { useAuth } from "@/context/auth-context"
 import { motion, AnimatePresence } from "framer-motion"
 import dynamic from "next/dynamic"
+import Image from "next/image"
 import { Sidebar } from "@/components/layout/sidebar"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { useCMS } from "@/context/cms-context"
@@ -62,17 +63,19 @@ export function Navbar() {
 
                 {/* Logo - Hide on Dashboard as Sidebar has logo */}
                 {!isDashboard && (
-                    <Link href="/" className="flex items-center gap-2">
-                        <div className="bg-primary/10 p-2 rounded-lg">
-                            <Briefcase className="w-6 h-6 text-primary" />
+                    <Link href="/" className="flex items-center gap-2 group">
+                        <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-all shadow-[0_0_15px_rgba(var(--primary),0.2)]">
+                            <Image src="/logo.png" alt="SkillProof Logo" width={28} height={28} className="object-contain" />
                         </div>
-                        <span className="text-xl font-bold font-heading tracking-tight">{siteName}</span>
+                        <span className="text-xl font-black font-heading tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                            {siteName}
+                        </span>
                     </Link>
                 )}
 
                 {/* Desktop Nav */}
                 <nav className="hidden md:flex items-center gap-8">
-                    {navLinks.map((link) => (
+                    {navLinks.map((link: any) => (
                         <Link
                             key={link.href}
                             href={link.href}
@@ -211,7 +214,7 @@ export function Navbar() {
                                 {/* Site Links */}
                                 <div className="flex flex-col gap-4">
                                     <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold mb-2">Platform</p>
-                                    {navLinks.map((link) => (
+                                    {navLinks.map((link: any) => (
                                         <Link
                                             key={link.href}
                                             href={link.href}

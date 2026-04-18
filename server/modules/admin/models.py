@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from typing import Optional, List, Any, Dict, Literal
 from datetime import datetime
 
@@ -14,16 +14,19 @@ StaffRoleId = Literal[
     "content_staff",
 ]
 
+
 class StaffPermissionGrant(BaseModel):
     staff_wallet: str
     role_id: StaffRoleId
     granted_by: str
+
 
 class StaffRoleResponse(BaseModel):
     id: str
     label: str
     description: Optional[str]
     permissions: List[str]
+
 
 class StaffPermissionResponse(BaseModel):
     id: str
@@ -33,21 +36,31 @@ class StaffPermissionResponse(BaseModel):
     granted_at: Optional[datetime]
     is_active: bool
 
+
 # ──────────────────────────────────────────────────
 # User Reports
 # ──────────────────────────────────────────────────
 
+
 class UserReportCreate(BaseModel):
     reporter_wallet: Optional[str] = None
     reported_wallet: str
-    report_type: Literal["fake_profile", "plagiarized_project", "suspicious_activity", "harassment", "other"]
+    report_type: Literal[
+        "fake_profile",
+        "plagiarized_project",
+        "suspicious_activity",
+        "harassment",
+        "other",
+    ]
     reason: str
     priority: Literal["low", "normal", "high", "critical"] = "normal"
+
 
 class UserReportUpdate(BaseModel):
     status: Literal["open", "in_review", "resolved", "dismissed"]
     assigned_to: Optional[str] = None
     resolution_notes: Optional[str] = None
+
 
 class UserReportResponse(UserReportCreate):
     id: str
@@ -57,9 +70,11 @@ class UserReportResponse(UserReportCreate):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
+
 # ──────────────────────────────────────────────────
 # Job Reports
 # ──────────────────────────────────────────────────
+
 
 class JobReportCreate(BaseModel):
     reporter_wallet: Optional[str] = None
@@ -68,10 +83,12 @@ class JobReportCreate(BaseModel):
     reason: str
     priority: Literal["low", "normal", "high", "critical"] = "normal"
 
+
 class JobReportUpdate(BaseModel):
     status: Literal["open", "in_review", "resolved", "dismissed"]
     assigned_to: Optional[str] = None
     resolution_notes: Optional[str] = None
+
 
 class JobReportResponse(JobReportCreate):
     id: str
@@ -81,21 +98,31 @@ class JobReportResponse(JobReportCreate):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
+
 # ──────────────────────────────────────────────────
 # Skill Verification Flags
 # ──────────────────────────────────────────────────
+
 
 class SkillFlagCreate(BaseModel):
     nft_mint: str
     candidate_wallet: str
     skill_name: str
-    flag_reason: Literal["ai_score_mismatch", "github_suspicious", "duplicate_cert", "invalid_proof", "manual_review"]
+    flag_reason: Literal[
+        "ai_score_mismatch",
+        "github_suspicious",
+        "duplicate_cert",
+        "invalid_proof",
+        "manual_review",
+    ]
     flagged_by: str
+
 
 class SkillFlagReview(BaseModel):
     status: Literal["approved", "rejected", "retest_requested"]
     reviewed_by: str
     review_notes: Optional[str] = None
+
 
 class SkillFlagResponse(SkillFlagCreate):
     id: str
@@ -105,21 +132,27 @@ class SkillFlagResponse(SkillFlagCreate):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
+
 # ──────────────────────────────────────────────────
 # Support Tickets
 # ──────────────────────────────────────────────────
 
+
 class SupportTicketCreate(BaseModel):
     submitter_wallet: Optional[str] = None
-    category: Literal["profile_issue", "wallet_connection", "nft_sync", "job_application", "other"]
+    category: Literal[
+        "profile_issue", "wallet_connection", "nft_sync", "job_application", "other"
+    ]
     subject: str
     body: str
     priority: Literal["low", "normal", "high", "urgent"] = "normal"
+
 
 class SupportTicketUpdate(BaseModel):
     status: Literal["open", "in_progress", "resolved", "closed"]
     assigned_to: Optional[str] = None
     resolution_notes: Optional[str] = None
+
 
 class SupportTicketResponse(SupportTicketCreate):
     id: str
@@ -129,29 +162,38 @@ class SupportTicketResponse(SupportTicketCreate):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
+
 # ──────────────────────────────────────────────────
 # Flag User Action
 # ──────────────────────────────────────────────────
 
+
 class FlagUserAction(BaseModel):
     staff_wallet: str
     target_wallet: str
-    action: Literal["flag_suspicious", "request_reverification", "suspend", "warn", "send_message"]
+    action: Literal[
+        "flag_suspicious", "request_reverification", "suspend", "warn", "send_message"
+    ]
     notes: Optional[str] = None
+
 
 # ──────────────────────────────────────────────────
 # Admin Control Models
 # ──────────────────────────────────────────────────
 
+
 class SchemaFieldCreate(BaseModel):
     field_name: str
     field_label: str
-    field_type: Literal["text", "textarea", "number", "url", "select", "multi-select", "date", "file"]
+    field_type: Literal[
+        "text", "textarea", "number", "url", "select", "multi-select", "date", "file"
+    ]
     section: str
     required: bool = False
     validation_rules: Optional[Dict[str, Any]] = None
     display_order: int = 0
     is_active: bool = True
+
 
 class SchemaFieldUpdate(BaseModel):
     field_label: Optional[str] = None
@@ -162,25 +204,31 @@ class SchemaFieldUpdate(BaseModel):
     display_order: Optional[int] = None
     is_active: Optional[bool] = None
 
+
 class SkillCategoryCreate(BaseModel):
     category_name: str
     parent_id: Optional[str] = None
+
 
 class FeatureToggleRequest(BaseModel):
     feature_name: str
     is_enabled: bool
     description: Optional[str] = None
 
+
 class PlatformSettingRequest(BaseModel):
     setting_key: str
     setting_value: Dict[str, Any]
-    
+
+
 class JobCategoryCreate(BaseModel):
     category_name: str
+
 
 class UserUpdate(BaseModel):
     role: Optional[str] = None
     is_blocked: Optional[bool] = None
+
 
 class JobUpdate(BaseModel):
     status: Optional[str] = None
@@ -193,9 +241,11 @@ class AnalyticsStatsResponse(BaseModel):
     platform_health: str
     last_calc_at: Optional[datetime]
 
+
 # ──────────────────────────────────────────────────
 # Staff Operational Models
 # ──────────────────────────────────────────────────
+
 
 class StaffAuditLogResponse(BaseModel):
     id: str
@@ -205,6 +255,7 @@ class StaffAuditLogResponse(BaseModel):
     target_id: str
     metadata: Dict[str, Any]
     created_at: datetime
+
 
 class NFTActivityLog(BaseModel):
     nft_mint: str

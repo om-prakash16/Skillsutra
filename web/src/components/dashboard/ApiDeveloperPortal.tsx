@@ -37,6 +37,7 @@ import {
     TableRow 
 } from "@/components/ui/table"
 import { toast } from "sonner"
+import { cn } from "@/lib/utils"
 
 interface ApiKey {
     id: string
@@ -199,7 +200,7 @@ export function ApiDeveloperPortal() {
                 <Card className="p-8 rounded-[2.5rem] border-white/10 bg-zinc-950 space-y-6 border-emerald-500/20 shadow-2xl shadow-emerald-500/5">
                     <div className="flex items-center justify-between">
                         <h3 className="text-lg font-black tracking-tight flex items-center gap-3">
-                            <terminal className="w-6 h-6 text-primary" />
+                            <Terminal className="w-6 h-6 text-primary" />
                             Example Implementation
                         </h3>
                         <Badge variant="outline" className="text-[9px] font-black uppercase text-zinc-500">cURL</Badge>

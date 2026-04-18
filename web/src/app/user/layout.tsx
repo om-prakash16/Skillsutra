@@ -1,4 +1,7 @@
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
+import { useAuth } from "@/context/auth-context"
+import { Sidebar } from "@/components/layout/sidebar"
+import { Footer } from "@/components/layout/footer"
 
 export default function UserLayout({
     children,

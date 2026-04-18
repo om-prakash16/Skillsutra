@@ -6,13 +6,14 @@ from nacl.exceptions import BadSignatureError
 from fastapi import Security, HTTPException, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from core.supabase import get_supabase
-from typing import List, Optional, Dict, Any
+from typing import List, Optional
 
 SECRET_KEY = os.getenv("JWT_SECRET", "supersecret")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 1440 # 24 hours
+ACCESS_TOKEN_EXPIRE_MINUTES = 1440  # 24 hours
 
 security = HTTPBearer()
+
 
 async def verify_solana_signature(wallet: str, message: str, signature: str) -> bool:
     """
@@ -30,6 +31,7 @@ async def verify_solana_signature(wallet: str, message: str, signature: str) -> 
     except (BadSignatureError, ValueError):
         return False
 
+
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -40,12 +42,15 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-async def get_current_user(credentials: HTTPAuthorizationCredentials = Security(security)):
+
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Security(security),
+):
     """
     Validates the custom JWT or Supabase JWT and returns the user payload.
     """
     token = credentials.credentials
-    
+
     # 1. Try Custom JWT (Wallet/Demo)
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -66,12 +71,13 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Security(
                 return {
                     "sub": user_res.user.id,
                     "email": user_res.user.email,
-                    "roles": [user_res.user.user_metadata.get("role", "USER")]
+                    "roles": [user_res.user.user_metadata.get("role", "USER")],
                 }
         except Exception:
             pass
 
     raise HTTPException(status_code=401, detail="Token expired or invalid")
+
 
 async def get_user_permissions(user_id: str) -> List[str]:
     """
@@ -81,19 +87,26 @@ async def get_user_permissions(user_id: str) -> List[str]:
     if not sb:
         # Full access in mock mode
         return [
-            "job.create", "job.edit", "job.moderate", 
-            "profile.edit", "profile.moderate", 
-            "ai.config.manage", "schema.manage", "user.promote"
+            "job.create",
+            "job.edit",
+            "job.moderate",
+            "profile.edit",
+            "profile.moderate",
+            "ai.config.manage",
+            "schema.manage",
+            "user.promote",
         ]
 
     try:
         # Complex join query to get all permissions for the user's role
         # We query the user_roles -> roles -> role_permissions -> permissions
         # Supabase syntax for joins:
-        response = sb.table("user_roles") \
-            .select("roles(role_permissions(permissions(permission_name)))") \
-            .eq("user_id", user_id) \
+        response = (
+            sb.table("user_roles")
+            .select("roles(role_permissions(permissions(permission_name)))")
+            .eq("user_id", user_id)
             .execute()
+        )
 
         permissions = []
         for role_entry in response.data:
@@ -103,24 +116,27 @@ async def get_user_permissions(user_id: str) -> List[str]:
                 perm_obj = rp.get("permissions", {})
                 if perm_name := perm_obj.get("permission_name"):
                     permissions.append(perm_name)
-        
-        return list(set(permissions)) # De-duplicate
+
+        return list(set(permissions))  # De-duplicate
     except Exception as e:
         print(f"Permission fetch error: {str(e)}")
         return []
+
 
 def require_permission(permission: str):
     """
     Dependency factory to enforce a specific permission.
     """
-    async def permission_checker(user = Depends(get_current_user)):
+
+    async def permission_checker(user=Depends(get_current_user)):
         user_id = getattr(user, "id", None) or user.get("id")
         perms = await get_user_permissions(user_id)
-        
+
         if permission not in perms:
             raise HTTPException(
-                status_code=403, 
-                detail=f"Access denied. Required permission: {permission}"
+                status_code=403,
+                detail=f"Access denied. Required permission: {permission}",
             )
         return user
+
     return permission_checker

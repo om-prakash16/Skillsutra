@@ -3,16 +3,16 @@
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { ProfileHeader } from "@/components/features/profile/profile-header"
-import { OverviewTab } from "@/components/features/profile/tabs/overview-tab"
-import { BasicInfoTab } from "@/components/features/profile/tabs/basic-info-tab"
-import { SkillsTab } from "@/components/features/profile/tabs/skills-tab"
-import { ExperienceTab } from "@/components/features/profile/tabs/experience-tab"
-import { EducationTab } from "@/components/features/profile/tabs/education-tab"
-import { ProjectsTab } from "@/components/features/profile/tabs/projects-tab"
-import { GithubTab } from "@/components/features/profile/tabs/github-tab"
-import { LeetcodeTab } from "@/components/features/profile/tabs/leetcode-tab"
-import { ApplicationsTab } from "@/components/features/profile/tabs/applications-tab"
-import { SettingsTab } from "@/components/features/profile/tabs/settings-tab"
+import { OverviewTab } from "@/features/user/profile/tabs/overview-tab"
+import { BasicInfoTab } from "@/features/user/profile/tabs/basic-info-tab"
+import { SkillsTab } from "@/features/user/profile/tabs/skills-tab"
+import { ExperienceTab } from "@/features/user/profile/tabs/experience-tab"
+import { EducationTab } from "@/features/user/profile/tabs/education-tab"
+import { ProjectsTab } from "@/features/user/profile/tabs/projects-tab"
+import { GithubTab } from "@/features/user/profile/tabs/github-tab"
+import { LeetcodeTab } from "@/features/user/profile/tabs/leetcode-tab"
+import { ApplicationsTab } from "@/features/user/profile/tabs/applications-tab"
+import { SettingsTab } from "@/features/user/profile/tabs/settings-tab"
 import { DynamicProfileForm } from "@/components/features/profile/DynamicProfileForm"
 import { UserProfile } from "@/lib/mock-api/user-profile"
 
@@ -158,7 +158,7 @@ export default function ProfilePage() {
         if (!profileData) return
         setProfileData({
             ...profileData,
-            skills: profileData.skills.filter(s => s.name !== skillName)
+            skills: profileData.skills.filter((s: any) => s.name !== skillName)
         })
     }
 
@@ -185,7 +185,7 @@ export default function ProfilePage() {
         if (!profileData) return
         setProfileData({
             ...profileData,
-            experience: profileData.experience.filter(e => e.id !== id)
+            experience: profileData.experience.filter((e: any) => e.id !== id)
         })
     }
 
@@ -193,7 +193,7 @@ export default function ProfilePage() {
         if (!profileData) return
         setProfileData({
             ...profileData,
-            experience: profileData.experience.map(e =>
+            experience: profileData.experience.map((e: any) =>
                 e.id === id ? { ...e, [field]: value } : e
             )
         })
@@ -219,7 +219,7 @@ export default function ProfilePage() {
         if (!profileData) return
         setProfileData({
             ...profileData,
-            education: profileData.education.filter(e => e.id !== id)
+            education: profileData.education.filter((e: any) => e.id !== id)
         })
     }
 
@@ -227,7 +227,7 @@ export default function ProfilePage() {
         if (!profileData) return
         setProfileData({
             ...profileData,
-            education: profileData.education.map(e =>
+            education: profileData.education.map((e: any) =>
                 e.id === id ? { ...e, [field]: value } : e
             )
         })
@@ -254,7 +254,7 @@ export default function ProfilePage() {
         if (!profileData) return
         setProfileData({
             ...profileData,
-            projects: profileData.projects.filter(p => p.id !== id)
+            projects: profileData.projects.filter((p: any) => p.id !== id)
         })
     }
 
@@ -268,7 +268,7 @@ export default function ProfilePage() {
 
         setProfileData({
             ...profileData,
-            projects: profileData.projects.map(p =>
+            projects: profileData.projects.map((p: any) =>
                 p.id === id ? { ...p, [field]: processedValue } : p
             )
         })

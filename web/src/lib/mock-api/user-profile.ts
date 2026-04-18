@@ -16,3 +16,5 @@ export const USER_PROFILE = {
     { name: "Gemini AI", level: "Advanced" }
   ]
 };
+
+export type UserProfile = any;

@@ -27,6 +27,10 @@ const data = [
     { name: 'Jul', userGrowth: 1549, jobVelocity: 430, volume: 1900 },
 ]
 
+export function AdminCharts() {
+    return <PlatformActivityChart />
+}
+
 export function PlatformActivityChart() {
     return (
         <motion.div

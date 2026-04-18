@@ -13,7 +13,7 @@ export function TechStackTab({ company }: { company: Company }) {
                     <div>
                         <h4 className="text-sm font-semibold mb-3">Frontend</h4>
                         <div className="flex flex-wrap gap-2">
-                            {company.techStack.frontend.map(tech => (
+                            {company.techStack.frontend.map((tech: any) => (
                                 <Badge key={tech} variant="secondary" className="px-3 py-1 text-sm">{tech}</Badge>
                             ))}
                         </div>
@@ -21,7 +21,7 @@ export function TechStackTab({ company }: { company: Company }) {
                     <div className="border-t pt-4">
                         <h4 className="text-sm font-semibold mb-3">Backend</h4>
                         <div className="flex flex-wrap gap-2">
-                            {company.techStack.backend.map(tech => (
+                            {company.techStack.backend.map((tech: any) => (
                                 <Badge key={tech} variant="secondary" className="px-3 py-1 text-sm">{tech}</Badge>
                             ))}
                         </div>
@@ -29,7 +29,7 @@ export function TechStackTab({ company }: { company: Company }) {
                     <div className="border-t pt-4">
                         <h4 className="text-sm font-semibold mb-3">Infrastructure</h4>
                         <div className="flex flex-wrap gap-2">
-                            {company.techStack.infra.map(tech => (
+                            {company.techStack.infra.map((tech: any) => (
                                 <Badge key={tech} variant="secondary" className="px-3 py-1 text-sm">{tech}</Badge>
                             ))}
                         </div>

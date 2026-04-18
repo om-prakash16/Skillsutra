@@ -8,7 +8,7 @@ router = APIRouter()
 
 
 @router.post("/create")
-async def create_company(req: CompanyCreate, user = Depends(get_current_user)):
+async def create_company(req: CompanyCreate, user=Depends(get_current_user)):
     """
     Set up a new company workspace.
 
@@ -19,10 +19,16 @@ async def create_company(req: CompanyCreate, user = Depends(get_current_user)):
     db = get_supabase()
     user_id = user.get("sub")
 
-    company_resp = db.table("companies").insert({
-        "name": req.name,
-        "created_by_user_id": user_id,
-    }).execute()
+    company_resp = (
+        db.table("companies")
+        .insert(
+            {
+                "name": req.name,
+                "created_by_user_id": user_id,
+            }
+        )
+        .execute()
+    )
 
     if not company_resp.data:
         raise HTTPException(status_code=500, detail="Failed to create company")
@@ -30,19 +36,25 @@ async def create_company(req: CompanyCreate, user = Depends(get_current_user)):
     company = company_resp.data[0]
 
     # Owner membership record
-    db.table("company_members").insert({
-        "company_id": company["id"],
-        "user_id": user_id,
-        "company_role": "OWNER",
-    }).execute()
+    db.table("company_members").insert(
+        {
+            "company_id": company["id"],
+            "user_id": user_id,
+            "company_role": "OWNER",
+        }
+    ).execute()
 
     # Elevate the user's global role so they route to the correct dashboard.
-    role_row = db.table("roles").select("id").eq("role_name", "COMPANY").single().execute()
+    role_row = (
+        db.table("roles").select("id").eq("role_name", "COMPANY").single().execute()
+    )
     if role_row.data:
-        db.table("user_roles").insert({
-            "user_id": user_id,
-            "role_id": role_row.data["id"],
-        }).execute()
+        db.table("user_roles").insert(
+            {
+                "user_id": user_id,
+                "role_id": role_row.data["id"],
+            }
+        ).execute()
 
     await record_event(
         actor_id=user_id,
@@ -57,7 +69,7 @@ async def create_company(req: CompanyCreate, user = Depends(get_current_user)):
 
 
 @router.post("/invite-member")
-async def invite_member(req: CompanyInvite, user = Depends(get_current_user)):
+async def invite_member(req: CompanyInvite, user=Depends(get_current_user)):
     """
     Invite an existing user to join a company.
 
@@ -67,27 +79,43 @@ async def invite_member(req: CompanyInvite, user = Depends(get_current_user)):
     db = get_supabase()
     user_id = user.get("sub")
 
-    ownership = db.table("company_members").select("*") \
-        .eq("company_id", req.company_id) \
-        .eq("user_id", user_id) \
-        .eq("company_role", "OWNER") \
+    ownership = (
+        db.table("company_members")
+        .select("*")
+        .eq("company_id", req.company_id)
+        .eq("user_id", user_id)
+        .eq("company_role", "OWNER")
         .execute()
+    )
 
     if not ownership.data:
-        raise HTTPException(status_code=403, detail="Only company owners can invite members")
+        raise HTTPException(
+            status_code=403, detail="Only company owners can invite members"
+        )
 
-    target = db.table("users").select("id").eq("wallet_address", req.wallet_address).execute()
+    target = (
+        db.table("users")
+        .select("id")
+        .eq("wallet_address", req.wallet_address)
+        .execute()
+    )
     if not target.data:
         raise HTTPException(
             status_code=404,
-            detail="User not found. They need to connect their wallet at least once first."
+            detail="User not found. They need to connect their wallet at least once first.",
         )
 
-    result = db.table("company_members").insert({
-        "company_id": req.company_id,
-        "user_id": target.data[0]["id"],
-        "company_role": req.role,
-    }).execute()
+    result = (
+        db.table("company_members")
+        .insert(
+            {
+                "company_id": req.company_id,
+                "user_id": target.data[0]["id"],
+                "company_role": req.role,
+            }
+        )
+        .execute()
+    )
 
     if not result.data:
         raise HTTPException(status_code=500, detail="Failed to send invitation")
@@ -96,11 +124,13 @@ async def invite_member(req: CompanyInvite, user = Depends(get_current_user)):
 
 
 @router.get("/team")
-async def get_team(company_id: str, user = Depends(get_current_user)):
+async def get_team(company_id: str, user=Depends(get_current_user)):
     """Return all members of a company with their wallet addresses."""
     db = get_supabase()
-    response = db.table("company_members") \
-        .select("*, users(wallet_address)") \
-        .eq("company_id", company_id) \
+    response = (
+        db.table("company_members")
+        .select("*, users(wallet_address)")
+        .eq("company_id", company_id)
         .execute()
+    )
     return response.data

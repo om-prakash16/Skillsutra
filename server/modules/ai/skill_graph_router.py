@@ -2,6 +2,7 @@
 Skill Graph Intelligence Router.
 Exposes endpoints for graph-based skill matching and job-to-candidate evaluation.
 """
+
 from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel
 from typing import List, Optional
@@ -23,7 +24,7 @@ class SkillMatchRequest(BaseModel):
 async def get_related_skills(
     skill: str = Query(..., description="The skill to find relationships for"),
     depth: int = Query(2, description="How many hops to traverse"),
-    current_user=Depends(get_current_user)
+    current_user=Depends(get_current_user),
 ):
     """
     Given a single skill, return all semantically related skills
@@ -34,22 +35,24 @@ async def get_related_skills(
         return {
             "skill": skill,
             "message": "Skill not found in the graph. It may be valid but not yet mapped.",
-            "related_skills": {}
+            "related_skills": {},
         }
 
     return {
         "skill": skill,
         "depth": depth,
         "related_skills": related,
-        "total_connections": len(related)
+        "total_connections": len(related),
     }
 
 
 @router.get("/expand-job")
 async def expand_job_skills(
     job_id: Optional[str] = Query(None, description="Job ID to expand"),
-    skills: Optional[str] = Query(None, description="Comma-separated skills if no job_id"),
-    current_user=Depends(get_current_user)
+    skills: Optional[str] = Query(
+        None, description="Comma-separated skills if no job_id"
+    ),
+    current_user=Depends(get_current_user),
 ):
     """
     Expand a job's required skills into a full semantic graph.
@@ -60,7 +63,13 @@ async def expand_job_skills(
     if job_id:
         db = get_supabase()
         if db:
-            resp = db.table("jobs").select("skills_required, title").eq("id", job_id).single().execute()
+            resp = (
+                db.table("jobs")
+                .select("skills_required, title")
+                .eq("id", job_id)
+                .single()
+                .execute()
+            )
             if resp.data:
                 required_skills = resp.data.get("skills_required", [])
 
@@ -68,7 +77,9 @@ async def expand_job_skills(
         required_skills = [s.strip() for s in skills.split(",")]
 
     if not required_skills:
-        raise HTTPException(status_code=400, detail="Provide job_id or skills parameter")
+        raise HTTPException(
+            status_code=400, detail="Provide job_id or skills parameter"
+        )
 
     expanded = graph_service.parse_job_to_skill_graph("", required_skills)
 
@@ -76,14 +87,13 @@ async def expand_job_skills(
         "job_id": job_id,
         "explicit_skills": expanded["explicit_skills"],
         "expanded_skill_graph": expanded["expanded_skill_graph"],
-        "total_skills_in_graph": expanded["total_skills_in_graph"]
+        "total_skills_in_graph": expanded["total_skills_in_graph"],
     }
 
 
 @router.post("/match")
 async def match_candidate_to_job(
-    payload: SkillMatchRequest,
-    current_user=Depends(get_current_user)
+    payload: SkillMatchRequest, current_user=Depends(get_current_user)
 ):
     """
     Intelligent candidate-job matching using the Skill Graph.
@@ -93,10 +103,7 @@ async def match_candidate_to_job(
     result = graph_service.match_candidate_to_job(
         candidate_skills=payload.candidate_skills,
         required_skills=payload.required_skills,
-        proof_score=payload.proof_score
+        proof_score=payload.proof_score,
     )
 
-    return {
-        "status": "success",
-        "match_result": result
-    }
+    return {"status": "success", "match_result": result}

@@ -1,9 +1,10 @@
 import uuid
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from core.supabase import get_supabase
 
 # In-memory cache for feature flags to reduce DB hits
 _FEATURE_CACHE: Dict[str, bool] = {}
+
 
 class FeatureFlagService:
     @staticmethod
@@ -14,10 +15,16 @@ class FeatureFlagService:
         global _FEATURE_CACHE
         if feature_name in _FEATURE_CACHE and not force_refresh:
             return _FEATURE_CACHE[feature_name]
-            
+
         db = get_supabase()
-        response = db.table("feature_flags").select("is_enabled").eq("feature_name", feature_name).maybe_single().execute()
-        
+        response = (
+            db.table("feature_flags")
+            .select("is_enabled")
+            .eq("feature_name", feature_name)
+            .maybe_single()
+            .execute()
+        )
+
         status = response.data.get("is_enabled", False) if response.data else False
         _FEATURE_CACHE[feature_name] = status
         return status
@@ -28,7 +35,12 @@ class FeatureFlagService:
         Fetch all features for admin dashboard.
         """
         db = get_supabase()
-        response = db.table("feature_flags").select("*").order("category", desc=False).execute()
+        response = (
+            db.table("feature_flags")
+            .select("*")
+            .order("category", desc=False)
+            .execute()
+        )
         return response.data if response.data else []
 
     @staticmethod
@@ -38,12 +50,14 @@ class FeatureFlagService:
         """
         global _FEATURE_CACHE
         db = get_supabase()
-        
-        db.table("feature_flags").update({
-            "is_enabled": is_enabled,
-            "updated_by": str(admin_id),
-            "updated_at": "now()"
-        }).eq("feature_name", feature_name).execute()
-        
+
+        db.table("feature_flags").update(
+            {
+                "is_enabled": is_enabled,
+                "updated_by": str(admin_id),
+                "updated_at": "now()",
+            }
+        ).eq("feature_name", feature_name).execute()
+
         # Invalidate cache
         _FEATURE_CACHE[feature_name] = is_enabled

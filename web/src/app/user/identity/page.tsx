@@ -39,7 +39,7 @@ export default function IdentityNexusPage() {
         setLoading(true)
         try {
             // Ideally an api.identity.getStatus()
-            const data = await api.identity.getHistory(user?.id || "")
+            const data = await api.identity.getStatus(user?.id || "")
             // For now, we simulate fetching the row from user_identities
             // In a real app, this would be a specific identity table fetch
             setStatus(data?.identity || { id_status: "not_started" })

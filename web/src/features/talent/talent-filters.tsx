@@ -26,7 +26,7 @@ export function TalentFilters() {
     const updateFilter = (key: string, value: string) => {
         const current = getFilter(key)
         const newValues = current.includes(value)
-            ? current.filter(v => v !== value)
+            ? current.filter((v: any) => v !== value)
             : [...current, value]
 
         const params = new URLSearchParams(searchParams.toString())
@@ -92,13 +92,13 @@ export function TalentFilters() {
 
             <ScrollArea className="h-[calc(100vh-250px)] pr-4" viewportRef={scrollRef}>
                 <div className="space-y-1 pb-8">
-                    {sections.map((section, index) => (
+                    {sections.map((section: any, index: any) => (
                         <FilterSection
                             key={section.id}
                             title={section.title}
                             options={section.options}
                             selected={getFilter(section.id)}
-                            onChange={(val) => updateFilter(section.id, val)}
+                            onChange={(val: string) => updateFilter(section.id, val)}
                             isLast={index === sections.length - 1}
                         />
                     ))}

@@ -179,7 +179,7 @@ export function SkillGrowthTracker() {
                     <div className="space-y-4">
                         <div className="flex items-center justify-between px-1">
                             <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Milestones</h4>
-                            <Badge variant="ghost" className="text-[10px] uppercase font-black text-primary p-0">View All</Badge>
+                            <Badge variant="outline" className="text-[10px] uppercase font-black text-primary p-0">View All</Badge>
                         </div>
                         <div className="space-y-2 max-h-[140px] overflow-y-auto pr-2 custom-scrollbar">
                             {data.milestones.length > 0 ? (
@@ -223,7 +223,7 @@ export function SkillGrowthTracker() {
     )
 }
 
-function CustomTooltip({ active, payload, label }: TooltipProps<number, string>) {
+function CustomTooltip({ active, payload, label }: any) {
     if (active && payload && payload.length) {
         return (
             <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-3 rounded-2xl shadow-2xl">

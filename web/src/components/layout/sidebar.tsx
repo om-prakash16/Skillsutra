@@ -247,10 +247,10 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                                 "w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black shrink-0",
                                 role === "admin" ? "bg-rose-500/20 text-rose-400" : "bg-primary/20 text-primary"
                             )}>
-                                {(user.username || user.name || "?").charAt(0).toUpperCase()}
+                                {(user.name || user.name || "?").charAt(0).toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-[11px] font-bold truncate text-white/80">{user.username || user.name || "User"}</p>
+                                <p className="text-[11px] font-bold truncate text-white/80">{user.name || user.name || "User"}</p>
                                 <p className="text-[8px] uppercase tracking-widest text-white/30 font-bold">{user.role || role}</p>
                             </div>
                         </div>

@@ -32,7 +32,7 @@ export function ProjectsTab({ data, isEditing, onAdd, onDelete, onUpdate }: Proj
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
-                {data.projects.map((project) => (
+                {data.projects.map((project: any) => (
                     <Card key={project.id} className="flex flex-col h-full hover:border-primary/50 transition-colors">
                         <CardHeader className="pb-4">
                             <div className="flex justify-between items-start gap-4">
@@ -119,7 +119,7 @@ export function ProjectsTab({ data, isEditing, onAdd, onDelete, onUpdate }: Proj
                         </CardContent>
                         <CardFooter>
                             <div className="flex flex-wrap gap-1.5">
-                                {project.stack.map(tech => (
+                                {project.stack.map((tech: any) => (
                                     <Badge key={tech} variant="secondary" className="text-xs font-normal">
                                         {tech}
                                     </Badge>

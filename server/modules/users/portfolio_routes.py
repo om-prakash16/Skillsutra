@@ -2,15 +2,16 @@
 Portfolio & Project Ledger Routes.
 Handles project submissions, AI scoring, and on-chain hash generation.
 """
-from fastapi import APIRouter, HTTPException
+
+from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional, List
 from core.supabase import get_supabase
 from datetime import datetime
 import hashlib
-import os
 
 router = APIRouter()
+
 
 # ─── Models ───────────────────────────────────────────────────────────
 class ProjectSubmission(BaseModel):
@@ -21,7 +22,9 @@ class ProjectSubmission(BaseModel):
     tech_stack: List[str] = []
     live_url: Optional[str] = None
 
+
 # ─── Endpoints ────────────────────────────────────────────────────────
+
 
 @router.get("/projects")
 async def get_projects(wallet: str):
@@ -37,7 +40,7 @@ async def get_projects(wallet: str):
                 "tech_stack": ["Rust", "Solana", "React", "TypeScript"],
                 "ai_score": 94,
                 "on_chain_hash": "0x7f8e2a1b3c4d5e6f...",
-                "created_at": "2026-04-01T10:00:00"
+                "created_at": "2026-04-01T10:00:00",
             },
             {
                 "id": "mock-2",
@@ -47,7 +50,7 @@ async def get_projects(wallet: str):
                 "tech_stack": ["Cairo", "Next.js", "Anchor"],
                 "ai_score": 89,
                 "on_chain_hash": "0x3a4b5c6d7e8f9a0b...",
-                "created_at": "2026-03-28T14:00:00"
+                "created_at": "2026-03-28T14:00:00",
             },
             {
                 "id": "mock-3",
@@ -57,20 +60,24 @@ async def get_projects(wallet: str):
                 "tech_stack": ["Python", "FastAPI", "LangChain"],
                 "ai_score": 82,
                 "on_chain_hash": "0x9c0d1e2f3a4b5c6d...",
-                "created_at": "2026-03-20T09:00:00"
-            }
+                "created_at": "2026-03-20T09:00:00",
+            },
         ]
 
-    response = db.table("project_ledger").select("*") \
-        .eq("candidate_wallet", wallet) \
-        .order("created_at", desc=True).execute()
+    response = (
+        db.table("project_ledger")
+        .select("*")
+        .eq("candidate_wallet", wallet)
+        .order("created_at", desc=True)
+        .execute()
+    )
     return response.data
 
 
 @router.post("/projects")
 async def add_project(data: ProjectSubmission):
     """Submit a new project for AI evaluation and on-chain hashing."""
-    
+
     # Generate deterministic hash for on-chain storage
     hash_input = f"{data.project_name}|{data.github_link}|{'|'.join(data.tech_stack)}|{datetime.utcnow().isoformat()}"
     project_hash = "0x" + hashlib.sha256(hash_input.encode()).hexdigest()
@@ -93,7 +100,7 @@ async def add_project(data: ProjectSubmission):
         return {
             "status": "success",
             "project": project_data,
-            "message": "Project evaluated and hashed (mock mode)"
+            "message": "Project evaluated and hashed (mock mode)",
         }
 
     response = db.table("project_ledger").insert(project_data).execute()
@@ -101,7 +108,7 @@ async def add_project(data: ProjectSubmission):
         "status": "success",
         "project": response.data[0] if response.data else project_data,
         "on_chain_hash": project_hash,
-        "ai_score": ai_score
+        "ai_score": ai_score,
     }
 
 
@@ -122,15 +129,21 @@ def _calculate_project_score(data: ProjectSubmission) -> int:
 
     # Tech stack diversity
     tech_count = len(data.tech_stack)
-    if tech_count >= 4: score += 20
-    elif tech_count >= 3: score += 15
-    elif tech_count >= 2: score += 10
+    if tech_count >= 4:
+        score += 20
+    elif tech_count >= 3:
+        score += 15
+    elif tech_count >= 2:
+        score += 10
 
     # Description quality
     desc_len = len(data.description)
-    if desc_len > 200: score += 15
-    elif desc_len > 100: score += 10
-    elif desc_len > 50: score += 5
+    if desc_len > 200:
+        score += 15
+    elif desc_len > 100:
+        score += 10
+    elif desc_len > 50:
+        score += 5
 
     # Advanced tech detection
     advanced_tech = {"Rust", "Solana", "Cairo", "ZK", "Anchor", "Move", "Sui"}

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { motion } from "react-router-dom"
+import { motion, AnimatePresence } from "framer-motion"
 import { Search, Filter, UserX, ShieldAlert, MoreVertical, ShieldCheck } from "lucide-react"
 import { AdminTable } from "@/features/admin/admin-table"
 import { EditUserModal } from "@/features/admin/edit-user-modal"
@@ -54,14 +54,29 @@ export default function StaffUserModeration() {
 
             <div className="bg-black/20 border border-white/5 rounded-[2.5rem] overflow-hidden backdrop-blur-xl">
                 <AdminTable 
-                    onEdit={handleEdit}
-                    columns={[
-                        { label: "Talent", key: "full_name" },
-                        { label: "Status", key: "status" },
-                        { label: "Reputation", key: "reputation_score" },
-                        { label: "Joined", key: "created_at" }
-                    ]}
-                />
+                    headers={["Talent", "Status", "Reputation", "Joined"]}
+                >
+                    {/* Mock data for demonstration - in production this would be mapped from a users array */}
+                    {[
+                        { id: "1", full_name: "Alice Blockchain", status: "active", reputation_score: 980, created_at: "2024-01-10" },
+                        { id: "2", full_name: "Bob Rust", status: "suspended", reputation_score: 420, created_at: "2023-11-15" }
+                    ].map((user, i) => (
+                        <tr 
+                            key={user.id} 
+                            onClick={() => handleEdit(user)}
+                            className="border-b border-white/5 hover:bg-white/[0.02] cursor-pointer group"
+                        >
+                            <td className="py-7 px-8 text-sm font-medium text-white">{user.full_name}</td>
+                            <td className="py-7 px-8 text-sm font-medium">
+                                <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${user.status === 'active' ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
+                                    {user.status}
+                                </span>
+                            </td>
+                            <td className="py-7 px-8 text-sm font-medium text-white/60">{user.reputation_score}</td>
+                            <td className="py-7 px-8 text-sm font-medium text-white/40">{user.created_at}</td>
+                        </tr>
+                    ))}
+                </AdminTable>
             </div>
 
             {selectedUser && (
@@ -69,6 +84,9 @@ export default function StaffUserModeration() {
                     user={selectedUser}
                     isOpen={isEditModalOpen}
                     onClose={() => setIsEditModalOpen(false)}
+                    onSuccess={() => {
+                        // Refresh logic here
+                    }}
                 />
             )}
         </div>

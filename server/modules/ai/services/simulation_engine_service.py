@@ -3,13 +3,12 @@ Real Work Simulation Engine Service.
 Generates role-specific micro-projects from job descriptions,
 and evaluates submissions across 5 quality dimensions.
 """
+
 from typing import Dict, Any, List
-import uuid
 import hashlib
 
 
 class SimulationEngineService:
-
     # Task templates mapped to detected role keywords
     TASK_TEMPLATES = {
         "backend": {
@@ -22,8 +21,8 @@ class SimulationEngineService:
                 "Validates email format and password strength (8+ chars, 1 number)",
                 "Returns structured JSON with access_token on success",
                 "Returns 422 with clear error messages on invalid input",
-                "Includes at least one middleware (rate-limit or logging)"
-            ]
+                "Includes at least one middleware (rate-limit or logging)",
+            ],
         },
         "frontend": {
             "title": "Create a Responsive Dashboard Card",
@@ -35,8 +34,8 @@ class SimulationEngineService:
                 "Green arrow for positive change, red for negative",
                 "Responsive: stacks vertically on mobile, horizontal on desktop",
                 "Smooth CSS animation on mount",
-                "Props are fully typed with TypeScript interfaces"
-            ]
+                "Props are fully typed with TypeScript interfaces",
+            ],
         },
         "data_science": {
             "title": "Analyze User Engagement Dataset",
@@ -48,8 +47,8 @@ class SimulationEngineService:
                 "Correlation matrix is computed correctly",
                 "Top 3 churn-correlating features are identified with reasoning",
                 "At least 2 visualizations (bar chart + heatmap)",
-                "Summary report is written in markdown or print statements"
-            ]
+                "Summary report is written in markdown or print statements",
+            ],
         },
         "smart_contract": {
             "title": "Build a Token Vesting Contract",
@@ -61,8 +60,8 @@ class SimulationEngineService:
                 "Beneficiary can claim proportional tokens based on elapsed time",
                 "Cannot claim more than vested amount",
                 "Uses PDA for the vault account",
-                "Includes at least 2 unit tests"
-            ]
+                "Includes at least 2 unit tests",
+            ],
         },
         "devops": {
             "title": "Containerize and Deploy a Microservice",
@@ -74,26 +73,42 @@ class SimulationEngineService:
                 "docker-compose.yml defines api and db services with networking",
                 "Environment variables are properly externalized",
                 "Health check endpoint returns DB connection status",
-                "Container starts successfully with `docker-compose up`"
-            ]
-        }
+                "Container starts successfully with `docker-compose up`",
+            ],
+        },
     }
 
-    def detect_role_from_job(self, job_title: str, job_description: str, required_skills: List[str]) -> str:
+    def detect_role_from_job(
+        self, job_title: str, job_description: str, required_skills: List[str]
+    ) -> str:
         """Detect the primary role category from the job posting."""
         combined = f"{job_title} {job_description} {' '.join(required_skills)}".lower()
 
-        if any(kw in combined for kw in ["solana", "anchor", "smart contract", "blockchain", "web3"]):
+        if any(
+            kw in combined
+            for kw in ["solana", "anchor", "smart contract", "blockchain", "web3"]
+        ):
             return "smart_contract"
-        if any(kw in combined for kw in ["data scien", "machine learning", "pandas", "analytics", "ml"]):
+        if any(
+            kw in combined
+            for kw in ["data scien", "machine learning", "pandas", "analytics", "ml"]
+        ):
             return "data_science"
-        if any(kw in combined for kw in ["react", "frontend", "ui", "css", "next.js", "vue"]):
+        if any(
+            kw in combined
+            for kw in ["react", "frontend", "ui", "css", "next.js", "vue"]
+        ):
             return "frontend"
-        if any(kw in combined for kw in ["docker", "kubernetes", "devops", "ci/cd", "infrastructure"]):
+        if any(
+            kw in combined
+            for kw in ["docker", "kubernetes", "devops", "ci/cd", "infrastructure"]
+        ):
             return "devops"
         return "backend"  # Default fallback
 
-    def generate_simulation(self, job_title: str, job_description: str, required_skills: List[str]) -> Dict[str, Any]:
+    def generate_simulation(
+        self, job_title: str, job_description: str, required_skills: List[str]
+    ) -> Dict[str, Any]:
         """Generate a role-specific simulation task from a job description."""
         role = self.detect_role_from_job(job_title, job_description, required_skills)
         template = self.TASK_TEMPLATES[role]
@@ -107,57 +122,86 @@ class SimulationEngineService:
                 "description": template["description"],
                 "time_limit_minutes": template["time_limit_minutes"],
                 "acceptance_criteria": template["acceptance_criteria"],
-                "boilerplate_info": template["boilerplate"]
-            }
+                "boilerplate_info": template["boilerplate"],
+            },
         }
 
-    def evaluate_submission(self, simulation_id: str, submitted_code: str) -> Dict[str, Any]:
+    def evaluate_submission(
+        self, simulation_id: str, submitted_code: str
+    ) -> Dict[str, Any]:
         """
         Evaluate submitted code across 5 quality dimensions.
         In production, this would use GPT-o1/Claude with AST parsing.
         For hackathon: deterministic scoring based on code characteristics.
         """
-        lines = submitted_code.strip().split('\n')
+        lines = submitted_code.strip().split("\n")
         line_count = len(lines)
-        has_comments = any(l.strip().startswith('#') or l.strip().startswith('//') for l in lines)
-        has_try_catch = 'try' in submitted_code.lower() and ('except' in submitted_code.lower() or 'catch' in submitted_code.lower())
-        has_types = 'def ' in submitted_code and ':' in submitted_code or 'interface' in submitted_code or ': string' in submitted_code
-        has_functions = submitted_code.count('def ') + submitted_code.count('function ') + submitted_code.count('=>')
+        has_comments = any(
+            line.strip().startswith("#") or line.strip().startswith("//") for line in lines
+        )
+        has_try_catch = "try" in submitted_code.lower() and (
+            "except" in submitted_code.lower() or "catch" in submitted_code.lower()
+        )
+        has_types = (
+            "def " in submitted_code
+            and ":" in submitted_code
+            or "interface" in submitted_code
+            or ": string" in submitted_code
+        )
+        has_functions = (
+            submitted_code.count("def ")
+            + submitted_code.count("function ")
+            + submitted_code.count("=>")
+        )
 
         # Score each dimension
         code_quality = 50
-        if has_comments: code_quality += 15
-        if has_types: code_quality += 15
-        if line_count > 20: code_quality += 10
+        if has_comments:
+            code_quality += 15
+        if has_types:
+            code_quality += 15
+        if line_count > 20:
+            code_quality += 10
         code_quality = min(100, code_quality + (min(has_functions, 5) * 2))
 
         problem_solving = 55
-        if has_functions >= 3: problem_solving += 20
-        if line_count > 40: problem_solving += 15
+        if has_functions >= 3:
+            problem_solving += 20
+        if line_count > 40:
+            problem_solving += 15
         problem_solving = min(100, problem_solving + 10)
 
         performance = 60
-        if 'async' in submitted_code or 'await' in submitted_code: performance += 15
-        if 'cache' in submitted_code.lower(): performance += 10
+        if "async" in submitted_code or "await" in submitted_code:
+            performance += 15
+        if "cache" in submitted_code.lower():
+            performance += 10
         performance = min(100, performance)
 
         logic_structure = 50
-        if has_try_catch: logic_structure += 20
-        if has_functions >= 2: logic_structure += 15
+        if has_try_catch:
+            logic_structure += 20
+        if has_functions >= 2:
+            logic_structure += 15
         logic_structure = min(100, logic_structure + 15)
 
         documentation = 40
-        if has_comments: documentation += 30
-        if 'readme' in submitted_code.lower() or '"""' in submitted_code or '/**' in submitted_code:
+        if has_comments:
+            documentation += 30
+        if (
+            "readme" in submitted_code.lower()
+            or '"""' in submitted_code
+            or "/**" in submitted_code
+        ):
             documentation += 20
         documentation = min(100, documentation)
 
         composite = int(
-            code_quality * 0.25 +
-            problem_solving * 0.25 +
-            performance * 0.20 +
-            logic_structure * 0.20 +
-            documentation * 0.10
+            code_quality * 0.25
+            + problem_solving * 0.25
+            + performance * 0.20
+            + logic_structure * 0.20
+            + documentation * 0.10
         )
 
         passed = composite >= 65
@@ -167,12 +211,43 @@ class SimulationEngineService:
             "passed": passed,
             "composite_score": composite,
             "evaluation": {
-                "code_quality": {"score": code_quality, "feedback": "Clean naming conventions and type safety detected." if code_quality >= 70 else "Consider improving variable naming and adding type hints."},
-                "problem_solving": {"score": problem_solving, "feedback": "Well-structured approach with appropriate function decomposition." if problem_solving >= 70 else "Try decomposing the problem into smaller helper functions."},
-                "performance": {"score": performance, "feedback": "Good use of async patterns for I/O operations." if performance >= 70 else "Consider async patterns for better throughput."},
-                "logic_structure": {"score": logic_structure, "feedback": "Proper error handling and separation of concerns." if logic_structure >= 70 else "Add try/catch blocks and separate business logic from routing."},
-                "documentation": {"score": documentation, "feedback": "Meaningful comments and documentation present." if documentation >= 70 else "Add inline comments explaining complex logic blocks."}
+                "code_quality": {
+                    "score": code_quality,
+                    "feedback": "Clean naming conventions and type safety detected."
+                    if code_quality >= 70
+                    else "Consider improving variable naming and adding type hints.",
+                },
+                "problem_solving": {
+                    "score": problem_solving,
+                    "feedback": "Well-structured approach with appropriate function decomposition."
+                    if problem_solving >= 70
+                    else "Try decomposing the problem into smaller helper functions.",
+                },
+                "performance": {
+                    "score": performance,
+                    "feedback": "Good use of async patterns for I/O operations."
+                    if performance >= 70
+                    else "Consider async patterns for better throughput.",
+                },
+                "logic_structure": {
+                    "score": logic_structure,
+                    "feedback": "Proper error handling and separation of concerns."
+                    if logic_structure >= 70
+                    else "Add try/catch blocks and separate business logic from routing.",
+                },
+                "documentation": {
+                    "score": documentation,
+                    "feedback": "Meaningful comments and documentation present."
+                    if documentation >= 70
+                    else "Add inline comments explaining complex logic blocks.",
+                },
             },
             "sbt_eligible": composite >= 80,
-            "recommendation": "Mint 'Simulation Verified' SBT" if composite >= 80 else ("Passed. Encourage candidate to retake for SBT eligibility." if passed else "Did not meet minimum threshold. Recommend further skill development.")
+            "recommendation": "Mint 'Simulation Verified' SBT"
+            if composite >= 80
+            else (
+                "Passed. Encourage candidate to retake for SBT eligibility."
+                if passed
+                else "Did not meet minimum threshold. Recommend further skill development."
+            ),
         }

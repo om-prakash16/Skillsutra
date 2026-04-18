@@ -29,7 +29,7 @@ export function EducationTab({ data, isEditing, onAdd, onDelete, onUpdate }: Edu
                 )}
             </CardHeader>
             <CardContent className="space-y-6">
-                {data.education.map((edu, index) => (
+                {data.education.map((edu: any, index: any) => (
                     <div key={edu.id} className={`flex gap-4 ${index !== data.education.length - 1 ? "pb-6 border-b border-border/50" : ""}`}>
                         <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center shrink-0 border border-border/50">
                             <GraduationCap className="w-6 h-6 text-muted-foreground" />

@@ -1,9 +1,10 @@
 import logging
 import asyncio
 import random
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 logger = logging.getLogger(__name__)
+
 
 class GitHubService:
     """
@@ -18,8 +19,10 @@ class GitHubService:
         Analyze a candidate's GitHub repositories to extract core skill metrics.
         Returns a structured dictionary of metrics including complexity scores.
         """
-        logger.info(f"Initiating deep AST forensic scan on GitHub handle: {github_handle}")
-        
+        logger.info(
+            f"Initiating deep AST forensic scan on GitHub handle: {github_handle}"
+        )
+
         # Simulate network latency for API calls / AST parsing
         await asyncio.sleep(1.5)
 
@@ -28,8 +31,8 @@ class GitHubService:
         # 2. Clone/Sparse checkout recent commits
         # 3. Run radon/lizard for Python, ESLint complexity plugin for TS, etc.
         # 4. Aggregate results.
-        
-        # For our demonstrative prototype, we compute a highly realistic deterministic mock 
+
+        # For our demonstrative prototype, we compute a highly realistic deterministic mock
         # based on the handle name to ensure consistency during evaluations.
         seed_value = sum([ord(c) for c in github_handle])
         random.seed(seed_value)
@@ -37,16 +40,16 @@ class GitHubService:
         # Metric generation logic
         total_repos = random.randint(5, 45)
         stars_earned = random.randint(0, 1200)
-        
+
         top_languages = ["Rust", "TypeScript", "Python", "Go", "Solidity"]
         random.shuffle(top_languages)
-        user_langs = top_languages[:random.randint(2, 4)]
-        
-        # AST Complexity (Lower is better usually, but here we treat it as 
+        user_langs = top_languages[: random.randint(2, 4)]
+
+        # AST Complexity (Lower is better usually, but here we treat it as
         # a 'handling complexity' score - e.g., capable of handling highly complex architectures)
         architectural_complexity_score = random.randint(65, 98)
-        commit_velocity = random.randint(10, 85) # Weekly commit rate
-        
+        commit_velocity = random.randint(10, 85)  # Weekly commit rate
+
         # Code Quality heuristic
         code_quality_index = random.randint(70, 99)
 
@@ -58,12 +61,16 @@ class GitHubService:
             "metrics": {
                 "architectural_complexity_handling": architectural_complexity_score,
                 "commit_velocity_weekly": commit_velocity,
-                "code_quality_index": code_quality_index
+                "code_quality_index": code_quality_index,
             },
-            "insight": GitHubService._generate_insight(code_quality_index, architectural_complexity_score)
+            "insight": GitHubService._generate_insight(
+                code_quality_index, architectural_complexity_score
+            ),
         }
 
-        logger.info(f"Scan complete for {github_handle}. Quality Index: {code_quality_index}")
+        logger.info(
+            f"Scan complete for {github_handle}. Quality Index: {code_quality_index}"
+        )
         return analysis_result
 
     @staticmethod
@@ -73,10 +80,11 @@ class GitHubService:
             return "Elite architectural patterns detected. Codebase demonstrates advanced concurrency and memory safety."
         elif quality > 85:
             return "Strong production-ready code output with consistent documentation and tests."
-        elif commit_velocity := random.randint(10, 85) > 50:
+        elif random.randint(10, 85) > 50:
             return "High velocity contributor. Fast prototyping skills dominant over deep architectural design."
         else:
             return "Steady contributor. Typical entry/mid-level codebase complexity."
+
 
 # Singleton instance
 github_scanner = GitHubService()

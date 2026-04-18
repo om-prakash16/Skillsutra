@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export function AnalyticsTab({ company }: { company: Company }) {
     const data = company.analytics.jobsOverTime
-    const maxVal = Math.max(...data.map(d => d.jobs), 1)
+    const maxVal = Math.max(...data.map((d: any) => d.jobs), 1)
 
     return (
         <div className="space-y-6">
@@ -13,7 +13,7 @@ export function AnalyticsTab({ company }: { company: Company }) {
                 </CardHeader>
                 <CardContent>
                     <div className="h-64 flex items-end gap-2 sm:gap-4 mt-4">
-                        {data.map((item, i) => (
+                        {data.map((item: any, i: any) => (
                             <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
                                 <div
                                     className="w-full bg-primary/20 hover:bg-primary/40 rounded-t-sm transition-all relative group-hover:shadow-lg"

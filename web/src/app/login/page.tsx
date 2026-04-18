@@ -43,7 +43,7 @@ export default function LoginPage() {
                         <p className="text-sm font-mono text-white truncate">{publicKey?.toBase58()}</p>
                     </div>
                     <Button 
-                        onClick={walletLogin} 
+                        onClick={() => walletLogin()} 
                         disabled={isLoading}
                         className="w-full h-12 text-lg font-black bg-white text-black hover:bg-neutral-200"
                     >

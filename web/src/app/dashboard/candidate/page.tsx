@@ -15,7 +15,9 @@ import {
     Sparkles,
     Zap,
     CloudSync,
-    RefreshCw
+    RefreshCw,
+    ShieldCheck,
+    Lock
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"

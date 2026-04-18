@@ -7,11 +7,12 @@ import { ArrowRight, Star, Clock } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 
 interface OverviewTabProps {
-    data: UserProfile
+    data: any
     isEditing?: boolean
+    onUpdate?: (username: string) => void
 }
 
-export function OverviewTab({ data, isEditing }: OverviewTabProps) {
+export function OverviewTab({ data, isEditing, onUpdate }: OverviewTabProps) {
     return (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Summary Section */}
@@ -41,7 +42,7 @@ export function OverviewTab({ data, isEditing }: OverviewTabProps) {
                         </CardHeader>
                         <CardContent>
                             <div className="flex flex-wrap gap-2">
-                                {data.skills.filter(s => s.level === "Advanced").slice(0, 5).map(skill => (
+                                {data.skills.filter((s: any) => s.level === "Advanced").slice(0, 5).map((skill: any) => (
                                     <Badge key={skill.name} variant="secondary">
                                         {skill.name}
                                     </Badge>
@@ -55,7 +56,7 @@ export function OverviewTab({ data, isEditing }: OverviewTabProps) {
                             <CardTitle>Experience Summary</CardTitle>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            {data.experience.slice(0, 2).map(exp => (
+                            {data.experience.slice(0, 2).map((exp: any) => (
                                 <div key={exp.id} className="flex gap-3 items-start">
                                     <div className="w-10 h-10 rounded bg-muted flex items-center justify-center shrink-0 font-bold text-muted-foreground text-xs">
                                         {exp.company.substring(0, 2).toUpperCase()}
@@ -109,7 +110,7 @@ export function OverviewTab({ data, isEditing }: OverviewTabProps) {
                         <div>
                             <p className="text-xs text-muted-foreground font-medium mb-1">Languages</p>
                             <div className="flex flex-wrap gap-1.5">
-                                {data.basic.languages?.map(lang => (
+                                {data.basic.languages?.map((lang: any) => (
                                     <Badge key={lang} variant="outline" className="text-xs">{lang}</Badge>
                                 )) || <span className="text-sm">English</span>}
                             </div>

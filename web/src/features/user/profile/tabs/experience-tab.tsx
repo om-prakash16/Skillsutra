@@ -31,7 +31,7 @@ export function ExperienceTab({ data, isEditing, onAdd, onDelete, onUpdate }: Ex
                 )}
             </CardHeader>
             <CardContent className="space-y-6">
-                {data.experience.map((exp, index) => (
+                {data.experience.map((exp: any, index: any) => (
                     <div key={exp.id} className={`relative flex gap-4 ${index !== data.experience.length - 1 ? "pb-6 border-b border-border/50" : ""}`}>
                         <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center shrink-0 border border-border/50">
                             {exp.logo ? (

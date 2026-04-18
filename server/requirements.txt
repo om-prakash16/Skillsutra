@@ -13,3 +13,5 @@ base58
 scikit-learn
 numpy
 PyJWT
+ruff
+mypy

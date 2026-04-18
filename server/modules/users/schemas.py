@@ -1,14 +1,17 @@
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 from uuid import UUID
 from datetime import datetime
+
 
 class UserSkillBase(BaseModel):
     skill_name: str
     proficiency_level: int = 1
 
+
 class UserSkillCreate(UserSkillBase):
     pass
+
 
 class UserSkill(UserSkillBase):
     id: UUID
@@ -19,6 +22,7 @@ class UserSkill(UserSkillBase):
 
     class Config:
         from_attributes = True
+
 
 class VerificationStatus(BaseModel):
     is_verified: bool

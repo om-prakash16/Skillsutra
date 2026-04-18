@@ -1,20 +1,24 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from uuid import UUID
 from datetime import datetime
 from typing import Optional, Dict, Any
 
+
 class NotificationBase(BaseModel):
     user_id: UUID
-    type: str # e.g., 'nft_minted', 'job_offer'
+    type: str  # e.g., 'nft_minted', 'job_offer'
     title: str
     message: str
     metadata: Optional[Dict[str, Any]] = {}
 
+
 class NotificationCreate(NotificationBase):
     pass
 
+
 class NotificationUpdate(BaseModel):
-    status: str # 'read' or 'unread'
+    status: str  # 'read' or 'unread'
+
 
 class NotificationResponse(NotificationBase):
     id: UUID
@@ -24,6 +28,7 @@ class NotificationResponse(NotificationBase):
     class Config:
         from_attributes = True
 
+
 class ActivityLogBase(BaseModel):
     user_id: Optional[UUID] = None
     action_type: str
@@ -32,8 +37,10 @@ class ActivityLogBase(BaseModel):
     description: Optional[str] = None
     tx_hash: Optional[str] = None
 
+
 class ActivityLogCreate(ActivityLogBase):
     pass
+
 
 class ActivityLogResponse(ActivityLogBase):
     id: UUID
@@ -41,6 +48,7 @@ class ActivityLogResponse(ActivityLogBase):
 
     class Config:
         from_attributes = True
+
 
 class AILogBase(BaseModel):
     user_id: Optional[UUID] = None
@@ -50,8 +58,10 @@ class AILogBase(BaseModel):
     output_data: Optional[Dict[str, Any]] = None
     token_usage: Optional[int] = 0
 
+
 class AILogCreate(AILogBase):
     pass
+
 
 class AILogResponse(AILogBase):
     id: UUID

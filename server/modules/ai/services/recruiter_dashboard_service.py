@@ -3,14 +3,13 @@ Recruiter Intelligence Dashboard Service.
 Aggregates hiring analytics, talent availability, skill demand trends,
 and generates predictive insights for recruiters.
 """
-from typing import Dict, Any, List, Optional
+
+from typing import Dict, Any, List
 from core.supabase import get_supabase
 import random
-import math
 
 
 class RecruiterDashboardService:
-
     def get_candidate_rankings(self, job_id: str) -> List[Dict[str, Any]]:
         """Rank applicants by AI match % + Proof-Score, not application date."""
         db = get_supabase()
@@ -18,9 +17,12 @@ class RecruiterDashboardService:
             return self._mock_rankings()
 
         try:
-            apps = db.table("applications").select(
-                "id, candidate_wallet, status, created_at"
-            ).eq("job_id", job_id).execute()
+            apps = (
+                db.table("applications")
+                .select("id, candidate_wallet, status, created_at")
+                .eq("job_id", job_id)
+                .execute()
+            )
 
             if not apps.data:
                 return self._mock_rankings()
@@ -28,22 +30,43 @@ class RecruiterDashboardService:
             rankings = []
             for app in apps.data:
                 wallet = app.get("candidate_wallet", "")
-                user_resp = db.table("users").select("full_name, profile_data").eq("wallet_address", wallet).single().execute()
-                rep_resp = db.table("reputation_history").select("total_score").eq("wallet_address", wallet).order("recorded_at", desc=True).limit(1).execute()
+                user_resp = (
+                    db.table("users")
+                    .select("full_name, profile_data")
+                    .eq("wallet_address", wallet)
+                    .single()
+                    .execute()
+                )
+                rep_resp = (
+                    db.table("reputation_history")
+                    .select("total_score")
+                    .eq("wallet_address", wallet)
+                    .order("recorded_at", desc=True)
+                    .limit(1)
+                    .execute()
+                )
 
-                name = user_resp.data.get("full_name", "Unknown") if user_resp.data else "Unknown"
+                name = (
+                    user_resp.data.get("full_name", "Unknown")
+                    if user_resp.data
+                    else "Unknown"
+                )
                 score = rep_resp.data[0].get("total_score", 0) if rep_resp.data else 0
                 match_pct = min(99, score / 10 + random.randint(0, 10))
 
-                rankings.append({
-                    "name": name,
-                    "wallet": wallet,
-                    "proof_score": score,
-                    "match_percentage": round(match_pct, 1),
-                    "shield": "Green" if score >= 700 else ("Yellow" if score >= 400 else "Red"),
-                    "status": app.get("status", "applied"),
-                    "applied_at": app.get("created_at")
-                })
+                rankings.append(
+                    {
+                        "name": name,
+                        "wallet": wallet,
+                        "proof_score": score,
+                        "match_percentage": round(match_pct, 1),
+                        "shield": "Green"
+                        if score >= 700
+                        else ("Yellow" if score >= 400 else "Red"),
+                        "status": app.get("status", "applied"),
+                        "applied_at": app.get("created_at"),
+                    }
+                )
 
             rankings.sort(key=lambda x: x["match_percentage"], reverse=True)
             for i, r in enumerate(rankings):
@@ -61,7 +84,12 @@ class RecruiterDashboardService:
 
         if db:
             try:
-                apps = db.table("applications").select("candidate_wallet").eq("job_id", job_id).execute()
+                apps = (
+                    db.table("applications")
+                    .select("candidate_wallet")
+                    .eq("job_id", job_id)
+                    .execute()
+                )
                 total_applicants = len(apps.data) if apps.data else 0
                 qualified_count = max(1, int(total_applicants * 0.35))
             except Exception:
@@ -81,8 +109,12 @@ class RecruiterDashboardService:
             "predicted_days": predicted_days,
             "total_applicants": total_applicants,
             "qualified_count": qualified_count,
-            "pipeline_health": "Healthy" if qualified_count >= 10 else ("Moderate" if qualified_count >= 5 else "Critical"),
-            "recommendation": f"Expedite outreach to top {min(5, qualified_count)} candidates." if qualified_count < 15 else "Pipeline is healthy. Proceed with structured interviews."
+            "pipeline_health": "Healthy"
+            if qualified_count >= 10
+            else ("Moderate" if qualified_count >= 5 else "Critical"),
+            "recommendation": f"Expedite outreach to top {min(5, qualified_count)} candidates."
+            if qualified_count < 15
+            else "Pipeline is healthy. Proceed with structured interviews.",
         }
 
     def get_skill_demand_trends(self) -> List[Dict[str, Any]]:
@@ -93,7 +125,11 @@ class RecruiterDashboardService:
             {"skill": "Python", "trend": [90, 88, 91, 89, 90, 89], "change": "-1%"},
             {"skill": "Solidity", "trend": [65, 60, 55, 52, 48, 42], "change": "-18%"},
             {"skill": "Go", "trend": [30, 35, 38, 42, 48, 55], "change": "+22%"},
-            {"skill": "TypeScript", "trend": [70, 72, 75, 78, 80, 82], "change": "+12%"},
+            {
+                "skill": "TypeScript",
+                "trend": [70, 72, 75, 78, 80, 82],
+                "change": "+12%",
+            },
         ]
         return skills
 
@@ -102,7 +138,12 @@ class RecruiterDashboardService:
         return [
             {"skill": "React", "available": 1240, "avg_score": 620, "supply": "High"},
             {"skill": "Python", "available": 980, "avg_score": 590, "supply": "High"},
-            {"skill": "TypeScript", "available": 850, "avg_score": 640, "supply": "High"},
+            {
+                "skill": "TypeScript",
+                "available": 850,
+                "avg_score": 640,
+                "supply": "High",
+            },
             {"skill": "Go", "available": 185, "avg_score": 700, "supply": "Medium"},
             {"skill": "Rust", "available": 47, "avg_score": 810, "supply": "Scarce"},
             {"skill": "Solana", "available": 23, "avg_score": 860, "supply": "Scarce"},
@@ -115,21 +156,25 @@ class RecruiterDashboardService:
         for skill in required_skills:
             pool = availability.get(skill.lower())
             if pool:
-                gaps.append({
-                    "skill": skill,
-                    "required_level": 80,
-                    "pool_average": pool["avg_score"] // 10,
-                    "gap": max(0, 80 - pool["avg_score"] // 10),
-                    "available_candidates": pool["available"]
-                })
+                gaps.append(
+                    {
+                        "skill": skill,
+                        "required_level": 80,
+                        "pool_average": pool["avg_score"] // 10,
+                        "gap": max(0, 80 - pool["avg_score"] // 10),
+                        "available_candidates": pool["available"],
+                    }
+                )
             else:
-                gaps.append({
-                    "skill": skill,
-                    "required_level": 80,
-                    "pool_average": 0,
-                    "gap": 80,
-                    "available_candidates": 0
-                })
+                gaps.append(
+                    {
+                        "skill": skill,
+                        "required_level": 80,
+                        "pool_average": 0,
+                        "gap": 80,
+                        "available_candidates": 0,
+                    }
+                )
         return {"gaps": gaps}
 
     def get_engagement_funnel(self, job_id: str) -> Dict[str, Any]:
@@ -142,7 +187,7 @@ class RecruiterDashboardService:
             "offers_sent": 6,
             "hired": 2,
             "conversion_rate": "0.08%",
-            "avg_days_in_pipeline": 31
+            "avg_days_in_pipeline": 31,
         }
 
     def _mock_rankings(self) -> List[Dict[str, Any]]:
@@ -156,7 +201,7 @@ class RecruiterDashboardService:
                 "match_percentage": round(94.2 - (i * 8.5), 1),
                 "shield": "Green" if i < 3 else "Yellow",
                 "status": "applied",
-                "applied_at": f"2026-04-{10+i}T10:00:00Z"
+                "applied_at": f"2026-04-{10 + i}T10:00:00Z",
             }
             for i in range(5)
         ]

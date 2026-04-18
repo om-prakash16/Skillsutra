@@ -21,7 +21,7 @@ export function ReviewsTab({ company }: { company: Company }) {
 
             <div className="grid gap-4">
                 {company.reviews.length > 0 ? (
-                    company.reviews.map((review) => (
+                    company.reviews.map((review: any) => (
                         <Card key={review.id}>
                             <CardContent className="pt-6">
                                 <div className="flex justify-between items-start mb-4">
@@ -35,7 +35,7 @@ export function ReviewsTab({ company }: { company: Company }) {
                                         </div>
                                     </div>
                                     <div className="flex text-yellow-500 gap-0.5">
-                                        {[...Array(5)].map((_, i) => (
+                                        {[...Array(5)].map((_: any, i: any) => (
                                             <Star key={i} className={`w-4 h-4 ${i < review.rating ? "fill-current" : "text-muted"}`} />
                                         ))}
                                     </div>

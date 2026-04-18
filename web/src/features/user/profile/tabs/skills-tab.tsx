@@ -77,7 +77,7 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                 )}
 
                 {levels.map(level => {
-                    const skillsInLevel = data.skills.filter(s => s.level === level)
+                    const skillsInLevel = data.skills.filter((s: any) => s.level === level)
                     // If editing, show empty levels so we can see structure? Or just list?
                     if (skillsInLevel.length === 0 && !isEditing) return null
 
@@ -87,7 +87,7 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                                 <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">{level}</h3>
                             </div>
                             <div className="flex flex-wrap gap-3">
-                                {skillsInLevel.map(skill => (
+                                {skillsInLevel.map((skill: any) => (
                                     <div
                                         key={skill.name}
                                         className="flex items-center gap-2 px-3 py-1.5 bg-muted/50 hover:bg-muted border rounded-lg transition-colors cursor-default group"

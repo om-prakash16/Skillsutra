@@ -1,7 +1,7 @@
 from uuid import UUID
 from typing import Optional, Dict, Any, List
-from modules.notifications.schemas import NotificationCreate, ActivityLogCreate
 from core.supabase import get_supabase
+
 
 class NotificationService:
     @staticmethod
@@ -11,14 +11,15 @@ class NotificationService:
         title: str,
         message: str,
         metadata: Optional[Dict[str, Any]] = None,
-        link: Optional[str] = None
+        link: Optional[str] = None,
     ):
         """
         Create a new persistent notification in the database.
         """
         db = get_supabase()
-        if not db: return None
-        
+        if not db:
+            return None
+
         notification_data = {
             "user_id": str(user_id),
             "type": type,
@@ -26,9 +27,9 @@ class NotificationService:
             "message": message,
             "metadata": metadata or {},
             "link": link,
-            "status": "unread"
+            "status": "unread",
         }
-        
+
         response = db.table("notifications").insert(notification_data).execute()
         return response.data[0] if response.data else None
 
@@ -40,14 +41,15 @@ class NotificationService:
         entity_id: Optional[Any] = None,
         description: Optional[str] = None,
         tx_hash: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: Optional[Dict[str, Any]] = None,
     ):
         """
         Record a persistent activity log for user history.
         """
         db = get_supabase()
-        if not db: return None
-        
+        if not db:
+            return None
+
         log_data = {
             "user_id": str(user_id) if user_id else None,
             "action_type": action_type,
@@ -55,25 +57,30 @@ class NotificationService:
             "entity_id": str(entity_id) if entity_id else None,
             "description": description,
             "tx_hash": tx_hash,
-            "metadata": metadata or {}
+            "metadata": metadata or {},
         }
-        
+
         response = db.table("activity_logs").insert(log_data).execute()
         return response.data[0] if response.data else None
 
     @staticmethod
-    async def get_user_notifications(user_id: Any, limit: int = 20) -> List[Dict[str, Any]]:
+    async def get_user_notifications(
+        user_id: Any, limit: int = 20
+    ) -> List[Dict[str, Any]]:
         """
         Fetch notifications for a specific user.
         """
         db = get_supabase()
-        if not db: return []
-        response = db.table("notifications") \
-            .select("*") \
-            .eq("user_id", str(user_id)) \
-            .order("created_at", desc=True) \
-            .limit(limit) \
+        if not db:
+            return []
+        response = (
+            db.table("notifications")
+            .select("*")
+            .eq("user_id", str(user_id))
+            .order("created_at", desc=True)
+            .limit(limit)
             .execute()
+        )
         return response.data if response.data else []
 
     @staticmethod
@@ -82,9 +89,8 @@ class NotificationService:
         Mark a notification as read.
         """
         db = get_supabase()
-        if not db: return
-        db.table("notifications") \
-            .update({"status": "read"}) \
-            .eq("id", str(notification_id)) \
-            .eq("user_id", str(user_id)) \
-            .execute()
+        if not db:
+            return
+        db.table("notifications").update({"status": "read"}).eq(
+            "id", str(notification_id)
+        ).eq("user_id", str(user_id)).execute()

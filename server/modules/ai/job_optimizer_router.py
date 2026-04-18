@@ -2,9 +2,10 @@
 AI Job Description Optimizer Router.
 Endpoints for analyzing and optimizing job listings.
 """
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from modules.auth.service import get_current_user
 from modules.ai.services.job_optimizer_service import JobOptimizerService
 
@@ -29,19 +30,16 @@ class JDAnalysisResponse(BaseModel):
 
 @router.post("/optimize", response_model=JDAnalysisResponse)
 async def optimize_job_description(
-    req: JDAnalysisRequest,
-    current_user=Depends(get_current_user)
+    req: JDAnalysisRequest, current_user=Depends(get_current_user)
 ):
     """
     AI Job Description Optimizer.
-    Parses a JD and returns an optimization score with suggestions for 
+    Parses a JD and returns an optimization score with suggestions for
     missing skills, market alignment, and clarity.
     """
     try:
         analysis = optimizer_service.analyze_job_description(
-            title=req.title,
-            description=req.description,
-            skills=req.skills
+            title=req.title, description=req.description, skills=req.skills
         )
         return analysis
     except Exception as e:
@@ -51,17 +49,17 @@ async def optimize_job_description(
 @router.get("/benchmarks")
 async def get_market_benchmarks(
     title: str,
-    skills: str, # Comma separated
-    current_user=Depends(get_current_user)
+    skills: str,  # Comma separated
+    current_user=Depends(get_current_user),
 ):
     """Get standalone market salary and rarity data for a role."""
     skill_list = [s.strip() for s in skills.split(",")]
     salary = optimizer_service._get_salary_benchmark(title, skill_list)
     rarity = optimizer_service._calculate_skill_rarity(skill_list)
-    
+
     return {
         "status": "success",
         "job_title": title,
         "salary_benchmark": salary,
-        "market_rarity": rarity
+        "market_rarity": rarity,
     }

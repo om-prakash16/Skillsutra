@@ -44,7 +44,7 @@ export default function CompanyDashboard() {
     }
   };
 
-  const updateStatus = async (appId: str, status: string) => {
+  const updateStatus = async (appId: string, status: string) => {
     try {
       const token = localStorage.getItem("sp_token");
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/applications/${appId}/status?status=${status}`, {

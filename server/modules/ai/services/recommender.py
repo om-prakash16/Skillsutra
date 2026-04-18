@@ -1,12 +1,19 @@
 import os
-from typing import Dict, Any, List
+from typing import Dict, Any
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import PromptTemplate
+
 
 class CareerRecommender:
     def __init__(self):
         self.api_key = os.getenv("GOOGLE_API_KEY")
-        self.llm = ChatGoogleGenerativeAI(temperature=0.7, google_api_key=self.api_key, model="gemini-1.5-flash") if self.api_key else None
+        self.llm = (
+            ChatGoogleGenerativeAI(
+                temperature=0.7, google_api_key=self.api_key, model="gemini-1.5-flash"
+            )
+            if self.api_key
+            else None
+        )
 
     async def recommend(self, profile_data: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -15,7 +22,7 @@ class CareerRecommender:
         if not self.llm:
             return {
                 "suggested_paths": ["Backend Developer", "AI Engineer"],
-                "justification": "Candidate has strong Python and SQL skills."
+                "justification": "Candidate has strong Python and SQL skills.",
             }
 
         prompt = PromptTemplate(
@@ -28,15 +35,18 @@ class CareerRecommender:
             - justification (brief string)
             - top_priority_skill (single string)
             """,
-            input_variables=["skills", "bio"]
+            input_variables=["skills", "bio"],
         )
 
         try:
-            result = self.llm.invoke(prompt.format(
-                skills=", ".join(profile_data.get("skills", [])),
-                bio=profile_data.get("bio", "")
-            ))
+            result = self.llm.invoke(
+                prompt.format(
+                    skills=", ".join(profile_data.get("skills", [])),
+                    bio=profile_data.get("bio", ""),
+                )
+            )
             import json
+
             return json.loads(result.content)
         except Exception as e:
             return {"error": str(e)}

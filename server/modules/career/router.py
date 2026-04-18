@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, Depends
-from typing import List, Dict, Any
 from modules.auth.service import get_current_user
 from modules.career.service import CareerService
 from modules.career.models import CareerGoalCreate, CareerTaskCreate
@@ -7,8 +6,9 @@ from modules.career.models import CareerGoalCreate, CareerTaskCreate
 router = APIRouter()
 career_service = CareerService()
 
+
 @router.post("/goals")
-async def create_goal(goal: CareerGoalCreate, current_user = Depends(get_current_user)):
+async def create_goal(goal: CareerGoalCreate, current_user=Depends(get_current_user)):
     """
     Start a new career growth roadmap.
     """
@@ -20,8 +20,9 @@ async def create_goal(goal: CareerGoalCreate, current_user = Depends(get_current
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.post("/tasks")
-async def add_task(task: CareerTaskCreate, current_user = Depends(get_current_user)):
+async def add_task(task: CareerTaskCreate, current_user=Depends(get_current_user)):
     """
     Add a milestone or specific task to a goal.
     """
@@ -31,8 +32,9 @@ async def add_task(task: CareerTaskCreate, current_user = Depends(get_current_us
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.get("/goals")
-async def get_goals(current_user = Depends(get_current_user)):
+async def get_goals(current_user=Depends(get_current_user)):
     """
     Retrieve user roadmap and progress.
     """

@@ -7,11 +7,14 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost
 
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
     const token = localStorage.getItem("auth_token");
-    const headers = {
+    const headers: Record<string, string> = {
         "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...options.headers,
+        ...(options.headers as Record<string, string>),
     };
+
+    if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+    }
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,

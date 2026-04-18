@@ -40,7 +40,7 @@ export function CultureTab({ company }: { company: Company }) {
                 </CardHeader>
                 <CardContent>
                     <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        {company.culture.benefits.map((benefit, i) => (
+                        {company.culture.benefits.map((benefit: any, i: any) => (
                             <div key={i} className="flex items-center gap-2 p-3 rounded-lg bg-green-500/5 border border-green-500/10 text-sm font-medium">
                                 <span className="bg-green-500/20 text-green-700 p-1 rounded-full">
                                     <Check className="w-3 h-3" />

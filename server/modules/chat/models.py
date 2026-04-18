@@ -1,15 +1,18 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import Optional
 from uuid import UUID
 from datetime import datetime
+
 
 class RoomBase(BaseModel):
     room_name: str
     category: str
     description: Optional[str] = None
 
+
 class RoomCreate(RoomBase):
     pass
+
 
 class RoomResponse(RoomBase):
     id: UUID
@@ -19,9 +22,11 @@ class RoomResponse(RoomBase):
     class Config:
         from_attributes = True
 
+
 class MessageCreate(BaseModel):
     room_id: UUID
     content: str
+
 
 class MessageResponse(BaseModel):
     id: UUID

@@ -19,8 +19,10 @@ import {
     Users,
     Zap,
     TrendingUp,
-    Shield
+    Shield,
+    ShieldCheck
 } from "lucide-react"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -33,7 +35,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { useAuth } from "@/context/auth-context"
 import { api, API_BASE_URL } from "@/lib/api/api-client"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
 
 export default function PortfolioPage() {
     const { user } = useAuth()

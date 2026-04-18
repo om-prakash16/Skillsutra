@@ -43,7 +43,7 @@ export function AboutTab({ company }: { company: Company }) {
                 </CardHeader>
                 <CardContent>
                     <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
-                        {company.about.values.map((value, i) => (
+                        {company.about.values.map((value: any, i: any) => (
                             <div key={i} className="p-4 rounded-lg bg-muted/50 border flex items-center justify-center text-center font-medium">
                                 {value}
                             </div>

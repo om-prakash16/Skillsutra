@@ -21,7 +21,7 @@ export default function JobSearchPage() {
       <SearchHeader onSearch={handleSearch} />
       
       <main className="max-w-7xl mx-auto px-4 py-8 flex gap-8">
-        <FilterSidebar />
+        <FilterSidebar type="jobs" onFilterChange={(f) => console.log(f)} />
 
         <div className="flex-1 space-y-6">
           <div className="flex justify-between items-end mb-4">

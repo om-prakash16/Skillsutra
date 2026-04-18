@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useAuth } from "@/context/auth-context";
 import { toast } from "sonner";
+import { api } from "@/lib/api/api-client";
 
 export function NotificationBell() {
   const { user } = useAuth();
@@ -19,8 +20,7 @@ export function NotificationBell() {
 
   const fetchNotifications = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/notifications/list`);
-      const data = await res.json();
+      const data = await api.notifications.get();
       setNotifications(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
@@ -29,9 +29,7 @@ export function NotificationBell() {
 
   const markAsRead = async (id: string) => {
     try {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/notifications/${id}/read`, {
-            method: "PATCH",
-        });
+        await api.notifications.read(id);
         setNotifications(prev => prev.map(n => n.id === id ? { ...n, status: 'read' } : n));
     } catch (err) {
         console.error(err);

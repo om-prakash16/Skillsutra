@@ -3,9 +3,9 @@ Soft Skill Verification AI Service.
 Evaluates behavioral and communication traits through NLP analysis
 of candidate responses to AI-generated workplace scenarios.
 """
-from typing import Dict, Any, List
+
+from typing import Dict, Any
 import re
-import math
 
 
 class SoftSkillsService:
@@ -21,39 +21,84 @@ class SoftSkillsService:
 
     # Hedge words that reduce confidence score
     HEDGE_WORDS = [
-        "maybe", "perhaps", "sort of", "kind of", "i think",
-        "i guess", "possibly", "might", "probably", "not sure",
-        "i suppose", "it seems", "could be"
+        "maybe",
+        "perhaps",
+        "sort of",
+        "kind of",
+        "i think",
+        "i guess",
+        "possibly",
+        "might",
+        "probably",
+        "not sure",
+        "i suppose",
+        "it seems",
+        "could be",
     ]
 
     # Assertive phrases that boost confidence score
     ASSERTIVE_PHRASES = [
-        "i recommend", "based on", "the best approach", "we should",
-        "i am confident", "the data shows", "clearly", "definitively",
-        "my recommendation is", "the priority is", "i will"
+        "i recommend",
+        "based on",
+        "the best approach",
+        "we should",
+        "i am confident",
+        "the data shows",
+        "clearly",
+        "definitively",
+        "my recommendation is",
+        "the priority is",
+        "i will",
     ]
 
     # Inclusive language markers for teamwork
     TEAMWORK_MARKERS = [
-        "we", "our", "team", "together", "collaborate", "let's",
-        "everyone", "collectively", "as a group", "support each other",
-        "help you", "pair on this"
+        "we",
+        "our",
+        "team",
+        "together",
+        "collaborate",
+        "let's",
+        "everyone",
+        "collectively",
+        "as a group",
+        "support each other",
+        "help you",
+        "pair on this",
     ]
 
     # Individual-focused markers (negative signal for teamwork)
     SOLO_MARKERS = [
-        "i alone", "by myself", "only i", "i don't need",
-        "not my problem", "their fault", "blame"
+        "i alone",
+        "by myself",
+        "only i",
+        "i don't need",
+        "not my problem",
+        "their fault",
+        "blame",
     ]
 
     # Leadership indicators
     LEADERSHIP_MARKERS = [
-        "prioritize", "delegate", "roadmap", "strategy", "stakeholder",
-        "business impact", "trade-off", "risk", "decision", "accountable",
-        "ownership", "escalate", "unblock", "mentor"
+        "prioritize",
+        "delegate",
+        "roadmap",
+        "strategy",
+        "stakeholder",
+        "business impact",
+        "trade-off",
+        "risk",
+        "decision",
+        "accountable",
+        "ownership",
+        "escalate",
+        "unblock",
+        "mentor",
     ]
 
-    def analyze_response(self, response_text: str, scenario_type: str = "crisis") -> Dict[str, Any]:
+    def analyze_response(
+        self, response_text: str, scenario_type: str = "crisis"
+    ) -> Dict[str, Any]:
         """
         Main entry point. Analyzes a candidate's written response to a workplace scenario.
         Returns the full Soft Skill Matrix with scores and evidence.
@@ -69,11 +114,11 @@ class SoftSkillsService:
 
         # Composite score (equal weight for now, can be role-adjusted)
         composite = int(
-            communication["score"] * 0.25 +
-            confidence["score"] * 0.20 +
-            teamwork["score"] * 0.25 +
-            consistency["score"] * 0.10 +
-            leadership["score"] * 0.20
+            communication["score"] * 0.25
+            + confidence["score"] * 0.20
+            + teamwork["score"] * 0.25
+            + consistency["score"] * 0.10
+            + leadership["score"] * 0.20
         )
 
         # Percentile simulation (based on mock distribution)
@@ -81,9 +126,11 @@ class SoftSkillsService:
 
         # AI-generated summary
         summary = self._generate_summary(
-            communication["score"], confidence["score"],
-            teamwork["score"], consistency["score"],
-            leadership["score"]
+            communication["score"],
+            confidence["score"],
+            teamwork["score"],
+            consistency["score"],
+            leadership["score"],
         )
 
         return {
@@ -94,9 +141,9 @@ class SoftSkillsService:
                 "confidence": confidence,
                 "teamwork": teamwork,
                 "consistency": consistency,
-                "leadership": leadership
+                "leadership": leadership,
             },
-            "ai_generated_summary": summary
+            "ai_generated_summary": summary,
         }
 
     def _score_communication(self, text: str, word_count: int) -> Dict[str, Any]:
@@ -104,16 +151,16 @@ class SoftSkillsService:
         score = 50  # Baseline
 
         # Reward structured thinking (bullet points, numbered lists)
-        if re.search(r'[\-\*]\s', text) or re.search(r'\d+[\.\)]\s', text):
+        if re.search(r"[\-\*]\s", text) or re.search(r"\d+[\.\)]\s", text):
             score += 15
 
         # Reward paragraph breaks (indicates organized thinking)
-        paragraph_count = len([p for p in text.split('\n') if p.strip()])
+        paragraph_count = len([p for p in text.split("\n") if p.strip()])
         if paragraph_count >= 3:
             score += 10
 
         # Flesch-Kincaid approximation (sentence length penalty)
-        sentences = re.split(r'[.!?]+', text)
+        sentences = re.split(r"[.!?]+", text)
         sentences = [s for s in sentences if s.strip()]
         if sentences:
             avg_sentence_len = word_count / len(sentences)
@@ -132,7 +179,7 @@ class SoftSkillsService:
 
         return {
             "score": score,
-            "evidence": self._comm_evidence(score, word_count, paragraph_count)
+            "evidence": self._comm_evidence(score, word_count, paragraph_count),
         }
 
     def _score_confidence(self, text_lower: str, word_count: int) -> Dict[str, Any]:
@@ -151,7 +198,11 @@ class SoftSkillsService:
 
         score = max(0, min(100, score))
 
-        evidence = "Strong assertions" if assertive_count > hedge_count else "Moderate hedging detected"
+        evidence = (
+            "Strong assertions"
+            if assertive_count > hedge_count
+            else "Moderate hedging detected"
+        )
         if hedge_count > 4:
             evidence = f"High hedging frequency ({hedge_count} instances). Candidate appears uncertain."
 
@@ -172,7 +223,9 @@ class SoftSkillsService:
         if team_hits > 3:
             evidence = f"High use of inclusive language ({team_hits} markers). Strong collaborative signal."
         elif solo_hits > 1:
-            evidence = f"Warning: Solo-focused language detected. Potential culture-fit risk."
+            evidence = (
+                "Warning: Solo-focused language detected. Potential culture-fit risk."
+            )
         else:
             evidence = "Moderate collaborative language usage."
 
@@ -185,13 +238,16 @@ class SoftSkillsService:
         """
         score = 70  # Default to reasonable consistency
 
-        paragraphs = [p.strip() for p in text.split('\n') if p.strip()]
+        paragraphs = [p.strip() for p in text.split("\n") if p.strip()]
         if len(paragraphs) < 2:
-            return {"score": score, "evidence": "Response too short for consistency analysis."}
+            return {
+                "score": score,
+                "evidence": "Response too short for consistency analysis.",
+            }
 
         # Check for tone shifts (exclamation marks, ALL CAPS, etc.)
         caps_ratio = sum(1 for c in text if c.isupper()) / max(len(text), 1)
-        exclamation_count = text.count('!')
+        exclamation_count = text.count("!")
 
         if caps_ratio > 0.3:
             score -= 20
@@ -200,8 +256,11 @@ class SoftSkillsService:
 
         score = max(0, min(100, score))
 
-        evidence = "Maintains calm, professional tone throughout." if score >= 70 else \
-                   "Tone fluctuations detected. Possible stress indicators."
+        evidence = (
+            "Maintains calm, professional tone throughout."
+            if score >= 70
+            else "Tone fluctuations detected. Possible stress indicators."
+        )
 
         return {"score": score, "evidence": evidence}
 
@@ -209,11 +268,15 @@ class SoftSkillsService:
         """Evaluate initiative, prioritization, and business-level thinking."""
         score = 45  # Lower baseline — leadership must be demonstrated
 
-        leadership_hits = sum(1 for l in self.LEADERSHIP_MARKERS if l in text_lower)
+        leadership_hits = sum(1 for marker in self.LEADERSHIP_MARKERS if marker in text_lower)
         score += leadership_hits * 8
 
         # Bonus for mentioning business impact explicitly
-        if "business" in text_lower or "revenue" in text_lower or "customer" in text_lower:
+        if (
+            "business" in text_lower
+            or "revenue" in text_lower
+            or "customer" in text_lower
+        ):
             score += 10
 
         score = max(0, min(100, score))
@@ -223,7 +286,9 @@ class SoftSkillsService:
         elif leadership_hits >= 2:
             evidence = "Moderate initiative shown. Shows awareness of broader impact."
         else:
-            evidence = "Limited leadership indicators. May excel in execution-focused roles."
+            evidence = (
+                "Limited leadership indicators. May excel in execution-focused roles."
+            )
 
         return {"score": score, "evidence": evidence}
 
@@ -235,7 +300,9 @@ class SoftSkillsService:
         else:
             return "Response lacks structure. Difficult to parse intent."
 
-    def _generate_summary(self, comm: int, conf: int, team: int, cons: int, lead: int) -> str:
+    def _generate_summary(
+        self, comm: int, conf: int, team: int, cons: int, lead: int
+    ) -> str:
         """Generate a human-readable AI summary of the candidate's behavioral profile."""
         traits = []
         if comm >= 75:

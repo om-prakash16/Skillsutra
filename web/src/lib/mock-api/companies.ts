@@ -10,6 +10,16 @@ export interface Company {
   openPositions: number;
   website: string;
   tags: string[];
+  about?: any;
+  analytics?: any;
+  culture?: any;
+  stats?: any;
+  reviews?: any;
+  techStack?: any;
+  tagline?: string;
+  jobCount?: number;
+  slug?: string;
+  founded?: string;
 }
 
 export const INDUSTRIES = [

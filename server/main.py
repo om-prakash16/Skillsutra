@@ -27,10 +27,12 @@ app = FastAPI(
     version="3.1.0",
 )
 
+
 @app.on_event("startup")
 async def startup_event():
     # Initialize system-wide event handlers (Mailer, Analytics, etc.)
     initialize_event_handlers()
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,10 +48,14 @@ app.include_router(users_router, prefix="/api/v1/profile", tags=["Profile"])
 app.include_router(ai_router, prefix="/api/v1/ai", tags=["AI"])
 app.include_router(company_router, prefix="/api/v1/company", tags=["Company"])
 app.include_router(jobs_router, prefix="/api/v1/jobs", tags=["Jobs"])
-app.include_router(applications_router, prefix="/api/v1/applications", tags=["Applications"])
+app.include_router(
+    applications_router, prefix="/api/v1/applications", tags=["Applications"]
+)
 app.include_router(nft_router, prefix="/api/v1/nft", tags=["NFT"])
 app.include_router(search_router, prefix="/api/v1/search", tags=["Search"])
-app.include_router(notifications_router, prefix="/api/v1/notifications", tags=["Notifications"])
+app.include_router(
+    notifications_router, prefix="/api/v1/notifications", tags=["Notifications"]
+)
 app.include_router(activity_router, prefix="/api/v1/activity", tags=["Activity"])
 app.include_router(analytics_router, prefix="/api/v1/analytics", tags=["Analytics"])
 app.include_router(sync_router, prefix="/api/v1/sync", tags=["Sync"])
@@ -58,7 +64,9 @@ app.include_router(cms_router, prefix="/api/v1/cms", tags=["CMS"])
 app.include_router(career_router, prefix="/api/v1/career", tags=["Career Planning"])
 app.include_router(identity_router, prefix="/api/v1", tags=["Networking & Identity"])
 app.include_router(chat_router, prefix="/api/v1/chat", tags=["Community Chat"])
-app.include_router(enterprise_router, prefix="/api/v1/enterprise", tags=["Enterprise API"])
+app.include_router(
+    enterprise_router, prefix="/api/v1/enterprise", tags=["Enterprise API"]
+)
 
 
 @app.get("/")

@@ -45,6 +45,7 @@ const careerPath = [
     { milestone: "VP of Engineering (Web3)", probability: "55%", timeline: "3-5 years" },
 ]
 
+export default function CandidateInsightsPage() {
     const [skills, setSkills] = useState<any[]>([])
     const [isLoading, setIsLoading] = useState(true)
 

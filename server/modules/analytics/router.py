@@ -13,6 +13,7 @@ growth_svc = GrowthTrackingService()
 
 # -- Role-scoped analytics --
 
+
 @router.get("/user")
 async def user_analytics(user: Dict[str, Any] = Depends(get_current_user)):
     """Career growth metrics for the authenticated candidate."""
@@ -32,12 +33,15 @@ async def company_analytics(user: Dict[str, Any] = Depends(get_current_user)):
 
 
 @router.get("/admin")
-async def admin_analytics(user: Dict[str, Any] = Depends(require_permission("admin.access"))):
+async def admin_analytics(
+    user: Dict[str, Any] = Depends(require_permission("admin.access")),
+):
     """Platform-wide health and growth dashboard data."""
     return await svc.get_admin_analytics()
 
 
 # -- Insights endpoints (same data, aliased for frontend clarity) --
+
 
 @router.get("/insights/user")
 async def user_insights(user: Dict[str, Any] = Depends(get_current_user)):
@@ -52,9 +56,14 @@ async def company_insights(user: Dict[str, Any] = Depends(get_current_user)):
 
 
 @router.get("/insights/admin")
-async def admin_insights(user: Dict[str, Any] = Depends(require_permission("admin.access"))):
+async def admin_insights(
+    user: Dict[str, Any] = Depends(require_permission("admin.access")),
+):
     """Alias for /analytics/admin — used by the insights dashboard."""
     return await svc.get_admin_analytics()
 
+
 # -- Market Intelligence --
-router.include_router(market_intel_router, prefix="/market-intel", tags=["Market Intelligence"])
+router.include_router(
+    market_intel_router, prefix="/market-intel", tags=["Market Intelligence"]
+)

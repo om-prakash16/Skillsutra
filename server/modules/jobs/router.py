@@ -1,17 +1,14 @@
-from fastapi import APIRouter, HTTPException, Depends
-from typing import List, Dict, Any, Optional
+from fastapi import APIRouter, Depends
+from typing import Dict, Any, Optional
 from modules.auth.service import require_permission, get_current_user
 from modules.jobs.service import JobService
-from modules.search.service import SearchService
 from modules.jobs.models import (
-    JobCreate, JobUpdate, JobResponse,
-    JobApplicationRequest, JobApplicationResponse,
-    CompanyCreate, CompanyResponse,
-    JobSchemaFieldResponse,
-    ApplicationCreate, ApplicationResponse
+    JobCreate,
+    JobResponse,
+    ApplicationCreate,
+    ApplicationResponse,
 )
 from core.supabase import get_supabase
-from core.postgres import get_db_connection
 from modules.notifications.service import NotificationService
 from modules.activity.service import record_event
 
@@ -20,6 +17,7 @@ job_service = JobService()
 
 # Company Endpoints
 
+
 @router.get("/list")
 async def list_jobs(user_id: Optional[str] = None):
     """
@@ -27,8 +25,11 @@ async def list_jobs(user_id: Optional[str] = None):
     """
     return await job_service.get_jobs_with_scores(user_id)
 
+
 @router.get("/{job_id}/discovery")
-async def get_job_discovery(job_id: str, limit: int = 10, current_user = Depends(get_current_user)):
+async def get_job_discovery(
+    job_id: str, limit: int = 10, current_user=Depends(get_current_user)
+):
     """
     AI Candidate Discovery for recruiters.
     """
@@ -36,8 +37,9 @@ async def get_job_discovery(job_id: str, limit: int = 10, current_user = Depends
     if current_user.get("role") not in ["COMPANY", "ADMIN", "staff"]:
         # Fallback check if role is 'admin' or something else
         pass
-        
+
     return await job_service.get_recommended_candidates(job_id, limit)
+
 
 @router.get("/{job_id}")
 async def get_job_details(job_id: str):
@@ -46,12 +48,14 @@ async def get_job_details(job_id: str):
     """
     return await job_service.get_job_details(job_id)
 
+
 # Job Posting Endpoints
 
+
 @router.post("/create", response_model=JobResponse)
-async def create_job(job: JobCreate, user = Depends(get_current_user)):
+async def create_job(job: JobCreate, user=Depends(get_current_user)):
     """
-    Create a job post. 
+    Create a job post.
     """
     result = await job_service.create_job(job.model_dump())
 
@@ -67,56 +71,60 @@ async def create_job(job: JobCreate, user = Depends(get_current_user)):
 
     return JobResponse(id=result["id"], **result)
 
+
 @router.post("/apply", response_model=ApplicationResponse)
-async def apply_to_job(data: ApplicationCreate, user = Depends(get_current_user)):
+async def apply_to_job(data: ApplicationCreate, user=Depends(get_current_user)):
     """
     Submits an application and triggers AI matching.
     """
     result = await job_service.apply_to_job(data.job_id, data.candidate_id)
-    
+
     # Notify Candidate
     try:
         await NotificationService.create_event_notification(
             user_id=user.get("id"),
             type="job_apply",
             title="Application Submitted",
-            message=f"You successfully applied for the job. AI Match Score: {result.get('ai_match_score', 0)}%"
+            message=f"You successfully applied for the job. AI Match Score: {result.get('ai_match_score', 0)}%",
         )
-        
+
         # Log Activity
         await NotificationService.log_activity(
             user_id=user.get("id"),
             action_type="apply_to_job",
             entity_type="job",
             entity_id=data.job_id,
-            description=f"Applied with score {result.get('ai_match_score', 0)}%"
+            description=f"Applied with score {result.get('ai_match_score', 0)}%",
         )
     except Exception:
-        pass # Best effort for notifications
+        pass  # Best effort for notifications
 
     return ApplicationResponse(
-        id=result["id"], 
-        status=result.get("status", "applied"), 
-        ai_match_score=result.get("ai_match_score", 0), 
-        **data.model_dump()
+        id=result["id"],
+        status=result.get("status", "applied"),
+        ai_match_score=result.get("ai_match_score", 0),
+        **data.model_dump(),
     )
 
+
 @router.post("/save")
-async def save_job(job_id: str, user = Depends(get_current_user)):
+async def save_job(job_id: str, user=Depends(get_current_user)):
     """
     Save a job for later review.
     """
     return await job_service.save_job(job_id, user.get("id"))
 
+
 @router.delete("/unsave/{job_id}")
-async def unsave_job(job_id: str, user = Depends(get_current_user)):
+async def unsave_job(job_id: str, user=Depends(get_current_user)):
     """
     Remove a job from saved list.
     """
     return await job_service.unsave_job(job_id, user.get("id"))
 
+
 @router.get("/saved")
-async def get_saved_jobs(user = Depends(get_current_user)):
+async def get_saved_jobs(user=Depends(get_current_user)):
     """
     Get all jobs saved by the current user.
     """
@@ -129,12 +137,16 @@ async def get_user_applications(user_id: str):
     Candidate's application tracking.
     """
     db = get_supabase()
-    if not db: return []
-    response = db.table("applications") \
-        .select("*, jobs(title, companies(name))") \
-        .eq("candidate_id", user_id) \
+    if not db:
+        return []
+    response = (
+        db.table("applications")
+        .select("*, jobs(title, companies(name))")
+        .eq("candidate_id", user_id)
         .execute()
+    )
     return response.data
+
 
 @router.get("/company/{company_id}")
 async def get_company_applications(company_id: str, job_id: Optional[str] = None):
@@ -142,6 +154,7 @@ async def get_company_applications(company_id: str, job_id: Optional[str] = None
     Recruiter's applicant list.
     """
     return await job_service.get_company_applications(company_id, job_id)
+
 
 @router.get("/company-metrics/{company_id}")
 async def get_company_jobs_metrics(company_id: str):
@@ -152,15 +165,16 @@ async def get_company_jobs_metrics(company_id: str):
 
 
 @router.patch("/{app_id}/status")
-async def update_app_status(app_id: str, status: str, recruiter = Depends(require_permission("job.moderate"))):
+async def update_app_status(
+    app_id: str, status: str, recruiter=Depends(require_permission("job.moderate"))
+):
     """
     Step 13: Recruiter Action (Shortlist, Hire, Reject).
     """
     return await job_service.update_application_status(
-        application_id=app_id, 
-        new_status=status, 
-        recruiter_id=recruiter.get("id")
+        application_id=app_id, new_status=status, recruiter_id=recruiter.get("id")
     )
+
 
 @router.patch("/applications/{app_id}/submit-assessment")
 async def submit_assessment(app_id: str, data: Dict[str, Any]):
@@ -170,5 +184,5 @@ async def submit_assessment(app_id: str, data: Dict[str, Any]):
     return await job_service.submit_assessment_results(
         application_id=app_id,
         answers=data.get("answers", []),
-        score=data.get("score", 0)
+        score=data.get("score", 0),
     )

@@ -1,6 +1,6 @@
 from fastapi import WebSocket
 from typing import List, Dict
-import json
+
 
 class ConnectionManager:
     def __init__(self):
@@ -23,5 +23,6 @@ class ConnectionManager:
         if room_id in self.active_connections:
             for connection in self.active_connections[room_id]:
                 await connection.send_text(message)
+
 
 manager = ConnectionManager()

@@ -33,7 +33,7 @@ export function ApplicationsTab({ data }: ApplicationsTabProps) {
                         <div className="col-span-3 md:col-span-2 text-right md:text-left">Status</div>
                     </div>
                     <div>
-                        {data.applications.map((app) => (
+                        {data.applications.map((app: any) => (
                             <div key={app.id} className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-muted/5 transition-colors border-b last:border-0">
                                 <div className="col-span-6 md:col-span-5 flex gap-3 items-center">
                                     <div className="w-8 h-8 rounded bg-muted flex items-center justify-center shrink-0">

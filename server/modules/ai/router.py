@@ -1,7 +1,6 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from typing import List, Dict, Any, Optional
 from modules.auth.service import get_current_user
-from core.supabase import get_supabase
 from modules.ai.services.evaluation_service import EvaluationService as AIService
 from modules.ai.quiz_router import router as quiz_router
 from modules.ai.interview_router import router as interview_router
@@ -25,51 +24,107 @@ ai_service = AIService()
 # Include sub-routers (no extra prefix to match frontend api-client)
 router.include_router(quiz_router, tags=["Quiz"])
 router.include_router(interview_router, tags=["Interview Prep"])
-router.include_router(portfolio_router, prefix="/portfolio", tags=["Portfolio Auto-Builder"])
+router.include_router(
+    portfolio_router, prefix="/portfolio", tags=["Portfolio Auto-Builder"]
+)
 router.include_router(salary_router, prefix="/salary", tags=["Salary Prediction AI"])
 router.include_router(fraud_router, prefix="/fraud", tags=["AI Fraud Detection"])
-router.include_router(soft_skills_router, prefix="/soft-skills", tags=["Soft Skill Verification"])
-router.include_router(skill_graph_router, prefix="/skill-graph", tags=["Skill Graph Intelligence"])
-router.include_router(recruiter_dashboard_router, prefix="/recruiter", tags=["Recruiter Intelligence Dashboard"])
-router.include_router(external_platform_router, prefix="/platforms", tags=["External Platform Integration"])
-router.include_router(feedback_loop_router, prefix="/feedback", tags=["Hiring Feedback Loop"])
-router.include_router(simulation_router, prefix="/simulation", tags=["Real Work Simulation Engine"])
-router.include_router(job_optimizer_router, prefix="/job-optimizer", tags=["AI Job Description Optimizer"])
-router.include_router(team_analyzer_router, prefix="/team-analyzer", tags=["Team Skill Balance Analyzer"])
-router.include_router(career_risk_router, prefix="/career-risk", tags=["AI Career Risk Predictor"])
+router.include_router(
+    soft_skills_router, prefix="/soft-skills", tags=["Soft Skill Verification"]
+)
+router.include_router(
+    skill_graph_router, prefix="/skill-graph", tags=["Skill Graph Intelligence"]
+)
+router.include_router(
+    recruiter_dashboard_router,
+    prefix="/recruiter",
+    tags=["Recruiter Intelligence Dashboard"],
+)
+router.include_router(
+    external_platform_router,
+    prefix="/platforms",
+    tags=["External Platform Integration"],
+)
+router.include_router(
+    feedback_loop_router, prefix="/feedback", tags=["Hiring Feedback Loop"]
+)
+router.include_router(
+    simulation_router, prefix="/simulation", tags=["Real Work Simulation Engine"]
+)
+router.include_router(
+    job_optimizer_router, prefix="/job-optimizer", tags=["AI Job Description Optimizer"]
+)
+router.include_router(
+    team_analyzer_router, prefix="/team-analyzer", tags=["Team Skill Balance Analyzer"]
+)
+router.include_router(
+    career_risk_router, prefix="/career-risk", tags=["AI Career Risk Predictor"]
+)
+
 
 class ProfileAnalysisRequest(BaseModel):
     profile_data: Dict[str, Any]
+
 
 class SkillRecommendationResponse(BaseModel):
     recommended_skills: List[str]
     reasoning: str
 
+
 # AI Reasoning Engine
 
+
 @router.post("/analyze-profile")
-async def analyze_profile_insights(req: ProfileAnalysisRequest, current_user = Depends(get_current_user)):
+async def analyze_profile_insights(
+    req: ProfileAnalysisRequest, current_user=Depends(get_current_user)
+):
     """
     Resume and profile analysis via Gemini 1.5.
     """
     return await ai_service.analyze_resume(req.profile_data)
 
+
 @router.get("/scores")
-async def get_proof_scores(user_id: Optional[str] = None, current_user = Depends(get_current_user)):
+async def get_proof_scores(
+    user_id: Optional[str] = None, current_user=Depends(get_current_user)
+):
     """
     Fetch current Proof Score and competency metrics.
     """
     target_id = user_id or current_user.get("sub")
     return await ai_service.get_user_scores(target_id)
 
+
+@router.get("/verification-stream-demo")
+async def verification_stream_demo():
+    """
+    Streams demo log output for the Landing Page Terminal UI.
+    """
+    return [
+        "> SYSTEM REBOOT INITIATED...",
+        "> LOAD BALANCING SERVERS...",
+        "> AI MODEL: GEMINI 1.5 PRO CONNECTED",
+        "> SYNCHRONIZING WITH SOLANA MAINNET BETA...",
+        "> ======================================",
+        "> INCOMING CONNECTION: 0x8a92...f2e5",
+        "> PARSING RUST COMPETENCY PROFILE...",
+        "> CROSS_REFERENCING GITHUB AST LOGS...",
+        "> EXECUTING STATIC ANALYSIS ON PORTFOLIO...",
+        "> AI CONFIDENCE: 98.4%",
+        "> [SUCCESS] VERIFICATION MINTED TO CHAIN",
+    ]
+
+
 @router.post("/recommend-skills", response_model=SkillRecommendationResponse)
-async def recommend_skills(current_user = Depends(get_current_user)):
+async def recommend_skills(current_user=Depends(get_current_user)):
     """
     AI-driven skill gap analysis and growth suggestions.
     """
     return await ai_service.generate_skill_suggestions(current_user.get("sub"))
 
+
 # Assessment & Quizzes
+
 
 @router.get("/quizzes")
 async def get_assessment_quizzes(skill_id: Optional[str] = None):
@@ -78,8 +133,11 @@ async def get_assessment_quizzes(skill_id: Optional[str] = None):
     """
     return await ai_service.get_available_quizzes(skill_id)
 
+
 @router.post("/quizzes/submit")
-async def submit_quiz_result(quiz_id: str, results: Dict[str, Any], current_user = Depends(get_current_user)):
+async def submit_quiz_result(
+    quiz_id: str, results: Dict[str, Any], current_user=Depends(get_current_user)
+):
     """
     Submit quiz results and trigger score updates.
     """

@@ -22,6 +22,7 @@ class EventRecord(BaseModel):
 
 # -- Candidate timeline --
 
+
 @router.get("/user")
 async def user_activity(
     limit: int = Query(20, ge=1, le=100),
@@ -32,6 +33,7 @@ async def user_activity(
 
 
 # -- Company timeline --
+
 
 @router.get("/company")
 async def company_activity(
@@ -44,6 +46,7 @@ async def company_activity(
 
 # -- Admin global feed --
 
+
 @router.get("/admin")
 async def admin_activity(
     limit: int = Query(50, ge=1, le=200),
@@ -54,6 +57,7 @@ async def admin_activity(
 
 
 # -- Record endpoint (internal use) --
+
 
 @router.post("/record")
 async def record(event: EventRecord, user=Depends(get_current_user)):

@@ -15,7 +15,8 @@ import {
     User,
     LayoutDashboard,
     PlusCircle,
-    X
+    X,
+    ShieldAlert
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { api } from "@/lib/api/api-client"
@@ -53,7 +54,8 @@ export function CommandSearch() {
         { id: '1', title: 'Mission Control', icon: <LayoutDashboard className="w-4 h-4"/>, href: '/dashboard', category: 'Navigation' },
         { id: '2', title: 'Post New Mission', icon: <PlusCircle className="w-4 h-4"/>, href: '/company/post-job', category: 'Actions' },
         { id: '3', title: 'Reputation Nexus', icon: <User className="w-4 h-4"/>, href: '/user/profile', category: 'Personnel' },
-        { id: '4', title: 'System Settings', icon: <Settings className="w-4 h-4"/>, href: '/settings', category: 'Administration' }
+        { id: '4', title: 'System Settings', icon: <Settings className="w-4 h-4"/>, href: '/settings', category: 'Administration' },
+        { id: '5', title: 'Admin Intelligence', icon: <ShieldAlert className="w-4 h-4"/>, href: '/admin/dashboard', category: 'Administration' }
     ]
 
     const handleSearch = async (val: string) => {
@@ -67,7 +69,7 @@ export function CommandSearch() {
         try {
             // Fetch jobs and potentially talent
             const [jobs] = await Promise.all([
-                api.jobs.list({ search: val })
+                api.jobs.list()
             ])
             
             setResults({
