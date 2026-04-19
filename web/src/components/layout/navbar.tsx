@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { useScrolled } from "@/hooks/use-scrolled"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Menu, Briefcase, Building2, User } from "lucide-react"
+import { Menu, Briefcase, Building2, User, ShieldCheck } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/context/auth-context"
@@ -65,7 +65,7 @@ export function Navbar() {
                 {!isDashboard && (
                     <Link href="/" className="flex items-center gap-2 group">
                         <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-all shadow-[0_0_15px_rgba(var(--primary),0.2)]">
-                            <Image src="/logo.png" alt="SkillProof Logo" width={28} height={28} className="object-contain" />
+                            <ShieldCheck className="w-7 h-7 text-primary fill-primary/20" />
                         </div>
                         <span className="text-xl font-black font-heading tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
                             {siteName}
@@ -139,7 +139,7 @@ export function Navbar() {
                         </>
                     ) : (
                         <div className="flex items-center gap-4">
-                            <Link href="/user/profile" className="hidden lg:block">
+                            <Link href={user.role === 'admin' ? "/admin/profile" : user.role === 'company' ? "/company/profile" : "/user/profile"} className="hidden lg:block">
                                 <Button variant="ghost" size="sm">My Profile</Button>
                             </Link>
                             <DropdownMenu>
@@ -168,7 +168,7 @@ export function Navbar() {
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href="/user/profile">
+                                            <Link href={user.role === 'admin' ? "/admin/profile" : user.role === 'company' ? "/company/profile" : "/user/profile"}>
                                                 Profile Builder
                                             </Link>
                                         </DropdownMenuItem>
@@ -239,7 +239,7 @@ export function Navbar() {
                                     </div>
                                 ) : (
                                     <div className="flex flex-col gap-3 mt-4">
-                                        <Link href="/user/profile" className="w-full">
+                                        <Link href={user.role === 'admin' ? "/admin/profile" : user.role === 'company' ? "/company/profile" : "/user/profile"} className="w-full">
                                             <Button className="w-full" variant="outline">My Profile</Button>
                                         </Link>
                                         <Button className="w-full" variant="destructive" onClick={logout}>Sign Out</Button>

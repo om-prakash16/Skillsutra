@@ -145,6 +145,23 @@ export default function ProfilePage() {
         }
     }
 
+    // --- Handlers for Basic Info & Settings ---
+    const handleUpdateBasicInfo = (field: string, value: string) => {
+        if (!profileData) return
+        setProfileData({
+            ...profileData,
+            basic: { ...profileData.basic, [field]: value }
+        })
+    }
+
+    const handleUpdateSettings = (field: string, value: any) => {
+        if (!profileData) return
+        setProfileData({
+            ...profileData,
+            settings: { ...profileData.settings, [field]: value }
+        })
+    }
+
     // --- Handlers for Skills ---
     const handleAddSkill = (newSkill: { name: string, level: "Advanced" | "Intermediate" | "Beginner" }) => {
         if (!profileData) return
@@ -339,7 +356,7 @@ export default function ProfilePage() {
     const activeData = profileData || userProfile
 
     return (
-        <div className="space-y-6 max-w-5xl mx-auto pb-12 pt-8 px-4">
+        <div className="space-y-8 max-w-6xl mx-auto pb-16 pt-12 px-4 md:px-8">
             <ProfileHeader
                 user={activeData.basic}
                 profileId={activeData.id}
@@ -356,9 +373,9 @@ export default function ProfilePage() {
             </div>
 
             <Tabs defaultValue="overview" className="space-y-6">
-                <div className="overflow-x-auto pb-2 scrollbar-hide">
+                <div className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                     {/* ... TabsList ... */}
-                    <TabsList className="w-full justify-start h-auto p-1 bg-transparent border-b rounded-none gap-2">
+                    <TabsList className="w-full justify-start h-auto p-1 pb-3 bg-transparent border-b rounded-none gap-3">
                         <TabsTrigger value="overview" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">Overview</TabsTrigger>
                         <TabsTrigger value="basic" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">Basic Info</TabsTrigger>
                         <TabsTrigger value="skills" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">Skills</TabsTrigger>
@@ -377,10 +394,10 @@ export default function ProfilePage() {
                 </div>
 
                 <TabsContent value="overview" className="animate-in fade-in-50 duration-300">
-                    <OverviewTab data={activeData} isEditing={isEditing} />
+                    <OverviewTab data={activeData} isEditing={isEditing} onUpdateBio={(bio) => handleUpdateBasicInfo('bio', bio)} />
                 </TabsContent>
                 <TabsContent value="basic" className="animate-in fade-in-50 duration-300">
-                    <BasicInfoTab data={activeData} isEditing={isEditing} />
+                    <BasicInfoTab data={activeData} isEditing={isEditing} onUpdate={handleUpdateBasicInfo} />
                 </TabsContent>
                 <TabsContent value="skills" className="animate-in fade-in-50 duration-300">
                     <SkillsTab
@@ -433,7 +450,7 @@ export default function ProfilePage() {
                     </div>
                 </TabsContent>
                 <TabsContent value="settings" className="animate-in fade-in-50 duration-300">
-                    <SettingsTab data={activeData} />
+                    <SettingsTab data={activeData} onUpdateSettings={handleUpdateSettings} />
                 </TabsContent>
 
             </Tabs>

@@ -186,3 +186,20 @@ class AnalyticsService:
             "recent_activity": recent.data or [],
             "system_health": "Operational",
         }
+
+    @staticmethod
+    async def get_public_stats() -> Dict[str, Any]:
+        """Aggregate totals for the public landing page."""
+        db = get_supabase()
+
+        users = db.table("users").select("id", count="exact").execute()
+        companies = db.table("companies").select("id", count="exact").execute()
+        jobs = db.table("jobs").select("id", count="exact").execute()
+        nfts = db.table("nft_records").select("id", count="exact").execute()
+
+        return {
+            "total_users": users.count or 0,
+            "total_companies": companies.count or 0,
+            "total_jobs": jobs.count or 0,
+            "total_nfts": nfts.count or 0,
+        }

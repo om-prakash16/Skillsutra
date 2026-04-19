@@ -1,3 +1,5 @@
+"use client"
+
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 import { Sidebar } from "@/components/layout/sidebar"
 import { useAuth } from "@/context/auth-context"

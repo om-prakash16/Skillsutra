@@ -92,7 +92,7 @@ export function HeroSection() {
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-primary text-xs font-black uppercase tracking-widest backdrop-blur-xl"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-primary text-xs font-black uppercase tracking-widest backdrop-blur-xl"
           >
             <Sparkles className="w-3 h-3" />
             {content.badge}
@@ -102,7 +102,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-black font-heading tracking-tight text-white leading-[1.1]"
+            className="text-5xl md:text-7xl font-black font-heading tracking-tight text-foreground leading-[1.1]"
           >
             {content.title.split('.').map((part: string, i: number) => (
               <span key={i} className={i === 1 ? "text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary italic" : ""}>
@@ -132,7 +132,7 @@ export function HeroSection() {
               </Button>
             </Link>
             <Link href="/verify" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 rounded-2xl border-white/10 bg-white/5 backdrop-blur-xl font-bold hover:bg-white/10 transition-all text-white hover:border-primary/50">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 rounded-2xl border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-xl font-bold hover:bg-black/10 dark:hover:bg-white/10 transition-all text-foreground hover:border-primary/50">
                 Verify My Skills
               </Button>
             </Link>
@@ -142,9 +142,9 @@ export function HeroSection() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
             className="flex items-center gap-6 pt-8 text-sm font-bold text-muted-foreground uppercase tracking-widest"
           >
-            <div className="flex flex-col gap-1 items-start"><span className="text-white text-2xl">4.9M+</span><span className="text-[10px]">Verifications</span></div>
+            <div className="flex flex-col gap-1 items-start"><span className="text-foreground text-2xl">4.9M+</span><span className="text-[10px]">Verifications</span></div>
             <div className="w-px h-8 bg-border" />
-            <div className="flex flex-col gap-1 items-start"><span className="text-white text-2xl">12k+</span><span className="text-[10px]">Hired Talent</span></div>
+            <div className="flex flex-col gap-1 items-start"><span className="text-foreground text-2xl">12k+</span><span className="text-[10px]">Hired Talent</span></div>
           </motion.div>
         </div>
 
@@ -178,8 +178,8 @@ export function HeroSection() {
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 className={`
-                                    ${log.includes('[SUCCESS]') ? 'text-primary font-bold' : 'text-neutral-400'}
-                                    ${log.includes('[ERROR]') ? 'text-destructive font-bold' : ''}
+                                    ${log?.includes?.('[SUCCESS]') ? 'text-primary font-bold' : 'text-neutral-400'}
+                                    ${log?.includes?.('[ERROR]') ? 'text-destructive font-bold' : ''}
                                 `}
                             >
                                 {log}

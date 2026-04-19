@@ -79,8 +79,8 @@ export const api = {
         jobs: (params: string) => fetchWithAuth(`/search/jobs?${params}`)
     },
     notifications: {
-        get: () => fetchWithAuth("/notifications"),
-        read: (id: string) => fetchWithAuth(`/notifications/read?id=${id}`, { method: "PATCH" })
+        get: () => fetchWithAuth("/notifications/list"),
+        read: (id: string) => fetchWithAuth(`/notifications/${id}/read`, { method: "PATCH" })
     },
     activity: {
         user: (limit = 20) => fetchWithAuth(`/activity/user?limit=${limit}`),
@@ -92,6 +92,7 @@ export const api = {
         user: () => fetchWithAuth("/analytics/user"),
         company: () => fetchWithAuth("/analytics/company"),
         admin: () => fetchWithAuth("/analytics/admin"),
+        public: () => fetchWithAuth("/analytics/public"),
     },
     insights: {
         user: () => fetchWithAuth("/analytics/insights/user"),

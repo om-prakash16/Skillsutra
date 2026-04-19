@@ -9,10 +9,10 @@ import { Textarea } from "@/components/ui/textarea"
 interface OverviewTabProps {
     data: any
     isEditing?: boolean
-    onUpdate?: (username: string) => void
+    onUpdateBio?: (bio: string) => void
 }
 
-export function OverviewTab({ data, isEditing, onUpdate }: OverviewTabProps) {
+export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) {
     return (
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {/* Summary Section */}
@@ -25,6 +25,7 @@ export function OverviewTab({ data, isEditing, onUpdate }: OverviewTabProps) {
                         {isEditing ? (
                             <Textarea
                                 defaultValue={data.basic.bio}
+                                onChange={(e) => onUpdateBio?.(e.target.value)}
                                 className="min-h-[120px]"
                             />
                         ) : (

@@ -11,6 +11,14 @@ svc = AnalyticsService()
 growth_svc = GrowthTrackingService()
 
 
+# -- Public analytics --
+
+@router.get("/public")
+async def public_analytics():
+    """Aggregate totals for the public landing page."""
+    return await svc.get_public_stats()
+
+
 # -- Role-scoped analytics --
 
 

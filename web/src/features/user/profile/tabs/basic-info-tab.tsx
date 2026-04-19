@@ -10,9 +10,10 @@ import { Edit2, Save, X } from "lucide-react"
 interface BasicInfoTabProps {
     data: UserProfile
     isEditing?: boolean
+    onUpdate?: (field: string, value: string) => void
 }
 
-export function BasicInfoTab({ data, isEditing = false }: BasicInfoTabProps) {
+export function BasicInfoTab({ data, isEditing = false, onUpdate }: BasicInfoTabProps) {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-6">
@@ -27,11 +28,11 @@ export function BasicInfoTab({ data, isEditing = false }: BasicInfoTabProps) {
                 <div className="grid md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="firstName">First Name</Label>
-                        <Input id="firstName" defaultValue={data.basic.firstName} disabled={!isEditing} />
+                        <Input id="firstName" defaultValue={data.basic.firstName} onChange={(e) => onUpdate?.('firstName', e.target.value)} disabled={!isEditing} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="lastName">Last Name</Label>
-                        <Input id="lastName" defaultValue={data.basic.lastName} disabled={!isEditing} />
+                        <Input id="lastName" defaultValue={data.basic.lastName} onChange={(e) => onUpdate?.('lastName', e.target.value)} disabled={!isEditing} />
                     </div>
                 </div>
 
@@ -43,7 +44,7 @@ export function BasicInfoTab({ data, isEditing = false }: BasicInfoTabProps) {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="phone">Phone Number</Label>
-                        <Input id="phone" defaultValue={data.basic.phone} disabled={!isEditing} />
+                        <Input id="phone" defaultValue={data.basic.phone} onChange={(e) => onUpdate?.('phone', e.target.value)} disabled={!isEditing} />
                     </div>
                 </div>
 
@@ -52,6 +53,7 @@ export function BasicInfoTab({ data, isEditing = false }: BasicInfoTabProps) {
                     <Textarea
                         id="bio"
                         defaultValue={data.basic.bio}
+                        onChange={(e) => onUpdate?.('bio', e.target.value)}
                         className="min-h-[120px] leading-relaxed"
                         placeholder="Tell recruiters about yourself..."
                         disabled={!isEditing}
@@ -61,15 +63,15 @@ export function BasicInfoTab({ data, isEditing = false }: BasicInfoTabProps) {
                 <div className="grid md:grid-cols-3 gap-6">
                     <div className="space-y-2">
                         <Label htmlFor="location">Location</Label>
-                        <Input id="location" defaultValue={data.basic.location} disabled={!isEditing} />
+                        <Input id="location" defaultValue={data.basic.location} onChange={(e) => onUpdate?.('location', e.target.value)} disabled={!isEditing} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="exp">Experience Level</Label>
-                        <Input id="exp" defaultValue={data.basic.experienceLevel} disabled={!isEditing} />
+                        <Input id="exp" defaultValue={data.basic.experienceLevel} onChange={(e) => onUpdate?.('experienceLevel', e.target.value)} disabled={!isEditing} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="type">Preferred Job Type</Label>
-                        <Input id="type" defaultValue={data.basic.jobType} disabled={!isEditing} />
+                        <Input id="type" defaultValue={data.basic.jobType} onChange={(e) => onUpdate?.('jobType', e.target.value)} disabled={!isEditing} />
                     </div>
                 </div>
             </CardContent>

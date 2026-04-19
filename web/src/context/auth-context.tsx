@@ -111,7 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 .map((b) => b.toString(16).padStart(2, "0"))
                 .join("")
 
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/wallet-login`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/wallet-login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -141,11 +141,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             const normalizedRole = (data.role || role).toLowerCase()
             if (normalizedRole === "admin") {
-                router.push("/admin")
+                router.push("/admin/profile")
             } else if (normalizedRole === "company") {
-                router.push("/company/dashboard")
+                router.push("/company/profile")
             } else {
-                router.push("/dashboard/candidate")
+                router.push("/user/profile")
             }
         } catch (err: any) {
             console.error("[auth] wallet login failed:", err)
@@ -170,7 +170,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             const message = `Sign in to Best Hiring Tool (DEMO MODE)\n\nRole: ${role}\nWallet: ${mockWallet}\nTime: ${Date.now()}`
             
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/wallet-login`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/wallet-login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -200,11 +200,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             const normalizedRole = (data.role || role).toLowerCase()
             if (normalizedRole === "admin") {
-                router.push("/admin")
+                router.push("/admin/profile")
             } else if (normalizedRole === "company") {
-                router.push("/company/dashboard")
+                router.push("/company/profile")
             } else {
-                router.push("/dashboard/candidate")
+                router.push("/user/profile")
             }
         } catch (err: any) {
             console.error("[auth] demo login failed:", err)
@@ -227,8 +227,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // Store token for fetchWithAuth compatibility
             localStorage.setItem("auth_token", data.session.access_token)
 
+            const metaRole = (data.user?.user_metadata?.role as string)?.toLowerCase() || "user"
+            
             toast.success("Welcome back!")
-            router.push("/dashboard")
+            if (metaRole === "admin") {
+                router.push("/admin/profile")
+            } else if (metaRole === "company") {
+                router.push("/company/profile")
+            } else {
+                router.push("/user/profile")
+            }
         } catch (err: any) {
             console.error("[auth] login failed:", err)
             toast.error(err.message || "Login failed")

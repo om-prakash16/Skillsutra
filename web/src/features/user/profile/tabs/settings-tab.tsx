@@ -11,9 +11,10 @@ import { useEffect, useState } from "react"
 
 interface SettingsTabProps {
     data: UserProfile
+    onUpdateSettings?: (field: string, value: any) => void
 }
 
-export function SettingsTab({ data }: SettingsTabProps) {
+export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
     const { theme, setTheme } = useTheme()
     const [mounted, setMounted] = useState(false)
 
@@ -34,7 +35,7 @@ export function SettingsTab({ data }: SettingsTabProps) {
                         <Label className="text-base">Email Notifications</Label>
                         <p className="text-sm text-muted-foreground">Receive emails about new job matches.</p>
                     </div>
-                    <Switch defaultChecked={data.settings.notifications} />
+                    <Switch defaultChecked={data.settings.notifications} onCheckedChange={(checked) => onUpdateSettings?.('notifications', checked)} />
                 </div>
 
                 <div className="flex items-center justify-between space-x-2">
@@ -42,7 +43,7 @@ export function SettingsTab({ data }: SettingsTabProps) {
                         <Label className="text-base">Profile Visibility</Label>
                         <p className="text-sm text-muted-foreground">Control who can see your profile.</p>
                     </div>
-                    <Select defaultValue={data.settings.visibility.toLowerCase()}>
+                    <Select defaultValue={data.settings.visibility.toLowerCase()} onValueChange={(val) => onUpdateSettings?.('visibility', val === "public" ? "Public" : "Private")}>
                         <SelectTrigger className="w-[180px]">
                             <SelectValue placeholder="Select visibility" />
                         </SelectTrigger>
