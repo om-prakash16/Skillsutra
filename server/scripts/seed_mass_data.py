@@ -1,6 +1,7 @@
 import random
 import uuid
 import json
+import csv
 import os
 import sys
 from dotenv import load_dotenv
@@ -32,6 +33,7 @@ def seed():
     print("\n--- SKILLPROOF AI TEST CREDENTIAL GENERATOR ---")
     
     accounts_manifest = {"companies": [], "candidates": []}
+    csv_rows = [] # Flat list for spreadsheet export
 
     # 1. Generate 10 Company Identities
     print("Generating 10 Company Lead Identities...")
@@ -46,6 +48,7 @@ def seed():
             "role": "company"
         }
         accounts_manifest["companies"].append(account)
+        csv_rows.append([account["name"], account["email"], account["wallet"], account["role"], account["company"]])
         
         # Immediate DB Attempt (Internal block)
         if db:
@@ -55,7 +58,6 @@ def seed():
                     "id": uid, "wallet_address": wallet, "full_name": account["name"], 
                     "email": account["email"], "role": "company"
                 }).execute()
-                # Attempt to create company object too
                 c_res = db.table("companies").insert({"name": comp_name, "created_by_user_id": uid}).execute()
                 if c_res.data:
                     db.table("company_members").insert({"company_id": c_res.data[0]["id"], "user_id": uid, "company_role": "OWNER"}).execute()
@@ -70,9 +72,11 @@ def seed():
             "name": fname,
             "wallet": wallet,
             "email": f"candidate_{x}@skillproof.test",
-            "role": "talent"
+            "role": "talent",
+            "company": "N/A"
         }
         accounts_manifest["candidates"].append(account)
+        csv_rows.append([account["name"], account["email"], account["wallet"], account["role"], account["company"]])
         
         # Immediate DB Attempt
         if db:
@@ -86,14 +90,22 @@ def seed():
         if x % 25 == 0:
             print(f"  ... {x}/100 generated")
 
-    # Save manifest
-    manifest_path = os.path.join(os.path.dirname(__file__), "test_accounts.json")
-    with open(manifest_path, "w") as f:
+    # Save JSON manifest
+    base_path = os.path.dirname(__file__)
+    json_path = os.path.join(base_path, "test_accounts.json")
+    with open(json_path, "w") as f:
         json.dump(accounts_manifest, f, indent=4)
     
-    print(f"\nManifest successfully created with 110 identities.")
-    print(f"File Path: {manifest_path}")
-    print("\nNOTE: Since traditional passwords are not used, use the 'Wallet Address' in the login field.")
+    # Save CSV manifest (Excel Friendly)
+    csv_path = os.path.join(base_path, "test_accounts.csv")
+    with open(csv_path, "w", newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["Name", "Email", "Wallet Address", "Role", "Company"])
+        writer.writerows(csv_rows)
+    
+    print(f"\nManifests generated successfully.")
+    print(f"JSON: {json_path}")
+    print(f"CSV (Excel): {csv_path}")
 
 if __name__ == "__main__":
     seed()

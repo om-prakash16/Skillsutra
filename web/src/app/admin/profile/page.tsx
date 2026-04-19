@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useAuth } from "@/context/auth-context";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,7 +24,32 @@ import {
 import { motion } from "framer-motion";
 
 export default function AdminProfile() {
-    const { user } = useAuth();
+    const { user, token } = useAuth();
+    const [isSeeding, setIsSeeding] = useState(false);
+    const [seedResult, setSeedResult] = useState<any>(null);
+
+    const handleSeeding = async () => {
+        setIsSeeding(true);
+        try {
+            const response = await fetch("http://localhost:8000/api/v1/admin/seed-platform", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                }
+            });
+            const data = await response.json();
+            if (response.ok) {
+                setSeedResult(data.summary);
+                alert(`SUCCESS: Synthesized ${data.summary.users} users and ${data.summary.companies} companies.`);
+            } else {
+                alert(`FAILURE: ${data.detail || "Genesis Protocol Error"}`);
+            }
+        } catch (error) {
+            alert("CRITICAL ERROR: Connection to Backend Nexus failed.");
+        } finally {
+            setIsSeeding(false);
+        }
+    };
     
     // Fallback data if user state is empty during hydration bounce
     const adminEmail = user?.email || "sysadmin@nexus.core";
@@ -59,6 +85,55 @@ export default function AdminProfile() {
                     </Button>
                 </div>
             </div>
+
+            {/* Data Logistics Nexus */}
+            <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+            >
+                <Card className="bg-indigo-500/5 border-indigo-500/20 backdrop-blur-xl border-l-4 border-l-indigo-500 overflow-hidden shadow-2xl">
+                    <div className="absolute top-0 right-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-5 pointer-events-none" />
+                    <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-8">
+                        <div className="flex items-center gap-6">
+                            <div className="w-16 h-16 rounded-full bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center relative">
+                                <Radar className={`w-8 h-8 text-indigo-400 ${isSeeding ? 'animate-spin' : ''}`} />
+                                {isSeeding && <div className="absolute inset-x-0 inset-y-0 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin" />}
+                            </div>
+                            <div className="space-y-1">
+                                <h3 className="text-2xl font-black text-white uppercase italic tracking-tighter">Data Logistics Nexus</h3>
+                                <p className="text-sm text-indigo-300/60 font-medium max-w-md">
+                                    Trigger global data biosynthesis. Injects 110 validated identities into the primary platform ledger for stress testing.
+                                </p>
+                            </div>
+                        </div>
+                        <div className="flex flex-col items-end gap-3 w-full md:w-auto">
+                            <Button 
+                                onClick={handleSeeding}
+                                disabled={isSeeding}
+                                size="lg" 
+                                className={`h-16 px-10 font-black tracking-widest uppercase transition-all ${
+                                    isSeeding 
+                                    ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30' 
+                                    : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-500/20'
+                                }`}
+                            >
+                                {isSeeding ? (
+                                    <> <Activity className="w-5 h-5 mr-3 animate-pulse" /> Synthesis in Progress...</>
+                                ) : (
+                                    <> <Terminal className="w-5 h-5 mr-3" /> Trigger Global Seeding</>
+                                )}
+                            </Button>
+                            {seedResult && (
+                                <p className="text-[10px] font-mono text-emerald-400 uppercase tracking-widest bg-emerald-500/10 px-3 py-1 rounded border border-emerald-500/20">
+                                    LAST GENESIS: {seedResult.users} USERS / {seedResult.companies} COMPANIES SYNCHRONIZED
+                                </p>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+            </motion.div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 

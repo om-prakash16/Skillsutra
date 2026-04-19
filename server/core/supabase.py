@@ -13,11 +13,11 @@ try:
     from supabase import create_client, Client
 
     SUPABASE_URL = os.getenv("SUPABASE_URL", "")
-    SUPABASE_KEY = os.getenv("SUPABASE_KEY", "")  # Use service_role key for backend
+    SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_KEY", "")
 
     if SUPABASE_URL and SUPABASE_KEY:
         supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-        print("[SUCCESS] Supabase connected successfully!")
+        print(f"[SUCCESS] Supabase connected successfully! (Privilege: {'System' if os.getenv('SUPABASE_SERVICE_ROLE_KEY') else 'Standard'})")
     else:
         supabase = None
         print("[WARNING] Supabase keys not found in .env - running in mock mode")
