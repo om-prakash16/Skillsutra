@@ -38,7 +38,7 @@ def seed_data():
         print(f"  [!] Role assignment skipped: {e}")
 
     # 3. Create Dummy Company
-    company_name = "SkillProof AI - Demo Corp"
+    company_name = "Best Hiring Tool AI - Demo Corp"
     print(f"[3/4] Synthesizing dummy company node: {company_name}")
     try:
         company_resp = (
@@ -132,7 +132,7 @@ def seed_data():
         },
         {
             "title": "Junior Python Developer (Automation)",
-            "description": "Develop and maintain background tasks and notification triggers for the SkillProof ecosystem.",
+            "description": "Develop and maintain background tasks and notification triggers for the Best Hiring Tool ecosystem.",
             "skills_required": ["Python", "SQL", "Unit Testing", "REST APIs"],
             "experience_level": "Junior",
             "salary_range": "$70k - $100k",

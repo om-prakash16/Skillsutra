@@ -207,7 +207,7 @@ export function ApiDeveloperPortal() {
                     </div>
                     <div className="bg-black rounded-2xl p-6 font-mono text-xs leading-relaxed border border-white/5 text-zinc-400 group relative">
                         <pre className="whitespace-pre-wrap">
-{`curl -X GET "https://api.skillsutra.io/v1/enterprise/candidates/user_wallet_address" \\
+{`curl -X GET "https://api.besthiringtool.com/v1/enterprise/candidates/user_wallet_address" \\
   -H "X-API-KEY: sk_live_your_secret_key" \\
   -H "Accept: application/json"`}
                         </pre>
@@ -215,7 +215,7 @@ export function ApiDeveloperPortal() {
                             variant="ghost" 
                             size="icon" 
                             className="absolute top-4 right-4 h-8 w-8 rounded-lg bg-white/5 opacity-0 group-hover:opacity-100 transition-all"
-                            onClick={() => copyToClipboard(`curl -X GET "https://api.skillsutra.io/v1/enterprise/candidates/user_wallet_address" -H "X-API-KEY: sk_live_your_secret_key" -H "Accept: application/json"`)}
+                            onClick={() => copyToClipboard(`curl -X GET "https://api.besthiringtool.com/v1/enterprise/candidates/user_wallet_address" -H "X-API-KEY: sk_live_your_secret_key" -H "Accept: application/json"`)}
                         >
                             <Copy className="w-3.5 h-3.5" />
                         </Button>

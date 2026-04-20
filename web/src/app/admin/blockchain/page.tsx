@@ -45,7 +45,7 @@ export default function BlockchainDashboard() {
       auto_mint: true,
       soulbound: true,
       min_resonance_score: 85,
-      metadata_template: "SKILLPROOF_V1_METAPLEX",
+      metadata_template: "BHT_V1_METAPLEX",
       collection_mint: "3u7...9vJ"
   });
 
@@ -209,8 +209,8 @@ export default function BlockchainDashboard() {
                               <SelectValue placeholder="Template Selection" />
                           </SelectTrigger>
                           <SelectContent className="bg-slate-950 border-white/10 text-white">
-                              <SelectItem value="SKILLPROOF_V1_METAPLEX">Metaplex Certified (v1.0)</SelectItem>
-                              <SelectItem value="SKILLPROOF_CORE_V2">SkillProof Core (v2.0)</SelectItem>
+                              <SelectItem value="BHT_V1_METAPLEX">Metaplex Certified (v1.0)</SelectItem>
+                              <SelectItem value="SKILLPROOF_CORE_V2">Best Hiring Tool Core (v2.0)</SelectItem>
                               <SelectItem value="ENTERPRISE_CUSTOM">Enterprise Custom</SelectItem>
                           </SelectContent>
                       </Select>

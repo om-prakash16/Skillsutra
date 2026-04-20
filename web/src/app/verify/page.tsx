@@ -9,9 +9,11 @@ import { useAuth } from "@/context/auth-context"
 
 interface ParsedData {
     skills: string[]
+    soft_skills: string[]
     experience_years: number
     roles: string[]
     education: string[]
+    forensic_confidence: number
 }
 
 export default function VerifyPage() {
@@ -71,9 +73,11 @@ export default function VerifyPage() {
             // Fallback for demo purposes if backend isn't running
             setParsedData({
                 skills: ["React", "Rust", "Solana", "TypeScript", "Node.js (Fallback)"],
+                soft_skills: ["Leadership", "Problem Solving", "Teamwork"],
                 experience_years: 4,
                 roles: ["Frontend Engineer", "Smart Contract Developer"],
-                education: ["B.Sc. Computer Science"]
+                education: ["B.Sc. Computer Science"],
+                forensic_confidence: 85
             })
             toast.info("Applied fallback mock data for testing UI.")
         } finally {
@@ -121,20 +125,20 @@ export default function VerifyPage() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                 >
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
                     
                     {!file ? (
-                        <label className="cursor-pointer flex flex-col items-center">
-                            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <label className="cursor-pointer flex flex-col items-center relative z-20 w-full h-full min-h-[200px] justify-center">
+                            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 pointer-events-none">
                                 <UploadCloud className="w-10 h-10 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold mb-2">Upload Resume</h3>
-                            <p className="text-sm text-muted-foreground mb-6">PDF max 5MB</p>
+                            <h3 className="text-xl font-bold mb-2 pointer-events-none">Upload Resume</h3>
+                            <p className="text-sm text-muted-foreground mb-6 pointer-events-none">PDF max 5MB</p>
                             <Button variant="outline" className="pointer-events-none relative z-10">Browse Files</Button>
                             <input 
                                 type="file" 
-                                className="hidden" 
-                                accept="application/pdf"
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30" 
+                                accept="application/pdf,.pdf"
                                 onChange={handleFileChange}
                             />
                         </label>
@@ -180,17 +184,43 @@ export default function VerifyPage() {
                         </div>
                     ) : (
                         <div className="flex flex-col h-full">
-                            <div className="flex items-center gap-3 mb-6 pb-6 border-b border-white/10">
-                                <ShieldCheck className="w-6 h-6 text-emerald-400" />
-                                <h3 className="text-lg font-bold">Verified Extraction</h3>
+                            <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
+                                <div className="flex items-center gap-3">
+                                    <ShieldCheck className="w-6 h-6 text-emerald-400" />
+                                    <h3 className="text-lg font-bold">Verified Extraction</h3>
+                                </div>
+                                <div className="text-right">
+                                    <div className="text-[10px] uppercase font-black text-muted-foreground tracking-widest mb-1">Forensic Confidence</div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-24 h-2 bg-white/10 rounded-full overflow-hidden">
+                                            <motion.div 
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${parsedData.forensic_confidence}%` }}
+                                                className="h-full bg-gradient-to-r from-amber-500 to-emerald-500"
+                                            />
+                                        </div>
+                                        <span className="text-xs font-bold text-emerald-400">{parsedData.forensic_confidence}%</span>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div className="flex-1 space-y-6">
                                 <div>
-                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Detected Skills</p>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Technical Skills</p>
                                     <div className="flex flex-wrap gap-2">
                                         {parsedData.skills.map((skill, i) => (
                                             <span key={i} className="px-2 py-1 text-xs rounded-md bg-primary/20 text-primary border border-primary/30">
+                                                {skill}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Soft Skills</p>
+                                    <div className="flex flex-wrap gap-2">
+                                        {parsedData.soft_skills.map((skill, i) => (
+                                            <span key={i} className="px-2 py-1 text-xs rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30">
                                                 {skill}
                                             </span>
                                         ))}

@@ -109,7 +109,7 @@ export default function AdminDashboardOverview() {
             <Radar className="w-12 h-12 text-rose-500 animate-pulse" />
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl font-medium">
-            Real-time heuristic analysis of the SkillProof AI ecosystem. Absolute oversight of user migration, corporate engagement, and neural matching efficiency.
+            Real-time heuristic analysis of the Best Hiring Tool ecosystem. Absolute oversight of user migration, corporate engagement, and neural matching efficiency.
           </p>
         </div>
         <div className="flex gap-4">

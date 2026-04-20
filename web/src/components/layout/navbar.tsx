@@ -45,7 +45,7 @@ export function Navbar() {
         { href: "/talent", label: "Talent" },
     ]
 
-    const siteName = getVal("global", "site_name", "Best Hiring Tool")
+    const siteName = "Best Hiring Tool"
 
     const isDashboard = pathname?.startsWith("/user") || pathname?.startsWith("/company") || pathname?.startsWith("/admin")
 

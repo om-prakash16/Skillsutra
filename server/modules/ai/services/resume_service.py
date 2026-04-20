@@ -30,10 +30,12 @@ class ResumeService:
 
         prompt = PromptTemplate(
             template="""Analyze the following resume for a professional profile.
-            1. Extract all technical and soft skills.
-            2. Identify the primary role (e.g. Frontend Engineer, Rust Dev).
-            3. Calculate a Skill Score (0-100) based on deep knowledge evidence.
-            4. Identify 3 critical missing skills for the primary role.
+            1. Extract all technical skills separately.
+            2. Extract all soft skills (e.g. Leadership, Communication, Problem Solving).
+            3. Identify the primary role (e.g. Frontend Engineer, Rust Dev).
+            4. Calculate a Skill Score (0-100) based on deep knowledge evidence.
+            5. Calculate a Forensic Confidence Score (0-100) representing how verifiable and detailed the professional claims are.
+            6. Identify 3 critical missing skills for the primary role.
             
             {format_instructions}
             
@@ -57,10 +59,16 @@ class ResumeService:
                 "skill_score": parsed_data.skill_score
                 if hasattr(parsed_data, "skill_score")
                 else 75,
+                "forensic_confidence": parsed_data.forensic_confidence
+                if hasattr(parsed_data, "forensic_confidence")
+                else 80,
                 "primary_role": parsed_data.role
                 if hasattr(parsed_data, "role")
                 else "Developer",
                 "extracted_skills": parsed_data.skills,
+                "soft_skills": parsed_data.soft_skills
+                if hasattr(parsed_data, "soft_skills")
+                else [],
                 "missing_skills": parsed_data.missing_skills
                 if hasattr(parsed_data, "missing_skills")
                 else [],

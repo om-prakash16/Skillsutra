@@ -24,6 +24,18 @@ export default function EditProfilePage() {
         enabled: !!user?.wallet_address,
     })
 
+    const { data: initialProfile, isLoading } = useQuery({
+        queryKey: ["userProfile", user?.id],
+        queryFn: async () => {
+            const token = localStorage.getItem("auth_token")
+            const res = await fetch(`${API}/users/`, {
+                headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) }
+            })
+            return res.json()
+        },
+        enabled: !!user?.id
+    })
+
     const handleSync = async () => {
         setSyncing(true)
         // Simulate blockchain sync
@@ -65,7 +77,14 @@ export default function EditProfilePage() {
                 transition={{ delay: 0.1 }}
                 className="p-8 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md"
             >
-                <DynamicProfileForm />
+                {isLoading ? (
+                    <div className="flex flex-col items-center justify-center py-20 gap-4">
+                        <RefreshCw className="w-10 h-10 text-primary animate-spin" />
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Recruiting Identity...</span>
+                    </div>
+                ) : (
+                    <DynamicProfileForm initialData={initialProfile?.profile_data} />
+                )}
             </motion.div>
 
             {/* Version History */}

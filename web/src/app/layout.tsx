@@ -26,25 +26,11 @@ const headingFont = Plus_Jakarta_Sans({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  try {
-    const response = await fetch(`${API_BASE_URL}/cms/seo`, { next: { revalidate: 3600 } });
-    const data = await response.json();
-    const seo = data.reduce((acc: any, item: any) => {
-      acc[item.content_key] = item.content_value;
-      return acc;
-    }, {});
-
-    return {
-      title: seo.default_title || "Best Hiring Tool | Standardizing Global Talent",
-      description: seo.default_description || "career verification and sovereign professional identity.",
-      keywords: seo.keywords || "blockchain, ai hiring, solana",
-    };
-  } catch (e) {
-    return {
-      title: "Best Hiring Tool | Standardizing Global Talent",
-      description: "career verification and sovereign professional identity.",
-    };
-  }
+  return {
+    title: "Best Hiring Tool | Standardizing Global Talent",
+    description: "career verification and sovereign professional identity.",
+    keywords: "blockchain, ai hiring, solana",
+  };
 }
 
 export default function RootLayout({

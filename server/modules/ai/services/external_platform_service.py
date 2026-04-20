@@ -45,7 +45,7 @@ class ExternalPlatformService:
     def cross_reference_email(
         self, platform_email: str, skillproof_email: str
     ) -> Dict[str, Any]:
-        """Layer 2: Check if platform email matches SkillProof registration."""
+        """Layer 2: Check if platform email matches Best Hiring Tool registration."""
         match = platform_email.lower() == skillproof_email.lower()
         return {
             "email_match": match,

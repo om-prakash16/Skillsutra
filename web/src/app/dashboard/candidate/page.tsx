@@ -60,7 +60,7 @@ export default function CandidateDashboard() {
 
     useEffect(() => {
         const token = localStorage.getItem("auth_token")
-        const headers = token ? { Authorization: `Bearer ${token}` } : {}
+        const headers = token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" }
 
         // Fetch analytics
         fetch(`${API}/analytics/user`, { headers })
@@ -74,7 +74,6 @@ export default function CandidateDashboard() {
             .then(data => setActivity(Array.isArray(data) ? data : []))
             .catch(console.error)
 
-        // Fetch sync status
         if (user?.id) {
             fetch(`${API}/sync/status`, { headers })
                 .then(res => res.json())
@@ -262,7 +261,7 @@ export default function CandidateDashboard() {
             >
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/5 border border-emerald-500/10">
                     <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500/60">Secured by SkillProof Protocol</span>
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-500/60">Secured by Best Hiring Protocol</span>
                 </div>
                 <div className="flex items-center gap-6 opacity-20">
                     <div className="h-px w-20 bg-gradient-to-r from-transparent to-white" />

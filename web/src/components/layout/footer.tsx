@@ -16,7 +16,7 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
 
     if (isDashboard && !forceVisible) return null
 
-    const siteName = getVal("global", "site_name", "SkillProof AI")
+    const siteName = getVal("global", "site_name", "Best Hiring Tool")
     const copyright = getVal("global", "copyright", `© ${new Date().getFullYear()} ${siteName}. All rights reserved.`)
     
     const [showBackToTop, setShowBackToTop] = useState(false)
@@ -232,7 +232,7 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
                                 <span className="opacity-50">Powered by</span>
                                 <span className="font-bold tracking-tighter flex items-center gap-1 text-foreground">
                                     <Zap className="w-3 h-3 text-primary fill-primary" />
-                                    SkillProof AI Core
+                                    Best Hiring Tool Core
                                 </span>
                             </div>
                         </div>

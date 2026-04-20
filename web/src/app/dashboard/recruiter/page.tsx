@@ -60,7 +60,7 @@ export default function RecruiterDashboard() {
     <div className="container mx-auto py-12 px-4 mt-16 max-w-7xl animate-in fade-in duration-1000">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div className="space-y-4">
-            <h1 className="text-5xl font-black font-heading tracking-tighter">Recruiter <span className="text-primary italic">Nexus</span></h1>
+            <h1 className="text-5xl font-black font-heading tracking-tighter">Best Hiring Tool <span className="text-primary italic">Nexus</span></h1>
             <p className="text-muted-foreground text-lg max-w-xl">
                 Manage your Web3 talent pipeline with AI-driven matching and verifiable skill proofs.
             </p>

@@ -71,7 +71,7 @@ def seed():
         account = {
             "name": fname,
             "wallet": wallet,
-            "email": f"candidate_{x}@skillproof.test",
+            "email": f"candidate_{x}@besthiringtool.test",
             "role": "talent",
             "company": "N/A"
         }

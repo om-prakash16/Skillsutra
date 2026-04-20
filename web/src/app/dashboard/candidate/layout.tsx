@@ -18,7 +18,6 @@ import {
     Settings,
     LogOut,
     Zap,
-    Zap,
     Brain,
     Users,
     Route,

@@ -233,7 +233,7 @@ export default function AdminSettingsPage() {
                     <div className="h-2 w-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)] animate-pulse" />
                     <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40">Network Integrity Pattern Match: 100%</span>
                     <div className="h-4 w-px bg-white/10 mx-4" />
-                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40">Node: SKILLPROOF_ADMIN_01</span>
+                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40">Node: BHT_ADMIN_01</span>
                 </div>
             </div>
         </div>

@@ -31,6 +31,8 @@ import {
 import { toast } from "sonner"
 import { api } from "@/lib/api/api-client"
 import { useAuth } from "@/context/auth-context"
+import { cn } from "@/lib/utils"
+import { Label } from "@/components/ui/label"
 
 export default function AIInterviewPrepPage() {
     const { user } = useAuth()

@@ -31,9 +31,11 @@ class SkillGapResponse(BaseModel):
 
 
 class ParsedResume(BaseModel):
-    skills: List[str] = Field(description="List of extracted technical and soft skills")
+    skills: List[str] = Field(description="List of extracted technical skills")
+    soft_skills: List[str] = Field(description="List of extracted soft skills (e.g. Leadership, Communication)")
     role: str = Field(description="Primary professional role identified")
     skill_score: float = Field(description="AI-calculated skill score from 0-100")
+    forensic_confidence: float = Field(description="AI confidence score for the verification (0-100)")
     missing_skills: List[str] = Field(
         description="Top 3 missing skills for the identified role"
     )

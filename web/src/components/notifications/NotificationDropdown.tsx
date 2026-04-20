@@ -19,24 +19,24 @@ const mockNotifications: Notification[] = [
     {
         id: "1",
         type: "nft",
-        title: "NFT Minted Successfully",
-        message: "Your React Developer Skill NFT is now on-chain.",
+        title: "Skill NFT Verified",
+        message: "Your React Architect SBT has been successfully minted to Solana devnet.",
         time: "2m ago",
         isRead: false
     },
     {
         id: "2",
         type: "job",
-        title: "New Job Match",
-        message: "A new 'Senior Rust Engineer' role matches your profile.",
+        title: "Elite Match Found",
+        message: "AI matched your profile with 'Lead Protocol Engineer' at Solana Labs (98% match).",
         time: "1h ago",
         isRead: false
     },
     {
         id: "3",
         type: "verify",
-        title: "Verification Complete",
-        message: "Your GitHub activity analysis is finished. Score: 850.",
+        title: "Forensic Analysis Complete",
+        message: "GitHub Repository 'solana-defi-vault' verified. Forensic Confidence: 94%.",
         time: "3h ago",
         isRead: false
     }

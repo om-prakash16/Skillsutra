@@ -94,7 +94,7 @@ class MailerService:
             else '<div style="text-align: center; margin-top: 30px;"><a href="#" style="background: #6366f1; color: white; padding: 12px 24px; text-decoration: none; border-radius: 12px; font-weight: bold;">Resubmit Identification</a></div>'
         }
             <p style="margin-top: 40px; font-size: 12px; color: #3f3f46; text-align: center;">
-                Trusted Identity Protocol | SkillProof AI
+                Trusted Identity Protocol | Best Hiring Tool AI
             </p>
         </div>
         """

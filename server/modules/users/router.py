@@ -37,16 +37,51 @@ async def get_user_profile(current_user=Depends(get_current_user)):
 @router.post("/update")
 async def update_profile(data: Dict[str, Any], current_user=Depends(get_current_user)):
     """
-    Update dynamic profile JSON data.
+    Update dynamic profile JSON data and synchronize with core tables.
     """
     db = get_supabase()
+    user_id = current_user["id"]
+
+    # 1. Identity Synchronization (users table)
+    first_name = data.get("firstName", "")
+    last_name = data.get("lastName", "")
+    if first_name or last_name:
+        full_name = f"{first_name} {last_name}".strip()
+        db.table("users").update({"full_name": full_name}).eq("id", user_id).execute()
+
+    # 2. Skill Nexus Synchronization (user_skills table)
+    skills_csv = data.get("skills", "")
+    if skills_csv:
+        # Parse and clean skills
+        new_skill_names = [s.strip() for s in skills_csv.split(",") if s.strip()]
+        
+        # Fetch existing skills to avoid duplicates
+        existing_skills = db.table("user_skills").select("skill_name").eq("user_id", user_id).execute()
+        existing_names = {s["skill_name"].lower() for s in existing_skills.data}
+
+        # Filter for truly new skills
+        skills_to_insert = []
+        for name in new_skill_names:
+            if name.lower() not in existing_names:
+                skills_to_insert.append({
+                    "user_id": user_id,
+                    "skill_name": name,
+                    "proficiency_level": 1,
+                    "is_verified": False
+                })
+        
+        if skills_to_insert:
+            db.table("user_skills").insert(skills_to_insert).execute()
+
+    # 3. Dynamic Profile Meta-data (JSON-B)
     response = (
         db.table("dynamic_profile_data")
         .upsert(
-            {"user_id": current_user["id"], "profile_data": data, "updated_at": "now()"}
+            {"user_id": user_id, "profile_data": data, "updated_at": "now()"}
         )
         .execute()
     )
+    
     return {"status": "success", "data": response.data}
 
 

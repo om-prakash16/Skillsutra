@@ -217,7 +217,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                             <Zap className={cn("w-4 h-4", role === "admin" ? "text-rose-400" : "text-primary")} />
                         </div>
                         <div>
-                            <p className="text-sm font-black tracking-tight text-white leading-none">SkillProof AI</p>
+                            <p className="text-sm font-black tracking-tight text-white leading-none">Best Hiring Tool</p>
                             <p className={cn("text-[8px] uppercase tracking-[0.3em] font-bold leading-tight mt-0.5",
                                 role === "admin" ? "text-rose-500/60" : "text-primary/60"
                             )}>

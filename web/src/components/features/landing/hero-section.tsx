@@ -10,7 +10,7 @@ import { api, API_BASE_URL } from '@/lib/api/api-client';
 export function HeroSection() {
   const [content, setContent] = useState<any>({
     title: 'Verify Skills. Hire Intelligence.',
-    subtitle: 'The best hiring tool uses Gemini 1.5 and Solana to verify professional expertise with on-chain precision. No more resume inflation.',
+    subtitle: 'The best hiring tool uses Gemini 1.5 and Solana to verify professional expertise with on-chain precision. No more resume information.',
     badge: 'The Future of Web3 Talent is Here'
   });
   const [terminalLogs, setTerminalLogs] = useState<string[]>([]);

@@ -20,7 +20,8 @@ import {
     Brain,
     Lock,
     ExternalLink,
-    Zap
+    Zap,
+    Info
 } from "lucide-react"
 import Link from "next/link"
 import { toast } from "sonner"
@@ -141,7 +142,7 @@ export default function JobDetailPage() {
                             <span className="flex items-center gap-2 text-white/50"><Briefcase className="w-4 h-4" />{job.companies?.name || "Global Tech"}</span>
                             <span className="flex items-center gap-2"><MapPin className="w-4 h-4" />{job.location || "Remote"}</span>
                             <span className="flex items-center gap-2 text-primary/80"><DollarSign className="w-4 h-4" />{job.salary_range || "Competitive"}</span>
-                            <Badge variant="ghost" className="text-[10px] font-black tracking-widest uppercase opacity-40">{job.job_type}</Badge>
+                            <Badge variant="outline" className="text-[10px] font-black tracking-widest uppercase opacity-40">{job.job_type}</Badge>
                         </div>
                     </div>
 
