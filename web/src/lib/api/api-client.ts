@@ -18,7 +18,7 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         ...options,
-        headers,
+        headers: headers as HeadersInit,
     });
 
     if (!response.ok) {
@@ -162,3 +162,20 @@ export const api = {
         getHistory: (roomId: string) => fetchWithAuth(`/chat/history/${roomId}`),
     },
 };
+
+// ─── Domain-Specific API Modules (Preferred) ─────────────────
+// New code should import from these domain modules:
+//   import { userApi } from "@/lib/api/user-api"
+//   import { companyApi } from "@/lib/api/company-api"
+//   import { adminApi } from "@/lib/api/admin-api"
+//   import { publicApi } from "@/lib/api/public-api"
+//   import { authApi } from "@/lib/api/auth-api"
+//
+// The unified `api` object above is preserved for backward compatibility.
+// ──────────────────────────────────────────────────────────────
+
+export { authApi } from "./auth-api";
+export { userApi } from "./user-api";
+export { companyApi } from "./company-api";
+export { adminApi } from "./admin-api";
+export { publicApi } from "./public-api";

@@ -228,6 +228,7 @@ class JobCategoryCreate(BaseModel):
 class UserUpdate(BaseModel):
     role: Optional[str] = None
     is_blocked: Optional[bool] = None
+    is_active: Optional[bool] = None
 
 
 class JobUpdate(BaseModel):

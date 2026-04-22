@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from modules.auth.service import get_current_user
+from modules.auth.guards import require_company
 from modules.auth.models import CompanyCreate, CompanyInvite
 from core.supabase import get_supabase
 from modules.activity.service import record_event
@@ -69,7 +70,7 @@ async def create_company(req: CompanyCreate, user=Depends(get_current_user)):
 
 
 @router.post("/invite-member")
-async def invite_member(req: CompanyInvite, user=Depends(get_current_user)):
+async def invite_member(req: CompanyInvite, user=Depends(require_company)):
     """
     Invite an existing user to join a company.
 
@@ -124,7 +125,7 @@ async def invite_member(req: CompanyInvite, user=Depends(get_current_user)):
 
 
 @router.get("/team")
-async def get_team(company_id: str, user=Depends(get_current_user)):
+async def get_team(company_id: str, user=Depends(require_company)):
     """Return all members of a company with their wallet addresses."""
     db = get_supabase()
     response = (

@@ -2,29 +2,22 @@ from fastapi import APIRouter, HTTPException, Depends
 from typing import Dict, Any, Optional
 import uuid
 from modules.auth.service import require_permission
+from modules.auth.guards import require_admin
 from core.supabase import get_supabase
-from pydantic import BaseModel
 from modules.activity.service import record_event
-from modules.admin.models import SkillFlagReview, SupportTicketUpdate, FlagUserAction
+from modules.admin.models import (
+    SkillFlagReview,
+    SupportTicketUpdate,
+    FlagUserAction,
+    SchemaFieldCreate,
+    FeatureToggleRequest,
+    PlatformSettingRequest,
+    UserUpdate as AdminUserUpdate,
+)
 import json
 import os
 
 router = APIRouter()
-
-
-# -- Request models --
-
-
-class SchemaFieldCreate(BaseModel):
-    id: Optional[str] = None
-    field_name: str
-    field_label: Optional[str] = None
-    field_type: str  # text | number | select | date | file_upload
-    section: str = "General"
-    required: bool = False
-    placeholder: Optional[str] = None
-    validation_rules: Optional[Dict[str, Any]] = None
-    display_order: int = 0
 
 
 # -- Internal Helpers --
@@ -58,20 +51,7 @@ async def _write_staff_audit(
     )
 
 
-class FeatureToggleRequest(BaseModel):
-    feature_name: str
-    is_enabled: bool
-    description: Optional[str] = None
-
-
-class PlatformSettingRequest(BaseModel):
-    setting_key: str
-    setting_value: str
-
-
-class UserUpdate(BaseModel):
-    role: Optional[str] = None
-    is_active: Optional[bool] = None
+from pydantic import BaseModel
 
 
 class ReportResolveAction(BaseModel):
@@ -135,7 +115,7 @@ async def get_all_users(
 
 @router.patch("/users/{wallet}")
 async def update_user(
-    wallet: str, update: UserUpdate, user=Depends(require_permission("user.promote"))
+    wallet: str, update: AdminUserUpdate, user=Depends(require_permission("user.promote"))
 ):
     """
     Update a user's role or active status by wallet address.
@@ -208,11 +188,22 @@ async def update_schema_field(
     return {"status": "success", "data": result.data}
 
 
+@router.delete("/schema/{field_id}")
+async def delete_schema_field(
+    field_id: str,
+    user=Depends(require_permission("manage_schema")),
+):
+    """Delete a schema field."""
+    db = get_supabase()
+    db.table("profile_schema").delete().eq("id", field_id).execute()
+    return {"status": "success"}
+
+
 # -- Skill taxonomy --
 
 
 @router.get("/skills")
-async def get_skill_taxonomy():
+async def get_skill_taxonomy(user=Depends(require_admin)):
     """Return the platform's canonical skill category list."""
     db = get_supabase()
     return db.table("skill_categories").select("*").execute().data
@@ -232,7 +223,7 @@ async def create_skill_category(
 
 
 @router.get("/features")
-async def get_feature_flags():
+async def get_feature_flags(user=Depends(require_admin)):
     """Return all feature flags and their current enabled state."""
     db = get_supabase()
     return db.table("feature_flags").select("*").execute().data
@@ -262,7 +253,7 @@ async def update_feature_flag(
 
 
 @router.get("/settings")
-async def get_platform_settings():
+async def get_platform_settings(user=Depends(require_admin)):
     """Return all key/value platform configuration entries."""
     db = get_supabase()
     return db.table("platform_settings").select("*").execute().data
@@ -470,6 +461,28 @@ async def resolve_ticket(
         user.get("sub", ""), f"ticket_{payload.status}", "ticket", ticket_id
     )
     return {"status": "success"}
+
+
+# -- Subscriptions --
+
+
+@router.get("/subscriptions")
+async def get_subscriptions(user=Depends(require_permission("admin.access"))):
+    """Get all platform subscriptions."""
+    db = get_supabase()
+    return db.table("platform_subscriptions").select("*").order("monthly_price").execute().data
+
+
+@router.patch("/subscriptions/{subscription_id}")
+async def update_subscription(
+    subscription_id: str,
+    payload: Dict[str, Any],
+    user=Depends(require_permission("admin.access")),
+):
+    """Update subscription details."""
+    db = get_supabase()
+    result = db.table("platform_subscriptions").update(payload).eq("id", subscription_id).execute()
+    return {"status": "success", "data": result.data}
 
 
 # -- Staff Activity Logs --

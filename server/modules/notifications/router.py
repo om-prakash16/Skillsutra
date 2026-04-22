@@ -3,6 +3,7 @@ from uuid import UUID
 from typing import Dict, Any
 from modules.notifications.service import NotificationService
 from modules.auth.service import get_current_user
+from modules.auth.guards import require_admin
 from core.supabase import get_supabase
 
 router = APIRouter()
@@ -55,12 +56,11 @@ async def get_activity_history(
 
 @router.get("/admin/global-logs")
 async def get_global_activity_logs(
-    current_user: Dict[str, Any] = Depends(get_current_user), limit: int = 100
+    current_user: Dict[str, Any] = Depends(require_admin), limit: int = 100
 ):
     """
     audit trail for administrators.
     """
-    # In a real app: check if current_user has 'admin' permissions
     db = get_supabase()
     response = (
         db.table("activity_logs")

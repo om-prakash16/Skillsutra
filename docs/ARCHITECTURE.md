@@ -1,36 +1,106 @@
 # Best Hiring Tool: Scalable SaaS Architecture
 
-Best Hiring Tool is architected as a high-performance, modular monorepo that bridges the gap between traditional SaaS (Supabase/FastAPI) and Web3 (Solana/IPFS).
+Best Hiring Tool aligns with an enterprise-grade, professional-standard architecture that effectively bridges the gap between traditional SaaS and Web3 infrastructure.
 
-## 🏛️ Project Structure
+## 🏛️ System Architecture Layers
 
-### `web/` (Next.js 14 Frontend)
-The frontend core, utilizing Next.js App Router for domain-driven navigation.
-- **`app/`**: Route-based pages for Candidates, Companies, and Admins.
-- **`components/ui/`**: Premium shadcn/ui visual elements with 100% Elite Gateway styling.
-- **`components/forms/`**: Dynamic AI-driven form generation.
-- **`lib/api/`**: Strongly typed FastAPI client integration.
+```text
+Frontend (Next.js 14)
+        ↓
+API Gateway (FastAPI)
+        ↓
+Core Services Layer
+ ├── Authentication Service
+ ├── AI Skill Engine
+ ├── Assessment Engine
+ ├── Analytics Engine
+ ├── Verification Engine
+ ├── Web3 Credential Engine
+        ↓
+Data Layer
+ ├── PostgreSQL (Supabase)
+ ├── Vector Database (pgvector)
+ ├── Redis Cache
+        ↓
+Blockchain Layer
+ ├── Solana (Anchor Programs)
+ ├── IPFS Storage
+```
 
-### `server/` (FastAPI Backend)
-A modular Python backend designed for independent service scaling.
-- **`modules/ai/`**: Orchestrates Gemini 1.5 resonance scoring and resume analysis.
-- **`modules/nft/`**: Manages on-chain identity minting and Metaplex metadata.
-- **`modules/sync/`**: High-assurance state synchronization between Supabase, IPFS, and Solana.
-- **`modules/analytics/`**: Aggregates platform-wide career growth and hiring metrics.
-- **`core/database/`**: Optimized Supabase PostgreSQL connection layer with RLS enforcement.
+## 📁 Standard Directory Structure
 
-### `contracts/` (Solana Anchor Programs)
-Verifiable professional state on-chain.
-- **`programs/this-best-hiring-tool/`**: Core Anchor program for credential issuance.
-- **`instructions/`**: Atomic instructions for minting and metadata updates.
+```text
+best-hiring-tool/
+├── web/                   # Next.js 14 Frontend Application
+│    ├── app/              # App Router definitions
+│    ├── components/       # Shared UI components
+│    ├── dashboard/        # Dashboard layout segment
+│    ├── candidate/        # Candidate platform domain
+│    ├── company/          # Enterprise routing domain
+│    └── admin/            # Administrative interface
+│
+├── server/                # FastAPI Backend & Services
+│    ├── api_gateway/      # API entrypoints and routing
+│    ├── modules/          # Core microservices domains
+│    │    ├── auth/
+│    │    ├── ai/
+│    │    ├── assessment/
+│    │    ├── analytics/
+│    │    ├── verification/
+│    │    ├── nft/
+│    │    ├── sync/
+│    │    └── vector/
+│    │
+│    └── workers/          # Background Job Processors
+│         ├── ai_worker.py
+│         ├── blockchain_worker.py
+│         └── analytics_worker.py
+│
+├── contracts/             # Web3 Smart Contracts
+│    └── solana_anchor_programs/
+│
+├── infra/                 # DevOps & Deployment Infrastructure
+│    ├── docker/
+│    ├── CI_CD/
+│    └── terraform/
+│
+└── docs/                  # System Architecture Documentation
+```
+
+## ⚙️ Core Operational Workflows
+
+### AI Resume Parsing Workflow
+The AI Skill Engine executes the following data pipeline to derive verifiable skills from professional resumes:
+
+```text
+resume parsing
+       ↓
+skill extraction
+       ↓
+embedding generation
+       ↓
+semantic matching
+       ↓
+AI score generation
+```
+
+### NFT Minting & Verification Workflow
+The Web3 Credential Engine ensures on-chain immutability through this standard synchronization process:
+
+```text
+skill verified
+      ↓
+metadata generated
+      ↓
+uploaded to IPFS
+      ↓
+NFT minted on Solana
+      ↓
+stored in candidate wallet
+```
 
 ---
 
-## 🚀 Key Architectural Benefits
-1. **Modular Consistency**: Each backend domain is isolated, allowing AI logic to grow without impacting Auth or Marketplace features.
-2. **Web3 State Sync**: A dedicated sync module ensures 100% data parity between off-chain SaaS state and on-chain verifiable records.
-3. **Enterprise Scalability**: Dockerized environment paths allow for seamless deployment to Vercel (Frontend), Render (API), and Colosseum (AI Research).
-
 ## 🛠️ Security Infrastructure
-- **Role-Based Access Control (RBAC)**: Enforced at both the FastAPI router level and Supabase RLS level.
-- **Audit Logging**: Every administrative toggle and on-chain sync is logged to `staff_action_logs` for transparency.
+- **Role-Based Access Control (RBAC)**: Enforced at both the FastAPI API Gateway level and Supabase RLS level.
+- **Audit Logging**: Every administrative toggle and on-chain sync is strictly audited for transparency.

@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "sonner"
+import { api } from "@/lib/api/api-client"
 import { motion, AnimatePresence } from "framer-motion"
 
 export default function ModerationCenter() {

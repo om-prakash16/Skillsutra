@@ -1,8 +1,4 @@
 {
-  "name": "this-best-hiring-tool-monorepo",
-  "private": true,
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  "name": "best-hiring-tool",
+  "private": true
 }

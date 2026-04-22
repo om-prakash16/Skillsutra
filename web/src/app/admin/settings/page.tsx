@@ -25,6 +25,8 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { Badge } from "@/components/ui/badge"
+import { api } from "@/lib/api/api-client"
 
 export default function AdminSettingsPage() {
     const [localSettings, setLocalSettings] = useState<any>({
@@ -201,7 +203,7 @@ export default function AdminSettingsPage() {
                                         <div className="flex items-center gap-4">
                                             {item.field === "input" && (
                                                 <Input 
-                                                    type={item.type}
+                                                    type={(item as any).type}
                                                     value={localSettings[item.id]}
                                                     onChange={e => setLocalSettings({...localSettings, [item.id]: e.target.value})}
                                                     className="bg-black/40 border-white/10 h-12 text-white font-mono text-sm rounded-xl focus:border-rose-500/50 transition-all"
@@ -213,7 +215,7 @@ export default function AdminSettingsPage() {
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent className="bg-slate-950 border-white/10 text-white">
-                                                        {item.options?.map(opt => (
+                                                        {(item as any).options?.map((opt: string) => (
                                                             <SelectItem key={opt} value={opt} className="focus:bg-rose-500/20">{opt}</SelectItem>
                                                         ))}
                                                     </SelectContent>

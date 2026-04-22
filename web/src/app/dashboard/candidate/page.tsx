@@ -60,7 +60,7 @@ export default function CandidateDashboard() {
 
     useEffect(() => {
         const token = localStorage.getItem("auth_token")
-        const headers = token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" }
+        const headers: HeadersInit = token ? { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } : { "Content-Type": "application/json" }
 
         // Fetch analytics
         fetch(`${API}/analytics/user`, { headers })

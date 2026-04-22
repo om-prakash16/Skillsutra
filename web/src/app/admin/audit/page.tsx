@@ -161,7 +161,7 @@ export default function GlobalAuditPage() {
                                         <p className="text-[9px] font-mono text-white/10 mt-1 uppercase">Actor: {event.actor_id}</p>
                                     </TableCell>
                                     <TableCell className="text-center">
-                                        <Badge variant="ghost" className="bg-white/5 text-[9px] font-mono tracking-tighter opacity-40">
+                                        <Badge variant="outline" className="border-none bg-white/5 text-[9px] font-mono tracking-tighter opacity-40">
                                             {event.entity_type || 'GLOBAL'}:{event.entity_id?.slice(0, 8) || 'SYSTEM'}
                                         </Badge>
                                     </TableCell>

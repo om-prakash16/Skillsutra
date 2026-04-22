@@ -2,9 +2,7 @@
 
 import { Breadcrumbs } from "@/components/layout/breadcrumbs"
 import { Sidebar } from "@/components/layout/sidebar"
-import { useAuth } from "@/context/auth-context"
-import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useRoleGuard } from "@/hooks/useRoleGuard"
 import { Loader2 } from "lucide-react"
 
 export default function CompanyLayout({
@@ -12,20 +10,9 @@ export default function CompanyLayout({
 }: {
     children: React.ReactNode
 }) {
-    const { user, isLoading } = useAuth()
-    const router = useRouter()
+    const { isLoading, isAuthorized } = useRoleGuard(["company", "admin"])
 
-    useEffect(() => {
-        if (!isLoading) {
-            if (!user) {
-                router.push("/auth/login")
-            } else if (user.role !== "company") {
-                router.push("/user/dashboard")
-            }
-        }
-    }, [user, isLoading, router])
-
-    if (isLoading || !user || user.role !== "company") {
+    if (isLoading || !isAuthorized) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />

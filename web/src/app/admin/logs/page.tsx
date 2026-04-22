@@ -198,7 +198,7 @@ export default function ActivityLogs() {
                       <div className="flex flex-col gap-1.5">
                           <span className="text-[11px] font-bold text-white/80 leading-relaxed max-w-2xl">{log.description}</span>
                           <div className="flex items-center gap-2">
-                              <Badge variant="ghost" className="text-[8px] p-0 text-white/20 font-black uppercase tracking-[0.2em]">{log.entity_type || 'GLOBAL'}</Badge>
+                              <Badge variant="outline" className="border-none text-[8px] p-0 text-white/20 font-black uppercase tracking-[0.2em]">{log.entity_type || 'GLOBAL'}</Badge>
                               {log.entity_id && <span className="text-[9px] font-mono text-white/10"># {log.entity_id.substring(0,12)}</span>}
                           </div>
                       </div>

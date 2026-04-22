@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from typing import Dict, Any, Optional
 from modules.auth.service import require_permission, get_current_user
+from modules.auth.guards import require_company
 from modules.jobs.service import JobService
 from modules.jobs.models import (
     JobCreate,
@@ -53,7 +54,7 @@ async def get_job_details(job_id: str):
 
 
 @router.post("/create", response_model=JobResponse)
-async def create_job(job: JobCreate, user=Depends(get_current_user)):
+async def create_job(job: JobCreate, user=Depends(require_company)):
     """
     Create a job post.
     """
@@ -149,7 +150,7 @@ async def get_user_applications(user_id: str):
 
 
 @router.get("/company/{company_id}")
-async def get_company_applications(company_id: str, job_id: Optional[str] = None):
+async def get_company_applications(company_id: str, job_id: Optional[str] = None, user=Depends(require_company)):
     """
     Recruiter's applicant list.
     """
@@ -157,7 +158,7 @@ async def get_company_applications(company_id: str, job_id: Optional[str] = None
 
 
 @router.get("/company-metrics/{company_id}")
-async def get_company_jobs_metrics(company_id: str):
+async def get_company_jobs_metrics(company_id: str, user=Depends(require_company)):
     """
     Recruiter's job list with high-level metrics (counts, discovery).
     """
@@ -177,7 +178,7 @@ async def update_app_status(
 
 
 @router.patch("/applications/{app_id}/submit-assessment")
-async def submit_assessment(app_id: str, data: Dict[str, Any]):
+async def submit_assessment(app_id: str, data: Dict[str, Any], user=Depends(get_current_user)):
     """
     Submits candidate's assessment answers and updates score.
     """

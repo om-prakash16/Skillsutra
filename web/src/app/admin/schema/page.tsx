@@ -19,7 +19,8 @@ import {
     ArrowUpDown,
     Type,
     FileCode,
-    Settings
+    Settings,
+    Save
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { motion, AnimatePresence } from "framer-motion";
@@ -113,7 +114,7 @@ export default function SchemaBuilder() {
     }
   };
 
-  if (!authLoading && user?.role !== "admin" && user?.role !== "super_admin" && process.env.NODE_ENV !== 'development') {
+  if (!authLoading && user?.role !== "admin" && (user?.role as string) !== "super_admin" && process.env.NODE_ENV !== 'development') {
     return (
       <div className="flex flex-col items-center justify-center p-24 space-y-6">
         <div className="relative">

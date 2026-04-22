@@ -19,13 +19,13 @@ export default function AdminLayout({
         if (!isLoading) {
             if (!user) {
                 router.push("/auth/login")
-            } else if (user.role !== "admin" && user.role !== "super_admin") {
+            } else if (user.role !== "admin" && (user.role as string) !== "super_admin") {
                 router.push("/dashboard/candidate")
             }
         }
     }, [user, isLoading, router])
 
-    if (isLoading || !user || (user.role !== "admin" && user.role !== "super_admin")) {
+    if (isLoading || !user || (user.role !== "admin" && (user.role as string) !== "super_admin")) {
         return (
             <div className="flex h-screen w-full flex-col items-center justify-center bg-[#020617] text-white overflow-hidden relative">
                 {/* Background Glows */}

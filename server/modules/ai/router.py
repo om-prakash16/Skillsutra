@@ -16,6 +16,7 @@ from modules.ai.simulation_router import router as simulation_router
 from modules.ai.job_optimizer_router import router as job_optimizer_router
 from modules.ai.team_analyzer_router import router as team_analyzer_router
 from modules.ai.career_risk_router import router as career_risk_router
+from modules.ai.pitch_router import router as pitch_router
 from pydantic import BaseModel
 
 router = APIRouter()
@@ -59,6 +60,9 @@ router.include_router(
 )
 router.include_router(
     career_risk_router, prefix="/career-risk", tags=["AI Career Risk Predictor"]
+)
+router.include_router(
+    pitch_router, prefix="/pitch", tags=["AI Pitch Deck Engine"]
 )
 
 
