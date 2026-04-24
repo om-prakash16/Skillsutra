@@ -19,6 +19,8 @@ from modules.career.router import router as career_router
 from modules.users.identity_router import router as identity_router
 from modules.chat.router import router as chat_router
 from modules.enterprise.router import router as enterprise_router
+from modules.skill_graph.router import router as skill_graph_router
+from modules.projects.router import router as projects_router
 from modules.auth.handlers import initialize_event_handlers
 
 app = FastAPI(
@@ -71,6 +73,12 @@ app.include_router(identity_router, prefix="/api/v1", tags=["Networking & Identi
 app.include_router(chat_router, prefix="/api/v1/chat", tags=["Community Chat"])
 app.include_router(
     enterprise_router, prefix="/api/v1/enterprise", tags=["Enterprise API"]
+)
+app.include_router(
+    skill_graph_router, prefix="/api/v1/skills", tags=["Skill Graph System"]
+)
+app.include_router(
+    projects_router, prefix="/api/v1/projects", tags=["Projects"]
 )
 
 

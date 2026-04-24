@@ -157,4 +157,50 @@ export const userApi = {
         getHistory: (roomId: string) =>
             fetchWithAuth(`/chat/history/${roomId}`),
     },
+    skillGraph: {
+        // Taxonomy
+        taxonomy: (category?: string, page = 1) =>
+            fetchWithAuth(`/skills/taxonomy?page=${page}${category ? `&category=${category}` : ""}`),
+        searchTaxonomy: (q: string) =>
+            fetchWithAuth(`/skills/taxonomy/search?q=${encodeURIComponent(q)}`),
+        // User Skill Graph
+        getMySkills: () => fetchWithAuth("/skills/me"),
+        getUserSkills: (userId: string) => fetchWithAuth(`/skills/user/${userId}`),
+        addSkill: (data: { skill_id: string; proficiency_level?: string; years_experience?: number; is_primary?: boolean }) =>
+            fetchWithAuth("/skills/me", { method: "POST", body: JSON.stringify(data) }),
+        updateSkill: (nodeId: string, data: any) =>
+            fetchWithAuth(`/skills/me/${nodeId}`, { method: "PUT", body: JSON.stringify(data) }),
+        removeSkill: (nodeId: string) =>
+            fetchWithAuth(`/skills/me/${nodeId}`, { method: "DELETE" }),
+        bulkAddSkills: (skills: any[]) =>
+            fetchWithAuth("/skills/me/bulk", { method: "POST", body: JSON.stringify({ skills }) }),
+        // Graph Intelligence
+        getRelated: (skill: string, depth = 2) =>
+            fetchWithAuth(`/skills/graph/related?skill=${encodeURIComponent(skill)}&depth=${depth}`),
+        expandJob: (jobId: string, depth = 2) =>
+            fetchWithAuth(`/skills/graph/expand-job/${jobId}?depth=${depth}`),
+        matchToJob: (candidateSkills: string[], requiredSkills: string[]) =>
+            fetchWithAuth("/skills/graph/match", { method: "POST", body: JSON.stringify({ candidate_skills: candidateSkills, required_skills: requiredSkills }) }),
+        getGaps: (jobId: string) =>
+            fetchWithAuth(`/skills/graph/gaps?job_id=${jobId}`),
+        // AI Extraction
+        extractFromResume: (resumeText: string) =>
+            fetchWithAuth("/skills/extract/resume", { method: "POST", body: JSON.stringify({ resume_text: resumeText }) }),
+        extractFromGitHub: (username: string) =>
+            fetchWithAuth("/skills/extract/github", { method: "POST", body: JSON.stringify({ github_username: username }) }),
+        confirmExtracted: (confirmedSkills: any[]) =>
+            fetchWithAuth("/skills/extract/confirm", { method: "POST", body: JSON.stringify({ confirmed_skills: confirmedSkills }) }),
+        // Endorsements
+        endorseSkill: (data: { user_skill_node_id: string; relationship?: string; comment?: string }) =>
+            fetchWithAuth("/skills/endorse", { method: "POST", body: JSON.stringify(data) }),
+    },
+    projects: {
+        list: () => fetchWithAuth("/projects/me"),
+        create: (data: any) => fetchWithAuth("/projects/me", { method: "POST", body: JSON.stringify(data) }),
+        update: (id: string, data: any) => fetchWithAuth(`/projects/me/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+        delete: (id: string) => fetchWithAuth(`/projects/me/${id}`, { method: "DELETE" }),
+        linkSkills: (projectId: string, data: { skill_ids: string[]; usage_context?: string; contribution_weight?: number }) =>
+            fetchWithAuth(`/projects/me/${projectId}/link-skills`, { method: "POST", body: JSON.stringify(data) }),
+        analyzeGitHub: (url: string) => fetchWithAuth(`/projects/github/analyze?url=${encodeURIComponent(url)}`),
+    },
 };
