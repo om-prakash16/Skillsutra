@@ -49,7 +49,6 @@ export default function VerifyPage() {
         formData.append("file", file)
 
         try {
-            // Using placeholder localhost for hackathon MVP. 
             const response = await fetch("http://localhost:8000/api/v1/ai/analyze-resume", {
                 method: "POST",
                 body: formData,
@@ -61,25 +60,11 @@ export default function VerifyPage() {
             }
 
             const data = await response.json()
-            if (data.status === "mock") {
-                toast.info("Using mock AI data (OpenAI Key not set in backend).")
-            } else {
-                toast.success("Resume parsed successfully using AI Oracle!")
-            }
+            toast.success("Resume analyzed successfully!")
             setParsedData(data.parsed_data)
         } catch (error: any) {
             console.error("Analysis error:", error)
-            toast.error(error.message || "A server error occurred.")
-            // Fallback for demo purposes if backend isn't running
-            setParsedData({
-                skills: ["React", "Rust", "Solana", "TypeScript", "Node.js (Fallback)"],
-                soft_skills: ["Leadership", "Problem Solving", "Teamwork"],
-                experience_years: 4,
-                roles: ["Frontend Engineer", "Smart Contract Developer"],
-                education: ["B.Sc. Computer Science"],
-                forensic_confidence: 85
-            })
-            toast.info("Applied fallback mock data for testing UI.")
+            toast.error(error.message || "A server error occurred. Please try again.")
         } finally {
             setIsAnalyzing(false)
         }
@@ -102,39 +87,45 @@ export default function VerifyPage() {
     }
 
     return (
-        <div className="min-h-screen pt-24 pb-20 px-6 flex flex-col items-center relative overflow-hidden bg-[#020617] text-white">
-            <div className="absolute top-[10%] -left-[10%] w-[50%] h-[50%] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-[10%] right-[10%] w-[30%] h-[30%] bg-blue-500/5 blur-[100px] rounded-full pointer-events-none" />
+        <div className="min-h-screen pt-32 pb-20 px-6 flex flex-col items-center relative overflow-hidden bg-background text-white">
+            <div className="absolute top-[10%] -left-[10%] w-[60%] h-[60%] bg-primary/10 blur-[150px] rounded-full pointer-events-none opacity-40 animate-pulse" />
+            <div className="absolute bottom-[10%] right-[10%] w-[50%] h-[50%] bg-secondary/10 blur-[180px] rounded-full pointer-events-none opacity-30" />
 
-            <div className="text-center max-w-2xl mb-12 relative z-10">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium mb-6">
+            <div className="text-center max-w-3xl mb-16 relative z-10 space-y-6">
+                <motion.div 
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="inline-flex items-center gap-3 px-6 py-2 rounded-full glass border-primary/20 text-primary text-[10px] font-black uppercase tracking-[0.3em]"
+                >
                     <Cpu className="w-4 h-4" /> Waitless Verification
-                </div>
-                <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tight mb-4">
-                    Prove Your Potential
+                </motion.div>
+                <h1 className="text-5xl md:text-7xl font-black font-heading tracking-tighter uppercase leading-none">
+                    Prove Your <span className="text-gradient">Potential</span>
                 </h1>
-                <p className="text-muted-foreground text-lg">
+                <p className="text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed font-medium opacity-80">
                     Upload your standard resume. Our AI Engine extracts the cryptographic proof we need to mint your verified Profile NFT.
                 </p>
             </div>
 
-            <div className="w-full max-w-4xl grid md:grid-cols-2 gap-8 relative z-10">
+            <div className="w-full max-w-5xl grid md:grid-cols-2 gap-10 relative z-10 px-4">
                 {/* Upload Section */}
                 <motion.div 
-                    className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl flex flex-col items-center justify-center text-center relative overflow-hidden group"
+                    className="p-10 rounded-[2.5rem] glass border-white/5 flex flex-col items-center justify-center text-center relative overflow-hidden group shadow-2xl h-[480px]"
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                 >
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                     
                     {!file ? (
-                        <label className="cursor-pointer flex flex-col items-center relative z-20 w-full h-full min-h-[200px] justify-center">
-                            <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 pointer-events-none">
-                                <UploadCloud className="w-10 h-10 text-primary" />
+                        <label className="cursor-pointer flex flex-col items-center relative z-20 w-full h-full justify-center">
+                            <div className="w-24 h-24 bg-primary/10 rounded-3xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_30px_rgba(var(--primary),0.2)] border border-primary/20">
+                                <UploadCloud className="w-12 h-12 text-primary" />
                             </div>
-                            <h3 className="text-xl font-bold mb-2 pointer-events-none">Upload Resume</h3>
-                            <p className="text-sm text-muted-foreground mb-6 pointer-events-none">PDF max 5MB</p>
-                            <Button variant="outline" className="pointer-events-none relative z-10">Browse Files</Button>
+                            <h3 className="text-2xl font-black uppercase tracking-tight mb-3">Upload Resume</h3>
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 mb-10">PDF format • MAX 5MB</p>
+                            <Button variant="premium" className="h-14 px-10 rounded-2xl pointer-events-none text-sm font-black uppercase tracking-widest shadow-xl">
+                                Browse Files
+                            </Button>
                             <input 
                                 type="file" 
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-30" 
@@ -143,27 +134,31 @@ export default function VerifyPage() {
                             />
                         </label>
                     ) : (
-                        <div className="flex flex-col items-center w-full">
-                            <div className="w-16 h-16 bg-blue-500/20 rounded-2xl flex items-center justify-center mb-4 text-blue-400">
-                                <FileText className="w-8 h-8" />
+                        <div className="flex flex-col items-center w-full space-y-8">
+                            <div className="w-20 h-20 bg-blue-500/10 border border-blue-500/20 rounded-3xl flex items-center justify-center text-blue-400 shadow-[0_0_30px_rgba(59,130,246,0.2)]">
+                                <FileText className="w-10 h-10" />
                             </div>
-                            <p className="font-medium text-sm truncate w-full max-w-[200px] mb-6">{file.name}</p>
+                            <div className="space-y-1">
+                                <p className="font-black text-lg truncate w-full max-w-[280px]">{file.name}</p>
+                                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Ready for heuristic analysis</p>
+                            </div>
                             
                             <Button 
                                 onClick={handleAnalyze} 
                                 disabled={isAnalyzing}
-                                className="w-full relative z-10"
+                                variant="premium"
+                                className="w-full h-16 rounded-2xl font-black uppercase tracking-widest shadow-2xl relative overflow-hidden"
                             >
                                 {isAnalyzing ? (
-                                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deep Scanning...</>
+                                    <><Loader2 className="mr-3 h-5 w-5 animate-spin" /> Deep Scanning...</>
                                 ) : (
-                                    <>Initiate AI Scan <ArrowRight className="ml-2 w-4 h-4" /></>
+                                    <>Initiate AI Scan <ArrowRight className="ml-3 w-5 h-5" /></>
                                 )}
                             </Button>
                             
                             <button 
                                 onClick={() => { setFile(null); setParsedData(null); }}
-                                className="text-xs text-muted-foreground mt-4 hover:text-white"
+                                className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 hover:text-rose-500 transition-colors"
                             >
                                 Remove File
                             </button>
@@ -173,103 +168,99 @@ export default function VerifyPage() {
 
                 {/* Results Section */}
                 <motion.div 
-                    className="p-8 rounded-3xl bg-white/5 border border-white/10 backdrop-blur-xl relative overflow-hidden"
+                    className="p-10 rounded-[2.5rem] glass border-white/5 shadow-2xl h-[480px] relative overflow-hidden"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                 >
                     {!parsedData ? (
-                        <div className="h-full flex flex-col items-center justify-center text-muted-foreground opacity-50">
-                            <Cpu className="w-12 h-12 mb-4" />
-                            <p>Awaiting Neural Input</p>
+                        <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30">
+                            <div className="p-6 glass rounded-full bg-white/5 border-white/5 mb-6">
+                                <Cpu className="w-16 h-16 animate-pulse" />
+                            </div>
+                            <p className="text-[10px] font-black uppercase tracking-[0.3em]">Awaiting Neural Input</p>
                         </div>
                     ) : (
                         <div className="flex flex-col h-full">
-                            <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/10">
-                                <div className="flex items-center gap-3">
-                                    <ShieldCheck className="w-6 h-6 text-emerald-400" />
-                                    <h3 className="text-lg font-bold">Verified Extraction</h3>
+                            <div className="flex items-center justify-between mb-8 pb-8 border-b border-white/5">
+                                <div className="flex items-center gap-4">
+                                    <div className="p-2.5 glass rounded-xl bg-emerald-500/10 border-emerald-500/20">
+                                        <ShieldCheck className="w-6 h-6 text-emerald-400" />
+                                    </div>
+                                    <h3 className="text-xl font-black uppercase tracking-tight">Extracted Proof</h3>
                                 </div>
                                 <div className="text-right">
-                                    <div className="text-[10px] uppercase font-black text-muted-foreground tracking-widest mb-1">Forensic Confidence</div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-24 h-2 bg-white/10 rounded-full overflow-hidden">
+                                    <div className="text-[9px] uppercase font-black text-muted-foreground/60 tracking-[0.2em] mb-2">Confidence Level</div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-24 h-2 glass rounded-full overflow-hidden border border-white/5">
                                             <motion.div 
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${parsedData.forensic_confidence}%` }}
-                                                className="h-full bg-gradient-to-r from-amber-500 to-emerald-500"
+                                                className="h-full bg-gradient-to-r from-amber-500 to-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
                                             />
                                         </div>
-                                        <span className="text-xs font-bold text-emerald-400">{parsedData.forensic_confidence}%</span>
+                                        <span className="text-[10px] font-black text-emerald-400">{parsedData.forensic_confidence}%</span>
                                     </div>
                                 </div>
                             </div>
                             
-                            <div className="flex-1 space-y-6">
-                                <div>
-                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Technical Skills</p>
+                            <div className="flex-1 space-y-8 overflow-y-auto custom-scrollbar pr-2">
+                                <div className="space-y-3">
+                                    <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Technical Competencies</p>
                                     <div className="flex flex-wrap gap-2">
                                         {parsedData.skills.map((skill, i) => (
-                                            <span key={i} className="px-2 py-1 text-xs rounded-md bg-primary/20 text-primary border border-primary/30">
+                                            <span key={i} className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider rounded-lg bg-primary/10 text-primary border border-primary/20">
                                                 {skill}
                                             </span>
                                         ))}
                                     </div>
                                 </div>
 
-                                <div>
-                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Soft Skills</p>
-                                    <div className="flex flex-wrap gap-2">
-                                        {parsedData.soft_skills.map((skill, i) => (
-                                            <span key={i} className="px-2 py-1 text-xs rounded-md bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                                                {skill}
-                                            </span>
-                                        ))}
+                                <div className="grid grid-cols-2 gap-8">
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Total Experience</p>
+                                        <p className="font-black text-xl italic">{parsedData.experience_years} Cycles</p>
                                     </div>
-                                </div>
-                                
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Experience</p>
-                                        <p className="font-medium">{parsedData.experience_years} Years</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Roles</p>
-                                        <p className="font-medium text-sm">{parsedData.roles.join(", ")}</p>
+                                    <div className="space-y-1">
+                                        <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Verified Role</p>
+                                        <p className="font-black text-sm uppercase tracking-tight">{parsedData.roles[0]}</p>
                                     </div>
                                 </div>
 
-                                <div>
-                                    <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Education</p>
-                                    <p className="font-medium text-sm text-blue-300">{parsedData.education.join(", ")}</p>
+                                <div className="space-y-1">
+                                    <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">Academic Anchor</p>
+                                    <p className="font-black text-sm text-blue-300 uppercase tracking-tight">{parsedData.education[0]}</p>
                                 </div>
                             </div>
 
-                            <div className="mt-8 pt-6 border-t border-white/10">
+                            <div className="mt-auto pt-8">
                                 <AnimatePresence mode="wait">
                                     {minted ? (
                                         <motion.div 
-                                            initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                                            className="w-full py-3 rounded-lg bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center justify-center gap-2 font-bold"
+                                            initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
+                                            className="w-full h-16 rounded-2xl glass bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center gap-3 font-black uppercase tracking-widest text-xs shadow-2xl"
                                         >
                                             <CheckCircle className="w-5 h-5" /> Secured On-Chain
                                         </motion.div>
                                     ) : (
-                                        <Button 
-                                            onClick={handleMint}
-                                            disabled={isMinting}
-                                            className="w-full shadow-[0_0_15px_rgba(var(--primary),0.5)]"
-                                        >
-                                            {isMinting ? (
-                                                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Awaiting Network Signature...</>
-                                            ) : (
-                                                'Mint Profile Record (SBT)'
+                                        <div className="space-y-4">
+                                            <Button 
+                                                onClick={handleMint}
+                                                disabled={isMinting}
+                                                variant="premium"
+                                                className="w-full h-16 rounded-2xl font-black uppercase tracking-widest shadow-2xl"
+                                            >
+                                                {isMinting ? (
+                                                    <><Loader2 className="mr-3 h-5 w-5 animate-spin" /> Finalizing Ledger...</>
+                                                ) : (
+                                                    'Mint Profile NFT (SBT)'
+                                                )}
+                                            </Button>
+                                            {!connected && (
+                                                <p className="text-[9px] font-black text-rose-500 uppercase tracking-[0.2em] text-center italic">Wallet Not Connected • Ledger Entry Restricted</p>
                                             )}
-                                        </Button>
+                                        </div>
                                     )}
                                 </AnimatePresence>
-                                {!connected && !minted && (
-                                    <p className="text-xs text-destructive mt-2 text-center">Wallet not connected. Connection required to mint.</p>
-                                )}
                             </div>
                         </div>
                     )}

@@ -40,27 +40,34 @@ export default function LoginPage() {
     }
 
     return (
-        <Card className="border-border/50 shadow-xl backdrop-blur-sm bg-background/95">
-            <CardHeader className="space-y-1 items-center text-center">
-                <div className="bg-primary/10 p-3 rounded-full mb-4">
+        <Card className="glass border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden relative">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+            <CardHeader className="space-y-4 items-center text-center pt-10">
+                <div className="glass bg-primary/10 p-4 rounded-2xl mb-2 border border-primary/20 shadow-[0_0_20px_rgba(var(--primary),0.2)]">
                     <Briefcase className="w-8 h-8 text-primary" />
                 </div>
-                <CardTitle className="text-2xl font-bold font-heading">Welcome back</CardTitle>
-                <CardDescription>
-                    Enter your email to sign in to your account
-                </CardDescription>
+                <div className="space-y-2">
+                    <CardTitle className="text-4xl font-black font-heading tracking-tighter text-gradient">Welcome back</CardTitle>
+                    <CardDescription className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                        Enter your credentials to access the nexus
+                    </CardDescription>
+                </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-10 pb-10">
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                         <FormField
                             control={form.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">Email</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="m@example.com" {...field} />
+                                        <Input 
+                                            placeholder="m@example.com" 
+                                            className="h-14 bg-white/5 border-white/10 rounded-xl focus:ring-primary/30 transition-all font-medium" 
+                                            {...field} 
+                                        />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -71,30 +78,30 @@ export default function LoginPage() {
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <div className="flex items-center justify-between">
-                                        <FormLabel>Password</FormLabel>
-                                        <Link href="#" className="text-sm font-medium text-primary hover:underline">Forgot password?</Link>
+                                    <div className="flex items-center justify-between pb-1">
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">Password</FormLabel>
+                                        <Link href="#" className="text-[10px] font-black uppercase tracking-[0.1em] text-primary hover:underline hover:text-primary/80 transition-colors">Forgot password?</Link>
                                     </div>
                                     <FormControl>
-                                        <div className="relative">
+                                        <div className="relative group">
                                             <Input 
                                                 type={showPassword ? "text" : "password"} 
-                                                className="pr-12 bg-white/5 border-white/10 rounded-xl focus:ring-primary/20 h-12 transition-all"
+                                                className="pr-14 h-14 bg-white/5 border-white/10 rounded-xl focus:ring-primary/30 transition-all font-medium"
                                                 {...field} 
                                             />
                                             <motion.button
                                                 type="button"
-                                                whileHover={{ scale: 1.1 }}
-                                                whileTap={{ scale: 0.9 }}
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-3 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center text-muted-foreground/60 hover:text-primary transition-colors bg-white/5 rounded-lg border border-white/5 hover:border-primary/20"
+                                                className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center text-muted-foreground/50 hover:text-primary transition-colors glass bg-white/5 rounded-lg border border-white/5 hover:border-primary/30"
                                             >
                                                 <AnimatePresence mode="wait">
                                                     <motion.div
                                                         key={showPassword ? "eye-off" : "eye"}
-                                                        initial={{ opacity: 0, rotate: -30 }}
-                                                        animate={{ opacity: 1, rotate: 0 }}
-                                                        exit={{ opacity: 0, rotate: 30 }}
+                                                        initial={{ opacity: 0, scale: 0.8 }}
+                                                        animate={{ opacity: 1, scale: 1 }}
+                                                        exit={{ opacity: 0, scale: 0.8 }}
                                                         transition={{ duration: 0.15 }}
                                                     >
                                                         {showPassword ? (
@@ -105,7 +112,6 @@ export default function LoginPage() {
                                                     </motion.div>
                                                 </AnimatePresence>
                                             </motion.button>
-
                                         </div>
                                     </FormControl>
                                     <FormMessage />
@@ -116,63 +122,69 @@ export default function LoginPage() {
                             control={form.control}
                             name="rememberMe"
                             render={({ field }) => (
-                                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                <FormItem className="flex flex-row items-center space-x-3 space-y-0 pt-2">
                                     <FormControl>
-                                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
+                                        <Checkbox 
+                                            checked={field.value} 
+                                            onCheckedChange={field.onChange} 
+                                            className="w-5 h-5 rounded-md border-white/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                        />
                                     </FormControl>
                                     <div className="space-y-1 leading-none">
-                                        <FormLabel>
+                                        <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground cursor-pointer">
                                             Remember me
                                         </FormLabel>
                                     </div>
                                 </FormItem>
                             )}
                         />
-                        <Button className="w-full" type="submit" disabled={isLoading}>
-                            {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Sign In"}
+                        <Button variant="premium" className="w-full h-14 rounded-xl text-sm mt-4 shadow-2xl" type="submit" disabled={isLoading}>
+                            {isLoading ? <Loader2 className="mr-3 h-5 w-5 animate-spin" /> : "AUTHENTICATE"}
                         </Button>
                         
-                        <div className="pt-4 space-y-3">
+                        <div className="pt-8 space-y-4">
                             <div className="relative">
-                                <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border/50" /></div>
-                                <div className="relative flex justify-center text-[10px] uppercase font-bold tracking-widest"><span className="bg-background px-4 text-muted-foreground/60">Professional Identity</span></div>
+                                <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/10" /></div>
+                                <div className="relative flex justify-center text-[9px] uppercase font-black tracking-[0.3em]"><span className="bg-background/95 px-4 text-muted-foreground/40 glass rounded-full">Development Bypass</span></div>
                             </div>
                             
-                            <Button 
-                                type="button" 
-                                variant="outline" 
-                                className="w-full h-12 border-primary/20 hover:bg-primary/10 hover:border-primary/50 transition-all font-black uppercase text-xs tracking-widest"
-                                onClick={() => demoLogin("USER")}
-                                disabled={isLoading}
-                            >
-                                Demo Login: Job Seeker
-                            </Button>
+                            <div className="grid grid-cols-1 gap-3 pt-2">
+                                <Button 
+                                    type="button" 
+                                    variant="outline" 
+                                    className="w-full h-12 glass border-primary/20 hover:border-primary/50 text-foreground hover:text-primary transition-all font-black uppercase text-[10px] tracking-[0.2em] rounded-xl"
+                                    onClick={() => demoLogin("USER")}
+                                    disabled={isLoading}
+                                >
+                                    Demo: Job Seeker
+                                </Button>
 
-                            <Button 
-                                type="button" 
-                                variant="outline" 
-                                className="w-full h-12 border-primary/20 hover:bg-primary/10 hover:border-primary/50 transition-all font-black uppercase text-xs tracking-widest"
-                                onClick={() => demoLogin("COMPANY")}
-                                disabled={isLoading}
-                            >
-                                Demo Login: Company
-                            </Button>
-                            
-                            <Button 
-                                type="button" 
-                                variant="outline" 
-                                className="w-full h-12 border-rose-500/20 hover:bg-rose-500/10 hover:border-rose-500/50 transition-all font-black uppercase text-xs tracking-widest text-rose-500"
-                                onClick={() => demoLogin("ADMIN")}
-                                disabled={isLoading}
-                            >
-                                Demo Login: Admin
-                            </Button>
+                                <Button 
+                                    type="button" 
+                                    variant="outline" 
+                                    className="w-full h-12 glass border-primary/20 hover:border-primary/50 text-foreground hover:text-primary transition-all font-black uppercase text-[10px] tracking-[0.2em] rounded-xl"
+                                    onClick={() => demoLogin("COMPANY")}
+                                    disabled={isLoading}
+                                >
+                                    Demo: Company
+                                </Button>
+                                
+                                <Button 
+                                    type="button" 
+                                    variant="outline" 
+                                    className="w-full h-12 glass border-rose-500/20 hover:border-rose-500/50 text-foreground hover:text-rose-500 transition-all font-black uppercase text-[10px] tracking-[0.2em] rounded-xl"
+                                    onClick={() => demoLogin("ADMIN")}
+                                    disabled={isLoading}
+                                >
+                                    Demo: Admin
+                                </Button>
+                            </div>
                         </div>
                     </form>
                 </Form>
             </CardContent>
-            <CardFooter className="justify-center text-sm text-muted-foreground">
-                Don't have an account? <Link href="/auth/register" className="text-primary hover:underline ml-1 font-medium">Sign up</Link>
+            <CardFooter className="justify-center pb-8 pt-0 text-[11px] font-black uppercase tracking-[0.1em] text-muted-foreground/60">
+                Don't have an account? <Link href="/auth/register" className="text-primary hover:text-primary/80 transition-colors ml-2">Sign up</Link>
             </CardFooter>
         </Card>
     )

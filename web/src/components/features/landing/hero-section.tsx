@@ -10,102 +10,75 @@ import { api, API_BASE_URL } from '@/lib/api/api-client';
 export function HeroSection() {
   const [content, setContent] = useState<any>({
     title: 'Verify Skills. Hire Intelligence.',
-    subtitle: 'The best hiring tool uses Gemini 1.5 and Solana to verify professional expertise with on-chain precision. No more resume information.',
-    badge: 'The Future of Web3 Talent is Here'
+    subtitle: 'Best Hiring Tool leverages Gemini and Solana to verify professional expertise with on-chain precision. No more resume inflation.',
+    badge: 'The Future of Verified Talent is Here'
   });
-  const [terminalLogs, setTerminalLogs] = useState<string[]>([]);
+
+  const [terminalLogs, setTerminalLogs] = useState<string[]>([
+    "Initializing Best Hiring Protocol v4.0.0...",
+    "Connecting to Solana Mainnet Node...",
+    "Ready for AI verification."
+  ]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const fetchHero = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/cms/hero`);
-        if (response.ok) {
-           const data = await response.json();
-           if (Array.isArray(data)) {
-             const mapped = data.reduce((acc: any, item: any) => {
-               acc[item.content_key] = item.content_value;
-               return acc;
-             }, {});
-             if (Object.keys(mapped).length > 0) setContent((prev: any) => ({ ...prev, ...mapped }));
-           }
-        }
-      } catch (e) {
-        console.error("CMS Sync Failed:", e);
-      }
-    };
-    fetchHero();
-    
-    // Terminal Log streaming sequence
-    const fetchLogs = async () => {
-        try {
-            const res = await fetch(`${API_BASE_URL}/ai/verification-stream-demo`);
-            if (res.ok) {
-                const logs = await res.json();
-                let i = 0;
-                const interval = setInterval(() => {
-                    if (i < logs.length) {
-                        setTerminalLogs(prev => [...prev, logs[i++]]);
-                        if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-                    } else {
-                        clearInterval(interval);
-                    }
-                }, 800);
-                return () => clearInterval(interval);
-            }
-        } catch(e) {
-            // Mock fallback if backend isn't ready
-            const mockLogs = [
-                "> INITIALIZING NEURAL ENGINE...",
-                "> CONNECTING TO SOLANA DEVNET...",
-                "> PARSING RESUME AST...",
-                "> EXTRACTING RUST COMPETENCY VERIFICATION...",
-                "> MATCHING GITHUB COMMITS TO CLAIMED EXPERIENCE...",
-                "> [SUCCESS] 98% MATCH CONFIDENCE",
-                "> MINTING SOULBOUND TOKEN..."
-            ];
-            let i = 0;
-            const interval = setInterval(() => {
-                if (i < mockLogs.length) {
-                    setTerminalLogs(prev => [...prev, mockLogs[i++]]);
-                    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-                } else clearInterval(interval);
-            }, 800);
-            return () => clearInterval(interval);
-        }
-    };
-    const cleanup = fetchLogs();
-    return () => { cleanup.then(c => c && c()) };
+      const logs = [
+          "Analyzing proof of work repository...",
+          "Decrypting verifiable credentials...",
+          "Running AI heuristic match engine...",
+          "Resonance matching: 98.4%",
+          "[SUCCESS] Identity Verified on Solana.",
+          "Generating NFT Proof Score...",
+          "Nexus link established.",
+      ];
+      
+      let currentIdx = 0;
+      const interval = setInterval(() => {
+          if (currentIdx < logs.length) {
+              setTerminalLogs(prev => [...prev, logs[currentIdx]]);
+              currentIdx++;
+          } else {
+              clearInterval(interval);
+          }
+      }, 2000);
+
+      return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [terminalLogs]);
+
   return (
-    <section className="relative min-h-[90vh] pt-32 pb-20 px-4 overflow-hidden bg-background flex flex-col justify-center">
+    <section className="relative min-h-[95vh] pt-32 pb-20 px-4 overflow-hidden bg-background flex flex-col justify-center">
       {/* Deep Space Glassmorphic Background */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full mix-blend-screen opacity-50 animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/20 blur-[150px] rounded-full mix-blend-screen opacity-50" />
+        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/10 blur-[150px] rounded-full mix-blend-screen opacity-40 animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-secondary/10 blur-[180px] rounded-full mix-blend-screen opacity-40" />
       </div>
 
-      <div className="container mx-auto max-w-7xl relative z-10 grid lg:grid-cols-2 gap-12 items-center">
+      <div className="container mx-auto max-w-7xl relative z-10 grid lg:grid-cols-2 gap-16 items-center">
         {/* Left Side: Typography & CTA */}
-        <div className="space-y-8 text-left">
+        <div className="space-y-10 text-left">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 text-primary text-xs font-black uppercase tracking-widest backdrop-blur-xl"
+            className="inline-flex items-center gap-3 px-6 py-2 rounded-full glass text-primary text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-2xl"
           >
-            <Sparkles className="w-3 h-3" />
+            <Sparkles className="w-4 h-4" />
             {content.badge}
           </motion.div>
 
           <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-5xl md:text-7xl font-black font-heading tracking-tight text-foreground leading-[1.1]"
+            transition={{ delay: 0.1, duration: 0.8 }}
+            className="text-6xl md:text-8xl font-black font-heading tracking-tighter text-foreground leading-[0.95]"
           >
             {content.title.split('.').map((part: string, i: number) => (
-              <span key={i} className={i === 1 ? "text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary italic" : ""}>
+              <span key={i} className={i === 1 ? "text-gradient italic" : ""}>
                 {part}{i === 0 && "."} {i === 0 && <br />}
               </span>
             ))}
@@ -115,7 +88,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="body-large text-muted-foreground max-w-xl"
+            className="text-xl md:text-2xl text-muted-foreground max-w-xl leading-relaxed font-medium opacity-80"
           >
             {content.subtitle}
           </motion.p>
@@ -124,15 +97,15 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center gap-4 pt-4 whitespace-nowrap"
+            className="flex flex-col sm:flex-row items-center gap-6 pt-6 whitespace-nowrap"
           >
             <Link href="/jobs" className="w-full sm:w-auto">
-              <Button size="lg" className="w-full sm:w-auto h-14 px-8 rounded-2xl bg-primary text-primary-foreground font-black tracking-wide shadow-[0_0_40px_rgba(var(--primary),0.3)] hover:scale-[1.02] transition-all">
-                Discover Jobs <ArrowRight className="ml-2 w-5 h-5" />
+              <Button size="lg" variant="premium" className="w-full sm:w-auto h-16 px-10 rounded-[1.25rem] shadow-2xl">
+                Discover Jobs <ArrowRight className="ml-2 w-6 h-6" />
               </Button>
             </Link>
             <Link href="/verify" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 rounded-2xl border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 backdrop-blur-xl font-bold hover:bg-black/10 dark:hover:bg-white/10 transition-all text-foreground hover:border-primary/50">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto h-16 px-10 rounded-[1.25rem] glass font-black uppercase tracking-widest text-[10px] hover:border-primary/50 transition-all">
                 Verify My Skills
               </Button>
             </Link>
@@ -140,11 +113,11 @@ export function HeroSection() {
 
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
-            className="flex items-center gap-6 pt-8 text-sm font-bold text-muted-foreground uppercase tracking-widest"
+            className="flex items-center gap-10 pt-12 text-sm font-black text-muted-foreground/40 uppercase tracking-[0.2em]"
           >
-            <div className="flex flex-col gap-1 items-start"><span className="text-foreground text-2xl">4.9M+</span><span className="text-[10px]">Verifications</span></div>
-            <div className="w-px h-8 bg-border" />
-            <div className="flex flex-col gap-1 items-start"><span className="text-foreground text-2xl">12k+</span><span className="text-[10px]">Hired Talent</span></div>
+            <div className="flex flex-col gap-2 items-start"><span className="text-foreground text-4xl font-black tracking-tighter">4.9M+</span><span className="text-[9px]">Verifications</span></div>
+            <div className="w-px h-12 bg-black/10 dark:bg-white/5" />
+            <div className="flex flex-col gap-2 items-start"><span className="text-foreground text-4xl font-black tracking-tighter">12k+</span><span className="text-[9px]">Hired Talent</span></div>
           </motion.div>
         </div>
 

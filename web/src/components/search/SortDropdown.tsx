@@ -28,18 +28,23 @@ export function SortDropdown({ onSortChange, type }: SortDropdownProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="h-14 px-8 border-white/10 hover:bg-white/5 font-black text-xs uppercase tracking-widest italic flex items-center gap-2">
-                    SORT BY: <span className="text-primary">{selected}</span> <ChevronDown className="w-4 h-4 ml-2" />
+                <Button variant="outline" className="h-16 px-8 glass border-white/10 hover:border-primary/50 font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 rounded-2xl transition-all group">
+                    <span className="text-muted-foreground/60 group-hover:text-primary transition-colors">SORT BY:</span> 
+                    <span className="text-foreground">{selected}</span> 
+                    <ChevronDown className="w-4 h-4 ml-2 text-primary" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-black/90 border-white/10 backdrop-blur-xl">
+            <DropdownMenuContent className="glass border-white/10 min-w-[240px] p-2 rounded-2xl shadow-2xl">
                 {options.map(opt => (
                     <DropdownMenuItem 
                         key={opt.value} 
                         onClick={() => { setSelected(opt.label); onSortChange(opt.value); }}
-                        className="p-3 font-bold text-xs uppercase tracking-widest focus:bg-primary focus:text-black cursor-pointer flex items-center gap-3"
+                        className="p-4 font-black text-[10px] uppercase tracking-[0.1em] focus:bg-primary/20 focus:text-primary cursor-pointer flex items-center gap-4 rounded-xl transition-all"
                     >
-                        <opt.icon className="w-4 h-4 font-bold" /> {opt.label}
+                        <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
+                            <opt.icon className="w-4 h-4 text-primary" />
+                        </div>
+                        {opt.label}
                     </DropdownMenuItem>
                 ))}
             </DropdownMenuContent>

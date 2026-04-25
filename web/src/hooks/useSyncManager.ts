@@ -15,7 +15,7 @@ export function useSyncManager() {
 
   const fetchSyncStatus = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/sync/status`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sync/status`);
       const data = await res.json();
       setSyncStatus(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -28,7 +28,7 @@ export function useSyncManager() {
   const triggerIPFSSync = async (type: string) => {
     setIsLoading(true);
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/sync/profile`, { method: "POST" });
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sync/profile`, { method: "POST" });
         const data = await res.json();
         await fetchSyncStatus();
         toast.success("Metadata pinned to IPFS. Pending blockchain sync.");
@@ -43,7 +43,7 @@ export function useSyncManager() {
 
   const confirmBlockchainSync = async (type: string, txHash: string) => {
     try {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/sync/confirm`, {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sync/confirm`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ entity_type: type, tx_hash: txHash })

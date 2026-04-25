@@ -26,37 +26,41 @@ export default function RegisterPage() {
     }
 
     return (
-        <Card className="border-border/50 shadow-2xl backdrop-blur-xl bg-background/95 relative overflow-hidden group">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl rounded-full" />
+        <Card className="glass border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden relative group">
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+            <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 blur-[100px] rounded-full mix-blend-screen pointer-events-none" />
             
-            <CardHeader className="space-y-2 items-center text-center pb-8 border-b border-border/50">
-                <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-primary/10 border border-primary/20 mb-2">
+            <CardHeader className="space-y-4 items-center text-center pt-10 pb-8 border-b border-white/5">
+                <div className="glass bg-primary/10 p-4 rounded-2xl mb-2 border border-primary/20 shadow-[0_0_20px_rgba(var(--primary),0.2)]">
                     <Briefcase className="w-8 h-8 text-primary" />
                 </div>
-                <CardTitle className="text-3xl font-black font-heading tracking-tight italic">Initialize Identity</CardTitle>
-                <CardDescription className="max-w-[280px]">
-                    Select your organizational role and securely anchor your profile to the Solana network.
-                </CardDescription>
+                <div className="space-y-2">
+                    <CardTitle className="text-4xl font-black font-heading tracking-tighter text-gradient">Initialize Identity</CardTitle>
+                    <CardDescription className="max-w-[280px] text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 leading-relaxed">
+                        Select your organizational role and securely anchor your profile to the network.
+                    </CardDescription>
+                </div>
             </CardHeader>
 
-            <CardContent className="pt-8 space-y-8">
-                <div className="space-y-4">
-                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Identity Selection</label>
+            <CardContent className="pt-10 space-y-10 px-10">
+                <div className="space-y-6">
+                    <label className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 ml-2">Identity Selection</label>
                     <RoleSelector value={selectedRole} onChange={setSelectedRole} />
                 </div>
 
-                <div className="space-y-4">
+                <div className="space-y-6">
                     <Button 
-                        className="w-full h-14 text-lg font-black bg-white text-black hover:bg-neutral-200 transition-all rounded-2xl gap-3 shadow-[0_8px_30px_rgb(255,255,255,0.1)] group-hover:shadow-[0_8px_30px_rgb(255,255,255,0.2)]" 
+                        variant="premium"
+                        className="w-full h-16 text-lg rounded-xl gap-3 shadow-2xl" 
                         onClick={handleRegister} 
                         disabled={isLoading}
                     >
                         {isLoading ? (
-                            <Loader2 className="w-6 h-6 animate-spin" />
+                            <Loader2 className="w-7 h-7 animate-spin" />
                         ) : (
                             <>
                                 REGISTER WITH WALLET 
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
                             </>
                         )}
                     </Button>
@@ -64,19 +68,19 @@ export default function RegisterPage() {
                     <button 
                         type="button"
                         onClick={() => demoLogin(selectedRole)}
-                        className="w-full text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest py-2"
+                        className="w-full text-[10px] font-black text-muted-foreground/60 hover:text-primary transition-colors uppercase tracking-[0.2em] py-2"
                     >
                         Demo Mode: Skip Wallet Check
                     </button>
 
-                    <p className="text-[10px] text-center text-muted-foreground/60 px-4">
-                        By registering, you are anchoring your cryptographic identity to Best Hiring Tool protocols.
+                    <p className="text-[9px] text-center text-muted-foreground/40 px-4 font-black uppercase tracking-[0.1em] leading-relaxed">
+                        By registering, you are anchoring your cryptographic identity to Best Hiring protocols.
                     </p>
                 </div>
             </CardContent>
 
-            <CardFooter className="justify-center text-sm text-muted-foreground border-t border-border/50 bg-white/[0.02] py-4">
-                Already have an identity? <Link href="/auth/login" className="text-primary hover:underline ml-1 font-bold">Log in</Link>
+            <CardFooter className="justify-center text-[11px] font-black uppercase tracking-[0.1em] text-muted-foreground/60 border-t border-white/5 bg-white/5 py-8">
+                Already have an identity? <Link href="/auth/login" className="text-primary hover:text-primary/80 transition-colors ml-2">Log in</Link>
             </CardFooter>
         </Card>
     )

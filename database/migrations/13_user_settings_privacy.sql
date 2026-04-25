@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS public.user_settings (
 ALTER TABLE public.user_settings ENABLE ROW LEVEL SECURITY;
 
 -- Users can read and update ONLY their own settings
+DROP POLICY IF EXISTS "Users can manage own settings" ON public.user_settings;
 CREATE POLICY "Users can manage own settings" 
 ON public.user_settings FOR ALL 
 USING (auth.uid() = user_id);
@@ -70,7 +71,8 @@ BEGIN
     INSERT INTO public.user_settings (user_id) VALUES (new.id);
     RETURN new;
 END
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
+DROP TRIGGER IF EXISTS tr_create_settings_on_signup ON public.users;
 CREATE TRIGGER tr_create_settings_on_signup AFTER INSERT ON public.users
 FOR EACH ROW EXECUTE FUNCTION handle_new_user_settings();

@@ -1,5 +1,5 @@
 -- Migration 41: Enterprise API Keys & Developer Platform
--- Allows ATS platforms to securely verify candidates via Skillsutra.
+-- Allows ATS platforms to securely verify candidates via Best Hiring Tool.
 
 CREATE TABLE IF NOT EXISTS public.enterprise_api_keys (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),

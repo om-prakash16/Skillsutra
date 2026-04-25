@@ -356,7 +356,7 @@ export default function ProfilePage() {
     const activeData = profileData || userProfile
 
     return (
-        <div className="space-y-8 max-w-6xl mx-auto pb-16 pt-12 px-4 md:px-8">
+        <div className="space-y-12 max-w-7xl mx-auto pb-24 pt-16 px-4 md:px-8 relative overflow-hidden">
             <ProfileHeader
                 user={activeData.basic}
                 profileId={activeData.id}
@@ -372,87 +372,94 @@ export default function ProfilePage() {
                 </div>
             </div>
 
-            <Tabs defaultValue="overview" className="space-y-6">
-                <div className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-                    {/* ... TabsList ... */}
-                    <TabsList className="w-full justify-start h-auto p-1 pb-3 bg-transparent border-b rounded-none gap-3">
-                        <TabsTrigger value="overview" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">Overview</TabsTrigger>
-                        <TabsTrigger value="basic" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">Basic Info</TabsTrigger>
-                        <TabsTrigger value="skills" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">Skills</TabsTrigger>
-                        <TabsTrigger value="experience" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">Experience</TabsTrigger>
-                        <TabsTrigger value="education" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">Education</TabsTrigger>
-                        <TabsTrigger value="projects" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">Projects</TabsTrigger>
-                        <TabsTrigger value="github" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">GitHub</TabsTrigger>
-                        <TabsTrigger value="applications" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">Applications</TabsTrigger>
-                        <TabsTrigger value="matrix" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary flex items-center gap-2">
-                            <Sparkles className="w-3 h-3" />
-                            Matrix Profile
-                        </TabsTrigger>
-                        <TabsTrigger value="settings" className="rounded-full px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary">Settings</TabsTrigger>
-
+            <Tabs defaultValue="overview" className="space-y-10">
+                <div className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] glass p-2 rounded-[2rem] border-white/5">
+                    <TabsList className="w-full justify-start h-auto p-1 bg-transparent border-none gap-2">
+                        {[
+                            { value: "overview", label: "Overview" },
+                            { value: "basic", label: "Identity" },
+                            { value: "skills", label: "Architecture" },
+                            { value: "experience", label: "Proof of Work" },
+                            { value: "education", label: "Credentials" },
+                            { value: "projects", label: "Ledger" },
+                            { value: "github", label: "Source" },
+                            { value: "applications", label: "Nexus" },
+                            { value: "matrix", label: "Matrix Profile", icon: Sparkles },
+                            { value: "settings", label: "Protocol" }
+                        ].map((tab) => (
+                            <TabsTrigger 
+                                key={tab.value} 
+                                value={tab.value} 
+                                className="rounded-2xl px-6 py-3 text-[10px] font-black uppercase tracking-[0.2em] transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground shadow-none border border-transparent data-[state=active]:border-primary/20 hover:text-primary"
+                            >
+                                {tab.icon && <tab.icon className="w-3.5 h-3.5 mr-2" />}
+                                {tab.label}
+                            </TabsTrigger>
+                        ))}
                     </TabsList>
                 </div>
 
-                <TabsContent value="overview" className="animate-in fade-in-50 duration-300">
-                    <OverviewTab data={activeData} isEditing={isEditing} onUpdateBio={(bio) => handleUpdateBasicInfo('bio', bio)} />
-                </TabsContent>
-                <TabsContent value="basic" className="animate-in fade-in-50 duration-300">
-                    <BasicInfoTab data={activeData} isEditing={isEditing} onUpdate={handleUpdateBasicInfo} />
-                </TabsContent>
-                <TabsContent value="skills" className="animate-in fade-in-50 duration-300">
-                    <SkillsTab
-                        data={activeData}
-                        isEditing={isEditing}
-                        onAddSkill={handleAddSkill}
-                        onDeleteSkill={handleDeleteSkill}
-                    />
-                </TabsContent>
-                <TabsContent value="experience" className="animate-in fade-in-50 duration-300">
-                    <ExperienceTab
-                        data={activeData}
-                        isEditing={isEditing}
-                        onAdd={handleAddExperience}
-                        onDelete={handleDeleteExperience}
-                        onUpdate={handleUpdateExperience}
-                    />
-                </TabsContent>
-                <TabsContent value="education" className="animate-in fade-in-50 duration-300">
-                    <EducationTab
-                        data={activeData}
-                        isEditing={isEditing}
-                        onAdd={handleAddEducation}
-                        onDelete={handleDeleteEducation}
-                        onUpdate={handleUpdateEducation}
-                    />
-                </TabsContent>
-                <TabsContent value="projects" className="animate-in fade-in-50 duration-300">
-                    <ProjectsTab
-                        data={activeData}
-                        isEditing={isEditing}
-                        onAdd={handleAddProject}
-                        onDelete={handleDeleteProject}
-                        onUpdate={handleUpdateProject}
-                    />
-                </TabsContent>
-                <TabsContent value="github" className="animate-in fade-in-50 duration-300">
-                    <GithubTab
-                        data={activeData}
-                        isEditing={isEditing}
-                        onUpdate={handleUpdateGitHubUsername}
-                    />
-                </TabsContent>
-                <TabsContent value="applications" className="animate-in fade-in-50 duration-300">
-                    <ApplicationsTab data={activeData} />
-                </TabsContent>
-                <TabsContent value="matrix" className="animate-in fade-in-50 duration-300">
-                    <div className="bg-background/20 backdrop-blur-3xl border border-white/5 rounded-[2.5rem] p-8 md:p-12 shadow-2xl">
-                         <DynamicProfileForm />
-                    </div>
-                </TabsContent>
-                <TabsContent value="settings" className="animate-in fade-in-50 duration-300">
-                    <SettingsTab data={activeData} onUpdateSettings={handleUpdateSettings} />
-                </TabsContent>
-
+                <div className="min-h-[600px]">
+                    <TabsContent value="overview" className="animate-in fade-in-50 duration-500">
+                        <OverviewTab data={activeData} isEditing={isEditing} onUpdateBio={(bio) => handleUpdateBasicInfo('bio', bio)} />
+                    </TabsContent>
+                    <TabsContent value="basic" className="animate-in fade-in-50 duration-500">
+                        <BasicInfoTab data={activeData} isEditing={isEditing} onUpdate={handleUpdateBasicInfo} />
+                    </TabsContent>
+                    <TabsContent value="skills" className="animate-in fade-in-50 duration-500">
+                        <SkillsTab
+                            data={activeData}
+                            isEditing={isEditing}
+                            onAddSkill={handleAddSkill}
+                            onDeleteSkill={handleDeleteSkill}
+                        />
+                    </TabsContent>
+                    <TabsContent value="experience" className="animate-in fade-in-50 duration-500">
+                        <ExperienceTab
+                            data={activeData}
+                            isEditing={isEditing}
+                            onAdd={handleAddExperience}
+                            onDelete={handleDeleteExperience}
+                            onUpdate={handleUpdateExperience}
+                        />
+                    </TabsContent>
+                    <TabsContent value="education" className="animate-in fade-in-50 duration-500">
+                        <EducationTab
+                            data={activeData}
+                            isEditing={isEditing}
+                            onAdd={handleAddEducation}
+                            onDelete={handleDeleteEducation}
+                            onUpdate={handleUpdateEducation}
+                        />
+                    </TabsContent>
+                    <TabsContent value="projects" className="animate-in fade-in-50 duration-500">
+                        <ProjectsTab
+                            data={activeData}
+                            isEditing={isEditing}
+                            onAdd={handleAddProject}
+                            onDelete={handleDeleteProject}
+                            onUpdate={handleUpdateProject}
+                        />
+                    </TabsContent>
+                    <TabsContent value="github" className="animate-in fade-in-50 duration-500">
+                        <GithubTab
+                            data={activeData}
+                            isEditing={isEditing}
+                            onUpdate={handleUpdateGitHubUsername}
+                        />
+                    </TabsContent>
+                    <TabsContent value="applications" className="animate-in fade-in-50 duration-500">
+                        <ApplicationsTab data={activeData} />
+                    </TabsContent>
+                    <TabsContent value="matrix" className="animate-in fade-in-50 duration-500">
+                        <div className="glass rounded-[3rem] p-8 md:p-16 border-white/5 shadow-2xl">
+                             <DynamicProfileForm />
+                        </div>
+                    </TabsContent>
+                    <TabsContent value="settings" className="animate-in fade-in-50 duration-500">
+                        <SettingsTab data={activeData} onUpdateSettings={handleUpdateSettings} />
+                    </TabsContent>
+                </div>
             </Tabs>
         </div>
     )

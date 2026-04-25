@@ -52,22 +52,22 @@ export function Navbar() {
     return (
         <header
             className={cn(
-                "fixed top-0 right-0 z-50 transition-all duration-300",
+                "fixed top-0 right-0 z-50 transition-all duration-500",
                 scrolled
-                    ? "bg-background/80 backdrop-blur-md border-b shadow-sm"
+                    ? "glass shadow-[0_4px_30px_rgba(0,0,0,0.1)] border-b border-white/10"
                     : "bg-transparent",
                 isDashboard ? "left-0 lg:left-64" : "left-0"
             )}
         >
-            <div className="container mx-auto flex items-center justify-between h-16 px-4 md:px-6">
+            <div className="container mx-auto flex items-center justify-between h-20 px-4 md:px-8 gap-4">
 
                 {/* Logo - Hide on Dashboard as Sidebar has logo */}
                 {!isDashboard && (
-                    <Link href="/" className="flex items-center gap-2 group">
-                        <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-all shadow-[0_0_15px_rgba(var(--primary),0.2)]">
-                            <ShieldCheck className="w-7 h-7 text-primary fill-primary/20" />
+                    <Link href="/" className="flex items-center gap-2 md:gap-3 group shrink-0">
+                        <div className="bg-primary/20 p-1.5 md:p-2 rounded-xl md:rounded-2xl group-hover:bg-primary/30 transition-all shadow-[0_0_20px_rgba(var(--primary),0.3)] backdrop-blur-md border border-primary/20 shrink-0">
+                            <ShieldCheck className="w-6 h-6 md:w-8 md:h-8 text-primary fill-primary/10" />
                         </div>
-                        <span className="text-xl font-black font-heading tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">
+                        <span className="text-lg md:text-2xl font-black font-heading tracking-tighter text-gradient leading-none">
                             {siteName}
                         </span>
                     </Link>
@@ -80,7 +80,7 @@ export function Navbar() {
                             key={link.href}
                             href={link.href}
                             className={cn(
-                                "text-sm font-medium transition-colors hover:text-primary relative py-2",
+                                "text-[10px] font-black uppercase tracking-widest transition-colors hover:text-primary relative py-2",
                                 pathname === link.href ? "text-primary" : "text-muted-foreground"
                             )}
                         >
@@ -98,7 +98,7 @@ export function Navbar() {
                         <Link
                             href="/profile"
                             className={cn(
-                                "text-sm font-medium transition-colors hover:text-primary relative py-2",
+                                "text-[10px] font-black uppercase tracking-widest transition-colors hover:text-primary relative py-2",
                                 pathname === "/profile" ? "text-primary" : "text-muted-foreground"
                             )}
                         >
@@ -119,20 +119,20 @@ export function Navbar() {
                     <CommandSearch />
                     <ThemeToggle />
                     <NotificationBell />
-                    <WalletMultiButton style={{ height: '36px', padding: '0 16px', fontSize: '14px', borderRadius: '8px' }} />
+                    <WalletMultiButton style={{ height: '36px', padding: '0 16px', fontSize: '10px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.1em', borderRadius: '8px' }} />
                     {!user ? (
                         <>
                             <Link href="/auth/login">
-                                <Button variant="ghost" size="sm">
+                                <Button variant="ghost" size="sm" className="text-[10px] font-black uppercase tracking-widest">
                                     Log In
                                 </Button>
                             </Link>
                             <Link href="/auth/register">
-                                <Button size="sm">Register</Button>
+                                <Button size="sm" variant="premium" className="text-[10px] font-black uppercase tracking-widest">Register</Button>
                             </Link>
                             <div className="w-px h-6 bg-border mx-2" />
                             <Link href="/post-job">
-                                <Button variant="outline" size="sm" className="hidden lg:flex">
+                                <Button variant="outline" size="sm" className="hidden lg:flex text-[10px] font-black uppercase tracking-widest hover:bg-primary/5">
                                     Post a Job
                                 </Button>
                             </Link>
@@ -140,7 +140,7 @@ export function Navbar() {
                     ) : (
                         <div className="flex items-center gap-4">
                             <Link href={user.role === 'admin' ? "/admin/profile" : user.role === 'company' ? "/company/profile" : "/user/profile"} className="hidden lg:block">
-                                <Button variant="ghost" size="sm">My Profile</Button>
+                                <Button variant="ghost" size="sm" className="text-[10px] font-black uppercase tracking-widest">My Profile</Button>
                             </Link>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>

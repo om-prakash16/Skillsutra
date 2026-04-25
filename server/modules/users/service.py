@@ -97,42 +97,41 @@ class UserService:
 
         import asyncio
 
-        # Run multiple queries in parallel for performance
-        tasks = [
-            db.table("users").select("*, profiles(*)").eq("id", user_id).single().execute(),
-            db.table("user_skills_relational").select("*, skills(name, category)").eq("user_id", user_id).execute(),
-            db.table("experiences").select("*").eq("user_id", user_id).order("start_date", desc=True).execute(),
-            db.table("projects").select("*").eq("user_id", user_id).order("start_date", desc=True).execute(),
-            db.table("education").select("*").eq("user_id", user_id).order("start_date", desc=True).execute(),
-            db.table("ai_scores").select("*").eq("user_id", user_id).single().execute()
-        ]
-
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        # Execute queries sequentially (Supabase sync client)
+        user_res = db.table("users").select("*, profiles(*)").eq("id", user_id).execute()
+        skills_rel_res = db.table("user_skills_relational").select("*, skills(name, category)").eq("user_id", user_id).execute()
+        exp_res = db.table("experiences").select("*").eq("user_id", user_id).order("start_date", desc=True).execute()
+        proj_res = db.table("projects").select("*").eq("user_id", user_id).order("start_date", desc=True).execute()
+        edu_res = db.table("education").select("*").eq("user_id", user_id).order("start_date", desc=True).execute()
+        scores_res = db.table("ai_scores").select("*").eq("user_id", user_id).execute()
         
-        user_res = results[0].data if not isinstance(results[0], Exception) else {}
-        skills_res = results[1].data if not isinstance(results[1], Exception) else []
-        exp_res = results[2].data if not isinstance(results[2], Exception) else []
-        proj_res = results[3].data if not isinstance(results[3], Exception) else []
-        edu_res = results[4].data if not isinstance(results[4], Exception) else []
-        scores_res = results[5].data if not isinstance(results[5], Exception) else {}
+        user_data = user_res.data[0] if user_res.data else {}
+        skills_data = skills_rel_res.data if skills_rel_res.data else []
+        exp_data = exp_res.data if exp_res.data else []
+        proj_data = proj_res.data if proj_res.data else []
+        edu_data = edu_res.data if edu_res.data else []
+        scores_data = scores_res.data[0] if scores_res.data else {}
 
         # Aggregate into a structured response
+        profiles_raw = user_data.get("profiles", {})
+        profiles_cleaned = profiles_raw[0] if isinstance(profiles_raw, list) and profiles_raw else (profiles_raw or {})
+        
         return {
             "profile": {
                 "user_id": user_id,
-                "user_code": user_res.get("user_code"),
-                "username": user_res.get("username"),
-                "visibility": user_res.get("visibility"),
-                **(user_res.get("profiles", {}) or {})
+                "user_code": user_data.get("user_code"),
+                "username": user_data.get("username"),
+                "visibility": user_data.get("visibility"),
+                **profiles_cleaned
             },
             "skills": [
                 {"name": s["skills"]["name"], "category": s["skills"]["category"], "proficiency": s["proficiency_level"], "verified": s["is_verified"]}
-                for s in skills_res if s.get("skills")
+                for s in skills_data if s.get("skills")
             ],
-            "experiences": exp_res,
-            "projects": proj_res,
-            "education": edu_res,
-            "ai_scores": scores_res
+            "experiences": exp_data,
+            "projects": proj_data,
+            "education": edu_data,
+            "ai_scores": scores_data
         }
 
     @staticmethod
@@ -206,11 +205,11 @@ class UserService:
         Public portfolio resolver by user_code.
         """
         db = get_supabase()
-        user_res = db.table("users").select("id, visibility").eq("user_code", user_code).single().execute()
+        user_res = db.table("users").select("id, visibility").eq("user_code", user_code).execute()
         if not user_res.data:
             return None
         
-        user = user_res.data
+        user = user_res.data[0]
         if user["visibility"] == "private":
             return None # Hidden
             

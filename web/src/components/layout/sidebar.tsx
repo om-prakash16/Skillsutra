@@ -123,34 +123,34 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
     const renderAdminNav = () => (
         <nav className={cn(
             "flex-1 overflow-y-auto custom-scrollbar",
-            variant === "default" ? "px-3 py-2" : "px-0 py-2"
+            variant === "default" ? "px-4 py-4" : "px-0 py-2"
         )}>
             {adminNavGroups.map((group) => (
-                <div key={group.label} className="mb-3">
-                    <p className="text-[9px] font-black uppercase tracking-[0.25em] text-white/20 px-2 mb-1.5 mt-2">
+                <div key={group.label} className="mb-6">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 px-3 mb-3">
                         {group.label}
                     </p>
-                    <div className="space-y-0.5">
+                    <div className="space-y-1">
                         {group.links.map((link) => {
                             const isActive = isActiveLink(link.href, (link as any).exact)
                             return (
                                 <Link key={link.href} href={link.href} className="block relative group/item">
                                     <div className={cn(
-                                        "flex items-center gap-3 px-3 h-9 rounded-lg transition-all duration-200 relative overflow-hidden",
+                                        "flex items-center gap-3 px-3 h-10 rounded-xl transition-all duration-300 relative overflow-hidden",
                                         isActive
-                                            ? "bg-rose-500/10 text-rose-400 border border-rose-500/15"
+                                            ? "bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
                                             : "text-white/40 hover:text-white/80 hover:bg-white/5"
                                     )}>
                                         {isActive && (
                                             <motion.div
                                                 layoutId="admin-active-bar"
-                                                className="absolute left-0 top-1.5 bottom-1.5 w-0.5 bg-rose-500 rounded-r-full"
+                                                className="absolute left-0 top-2 bottom-2 w-0.5 bg-rose-500 rounded-r-full"
                                                 transition={{ type: "spring", bounce: 0.15, duration: 0.35 }}
                                             />
                                         )}
-                                        <link.icon className={cn("w-3.5 h-3.5 shrink-0", isActive ? "text-rose-400" : "group-hover/item:text-white/70")} />
-                                        <span className={cn("text-[11px] font-semibold truncate", isActive ? "text-rose-300" : "")}>{link.label}</span>
-                                        {isActive && <ChevronRight className="w-3 h-3 ml-auto shrink-0 text-rose-500/40" />}
+                                        <link.icon className={cn("w-4 h-4 shrink-0", isActive ? "text-rose-400" : "group-hover/item:text-white/70")} />
+                                        <span className={cn("text-xs font-bold tracking-tight", isActive ? "text-rose-200" : "")}>{link.label}</span>
+                                        {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto shrink-0 text-rose-500/40" />}
                                     </div>
                                 </Link>
                             )
@@ -165,17 +165,17 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
         const links = role === "company" ? companyLinks : userLinks
         return (
             <nav className={cn(
-                "flex-1 space-y-0.5 overflow-y-auto custom-scrollbar",
-                variant === "default" ? "px-3 py-3" : "px-0 py-2"
+                "flex-1 space-y-1 overflow-y-auto custom-scrollbar",
+                variant === "default" ? "px-4 py-6" : "px-0 py-2"
             )}>
                 {links.map((link) => {
                     const isActive = isActiveLink(link.href, (link as any).exact)
                     return (
                         <Link key={link.href} href={link.href} className="block relative group/item">
                             <div className={cn(
-                                "flex items-center gap-3 px-3 h-10 rounded-xl transition-all duration-200 relative overflow-hidden",
+                                "flex items-center gap-3 px-3 h-11 rounded-xl transition-all duration-300 relative overflow-hidden",
                                 isActive
-                                    ? "bg-primary/10 text-primary border border-primary/15"
+                                    ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.1)]"
                                     : "text-white/40 hover:text-white/80 hover:bg-white/5"
                             )}>
                                 {isActive && (
@@ -185,8 +185,8 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                                         transition={{ type: "spring", bounce: 0.15, duration: 0.35 }}
                                     />
                                 )}
-                                <link.icon className={cn("w-4 h-4 shrink-0", isActive ? "text-primary" : "")} />
-                                <span className={cn("text-xs font-medium", isActive ? "font-semibold text-primary" : "")}>{link.label}</span>
+                                <link.icon className={cn("w-4.5 h-4.5 shrink-0", isActive ? "text-primary" : "")} />
+                                <span className={cn("text-sm font-bold tracking-tight", isActive ? "text-white" : "")}>{link.label}</span>
                             </div>
                         </Link>
                     )
@@ -198,27 +198,27 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
     return (
         <aside className={cn(
             variant === "default"
-                ? "w-52 flex flex-col h-screen sticky top-0 shrink-0 z-50 bg-black/70 backdrop-blur-2xl border-r border-white/[0.06]"
+                ? "w-64 flex flex-col h-screen sticky top-0 shrink-0 z-50 glass border-r border-white/10"
                 : "w-full flex flex-col h-full bg-transparent border-none",
             className
         )}>
             {/* Ambient glow */}
             {variant === "default" && (
-                <div className={cn("absolute top-0 -left-20 w-40 h-40 blur-[100px] pointer-events-none", accentGlow)} />
+                <div className={cn("absolute top-0 -left-20 w-40 h-40 blur-[120px] pointer-events-none opacity-20", accentGlow)} />
             )}
 
             {/* Logo */}
             {variant === "default" && (
-                <div className="px-4 pt-5 pb-4 border-b border-white/[0.06] shrink-0">
-                    <Link href="/" className="flex items-center gap-2.5 group mb-3">
-                        <div className={cn("p-2 rounded-xl border backdrop-blur-md shadow-lg transition-all duration-300 group-hover:scale-105",
+                <div className="px-6 pt-8 pb-6 border-b border-white/10 shrink-0">
+                    <Link href="/" className="flex items-center gap-3 group mb-2">
+                        <div className={cn("p-2 rounded-2xl border backdrop-blur-md shadow-lg transition-all duration-300 group-hover:scale-105",
                             role === "admin" ? "bg-rose-500/20 border-rose-500/30" : "bg-primary/20 border-primary/30"
                         )}>
-                            <Zap className={cn("w-4 h-4", role === "admin" ? "text-rose-400" : "text-primary")} />
+                            <ShieldCheck className={cn("w-5 h-5", role === "admin" ? "text-rose-400" : "text-primary")} />
                         </div>
                         <div>
-                            <p className="text-sm font-black tracking-tight text-white leading-none">Best Hiring Tool</p>
-                            <p className={cn("text-[8px] uppercase tracking-[0.3em] font-bold leading-tight mt-0.5",
+                            <p className="text-base font-black tracking-tighter text-gradient leading-none">Best Hiring</p>
+                            <p className={cn("text-[9px] uppercase tracking-[0.3em] font-black leading-tight mt-1",
                                 role === "admin" ? "text-rose-500/60" : "text-primary/60"
                             )}>
                                 {role === "admin" ? "Admin Terminal" : role === "company" ? "Recruiter Hub" : "Talent Engine"}

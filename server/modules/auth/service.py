@@ -64,6 +64,7 @@ async def get_current_user(
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         user_id = payload.get("sub")
         if user_id:
+            payload["id"] = user_id
             return payload
     except jwt.PyJWTError:
         pass
@@ -78,6 +79,7 @@ async def get_current_user(
                 # Map Supabase user to our payload format
                 return {
                     "sub": user_res.user.id,
+                    "id": user_res.user.id,
                     "email": user_res.user.email,
                     "roles": [user_res.user.user_metadata.get("role", "USER")],
                 }

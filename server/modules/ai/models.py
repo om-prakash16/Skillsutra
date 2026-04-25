@@ -34,6 +34,8 @@ class ParsedResume(BaseModel):
     skills: List[str] = Field(description="List of extracted technical skills")
     soft_skills: List[str] = Field(description="List of extracted soft skills (e.g. Leadership, Communication)")
     role: str = Field(description="Primary professional role identified")
+    experience_years: int = Field(description="Total years of professional experience", default=0)
+    education: List[str] = Field(description="List of educational degrees and institutions", default=[])
     skill_score: float = Field(description="AI-calculated skill score from 0-100")
     forensic_confidence: float = Field(description="AI confidence score for the verification (0-100)")
     missing_skills: List[str] = Field(

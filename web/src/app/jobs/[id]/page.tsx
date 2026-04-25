@@ -26,7 +26,7 @@ export default function JobDetails() {
 
   const fetchJob = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs/details/${id}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jobs/details/${id}`);
       const data = await res.json();
       setJob(data);
     } catch (err) {
@@ -43,8 +43,8 @@ export default function JobDetails() {
     }
     setIsApplying(true);
     try {
-      const token = localStorage.getItem("sp_token");
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs/apply`, {
+      const token = localStorage.getItem("auth_token");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jobs/apply`, {
         method: "POST",
         headers: { 
             "Content-Type": "application/json",
@@ -71,73 +71,80 @@ export default function JobDetails() {
   if (!job) return <div className="min-h-screen flex items-center justify-center text-white">Job not found.</div>;
 
   return (
-    <div className="min-h-screen bg-black text-white pt-24 pb-12 px-6">
-      <div className="max-w-4xl mx-auto space-y-8">
-        <Link href="/jobs" className="inline-flex items-center text-neutral-500 hover:text-white transition-colors gap-2 font-black italic uppercase tracking-tighter">
-            <ArrowLeft className="w-4 h-4" /> Back to Marketplace
+    <div className="min-h-screen py-24 pb-12 px-6 relative overflow-hidden">
+      <div className="max-w-5xl mx-auto space-y-12 relative z-10">
+        <Link href="/jobs" className="inline-flex items-center text-muted-foreground hover:text-primary transition-all gap-3 font-black uppercase tracking-[0.2em] text-[10px] glass px-4 py-2 rounded-full">
+            <ArrowLeft className="w-3.5 h-3.5" /> Back to Marketplace
         </Link>
 
-        <div className="flex flex-col md:flex-row justify-between items-start gap-8">
-            <div className="space-y-4 flex-1">
-                <div className="space-y-2">
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 px-3 py-0.5 text-[10px] font-black italic">
+        <div className="flex flex-col md:flex-row justify-between items-end gap-10">
+            <div className="space-y-6 flex-1">
+                <div className="space-y-4">
+                    <Badge variant="outline" className="glass text-primary px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] rounded-full">
                         {job.companies?.company_name}
                     </Badge>
-                    <h1 className="text-5xl font-black font-heading tracking-tighter italic">{job.title}</h1>
+                    <h1 className="text-6xl md:text-7xl font-black font-heading tracking-tighter text-gradient leading-none">{job.title}</h1>
                 </div>
-                <div className="flex flex-wrap gap-6 text-neutral-400 font-medium">
-                    <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" /> {job.location || 'Remote'}</span>
-                    <span className="flex items-center gap-1.5"><DollarSign className="w-4 h-4" /> {job.salary_range || 'Competitive'}</span>
-                    <span className="flex items-center gap-1.5"><Calendar className="w-4 h-4" /> Posted {new Date(job.created_at).toLocaleDateString()}</span>
+                <div className="flex flex-wrap gap-8 text-muted-foreground font-bold uppercase text-[10px] tracking-widest">
+                    <span className="flex items-center gap-2.5"><MapPin className="w-4 h-4 text-primary" /> {job.location || 'Remote'}</span>
+                    <span className="flex items-center gap-2.5"><DollarSign className="w-4 h-4 text-primary" /> {job.salary_range || 'Competitive'}</span>
+                    <span className="flex items-center gap-2.5"><Calendar className="w-4 h-4 text-primary" /> Posted {new Date(job.created_at).toLocaleDateString()}</span>
                 </div>
             </div>
 
-            <Card className="bg-white/5 border-white/10 backdrop-blur-xl w-full md:w-80">
-                <CardContent className="p-6 space-y-6">
+            <Card className="glass w-full md:w-96 rounded-[2rem] border-white/10 shadow-2xl overflow-hidden group">
+                <CardContent className="p-8 space-y-8">
                     <div className="flex justify-between items-center text-center">
-                        <div className="space-y-1">
-                           <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest leading-none">AI Match</p>
-                           <p className="text-3xl font-black text-emerald-500 italic">88%</p>
+                        <div className="space-y-2">
+                           <p className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-[0.3em] leading-none">AI Match</p>
+                           <p className="text-4xl font-black text-emerald-500 italic">88%</p>
                         </div>
-                        <div className="h-10 w-[1px] bg-white/10" />
-                        <div className="space-y-1">
-                           <p className="text-[10px] font-black text-neutral-500 uppercase tracking-widest leading-none">Reputation</p>
-                           <p className="text-3xl font-black text-primary italic">742</p>
+                        <div className="h-12 w-[1px] bg-white/10" />
+                        <div className="space-y-2">
+                           <p className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-[0.3em] leading-none">Reputation</p>
+                           <p className="text-4xl font-black text-primary italic">742</p>
                         </div>
                     </div>
                     {applied ? (
-                        <Button disabled className="w-full h-14 bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 font-black">
-                            <CheckCircle className="w-5 h-5 mr-2" /> APPLICATION SENT
+                        <Button disabled className="w-full h-16 bg-emerald-500/20 text-emerald-500 border border-emerald-500/30 font-black rounded-2xl">
+                            <CheckCircle className="w-6 h-6 mr-3" /> APPLICATION SENT
                         </Button>
                     ) : (
                         <Button 
                             onClick={handleApply} 
                             disabled={isApplying}
-                            className="w-full h-14 bg-white text-black hover:bg-neutral-200 font-black tracking-tight"
+                            variant="premium"
+                            className="w-full h-16 rounded-2xl"
                         >
-                            {isApplying ? <Loader2 className="w-6 h-6 animate-spin" /> : <><ShieldCheck className="w-5 h-5 mr-2" /> APPLY NOW</>}
+                            {isApplying ? <Loader2 className="w-7 h-7 animate-spin" /> : <><ShieldCheck className="w-6 h-6 mr-3" /> APPLY NOW</>}
                         </Button>
                     )}
                 </CardContent>
             </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 pt-12 items-start border-t border-white/10">
-            <div className="lg:col-span-2 space-y-12">
-                <div className="space-y-4">
-                    <h2 className="text-2xl font-black font-heading tracking-tight italic flex items-center gap-2">
-                        <Briefcase className="w-6 h-6 text-primary" /> Role Description
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 pt-16 items-start border-t border-white/5">
+            <div className="lg:col-span-2 space-y-16">
+                <div className="space-y-6">
+                    <h2 className="text-3xl font-black font-heading tracking-tight flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
+                            <Briefcase className="w-6 h-6 text-primary" />
+                        </div>
+                        Role Description
                     </h2>
-                    <p className="text-neutral-400 leading-relaxed text-lg whitespace-pre-wrap">{job.description}</p>
+                    <p className="text-muted-foreground leading-relaxed text-xl font-medium opacity-90 whitespace-pre-wrap">{job.description}</p>
                 </div>
 
-                <div className="space-y-4">
-                    <h2 className="text-2xl font-black font-heading tracking-tight italic flex items-center gap-2">
-                        <Zap className="w-6 h-6 text-primary" /> Required Architecture
+                <div className="space-y-8">
+                    <h2 className="text-3xl font-black font-heading tracking-tight flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
+                            <Zap className="w-6 h-6 text-primary" />
+                        </div>
+                        Required Architecture
                     </h2>
-                    <div className="flex flex-wrap gap-2">
+                    <div className="flex flex-wrap gap-3">
                         {job.skills_required.map((skill: string) => (
-                            <Badge key={skill} className="bg-white/5 border-white/10 text-neutral-300 py-2 px-4 shadow-xl">
+                            <Badge key={skill} className="glass border-white/5 text-muted-foreground py-3 px-6 text-xs font-black uppercase tracking-widest rounded-xl hover:text-white transition-colors">
                                 {skill}
                             </Badge>
                         ))}
@@ -145,17 +152,17 @@ export default function JobDetails() {
                 </div>
             </div>
 
-            <div className="space-y-6">
-                <Card className="bg-white/5 border-white/10">
-                    <CardHeader>
-                        <CardTitle className="text-lg font-bold italic">Verification Logic</CardTitle>
+            <div className="space-y-8">
+                <Card className="glass rounded-3xl border-white/5">
+                    <CardHeader className="pb-4">
+                        <CardTitle className="text-lg font-black uppercase tracking-[0.2em] opacity-40">Verification Logic</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4 text-sm text-neutral-500">
-                        <p>This job requires a verified on-chain identity and a Proof Score of at least 500.</p>
-                        <ul className="space-y-2 list-disc list-inside">
-                            <li>Identity Hash Check</li>
-                            <li>Skill Credential Link</li>
-                            <li>Multi-company RLS Isolation</li>
+                    <CardContent className="space-y-6 text-sm font-medium text-muted-foreground">
+                        <p>This job requires a verified on-chain identity and a Proof Score of at least <span className="text-foreground font-black">500</span>.</p>
+                        <ul className="space-y-4">
+                            <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary" /> Identity Hash Check</li>
+                            <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary" /> Skill Credential Link</li>
+                            <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary" /> Multi-company RLS Isolation</li>
                         </ul>
                     </CardContent>
                 </Card>

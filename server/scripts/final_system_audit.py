@@ -18,6 +18,9 @@ async def final_audit():
         print("\n[STEP 3/4] Testing User Creation...")
         import uuid
         test_uuid = str(uuid.uuid4())
+        # Pre-cleanup in case of previous failed runs
+        db.table("users").delete().eq("email", "audit_user@example.com").execute()
+
         user_res = db.table("users").insert({
             "id": test_uuid,
             "email": "audit_user@example.com",

@@ -24,9 +24,9 @@ export default function UserDashboard() {
 
     const fetchAIData = async () => {
         try {
-            const token = localStorage.getItem("sp_token")
+            const token = localStorage.getItem("auth_token")
             // In a real flow, we'd trigger /analyze if scores are missing or stale
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/ai/scores/${user?.id}`, {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ai/scores/${user?.id}`, {
                 headers: { "Authorization": `Bearer ${token}` }
             })
             if (res.ok) {
@@ -48,43 +48,48 @@ export default function UserDashboard() {
     ]
 
     return (
-        <div className="space-y-8">
-            <div>
-                <h1 className="text-3xl font-bold font-heading">Dashboard</h1>
-                <p className="text-muted-foreground">Welcome back, here is your daily overview.</p>
+        <div className="space-y-10 pb-12">
+            <div className="flex flex-col gap-2">
+                <h1 className="text-4xl font-black font-heading text-gradient tracking-tight">Dashboard</h1>
+                <p className="text-muted-foreground font-medium">Welcome back, <span className="text-foreground">{user?.name || 'User'}</span>. Here's your career intelligence overview.</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat, i) => (
-                    <Link key={i} href={stat.href} className="block transition-transform hover:scale-[1.02]">
-                        <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
-                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                                <CardTitle className="text-sm font-medium">
+                    <Link key={i} href={stat.href} className="block transition-transform hover:scale-[1.02] active:scale-95">
+                        <Card className="glass cursor-pointer h-full hover:border-primary/40 transition-all duration-300">
+                            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+                                <CardTitle className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground">
                                     {stat.label}
                                 </CardTitle>
-                                <stat.icon className="h-4 w-4 text-muted-foreground" />
+                                <div className="p-2 rounded-lg bg-primary/10 border border-primary/20">
+                                    <stat.icon className="h-4 w-4 text-primary" />
+                                </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-2xl font-bold">{stat.value}</div>
+                                <div className="text-3xl font-black">{stat.value}</div>
                             </CardContent>
                         </Card>
                     </Link>
                 ))}
             </div>
 
-            {/* Recent Activity / Recommended Jobs could go here */}
-
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-7">
-                <div className="col-span-4 space-y-6">
-                    <Card>
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-7">
+                <div className="col-span-4 space-y-8">
+                    <Card className="glass">
                         <CardHeader>
-                            <CardTitle>Recent Applications</CardTitle>
+                            <CardTitle className="text-xl font-bold">Recent Applications</CardTitle>
                         </CardHeader>
-                        <CardContent>
-                            <p className="text-sm text-muted-foreground">You haven't applied to any jobs recently.</p>
-                            <Link href="/jobs">
-                                <Button variant="link" className="px-0">Find Jobs</Button>
-                            </Link>
+                        <CardContent className="py-10">
+                            <div className="flex flex-col items-center justify-center text-center space-y-4">
+                                <div className="p-4 rounded-full bg-muted/30">
+                                    <Briefcase className="w-8 h-8 text-muted-foreground" />
+                                </div>
+                                <p className="text-sm text-muted-foreground font-medium max-w-[200px]">You haven't applied to any jobs recently.</p>
+                                <Link href="/jobs">
+                                    <Button variant="premium" size="sm">Explore Opportunities</Button>
+                                </Link>
+                            </div>
                         </CardContent>
                     </Card>
 
@@ -98,7 +103,7 @@ export default function UserDashboard() {
                     />
                 </div>
 
-                <div className="col-span-3 space-y-6">
+                <div className="col-span-3 space-y-8">
                     <ProofScoreDisplay 
                         isLoading={isLoading} 
                         scores={aiData || {
@@ -109,22 +114,30 @@ export default function UserDashboard() {
                         }} 
                     />
 
-                    <Card>
+                    <Card className="glass relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-3xl rounded-full -mr-16 -mt-16 group-hover:bg-primary/20 transition-all" />
                         <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
+                            <CardTitle className="flex items-center gap-2 text-xl font-bold">
                                 <Sparkles className="w-5 h-5 text-primary" /> Profile Status
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="flex items-center justify-center py-8">
-                                <div className="relative w-32 h-32 rounded-full border-4 border-muted flex items-center justify-center">
-                                    <span className="text-2xl font-bold">80%</span>
-                                    <div className="absolute top-0 left-0 w-full h-full rounded-full border-4 border-primary border-t-transparent rotate-45" />
+                            <div className="flex items-center justify-center py-10">
+                                <div className="relative w-40 h-40 rounded-full border-8 border-muted flex items-center justify-center shadow-inner">
+                                    <span className="text-4xl font-black tracking-tight">80%</span>
+                                    <svg className="absolute top-0 left-0 w-full h-full -rotate-90">
+                                        <circle 
+                                            cx="80" cy="80" r="76" 
+                                            fill="none" stroke="currentColor" strokeWidth="8" 
+                                            strokeDasharray={477} strokeDashoffset={477 * (1 - 0.8)}
+                                            className="text-primary"
+                                        />
+                                    </svg>
                                 </div>
                             </div>
-                            <p className="text-center text-sm text-muted-foreground italic font-medium mt-2">Add your GitHub to reach 100%</p>
+                            <p className="text-center text-xs text-muted-foreground italic font-black uppercase tracking-widest mt-2">Add your GitHub to reach 100%</p>
                             <Link href="/user/profile">
-                                <Button className="w-full mt-6 bg-white text-black hover:bg-neutral-200 font-bold" variant="outline">Update Profile</Button>
+                                <Button className="w-full mt-8 font-bold" variant="outline">Complete Profile</Button>
                             </Link>
                         </CardContent>
                     </Card>

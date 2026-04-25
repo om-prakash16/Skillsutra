@@ -117,7 +117,7 @@ BEGIN
     UPDATE public.skill_taxonomy SET popularity_score = popularity_score + 1 WHERE id = NEW.skill_id;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 DROP TRIGGER IF EXISTS trg_skill_popularity ON public.user_skill_nodes;
 CREATE TRIGGER trg_skill_popularity
@@ -132,7 +132,7 @@ BEGIN
     WHERE user_id = NEW.user_id AND skill_id = NEW.skill_id;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
 
 DROP TRIGGER IF EXISTS trg_proof_score ON public.skill_usage_events;
 CREATE TRIGGER trg_proof_score

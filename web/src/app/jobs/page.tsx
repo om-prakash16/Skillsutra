@@ -23,8 +23,8 @@ export default function JobMarketplace() {
   const fetchJobs = async () => {
     try {
       const url = user?.id 
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs/list?user_id=${user.id}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs/list`;
+        ? `${process.env.NEXT_PUBLIC_API_URL}/jobs/list?user_id=${user.id}`
+        : `${process.env.NEXT_PUBLIC_API_URL}/jobs/list`;
       
       const res = await fetch(url);
       const data = await res.json();
@@ -42,40 +42,40 @@ export default function JobMarketplace() {
   );
 
   return (
-    <div className="min-h-screen bg-black text-white py-20 px-6">
-      <div className="max-w-7xl mx-auto space-y-12">
+    <div className="min-h-screen py-24 px-6 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto space-y-16 relative z-10">
         {/* Header Section */}
-        <div className="text-center space-y-4">
-           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 px-4 py-1 uppercase tracking-tighter font-black italic">
-             AI-POWERED MARKETPLACE
+        <div className="text-center space-y-6">
+           <Badge variant="outline" className="glass text-primary px-6 py-2 uppercase tracking-[0.3em] font-black rounded-full">
+             AI-Powered Marketplace
            </Badge>
-           <h1 className="text-6xl font-black font-heading tracking-tighter italic">Find Your Next Impact.</h1>
-           <p className="text-muted-foreground max-w-2xl mx-auto">Browse high-fidelity roles verified by Proof Scores and AI matching.</p>
+           <h1 className="text-6xl md:text-8xl font-black font-heading tracking-tighter text-gradient leading-none">Find Your <br />Next Impact.</h1>
+           <p className="text-muted-foreground max-w-2xl mx-auto text-xl font-medium opacity-80">Browse high-fidelity roles verified by <span className="text-foreground">Proof Scores</span> and real-time AI matching intelligence.</p>
         </div>
 
         {/* Search & Filter Bar */}
-        <div className="flex flex-col md:flex-row gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-xl">
-           <div className="flex-1 relative">
-             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-neutral-500" />
+        <div className="flex flex-col md:flex-row gap-6 glass p-3 rounded-[2rem] border-white/5 shadow-2xl">
+           <div className="flex-1 relative group">
+             <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
              <Input 
-                placeholder="Search roles or companies..." 
-                className="bg-transparent border-none pl-12 h-14 text-lg focus-visible:ring-0"
+                placeholder="Search roles, companies, or stacks..." 
+                className="bg-transparent border-none pl-16 h-16 text-xl focus-visible:ring-0 placeholder:text-muted-foreground/30 font-medium"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
              />
            </div>
-           <Button className="h-14 px-8 bg-white text-black hover:bg-neutral-200 font-black tracking-tight">
-              <Filter className="w-5 h-5 mr-2" /> ADVANCED FILTERS
+           <Button className="h-16 px-10 glass border-white/10 hover:border-primary/50 text-foreground font-black tracking-widest uppercase text-xs rounded-2xl transition-all">
+              <Filter className="w-5 h-5 mr-3 text-primary" /> Advanced Filters
            </Button>
         </div>
 
         {/* Job Grid */}
         {isLoading ? (
           <div className="py-24 flex justify-center items-center">
-             <Loader2 className="w-12 h-12 animate-spin text-primary" />
+             <Loader2 className="w-16 h-16 animate-spin text-primary" />
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredJobs.map(job => (
               <JobCard key={job.id} job={job} user={user} />
             ))}
@@ -88,54 +88,53 @@ export default function JobMarketplace() {
 
 function JobCard({ job, user }: { job: any, user: any }) {
     return (
-        <Card className="bg-white/5 border-white/10 backdrop-blur-xl group hover:border-primary/50 transition-all duration-500 flex flex-col">
-            <CardHeader className="relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                    <Briefcase className="w-20 h-20 text-white" />
+        <Card className="glass group hover:border-primary/40 transition-all duration-500 flex flex-col rounded-[2.5rem] overflow-hidden border-white/5">
+            <CardHeader className="relative overflow-hidden pt-10 px-8">
+                <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-15 transition-all duration-500 group-hover:scale-110">
+                    <Briefcase className="w-24 h-24 text-primary" />
                 </div>
-                <div className="space-y-2">
-                    <p className="text-xs font-black text-primary uppercase tracking-widest">{job.companies?.company_name}</p>
-                    <CardTitle className="text-2xl font-black tracking-tight group-hover:text-primary transition-colors">{job.title}</CardTitle>
+                <div className="space-y-3 relative z-10">
+                    <p className="text-[10px] font-black text-primary uppercase tracking-[0.3em]">{job.companies?.company_name}</p>
+                    <CardTitle className="text-2xl font-black tracking-tight leading-tight group-hover:text-gradient transition-all duration-500">{job.title}</CardTitle>
                 </div>
             </CardHeader>
-            <CardContent className="flex-1 space-y-4">
-                <div className="flex flex-wrap gap-4 text-sm text-neutral-400 font-medium">
-                    <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" /> {job.location || 'Remote'}</span>
-                    <span className="flex items-center gap-1.5"><DollarSign className="w-4 h-4" /> {job.salary_range || 'Competitive'}</span>
+            <CardContent className="flex-1 space-y-8 px-8 pb-8 relative z-10">
+                <div className="flex flex-wrap gap-6 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                    <span className="flex items-center gap-2"><MapPin className="w-3.5 h-3.5 text-primary" /> {job.location || 'Remote'}</span>
+                    <span className="flex items-center gap-2"><DollarSign className="w-3.5 h-3.5 text-primary" /> {job.salary_range || 'Competitive'}</span>
                 </div>
                 <div className="flex flex-wrap gap-2 pt-2">
                     {job.skills_required.slice(0, 3).map((skill: string) => (
-                        <Badge key={skill} variant="secondary" className="bg-white/5 text-[10px] text-neutral-300 border-white/10">
+                        <Badge key={skill} variant="secondary" className="glass bg-white/5 text-[9px] text-muted-foreground border-white/5 font-black uppercase tracking-widest py-1 px-3">
                             {skill}
                         </Badge>
                     ))}
                     {job.skills_required.length > 3 && (
-                        <span className="text-[10px] text-neutral-500 font-bold">+{job.skills_required.length - 3} MORE</span>
+                        <span className="text-[9px] text-muted-foreground/30 font-black tracking-widest uppercase ml-1">+{job.skills_required.length - 3} MORE</span>
                     )}
                 </div>
             </CardContent>
-            <CardFooter className="pt-4 border-t border-white/10 mt-auto">
+            <CardFooter className="p-8 pt-6 border-t border-white/5 mt-auto bg-white/5 relative z-10">
                 {user ? (
-                   <div className="w-full flex items-center justify-between">
-                      <div className="flex flex-col">
-                         <span className="text-[10px] font-black text-neutral-500 uppercase tracking-widest">AI Match</span>
-                         <span className={`text-lg font-black italic flex items-center gap-1 ${
+                   <div className="w-full flex items-center justify-between gap-4">
+                      <div className="flex flex-col gap-1">
+                         <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">AI Match</span>
+                         <span className={`text-xl font-black italic flex items-center gap-2 ${
                             (job.ai_match_percentage || 0) > 70 ? 'text-emerald-500' : 'text-amber-500'
                          }`}>
-                            <Zap className={`w-4 h-4 ${
-                                (job.ai_match_percentage || 0) > 70 ? 'fill-emerald-500' : 'fill-amber-500'
-                            }`} /> {job.ai_match_percentage || 0}%
+                            <Zap className={`w-4 h-4 ${(job.ai_match_percentage || 0) > 70 ? 'fill-emerald-500' : 'fill-amber-500'}`} /> 
+                            {job.ai_match_percentage || 0}%
                          </span>
                       </div>
-                      <Link href={`/jobs/${job.id}`}>
-                        <Button className="h-11 bg-white text-black hover:bg-neutral-200 font-black px-6">
-                            DETAILS <ArrowRight className="w-4 h-4 ml-2" />
+                      <Link href={`/jobs/${job.id}`} className="flex-shrink-0">
+                        <Button variant="premium" size="sm" className="h-12 px-6 group/btn">
+                            DETAILS <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
                         </Button>
                       </Link>
                    </div>
                 ) : (
                    <Link href="/login" className="w-full">
-                      <Button variant="outline" className="w-full h-11 border-white/10 hover:bg-white/5 font-black">
+                      <Button variant="outline" className="w-full h-12 border-white/10 hover:bg-white/5 font-black uppercase text-[10px] tracking-widest rounded-xl">
                          SIGN IN TO APPLY
                       </Button>
                    </Link>

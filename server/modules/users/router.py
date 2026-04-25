@@ -11,7 +11,7 @@ user_service = UserService()
 @router.post("/create")
 async def create_new_user(email: str, wallet_address: str):
     """
-    Step 4: Create a new user identity. Trigger will handle BHT code.
+    Step 4: Create a new user identity. Trigger will handle Best Hiring (BH-) code.
     """
     db = get_supabase()
     res = db.table("users").insert({
@@ -84,7 +84,7 @@ async def get_public_portfolio(user_code: str):
 @router.get("/search/{user_code}")
 async def search_candidate_by_code(user_code: str):
     """
-    Search candidate by unique BHT code.
+    Search candidate by unique Best Hiring code.
     """
     db = get_supabase()
     response = db.table("users").select("id, user_code, full_name, visibility").eq("user_code", user_code).execute()

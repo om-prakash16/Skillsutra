@@ -1,22 +1,21 @@
 import os
 from typing import Dict, Any
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import PromptTemplate
-from langchain.output_parsers import PydanticOutputParser
-from modules.ai.models import ParsedResume
+from langchain_core.prompts import PromptTemplate
+from langchain_core.output_parsers import PydanticOutputParser
 from core.supabase import get_supabase
+import google.generativeai as genai
+from modules.ai.models import ParsedResume
 
 
 class ResumeService:
     def __init__(self):
         self.api_key = os.getenv("GOOGLE_API_KEY")
-        self.llm = (
-            ChatGoogleGenerativeAI(
-                temperature=0, google_api_key=self.api_key, model="gemini-1.5-flash"
-            )
-            if self.api_key
-            else None
-        )
+        if self.api_key:
+            genai.configure(api_key=self.api_key)
+            self.model = genai.GenerativeModel("gemini-flash-latest")
+        else:
+            self.model = None
+            
         self.parser = PydanticOutputParser(pydantic_object=ParsedResume)
         self.db = get_supabase()
 
@@ -25,7 +24,7 @@ class ResumeService:
         Processes resume text using LangChain, extracts skills,
         calculates proof score components, and stores in ai_scores.
         """
-        if not self.llm:
+        if not self.model:
             return {"error": "AI service not configured"}
 
         prompt = PromptTemplate(
@@ -49,9 +48,17 @@ class ResumeService:
         )
 
         try:
-            _input = prompt.format_prompt(resume=resume_text)
-            output = self.llm.invoke(_input.to_messages())
-            parsed_data = self.parser.parse(output.content)
+            prompt_text = prompt.format(resume=resume_text)
+            response = self.model.generate_content(prompt_text)
+            output_text = response.text
+            
+            # Clean up potential markdown formatting if model returns it
+            if output_text.startswith("```json"):
+                output_text = output_text.split("```json")[1].split("```")[0].strip()
+            elif output_text.startswith("```"):
+                output_text = output_text.split("```")[1].split("```")[0].strip()
+                
+            parsed_data = self.parser.parse(output_text)
 
             # Map ParsedResume fields to Best Hiring Tool score model
             analysis_results = {
@@ -75,13 +82,23 @@ class ResumeService:
                 "ai_recommendations": parsed_data.summary
                 if hasattr(parsed_data, "summary")
                 else "Keep building projects.",
+                "experience_years": parsed_data.experience_years
+                if hasattr(parsed_data, "experience_years")
+                else 0,
+                "education": parsed_data.education
+                if hasattr(parsed_data, "education")
+                else [],
             }
 
             # Store in ai_scores table (Supabase)
-            if self.db:
-                self.db.table("ai_scores").upsert(
-                    analysis_results, on_conflict="user_id"
-                ).execute()
+            try:
+                if self.db:
+                    self.db.table("ai_scores").upsert(
+                        analysis_results, on_conflict="user_id"
+                    ).execute()
+            except Exception as db_err:
+                print(f"Database Save Warning: {db_err}")
+                # We continue because the user still wants to see their results in the UI
 
             return analysis_results
         except Exception as e:

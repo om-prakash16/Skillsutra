@@ -88,6 +88,53 @@ async def analyze_profile_insights(
     return await ai_service.analyze_resume(req.profile_data)
 
 
+from fastapi import UploadFile, File, HTTPException
+import io
+import PyPDF2
+
+@router.post("/analyze-resume")
+async def analyze_resume_endpoint(
+    file: UploadFile = File(...)
+):
+    """
+    Endpoint for the Landing Page /verify UI to parse uploaded PDFs.
+    """
+    try:
+        content = await file.read()
+        reader = PyPDF2.PdfReader(io.BytesIO(content))
+        text = ""
+        for page in reader.pages:
+            if page.extract_text():
+                text += page.extract_text() + "\n"
+                
+        from modules.ai.services.resume_service import ResumeService
+        resume_service = ResumeService()
+        
+        # User ID fallback for public demo or disconnected wallet scenarios
+        user_id = "anonymous"
+        
+        result = await resume_service.analyze_resume(user_id=user_id, resume_text=text)
+        
+        if "error" in result:
+            raise HTTPException(status_code=500, detail=result["error"])
+            
+        frontend_data = {
+            "skills": result.get("extracted_skills", []),
+            "soft_skills": result.get("soft_skills", []),
+            "experience_years": result.get("experience_years", 0),
+            "roles": [result.get("primary_role", "Developer")],
+            "education": result.get("education", []),
+            "forensic_confidence": result.get("forensic_confidence", 85)
+        }
+        
+        return {"status": "success", "parsed_data": frontend_data}
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.get("/scores")
 async def get_proof_scores(
     user_id: Optional[str] = None, current_user=Depends(get_current_user)
