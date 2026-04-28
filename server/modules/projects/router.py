@@ -5,7 +5,7 @@ Project Ledger Router — API endpoints for managing projects.
 from fastapi import APIRouter, Depends, HTTPException
 from typing import List
 from uuid import UUID
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.projects.models import ProjectCreate, ProjectUpdate, ProjectResponse, SkillLinkRequest
 from modules.projects.service import ProjectService
 

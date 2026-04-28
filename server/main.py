@@ -5,27 +5,29 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import logging
 
-from modules.auth.router import router as auth_router
-from modules.users.router import router as users_router
+from modules.auth.api.router import router as auth_router
+from modules.users.api.router import router as users_router
 from modules.ai.router import router as ai_router
-from modules.company.router import router as company_router
+from modules.company.api.router import router as company_router
 from modules.jobs.router import router as jobs_router
 from modules.applications.router import router as applications_router
 from modules.nft.router import router as nft_router
 from modules.search.router import router as search_router
-from modules.notifications.router import router as notifications_router
+from modules.notifications.api.router import router as notifications_router
 from modules.activity.router import router as activity_router
 from modules.analytics.router import router as analytics_router
 from modules.sync.router import router as sync_router
-from modules.admin.router import router as admin_router
+from modules.admin.api.router import router as admin_router
 from modules.cms.router import router as cms_router
 from modules.career.router import router as career_router
-from modules.users.identity_router import router as identity_router
+from modules.users.api.identity_router import router as identity_router
 from modules.chat.router import router as chat_router
 from modules.enterprise.router import router as enterprise_router
 from modules.skill_graph.router import router as skill_graph_router
 from modules.projects.router import router as projects_router
-from modules.auth.handlers import initialize_event_handlers
+from modules.talent_pool.router import router as talent_pool_router
+from modules.competitions.router import router as competitions_router
+from modules.auth.core.handlers import initialize_event_handlers
 
 # Configure standard logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
@@ -108,6 +110,12 @@ app.include_router(
 )
 app.include_router(
     projects_router, prefix="/api/v1/projects", tags=["Proof of Work"]
+)
+app.include_router(
+    talent_pool_router, prefix="/api/v1/talent-pool", tags=["Talent Pool"]
+)
+app.include_router(
+    competitions_router, prefix="/api/v1/competitions", tags=["Competitions"]
 )
 
 

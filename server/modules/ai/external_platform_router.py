@@ -5,7 +5,7 @@ Handles connecting, verifying, and syncing external developer platforms.
 
 from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.ai.services.external_platform_service import ExternalPlatformService
 from core.supabase import get_supabase
 

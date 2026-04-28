@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from modules.auth.service import require_permission, get_current_user
+from modules.auth.core.service import require_permission, get_current_user
 from modules.jobs.service import JobService
 
 router = APIRouter()

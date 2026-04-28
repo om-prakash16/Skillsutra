@@ -1,4 +1,4 @@
-import EscrowButton from "@/components/features/bounty/EscrowButton";
+import EscrowButton from "@/features/bounty/components/EscrowButton";
 import { Badge } from "@/components/ui/badge";
 
 const MOCK_BOUNTIES = [

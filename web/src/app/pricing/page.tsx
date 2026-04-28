@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
-import { PricingCard, PricingPlan } from "@/components/features/pricing/pricing-card"
+import { PricingCard, PricingPlan } from "@/features/pricing/components/pricing-card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Check, Minus, HelpCircle } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"

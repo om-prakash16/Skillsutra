@@ -7,7 +7,7 @@ from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel
 from typing import Optional
 from core.supabase import get_supabase
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.ai.services.soft_skills_service import SoftSkillsService
 
 router = APIRouter()

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.analytics.market_intelligence_service import MarketIntelligenceService
 
 router = APIRouter()

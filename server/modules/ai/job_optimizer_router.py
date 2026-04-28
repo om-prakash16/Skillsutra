@@ -6,7 +6,7 @@ Endpoints for analyzing and optimizing job listings.
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import List, Dict, Any
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.ai.services.job_optimizer_service import JobOptimizerService
 
 router = APIRouter()

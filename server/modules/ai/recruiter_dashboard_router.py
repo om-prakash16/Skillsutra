@@ -4,7 +4,7 @@ Provides analytics endpoints for hiring insights.
 """
 
 from fastapi import APIRouter, Depends, Query
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.ai.services.recruiter_dashboard_service import RecruiterDashboardService
 
 router = APIRouter()

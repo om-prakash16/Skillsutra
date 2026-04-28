@@ -12,9 +12,9 @@ import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { SupportCard } from "@/components/features/support/SupportCard"
-import { FAQAccordion } from "@/components/features/support/FAQAccordion"
-import { ContactSupportForm } from "@/components/features/support/ContactSupportForm"
+import { SupportCard } from "@/features/support/components/SupportCard"
+import { FAQAccordion } from "@/features/support/components/FAQAccordion"
+import { ContactSupportForm } from "@/features/support/components/ContactSupportForm"
 
 // --- Mock Data ---
 const QUICK_LINKS = [

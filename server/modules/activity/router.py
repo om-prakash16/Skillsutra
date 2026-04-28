@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Query
 from typing import Optional
 from pydantic import BaseModel
-from modules.auth.service import get_current_user, require_permission
+from modules.auth.core.service import get_current_user, require_permission
 from modules.activity.service import (
     record_event,
     get_user_timeline,

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from core.supabase import get_supabase
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.ai.services.career_risk_service import CareerRiskService
 
 router = APIRouter()

@@ -1,6 +1,6 @@
 from typing import Dict, Any
 from core.supabase import get_supabase
-from modules.users.service import UserService
+from modules.users.core.service import UserService
 
 class ProofScoreService:
     @staticmethod

@@ -6,7 +6,7 @@ Generates role-specific tasks and evaluates candidate submissions.
 from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel
 from typing import List
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.ai.services.simulation_engine_service import SimulationEngineService
 from core.supabase import get_supabase
 

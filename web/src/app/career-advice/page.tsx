@@ -14,9 +14,9 @@ import {
     EXPERT_TIPS,
     Article
 } from "@/lib/mock-api/career-advice"
-import { ArticleCard } from "@/components/features/career-advice/article-card"
-import { FeaturedArticleCard } from "@/components/features/career-advice/featured-article-card"
-import { CategoryCard, CareerStageCard } from "@/components/features/career-advice/advice-components"
+import { ArticleCard } from "@/features/career-advice/components/article-card"
+import { FeaturedArticleCard } from "@/features/career-advice/components/featured-article-card"
+import { CategoryCard, CareerStageCard } from "@/features/career-advice/components/advice-components"
 import Link from "next/link"
 
 function CareerAdviceContent() {

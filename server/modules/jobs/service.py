@@ -1,7 +1,7 @@
 import uuid
 from typing import List, Dict, Any, Optional
 from core.supabase import get_supabase
-from modules.notifications.service import NotificationService
+from modules.notifications.core.service import NotificationService
 
 
 class JobService:
@@ -233,7 +233,7 @@ class JobService:
 
         # 4. Emit Global Event (Side effects like transactional email)
         from core.events import bus
-        from modules.auth.handlers import JOB_APPLIED
+        from modules.auth.core.handlers import JOB_APPLIED
 
         await bus.emit(
             JOB_APPLIED,

@@ -1,7 +1,7 @@
 'use client';
 
-import { MetricCard } from '@/components/features/analytics/MetricCard';
-import { AnalyticsCharts } from '@/components/features/analytics/AnalyticsCharts';
+import { MetricCard } from '@/features/analytics/components/MetricCard';
+import { AnalyticsCharts } from '@/features/analytics/components/AnalyticsCharts';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { 

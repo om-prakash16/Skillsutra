@@ -6,7 +6,7 @@ Endpoints for recording hires, submitting reviews, and tracking model improvemen
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from typing import Optional
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.ai.services.feedback_loop_service import FeedbackLoopService
 
 router = APIRouter()

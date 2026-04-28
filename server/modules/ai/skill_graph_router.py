@@ -6,7 +6,7 @@ Exposes endpoints for graph-based skill matching and job-to-candidate evaluation
 from fastapi import APIRouter, HTTPException, Depends, Query
 from pydantic import BaseModel
 from typing import List, Optional
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.ai.services.skill_graph_service import SkillGraphService
 from core.supabase import get_supabase
 

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Body
 from typing import Dict, Any, Optional
-from modules.auth.service import require_permission, get_current_user
-from modules.auth.guards import require_company
+from modules.auth.core.service import require_permission, get_current_user
+from modules.auth.core.guards import require_company
 from modules.jobs.service import JobService
 from modules.jobs.models import (
     JobCreate,
@@ -10,7 +10,7 @@ from modules.jobs.models import (
     ApplicationResponse,
 )
 from core.supabase import get_supabase
-from modules.notifications.service import NotificationService
+from modules.notifications.core.service import NotificationService
 from modules.activity.service import record_event
 
 router = APIRouter()

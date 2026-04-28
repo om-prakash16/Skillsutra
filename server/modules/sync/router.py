@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from typing import Dict, Any
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from core.supabase import get_supabase
 from pydantic import BaseModel
 import uuid

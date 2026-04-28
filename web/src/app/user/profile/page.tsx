@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { ProfileHeader } from "@/components/features/profile/profile-header"
+import { ProfileHeader } from "@/features/profile/components/profile-header"
 import { OverviewTab } from "@/features/user/profile/tabs/overview-tab"
 import { BasicInfoTab } from "@/features/user/profile/tabs/basic-info-tab"
 import { SkillsTab } from "@/features/user/profile/tabs/skills-tab"
@@ -13,7 +13,7 @@ import { GithubTab } from "@/features/user/profile/tabs/github-tab"
 import { LeetcodeTab } from "@/features/user/profile/tabs/leetcode-tab"
 import { ApplicationsTab } from "@/features/user/profile/tabs/applications-tab"
 import { SettingsTab } from "@/features/user/profile/tabs/settings-tab"
-import { DynamicProfileForm } from "@/components/features/profile/DynamicProfileForm"
+import { DynamicProfileForm } from "@/features/profile/components/DynamicProfileForm"
 import { UserProfile, Skill, Experience, Education, Project } from "@/types/profile"
 import { userApi } from "@/lib/api/user-api"
 

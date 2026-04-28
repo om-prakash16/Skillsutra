@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import Dict, Any, Optional
-from modules.auth.service import require_permission
+from modules.auth.core.service import require_permission
 from modules.cms.service import CMSService
 from pydantic import BaseModel
 

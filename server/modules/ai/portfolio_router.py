@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Dict, Any, Optional
 from core.supabase import get_supabase
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 
 router = APIRouter()
 

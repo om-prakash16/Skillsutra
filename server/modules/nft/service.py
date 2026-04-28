@@ -4,7 +4,7 @@ import json
 import uuid
 from typing import List, Dict, Any, Optional
 from core.supabase import get_supabase
-from modules.notifications.service import NotificationService
+from modules.notifications.core.service import NotificationService
 
 
 class NFTService:

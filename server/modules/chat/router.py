@@ -1,6 +1,6 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, Query
 from typing import List
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.chat.service import ChatService
 from modules.chat.ws_manager import manager
 from modules.chat.models import RoomResponse, MessageResponse

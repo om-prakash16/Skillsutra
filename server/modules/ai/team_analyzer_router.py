@@ -4,7 +4,7 @@ Endpoints for analyzing company team vulnerabilities and skill gaps.
 """
 
 from fastapi import APIRouter, Depends, Query, HTTPException
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.ai.services.team_analyzer_service import TeamAnalyzerService
 
 router = APIRouter()

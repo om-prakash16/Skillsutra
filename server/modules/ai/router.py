@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from typing import List, Dict, Any, Optional
-from modules.auth.service import get_current_user
+from modules.auth.core.service import get_current_user
 from modules.ai.services.evaluation_service import EvaluationService as AIService
 from modules.ai.quiz_router import router as quiz_router
 from modules.ai.interview_router import router as interview_router

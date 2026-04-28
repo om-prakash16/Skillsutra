@@ -2,8 +2,8 @@
 
 import { useState, useMemo } from "react"
 import { COMPANIES } from "@/lib/mock-api/companies"
-import { CompanyFilters } from "@/components/features/companies/company-filters"
-import { CompanyCard } from "@/components/features/companies/company-card"
+import { CompanyFilters } from "@/features/companies/components/company-filters"
+import { CompanyCard } from "@/features/companies/components/company-card"
 import { Button } from "@/components/ui/button"
 import { Search, Building2 } from "lucide-react"
 

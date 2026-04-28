@@ -18,8 +18,8 @@ import {
     Zap,
     Users
 } from "lucide-react"
-import { QuickStats, PlatformActivityChart } from "@/components/features/admin/admin-charts"
-import ColosseumAnalysis from "@/components/features/admin/colosseum-analysis"
+import { QuickStats, PlatformActivityChart } from "@/features/admin/components/admin-charts"
+import ColosseumAnalysis from "@/features/admin/components/colosseum-analysis"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 

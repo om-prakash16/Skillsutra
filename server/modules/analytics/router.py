@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from typing import Dict, Any
 from modules.analytics.service import AnalyticsService
-from modules.auth.service import get_current_user, require_permission
+from modules.auth.core.service import get_current_user, require_permission
 from modules.analytics.market_intelligence_router import router as market_intel_router
 from modules.ai.services.growth_service import GrowthTrackingService
 import uuid
