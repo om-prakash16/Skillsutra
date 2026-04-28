@@ -7,6 +7,7 @@ from portal.apps.jobs.routes import router as jobs_router
 from portal.apps.applications.routes import router as applications_router
 from portal.apps.identities.routes import router as identities_router
 from portal.apps.companies.routes import router as companies_router
+from portal.apps.admin.routes import router as admin_router
 
 router = APIRouter()
 
@@ -18,3 +19,4 @@ router.include_router(jobs_router, prefix="/jobs", tags=["Jobs"])
 router.include_router(applications_router, prefix="/applications", tags=["Applications"])
 router.include_router(identities_router, prefix="/identities", tags=["Identities"])
 router.include_router(companies_router, prefix="/companies", tags=["Companies"])
+router.include_router(admin_router, prefix="/admin", tags=["Admin"])
