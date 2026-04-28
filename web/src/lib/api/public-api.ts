@@ -31,6 +31,7 @@ export const publicApi = {
         candidates: (params: string) =>
             fetchPublic(`/search/candidates?${params}`),
         jobs: (params: string) => fetchPublic(`/search/jobs?${params}`),
+        companies: (params: string) => fetchPublic(`/search/companies?${params}`),
     },
     analytics: {
         public: () => fetchPublic("/analytics/public"),

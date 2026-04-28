@@ -46,7 +46,7 @@ export function StatsSection() {
   }, []);
 
   return (
-    <section className="bg-primary/90 backdrop-blur-3xl pt-16 pb-24 relative overflow-hidden border-y border-white/5">
+    <section className="bg-primary/90 backdrop-blur-3xl pt-16 pb-24 relative overflow-hidden border-y border-black/5 dark:border-white/5">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.05),transparent_40%)] pointer-events-none" />
       
       <div className="container mx-auto max-w-7xl px-6 flex flex-wrap justify-between items-center gap-12 relative z-10">
@@ -64,7 +64,7 @@ export function StatsSection() {
             </span>
             <div className="flex items-center gap-3">
                 <div className="w-8 h-px bg-white/20 group-hover:w-12 transition-all duration-500" />
-                <span className="text-[10px] uppercase font-black tracking-[0.3em] text-white/50 group-hover:text-white transition-colors duration-500">
+                <span className="text-[10px] uppercase font-black tracking-[0.3em] text-white/70 group-hover:text-white transition-colors duration-500">
                     {stat.label}
                 </span>
             </div>

@@ -29,3 +29,17 @@ async def search_jobs(
         query=query,
         location=location
     )
+
+@router.get("/companies")
+async def search_companies(
+    query: Optional[str] = Query(None, description="Search keyword"),
+    industry: Optional[str] = Query(None, description="Industry filter"),
+    size: Optional[str] = Query(None, description="Company size filter"),
+    location: Optional[str] = Query(None, description="Location filter")
+):
+    return await search_service.search_companies(
+        query=query,
+        industry=industry,
+        size=size,
+        location=location
+    )

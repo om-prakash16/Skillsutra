@@ -5,14 +5,16 @@ import { Sparkles, ArrowRight, ShieldCheck, TerminalSquare } from 'lucide-react'
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState, useRef } from 'react';
-import { api, API_BASE_URL } from '@/lib/api/api-client';
+import { useCMS } from '@/context/cms-context';
 
 export function HeroSection() {
-  const [content, setContent] = useState<any>({
-    title: 'The Proven Force. The Ultimate Talent.',
-    subtitle: 'Best Hiring Tool utilizes Gemini intelligence and Proof-of-Work protocols to verify professional competence with mathematical precision. No more resume noise.',
-    badge: 'The Paradigm Shift in Verified Hiring'
-  });
+  const { getVal } = useCMS();
+  
+  const content = {
+    title: getVal('hero', 'title', 'The Proven Force. The Ultimate Talent.'),
+    subtitle: getVal('hero', 'subtitle', 'Best Hiring Tool utilizes Gemini intelligence and Proof-of-Work protocols to verify professional competence with mathematical precision. No more resume noise.'),
+    badge: getVal('hero', 'badge', 'The Paradigm Shift in Verified Hiring')
+  };
 
   const [terminalLogs, setTerminalLogs] = useState<string[]>([
     "Initializing Best Hiring Tool Protocol v4.0.0...",

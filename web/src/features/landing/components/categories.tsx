@@ -38,7 +38,7 @@ export function Categories() {
         <div className="flex flex-col md:flex-row justify-between items-end gap-8 border-b border-white/5 pb-10">
             <div className="space-y-4">
                 <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Intelligence Nodes</h2>
-                <h3 className="text-4xl md:text-7xl font-black italic tracking-tighter uppercase leading-none text-white">
+                <h3 className="text-4xl md:text-7xl font-black italic tracking-tighter uppercase leading-none text-foreground">
                     {titleParts[0]} <span className="text-primary not-italic">{titleParts.slice(1).join(" ")}</span>
                 </h3>
             </div>
@@ -59,19 +59,19 @@ export function Categories() {
                         viewport={{ once: true }}
                         transition={{ delay: i * 0.1, duration: 0.6 }}
                     >
-                        <Card className="group p-10 glass border-white/5 hover:border-primary/40 transition-all duration-500 cursor-pointer hover:shadow-2xl hover:shadow-primary/10 rounded-[2.5rem] overflow-hidden relative">
+                        <Card className="group p-10 glass border-black/5 dark:border-white/5 hover:border-primary/40 transition-all duration-500 cursor-pointer hover:shadow-2xl hover:shadow-primary/10 rounded-[2.5rem] overflow-hidden relative">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl -z-10 rounded-full group-hover:bg-primary/10 transition-colors" />
                             
                             <div className="flex justify-between items-start mb-10">
-                                <div className="w-16 h-16 rounded-[1.25rem] bg-white/[0.03] border border-white/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500 shadow-inner">
-                                    <Icon className="w-8 h-8 text-white/20 group-hover:text-primary transition-colors" />
+                                <div className="w-16 h-16 rounded-[1.25rem] bg-black/[0.03] dark:bg-white/[0.03] border border-black/5 dark:border-white/10 flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500 shadow-inner">
+                                    <Icon className="w-8 h-8 text-muted-foreground/40 group-hover:text-primary transition-colors" />
                                 </div>
-                                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-white/5 text-white/20 py-1.5 px-4 rounded-xl">
+                                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border-black/5 dark:border-white/5 text-muted-foreground/40 py-1.5 px-4 rounded-xl">
                                     {cat.count && cat.count.toLocaleString()} ACTIVE NODES
                                 </Badge>
                             </div>
                             <div className="space-y-3">
-                                <h3 className="text-2xl font-black tracking-tight uppercase italic text-white group-hover:text-primary transition-colors">{cat.name}</h3>
+                                <h3 className="text-2xl font-black tracking-tight uppercase italic text-foreground group-hover:text-primary transition-colors">{cat.name}</h3>
                                 <div className="h-1 w-12 bg-primary/20 group-hover:w-20 group-hover:bg-primary transition-all duration-500 rounded-full" />
                             </div>
                         </Card>

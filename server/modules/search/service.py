@@ -52,3 +52,30 @@ class SearchService:
         SearchService._SEARCH_CACHE[cache_key] = result
         return result
 
+    @staticmethod
+    async def search_companies(
+        query: Optional[str] = None,
+        industry: Optional[str] = None,
+        size: Optional[str] = None,
+        location: Optional[str] = None
+    ) -> List[Dict[str, Any]]:
+        db = get_supabase()
+        if not db: return []
+
+        q = db.table("companies").select("*")
+
+        if query:
+            q = q.ilike("name", f"%{query}%")
+        
+        if industry:
+            q = q.eq("industry", industry)
+            
+        if size:
+            q = q.eq("company_size", size)
+            
+        if location:
+            q = q.ilike("location", f"%{location}%")
+
+        res = q.order("name").execute()
+        return res.data if res.data else []
+

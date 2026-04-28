@@ -54,7 +54,7 @@ export function Navbar() {
             className={cn(
                 "fixed top-0 right-0 z-50 transition-all duration-500",
                 scrolled
-                    ? "glass shadow-[0_4px_30px_rgba(0,0,0,0.1)] border-b border-white/10"
+                    ? "glass shadow-[0_4px_30px_rgba(0,0,0,0.1)] border-b border-black/5 dark:border-white/10"
                     : "bg-transparent",
                 isDashboard ? "left-0 lg:left-64" : "left-0"
             )}

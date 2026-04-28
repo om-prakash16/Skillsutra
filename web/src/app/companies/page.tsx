@@ -1,15 +1,18 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { COMPANIES } from "@/lib/mock-api/companies"
+import { useState, useMemo, useEffect } from "react"
 import { CompanyFilters } from "@/features/companies/components/company-filters"
 import { CompanyCard } from "@/features/companies/components/company-card"
 import { Button } from "@/components/ui/button"
-import { Search, Building2 } from "lucide-react"
+import { Search, Building2, Loader2 } from "lucide-react"
+import { publicApi } from "@/lib/api/public-api"
 
 const ITEMS_PER_PAGE = 12
 
 export default function CompaniesPage() {
+    const [companies, setCompanies] = useState<any[]>([])
+    const [isLoading, setIsLoading] = useState(true)
+    
     // Filter State
     const [searchQuery, setSearchQuery] = useState("")
     const [selectedIndustries, setSelectedIndustries] = useState<string[]>([])
@@ -17,9 +20,27 @@ export default function CompaniesPage() {
     const [onlyHiring, setOnlyHiring] = useState(false)
     const [currentPage, setCurrentPage] = useState(1)
 
-    // Filtering Logic
+    useEffect(() => {
+        fetchCompanies()
+    }, [])
+
+    const fetchCompanies = async () => {
+        setIsLoading(true)
+        try {
+            // Since our backend endpoint supports filters, we should use them eventually.
+            // For now, we fetch all and filter client-side for consistency with existing logic.
+            const data = await publicApi.search.companies("")
+            setCompanies(Array.isArray(data) ? data : [])
+        } catch (err) {
+            console.error("Failed to fetch companies:", err)
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    // Filtering Logic (Client-side for now to maintain original filter behavior)
     const filteredCompanies = useMemo(() => {
-        return COMPANIES.filter(company => {
+        return companies.filter(company => {
             // Search Query
             if (searchQuery && !company.name.toLowerCase().includes(searchQuery.toLowerCase())) {
                 return false
@@ -29,16 +50,16 @@ export default function CompaniesPage() {
                 return false
             }
             // Size Filter
-            if (selectedSizes.length > 0 && !selectedSizes.includes(company.size)) {
+            if (selectedSizes.length > 0 && !selectedSizes.includes(company.company_size)) {
                 return false
             }
-            // Hiring Status
-            if (onlyHiring && company.hiringStatus !== "Actively Hiring") {
+            // Hiring Status (Note: Adjust if 'hiringStatus' exists in DB)
+            if (onlyHiring && company.verified !== true) { // Using 'verified' as proxy if hiring status not yet in DB
                 return false
             }
             return true
         })
-    }, [searchQuery, selectedIndustries, selectedSizes, onlyHiring])
+    }, [companies, searchQuery, selectedIndustries, selectedSizes, onlyHiring])
 
     // Pagination Logic
     const paginatedCompanies = useMemo(() => {
@@ -49,7 +70,7 @@ export default function CompaniesPage() {
     const totalPages = Math.ceil(filteredCompanies.length / ITEMS_PER_PAGE)
 
     // Reset page when filters change
-    useMemo(() => {
+    useEffect(() => {
         setCurrentPage(1)
     }, [searchQuery, selectedIndustries, selectedSizes, onlyHiring])
 
@@ -66,7 +87,7 @@ export default function CompaniesPage() {
                         Partner <span className="text-gradient">Nodes</span>
                     </h1>
                     <p className="text-lg text-muted-foreground/80 font-medium max-w-2xl mx-auto">
-                        Explore the network of verified corporate entities. Browse {COMPANIES.length}+ active organizations seeking top talent.
+                        Explore the network of verified corporate entities. Browse our active organizations seeking top talent.
                     </p>
                 </div>
             </div>
@@ -106,7 +127,12 @@ export default function CompaniesPage() {
                             </div>
                         </div>
 
-                        {filteredCompanies.length > 0 ? (
+                        {isLoading ? (
+                            <div className="py-32 flex flex-col items-center justify-center gap-6">
+                                <Loader2 className="w-12 h-12 animate-spin text-primary/50" />
+                                <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Indexing Corporate Network...</p>
+                            </div>
+                        ) : filteredCompanies.length > 0 ? (
                             <>
                                 <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                                     {paginatedCompanies.map((company) => (

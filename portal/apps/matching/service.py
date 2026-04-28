@@ -3,6 +3,7 @@ import numpy as np
 from typing import List, Dict, Any
 from sklearn.metrics.pairwise import cosine_similarity
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
+from portal.apps.courses.service import CourseService
 
 class MatchingService:
     def __init__(self):
@@ -14,6 +15,7 @@ class MatchingService:
             if self.api_key
             else None
         )
+        self.course_service = CourseService()
 
     async def get_embeddings_batch(self, texts: List[str]) -> List[List[float]]:
         if not self.embeddings_model:
@@ -38,14 +40,29 @@ class MatchingService:
         profile_vec = embeddings[0]
         job_vecs = embeddings[1:]
 
-        # 3. Score
+        # 3. Score & Recommend
         results = []
+        user_skills = set(profile_data.get("skills", []))
+        
         for i, job in enumerate(job_list):
             similarity = cosine_similarity([profile_vec], [job_vecs[i]])[0][0]
+            score = round(float(similarity) * 100, 2)
+            
+            # Identify Gaps
+            job_skills = set(job.get("skills_required", []))
+            missing_skills = list(job_skills - user_skills)
+            
+            # Get Bridge Courses if score is < 85%
+            bridge_courses = []
+            if score < 85 and missing_skills:
+                bridge_courses = await self.course_service.get_bridge_recommendations(missing_skills)
+
             results.append({
                 "job_id": job.get("id"),
                 "title": job.get("title"),
-                "match_score": round(float(similarity) * 100, 2)
+                "match_score": score,
+                "missing_skills": missing_skills,
+                "recommendations": bridge_courses[:2] # Top 2 recommendations
             })
 
         return sorted(results, key=lambda x: x["match_score"], reverse=True)
