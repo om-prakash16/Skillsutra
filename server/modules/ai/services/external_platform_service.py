@@ -198,3 +198,6 @@ class ExternalPlatformService:
         if not handler:
             return {"error": f"Unsupported platform: {platform}"}
         return handler(username)
+        
+
+external_platform_service = ExternalPlatformService()

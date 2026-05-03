@@ -161,3 +161,6 @@ class FeedbackLoopService:
                 "proof_score_at_hire": 845,
             }
         ]
+
+
+feedback_service = FeedbackLoopService()

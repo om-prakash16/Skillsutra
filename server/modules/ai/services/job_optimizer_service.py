@@ -230,3 +230,6 @@ class JobOptimizerService:
             )
 
         return recs[:3]
+
+
+job_optimizer_service = JobOptimizerService()

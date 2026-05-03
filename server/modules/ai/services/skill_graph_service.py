@@ -257,3 +257,6 @@ class SkillGraphService:
             "proof_score_bonus": round(proof_bonus, 1),
             "recommendation": f"Candidate covers {len(graph_matches)}/{len(expanded)} skills in the expanded job graph.",
         }
+
+
+skill_graph_service = SkillGraphService()

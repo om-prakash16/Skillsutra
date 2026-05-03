@@ -120,3 +120,6 @@ class TeamAnalyzerService:
             "team_radar": radar_scores,
             "summary": f"Your team has {len(vulnerabilities)} high-risk single points of failure. We recommend balancing your {recommended_profile['suggested_role']} hiring to diversify your tech stack.",
         }
+
+
+team_analyzer_service = TeamAnalyzerService()
