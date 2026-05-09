@@ -81,31 +81,31 @@ export default function PricingPage() {
 
     return (
         <div className="min-h-screen bg-muted/5 py-12 px-4 sm:px-6">
-            <div className="max-w-7xl mx-auto space-y-20">
+            <div className="max-w-7xl mx-auto space-y-24">
 
                 {/* Header */}
                 <div className="text-center space-y-6 max-w-3xl mx-auto">
-                    <h1 className="text-4xl md:text-5xl font-bold font-heading tracking-tight">
-                        Simple, Transparent Pricing
+                    <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight">
+                        Simple, <span className="text-primary italic font-black">Transparent</span> Pricing
                     </h1>
-                    <p className="text-xl text-muted-foreground">
+                    <p className="text-lg md:text-xl text-muted-foreground font-normal">
                         Choose the plan that perfectly fits your hiring needs. No hidden fees. Cancel anytime.
                     </p>
 
-                    {/* Toggle */}
-                    <div className="flex items-center justify-center gap-4 mt-8">
-                        <span className={`text-sm font-medium transition-colors ${!isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    <div className="flex items-center justify-center gap-4 mt-10">
+                        <span className={`text-sm font-bold transition-colors ${!isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
                             Monthly
                         </span>
                         <Switch
                             checked={isYearly}
                             onCheckedChange={setIsYearly}
                             aria-label="Toggle yearly billing"
+                            className="data-[state=checked]:bg-primary"
                         />
-                        <span className={`text-sm font-medium transition-colors ${isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
+                        <span className={`text-sm font-bold transition-colors ${isYearly ? 'text-foreground' : 'text-muted-foreground'}`}>
                             Yearly
                         </span>
-                        <Badge variant="secondary" className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 hover:bg-green-100 dark:hover:bg-green-900/30">
+                        <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-lg">
                             Save 20%
                         </Badge>
                     </div>
@@ -119,49 +119,50 @@ export default function PricingPage() {
                 </div>
 
                 {/* Comparison Table */}
-                <div className="space-y-8">
-                    <div className="text-center">
-                        <h2 className="text-3xl font-bold font-heading">Compare Features</h2>
+                <div className="space-y-12">
+                    <div className="text-center space-y-4">
+                        <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight">Compare Features</h2>
+                        <p className="text-muted-foreground text-sm font-medium">A detailed breakdown of all platform capabilities.</p>
                     </div>
 
-                    <div className="bg-background rounded-xl border overflow-x-auto shadow-sm">
+                    <div className="bg-background/50 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-premium">
                         <TooltipProvider>
                             <Table>
                                 <TableHeader>
-                                    <TableRow className="bg-muted/50 hover:bg-muted/50">
-                                        <TableHead className="w-[30%] pl-6">Feature</TableHead>
-                                        <TableHead className="w-[23%] text-center">Starter</TableHead>
-                                        <TableHead className="w-[23%] text-center font-bold text-primary">Professional</TableHead>
-                                        <TableHead className="w-[23%] text-center">Enterprise</TableHead>
+                                    <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-white/5">
+                                        <TableHead className="w-[30%] pl-8 text-micro text-muted-foreground">Feature</TableHead>
+                                        <TableHead className="w-[23%] text-center text-micro text-muted-foreground">Starter</TableHead>
+                                        <TableHead className="w-[23%] text-center text-micro text-primary font-bold">Professional</TableHead>
+                                        <TableHead className="w-[23%] text-center text-micro text-muted-foreground">Enterprise</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {COMPARISON_FEATURES.map((feat, i) => (
-                                        <TableRow key={i} className="hover:bg-muted/5">
-                                            <TableCell className="font-medium pl-6 flex items-center gap-2">
+                                        <TableRow key={i} className="hover:bg-muted/5 border-b border-white/5 last:border-0">
+                                            <TableCell className="font-medium pl-8 py-4 flex items-center gap-2 text-sm">
                                                 {feat.name}
                                                 <Tooltip>
                                                     <TooltipTrigger>
-                                                        <HelpCircle className="w-3.5 h-3.5 text-muted-foreground/50" />
+                                                        <HelpCircle className="w-3.5 h-3.5 text-muted-foreground/30" />
                                                     </TooltipTrigger>
-                                                    <TooltipContent>
+                                                    <TooltipContent className="bg-background border-white/10 text-xs rounded-lg px-3 py-2 shadow-premium">
                                                         <p>{feat.category} feature detail</p>
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TableCell>
-                                            <TableCell className="text-center text-muted-foreground">
+                                            <TableCell className="text-center text-muted-foreground text-sm">
                                                 {typeof feat.starter === "boolean" ? (
-                                                    feat.starter ? <Check className="w-5 h-5 mx-auto text-green-500" /> : <Minus className="w-5 h-5 mx-auto text-muted-foreground/30" />
+                                                    feat.starter ? <Check className="w-5 h-5 mx-auto text-emerald-500" /> : <Minus className="w-5 h-5 mx-auto text-muted-foreground/10" />
                                                 ) : feat.starter}
                                             </TableCell>
-                                            <TableCell className="text-center font-medium bg-primary/5">
+                                            <TableCell className="text-center font-bold text-sm bg-primary/5 text-primary">
                                                 {typeof feat.pro === "boolean" ? (
-                                                    feat.pro ? <Check className="w-5 h-5 mx-auto text-green-500" /> : <Minus className="w-5 h-5 mx-auto text-muted-foreground/30" />
+                                                    feat.pro ? <Check className="w-5 h-5 mx-auto text-emerald-500" /> : <Minus className="w-5 h-5 mx-auto text-muted-foreground/10" />
                                                 ) : feat.pro}
                                             </TableCell>
-                                            <TableCell className="text-center text-muted-foreground">
+                                            <TableCell className="text-center text-muted-foreground text-sm">
                                                 {typeof feat.ent === "boolean" ? (
-                                                    feat.ent ? <Check className="w-5 h-5 mx-auto text-green-500" /> : <Minus className="w-5 h-5 mx-auto text-muted-foreground/30" />
+                                                    feat.ent ? <Check className="w-5 h-5 mx-auto text-emerald-500" /> : <Minus className="w-5 h-5 mx-auto text-muted-foreground/10" />
                                                 ) : feat.ent}
                                             </TableCell>
                                         </TableRow>

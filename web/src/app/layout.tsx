@@ -6,7 +6,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/auth-context";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { QueryProvider } from "@/components/providers/query-provider";
-import { WalletProvider } from "@/components/providers/wallet-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { MobileNav } from "@/components/layout/mobile-nav";
@@ -48,7 +47,6 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <WalletProvider>
             <QueryProvider>
               <AuthProvider>
                 <CMSProvider>
@@ -66,7 +64,6 @@ export default function RootLayout({
                 </CMSProvider>
               </AuthProvider>
             </QueryProvider>
-          </WalletProvider>
           <Toaster position="top-center" richColors />
         </ThemeProvider>
       </body>

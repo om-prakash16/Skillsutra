@@ -2,6 +2,7 @@
 
 import { JobCard } from '@/components/shared/job-card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { publicApi } from '@/lib/api/public-api';
@@ -27,13 +28,18 @@ export function FeaturedJobs() {
 
   return (
     <section className="py-24 px-4 bg-background">
-      <div className="container mx-auto max-w-7xl space-y-12">
+      <div className="container mx-auto max-w-7xl space-y-16">
         <div className="text-center space-y-4">
-            <h2 className="text-5xl font-black tracking-tighter leading-none">
-                Featured <span className="text-primary italic">Requisitions</span>
+            <div className="flex justify-center">
+                <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 text-micro px-6 py-2 rounded-full shadow-premium">
+                    Opportunities
+                </Badge>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
+                Featured <span className="text-primary italic font-black">Requisitions</span>
             </h2>
-            <p className="text-muted-foreground uppercase tracking-widest text-[10px] font-bold">
-                Top roles at verified Web3 and AI organizations
+            <p className="text-muted-foreground text-base max-w-xl mx-auto">
+                Top roles at verified professional organizations seeking high-fidelity talent.
             </p>
         </div>
 
@@ -57,7 +63,7 @@ export function FeaturedJobs() {
 
         <div className="flex justify-center pt-8">
             <Link href="/jobs">
-                <Button variant="outline" className="h-12 px-12 rounded-xl bg-card border-primary/10 hover:border-primary/40 font-bold uppercase text-xs tracking-widest">
+                <Button variant="outline" className="h-12 px-10 rounded-xl bg-card border-primary/20 hover:border-primary/50 text-xs font-bold uppercase tracking-widest transition-all">
                     Explore Directory
                 </Button>
             </Link>

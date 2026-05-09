@@ -44,14 +44,14 @@ export default function CredentialsDashboard() {
       <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/10 pb-12">
         <div className="space-y-4">
            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 px-4 py-1 uppercase tracking-tighter font-black italic">
-             WEB3 CREDENTIALS
+             VERIFIED CREDENTIALS
            </Badge>
            <h1 className="text-6xl font-black font-heading tracking-tighter italic">Verifiable Identity.</h1>
-           <p className="text-muted-foreground max-w-xl italic">Manage your professional reputation on the Solana blockchain. Immutable proof of your technical mastery.</p>
+           <p className="text-muted-foreground max-w-xl italic">Manage your professional reputation with AI-verified proof. Algorithmic confirmation of your technical mastery.</p>
         </div>
         <div className="flex gap-4">
-            <Button size="lg" className="bg-white text-black hover:bg-neutral-200 font-black h-16 px-8 tracking-tight flex items-center gap-2">
-                <Plus className="w-6 h-6 shrink-0" /> MINT NEW SKILL NFT
+             <Button size="lg" className="bg-white text-black hover:bg-neutral-200 font-black h-16 px-8 tracking-tight flex items-center gap-2">
+                <Plus className="w-6 h-6 shrink-0" /> REQUEST NEW VERIFICATION
             </Button>
         </div>
       </div>
@@ -75,8 +75,8 @@ export default function CredentialsDashboard() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 text-xs text-neutral-500 italic">
-                    <p>Every profile update generates a new IPFS CID. Click "Sync CID" to propagate your latest career achievements to the Solana blockchain.</p>
-                    <p>Status: <span className="text-emerald-500 font-black uppercase">On-Chain Parity: 100%</span></p>
+                    <p>Every profile update synchronizes your latest achievements. Click "Sync Profile" to propagate your latest career achievements to the verification engine.</p>
+                    <p>Status: <span className="text-emerald-500 font-black uppercase">Verified: 100%</span></p>
                 </CardContent>
             </Card>
         </div>
@@ -104,7 +104,7 @@ export default function CredentialsDashboard() {
                     <Shield className="w-12 h-12 text-emerald-500" />
                     <div className="space-y-2">
                         <h3 className="text-xl font-bold italic">Verification Logic</h3>
-                        <p className="text-neutral-500 text-sm italic">All Best Hiring Tool NFTs are anchored to our Diamond Collection on Solana to prevent spoofing.</p>
+                        <p className="text-neutral-500 text-sm italic">All Best Hiring Tool credentials are anchored to our central verification engine to prevent spoofing.</p>
                     </div>
                 </div>
             </div>

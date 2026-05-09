@@ -40,8 +40,8 @@ export function SkillNFTGallery({ nfts, isLoading }: SkillNFTProps) {
             <Award className="w-8 h-8 text-neutral-500" />
         </div>
         <div className="space-y-2">
-            <h3 className="text-xl font-bold italic tracking-tight font-heading">No Skill Certificates</h3>
-            <p className="text-neutral-500 text-sm max-w-md mx-auto italic">Complete AI quizzes to earn verifiable skill NFTs and boost your hiring credibility.</p>
+            <h3 className="text-xl font-bold italic tracking-tight font-heading">No Verified Certificates</h3>
+            <p className="text-neutral-500 text-sm max-w-md mx-auto italic">Complete AI quizzes to earn verifiable skill certificates and boost your hiring credibility.</p>
         </div>
         <Button className="bg-white text-black hover:bg-neutral-200 font-black px-8">
             TAKE AI QUIZ
@@ -81,13 +81,9 @@ export function SkillNFTGallery({ nfts, isLoading }: SkillNFTProps) {
                     </div>
 
                     <div className="pt-4 border-t border-white/5">
-                        <a 
-                            href={`https://explorer.solana.com/address/${nft.nft_address}`} 
-                            target="_blank" 
-                            className="text-[10px] font-black text-neutral-500 uppercase tracking-widest flex items-center justify-center gap-1 hover:text-white transition-colors py-2"
-                        >
-                            EXPLORER <ArrowRight className="w-3 h-3" />
-                        </a>
+                        <div className="text-[10px] font-black text-neutral-500 uppercase tracking-widest flex items-center justify-center gap-1">
+                            <Verified className="w-3 h-3 text-emerald-500" /> SECURELY VERIFIED
+                        </div>
                     </div>
                 </CardContent>
             </Card>

@@ -36,8 +36,8 @@ export function PricingCard({ plan, isYearly }: PricingCardProps) {
     >
       {plan.isPopular && (
         <div className="absolute -top-4 left-0 right-0 flex justify-center z-10">
-          <div className="bg-primary text-primary-foreground text-[11px] font-black uppercase tracking-widest py-1 px-4 rounded-full flex items-center gap-1 shadow-lg shadow-primary/20">
-            <Sparkles className="w-3 h-3" /> Most Popular
+          <div className="bg-primary text-primary-foreground text-micro py-1 px-4 rounded-full flex items-center gap-1.5 shadow-premium">
+            <Sparkles className="w-3.5 h-3.5" /> Most Popular
           </div>
         </div>
       )}
@@ -52,38 +52,38 @@ export function PricingCard({ plan, isYearly }: PricingCardProps) {
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
         )}
 
-        <CardHeader className="text-center pb-8 pt-8">
-          <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2">{plan.name}</p>
+        <CardHeader className="text-center pb-8 pt-10 px-8">
+          <p className="text-micro text-primary mb-2">{plan.name}</p>
           <div className="flex justify-center items-end gap-1 mb-4">
             {isCustom ? (
-              <span className="text-4xl font-black font-heading tracking-tight">Custom</span>
+              <span className="text-4xl font-extrabold tracking-tight">Custom</span>
             ) : (
               <>
-                <span className="text-5xl font-black font-heading tracking-tighter">${(price as number) / 100}</span>
-                <span className="text-muted-foreground font-medium mb-1">/mo</span>
+                <span className="text-5xl font-extrabold tracking-tight">${(price as number) / 100}</span>
+                <span className="text-muted-foreground font-medium mb-1.5">/mo</span>
               </>
             )}
           </div>
-          <CardDescription className="text-base">{plan.description}</CardDescription>
+          <CardDescription className="text-sm font-normal text-muted-foreground leading-relaxed">{plan.description}</CardDescription>
         </CardHeader>
 
-        <CardContent className="flex-1">
-          <p className="text-xs font-bold mb-4 uppercase tracking-widest text-primary/80">Best for: {plan.bestFor}</p>
+        <CardContent className="flex-1 px-8">
+          <p className="text-micro text-muted-foreground mb-6">Best for: {plan.bestFor}</p>
           <ul className="space-y-4">
             {plan.features.map((feature, i) => (
               <li key={i} className="flex items-start gap-3">
-                <Check className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <span className="text-muted-foreground font-medium">{feature}</span>
+                <Check className="w-4 h-4 text-primary shrink-0 mt-1" />
+                <span className="text-sm text-muted-foreground font-medium">{feature}</span>
               </li>
             ))}
           </ul>
         </CardContent>
 
-        <CardFooter className="pt-8 pb-8 mt-auto">
+        <CardFooter className="pt-8 pb-10 px-8 mt-auto">
           <Link href={plan.ctaLink} className="w-full">
             <Button 
-              variant={plan.ctaVariant || "default"} 
-              className={`w-full h-12 font-bold text-base ${plan.isPopular ? "shadow-lg shadow-primary/20 hover:scale-[1.02] transition-transform" : ""}`}
+              variant={plan.isPopular ? "premium" : "outline"} 
+              className={`w-full h-12 text-xs font-bold tracking-widest rounded-xl transition-all ${plan.isPopular ? "shadow-premium" : "hover:border-primary/50"}`}
             >
               {plan.ctaText}
             </Button>

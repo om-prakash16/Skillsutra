@@ -7,7 +7,7 @@ import { api } from '@/lib/api/api-client';
 export function StatsSection() {
   const [stats, setStats] = useState([
     { label: 'Verified Talent', value: '12,450' },
-    { label: 'Skill NFTs Minted', value: '8,920' },
+    { label: 'Verified Skills', value: '8,920' },
     { label: 'Active Companies', value: '432' },
     { label: 'AI Verifications', value: '15k+' },
   ]);
@@ -32,7 +32,7 @@ export function StatsSection() {
         if (Array.isArray(cmsData)) {
             cmsData.forEach(item => {
                 if (item.content_key === 'users_count_label') newStats[0].label = item.content_value;
-                if (item.content_key === 'nfts_minted_label') newStats[1].label = item.content_value;
+                if (item.content_key === 'skills_verified_label') newStats[1].label = item.content_value;
                 if (item.content_key === 'companies_count_label') newStats[2].label = item.content_value;
             });
         }
@@ -46,7 +46,7 @@ export function StatsSection() {
   }, []);
 
   return (
-    <section className="bg-primary/90 backdrop-blur-3xl pt-16 pb-24 relative overflow-hidden border-y border-black/5 dark:border-white/5">
+    <section className="bg-primary/90 backdrop-blur-3xl py-20 relative overflow-hidden border-y border-black/5 dark:border-white/5">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.05),transparent_40%)] pointer-events-none" />
       
       <div className="container mx-auto max-w-7xl px-6 flex flex-wrap justify-between items-center gap-12 relative z-10">
@@ -59,12 +59,12 @@ export function StatsSection() {
             transition={{ delay: i * 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
             className="flex flex-col space-y-2 group"
           >
-            <span className="text-4xl md:text-6xl font-black tracking-tighter text-white drop-shadow-2xl transition-transform group-hover:scale-105 duration-500">
+            <span className="text-4xl md:text-5xl font-extrabold tracking-tight text-white transition-transform group-hover:scale-105 duration-500">
                 {stat.value}
             </span>
             <div className="flex items-center gap-3">
-                <div className="w-8 h-px bg-white/20 group-hover:w-12 transition-all duration-500" />
-                <span className="text-[10px] uppercase font-black tracking-[0.3em] text-white/70 group-hover:text-white transition-colors duration-500">
+                <div className="w-6 h-px bg-white/20 group-hover:w-10 transition-all duration-500" />
+                <span className="text-micro text-white/70 group-hover:text-white transition-colors duration-500">
                     {stat.label}
                 </span>
             </div>

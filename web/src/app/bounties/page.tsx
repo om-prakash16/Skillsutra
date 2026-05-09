@@ -13,9 +13,9 @@ export default function BountyBoard() {
       <div className="max-w-5xl mx-auto">
         
         <div className="mb-10 text-center">
-            <h1 className="text-5xl font-bold font-heading">Decentralized Micro-Jobs</h1>
+            <h1 className="text-5xl font-bold font-heading">Verified Micro-Jobs</h1>
             <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
-                Employers lock SOL in a trustless smart contract. Freelancers complete the tasks to instantly trigger algorithmic payouts. Zero platform fees.
+                Employers secure funds for micro-tasks. Freelancers complete the tasks to instantly trigger algorithmic payouts. Zero platform fees.
             </p>
         </div>
 
@@ -28,7 +28,7 @@ export default function BountyBoard() {
                     </div>
                     <h3 className="text-lg font-semibold">{bounty.title}</h3>
                     <div className="pt-4 border-t">
-                        <EscrowButton amount={bounty.reward} bountyId={bounty.id} />
+                        <Button disabled className="w-full">Task System Disabled</Button>
                     </div>
                 </div>
             ))}

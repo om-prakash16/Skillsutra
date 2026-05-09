@@ -11,13 +11,13 @@ export function HeroSection() {
   const { getVal } = useCMS();
   
   const content = {
-    title: getVal('hero', 'title', 'The Proven Force. The Ultimate Talent.'),
-    subtitle: getVal('hero', 'subtitle', 'Best Hiring Tool utilizes Gemini intelligence and Proof-of-Work protocols to verify professional competence with mathematical precision. No more resume noise.'),
-    badge: getVal('hero', 'badge', 'The Paradigm Shift in Verified Hiring')
+    title: getVal('hero', 'title', 'The Proof Engine. The Ultimate Talent.'),
+    subtitle: getVal('hero', 'subtitle', 'Verified Identity utilizes AI-driven intelligence and proof-of-work protocols to verify professional competence with mathematical precision. No more resume noise.'),
+    badge: getVal('hero', 'badge', 'The Paradigm Shift in Talent Verification')
   };
 
   const [terminalLogs, setTerminalLogs] = useState<string[]>([
-    "Initializing Best Hiring Tool Protocol v4.0.0...",
+    "Initializing Verified Identity Protocol v4.0.0...",
     "Connecting to Intelligence Nodes...",
     "Ready for AI verification."
   ]);
@@ -25,13 +25,13 @@ export function HeroSection() {
 
   useEffect(() => {
       const logs = [
-          "Analyzing proof of work repository...",
+          "Analyzing professional proof repositories...",
           "Decrypting verifiable credentials...",
           "Running AI heuristic match engine...",
           "Resonance matching: 98.4%",
-          "[SUCCESS] Identity Verified on Solana.",
-          "Generating NFT Proof Score...",
-          "Nexus link established.",
+          "[SUCCESS] Identity Verified & Authenticated.",
+          "Generating Skill Verification Score...",
+          "Secure Nexus link established.",
       ];
       
       let currentIdx = 0;
@@ -54,7 +54,7 @@ export function HeroSection() {
   }, [terminalLogs]);
 
   return (
-    <section className="relative min-h-[95vh] pt-32 pb-20 px-4 overflow-hidden bg-background flex flex-col justify-center">
+    <section className="relative min-h-screen pt-32 pb-24 px-4 overflow-hidden bg-background flex flex-col justify-center">
       {/* Deep Space Glassmorphic Background */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-primary/10 blur-[150px] rounded-full mix-blend-screen opacity-40 animate-pulse" />
@@ -67,7 +67,7 @@ export function HeroSection() {
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="inline-flex items-center gap-3 px-6 py-2 rounded-full glass text-primary text-[10px] font-black uppercase tracking-[0.3em] backdrop-blur-2xl"
+            className="inline-flex items-center gap-3 px-6 py-2 rounded-full glass text-primary text-micro font-bold tracking-widest backdrop-blur-2xl"
           >
             <Sparkles className="w-4 h-4" />
             {content.badge}
@@ -77,10 +77,10 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.8 }}
-            className="text-5xl md:text-8xl font-black font-heading tracking-tighter text-foreground leading-[0.95]"
+            className="text-6xl md:text-8xl font-extrabold font-heading tracking-tight text-foreground leading-[1.05]"
           >
             {content.title.split('.').map((part: string, i: number) => (
-              <span key={i} className={i === 1 ? "text-gradient italic" : ""}>
+              <span key={i} className={i === 1 ? "text-gradient italic font-black" : ""}>
                 {part}{i === 0 && "."} {i === 0 && <br />}
               </span>
             ))}
@@ -90,7 +90,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="text-xl md:text-2xl text-muted-foreground max-w-xl leading-relaxed font-medium opacity-80"
+            className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed font-normal"
           >
             {content.subtitle}
           </motion.p>
@@ -99,15 +99,15 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center gap-6 pt-6 whitespace-nowrap"
+            className="flex flex-col sm:flex-row items-center gap-4 pt-6 whitespace-nowrap"
           >
             <Link href="/jobs" className="w-full sm:w-auto">
-              <Button size="lg" variant="premium" className="w-full sm:w-auto h-16 px-10 rounded-[1.25rem] shadow-2xl">
-                Discover Jobs <ArrowRight className="ml-2 w-6 h-6" />
+              <Button size="lg" variant="premium" className="w-full sm:w-auto h-14 px-8 rounded-xl shadow-premium group text-xs font-bold tracking-widest">
+                DISCOVER JOBS <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
             <Link href="/verify" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto h-16 px-10 rounded-[1.25rem] glass font-black uppercase tracking-widest text-[10px] hover:border-primary/50 transition-all">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 rounded-xl border-black/10 dark:border-white/10 text-xs font-bold uppercase tracking-widest hover:border-primary/50 transition-all">
                 Verify My Skills
               </Button>
             </Link>
@@ -115,11 +115,11 @@ export function HeroSection() {
 
           <motion.div 
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
-            className="flex items-center gap-10 pt-12 text-sm font-black text-muted-foreground/40 uppercase tracking-[0.2em]"
+            className="flex items-center gap-10 pt-12 text-micro font-bold text-muted-foreground/40 uppercase tracking-widest"
           >
-            <div className="flex flex-col gap-2 items-start"><span className="text-foreground text-4xl font-black tracking-tighter">4.9M+</span><span className="text-[9px]">Verifications</span></div>
+            <div className="flex flex-col gap-2 items-start"><span className="text-foreground text-4xl font-extrabold tracking-tighter">4.9M+</span><span>Verifications</span></div>
             <div className="w-px h-12 bg-black/10 dark:bg-white/5" />
-            <div className="flex flex-col gap-2 items-start"><span className="text-foreground text-4xl font-black tracking-tighter">12k+</span><span className="text-[9px]">Hired Talent</span></div>
+            <div className="flex flex-col gap-2 items-start"><span className="text-foreground text-4xl font-extrabold tracking-tighter">12k+</span><span>Hired Talent</span></div>
           </motion.div>
         </div>
 
@@ -139,10 +139,10 @@ export function HeroSection() {
                         <div className="w-3 h-3 rounded-full bg-amber-500/80" />
                         <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
                     </div>
-                    <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary/70">
-                        <TerminalSquare className="w-4 h-4" /> Nexus Terminal
+                    <div className="flex items-center gap-2 text-micro font-bold text-primary/60">
+                        <TerminalSquare className="w-4 h-4" /> Nexus Intelligence Terminal
                     </div>
-                    <div className="w-16" /> {/* spacer for center alignment */}
+                    <div className="w-16" />
                 </div>
                 
                 <div ref={scrollRef} className="flex-1 p-6 font-mono text-sm flex flex-col gap-3 overflow-y-auto custom-scrollbar">
@@ -170,7 +170,7 @@ export function HeroSection() {
                     </div>
                     <div>
                         <p className="text-sm font-bold text-white">AI Engine Active</p>
-                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-black">Waiting for parameters...</p>
+                        <p className="text-micro text-muted-foreground font-bold">Waiting for parameters...</p>
                     </div>
                 </div>
             </div>

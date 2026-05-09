@@ -15,7 +15,7 @@ import { Briefcase, Eye, EyeOff, Loader2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 
 export default function LoginPage() {
-    const { demoLogin, login } = useAuth()
+    const { signInWithGoogle, login } = useAuth()
     const [isLoading, setIsLoading] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
 
@@ -43,12 +43,12 @@ export default function LoginPage() {
         <Card className="glass border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden relative">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             <CardHeader className="space-y-4 items-center text-center pt-10">
-                <div className="glass bg-primary/10 p-4 rounded-2xl mb-2 border border-primary/20 shadow-[0_0_20px_rgba(var(--primary),0.2)]">
-                    <Briefcase className="w-8 h-8 text-primary" />
+                <div className="glass bg-primary/10 p-3 rounded-xl mb-2 border border-primary/20 shadow-premium">
+                    <Briefcase className="w-6 h-6 text-primary" />
                 </div>
                 <div className="space-y-2">
-                    <CardTitle className="text-4xl font-black font-heading tracking-tighter text-gradient">Welcome back</CardTitle>
-                    <CardDescription className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                    <CardTitle className="text-3xl font-extrabold font-heading tracking-tight text-gradient">Welcome back</CardTitle>
+                    <CardDescription className="text-micro text-muted-foreground/60">
                         Enter your credentials to access the nexus
                     </CardDescription>
                 </div>
@@ -61,11 +61,11 @@ export default function LoginPage() {
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">Email</FormLabel>
+                                    <FormLabel className="text-micro text-muted-foreground/80">Email</FormLabel>
                                     <FormControl>
                                         <Input 
                                             placeholder="m@example.com" 
-                                            className="h-14 bg-white/5 border-white/10 rounded-xl focus:ring-primary/30 transition-all font-medium" 
+                                            className="h-12 bg-white/5 border-white/10 rounded-xl focus:ring-primary/30 transition-all font-medium" 
                                             {...field} 
                                         />
                                     </FormControl>
@@ -79,14 +79,14 @@ export default function LoginPage() {
                             render={({ field }) => (
                                 <FormItem>
                                     <div className="flex items-center justify-between pb-1">
-                                        <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/80">Password</FormLabel>
-                                        <Link href="#" className="text-[10px] font-black uppercase tracking-[0.1em] text-primary hover:underline hover:text-primary/80 transition-colors">Forgot password?</Link>
+                                        <FormLabel className="text-micro text-muted-foreground/80">Password</FormLabel>
+                                        <Link href="#" className="text-micro text-primary hover:underline hover:text-primary/80 transition-colors">Forgot password?</Link>
                                     </div>
                                     <FormControl>
                                         <div className="relative group">
                                             <Input 
                                                 type={showPassword ? "text" : "password"} 
-                                                className="pr-14 h-14 bg-white/5 border-white/10 rounded-xl focus:ring-primary/30 transition-all font-medium"
+                                                className="pr-14 h-12 bg-white/5 border-white/10 rounded-xl focus:ring-primary/30 transition-all font-medium"
                                                 {...field} 
                                             />
                                             <motion.button
@@ -94,7 +94,7 @@ export default function LoginPage() {
                                                 whileHover={{ scale: 1.05 }}
                                                 whileTap={{ scale: 0.95 }}
                                                 onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center text-muted-foreground/50 hover:text-primary transition-colors glass bg-white/5 rounded-lg border border-white/5 hover:border-primary/30"
+                                                className="absolute right-1 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center text-muted-foreground/50 hover:text-primary transition-colors glass bg-white/5 rounded-lg border border-white/5 hover:border-primary/30"
                                             >
                                                 <AnimatePresence mode="wait">
                                                     <motion.div
@@ -131,60 +131,44 @@ export default function LoginPage() {
                                         />
                                     </FormControl>
                                     <div className="space-y-1 leading-none">
-                                        <FormLabel className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground cursor-pointer">
+                                        <FormLabel className="text-micro text-muted-foreground cursor-pointer">
                                             Remember me
                                         </FormLabel>
                                     </div>
                                 </FormItem>
                             )}
                         />
-                        <Button variant="premium" className="w-full h-14 rounded-xl text-sm mt-4 shadow-2xl" type="submit" disabled={isLoading}>
-                            {isLoading ? <Loader2 className="mr-3 h-5 w-5 animate-spin" /> : "AUTHENTICATE"}
+                        <Button variant="premium" className="w-full h-12 rounded-xl text-sm mt-4 shadow-premium font-bold tracking-widest" type="submit" disabled={isLoading}>
+                            {isLoading ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "AUTHENTICATE"}
                         </Button>
                         
                         <div className="pt-8 space-y-4">
                             <div className="relative">
                                 <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/10" /></div>
-                                <div className="relative flex justify-center text-[9px] uppercase font-black tracking-[0.3em]"><span className="bg-background/95 px-4 text-muted-foreground/40 glass rounded-full">Development Bypass</span></div>
+                                <div className="relative flex justify-center text-[9px] uppercase font-black tracking-[0.3em]"><span className="bg-background/95 px-4 text-muted-foreground/40 glass rounded-full">Or continue with</span></div>
                             </div>
                             
-                            <div className="grid grid-cols-1 gap-3 pt-2">
-                                <Button 
-                                    type="button" 
-                                    variant="outline" 
-                                    className="w-full h-12 glass border-primary/20 hover:border-primary/50 text-foreground hover:text-primary transition-all font-black uppercase text-[10px] tracking-[0.2em] rounded-xl"
-                                    onClick={() => demoLogin("USER")}
-                                    disabled={isLoading}
-                                >
-                                    Demo: Job Seeker
-                                </Button>
-
-                                <Button 
-                                    type="button" 
-                                    variant="outline" 
-                                    className="w-full h-12 glass border-primary/20 hover:border-primary/50 text-foreground hover:text-primary transition-all font-black uppercase text-[10px] tracking-[0.2em] rounded-xl"
-                                    onClick={() => demoLogin("COMPANY")}
-                                    disabled={isLoading}
-                                >
-                                    Demo: Company
-                                </Button>
-                                
-                                <Button 
-                                    type="button" 
-                                    variant="outline" 
-                                    className="w-full h-12 glass border-rose-500/20 hover:border-rose-500/50 text-foreground hover:text-rose-500 transition-all font-black uppercase text-[10px] tracking-[0.2em] rounded-xl"
-                                    onClick={() => demoLogin("ADMIN")}
-                                    disabled={isLoading}
-                                >
-                                    Demo: Admin
-                                </Button>
-                            </div>
+                            <Button 
+                                type="button" 
+                                variant="outline" 
+                                className="w-full h-12 glass border-primary/20 hover:border-primary/50 text-foreground hover:text-primary transition-all font-bold uppercase text-[11px] tracking-widest rounded-xl flex items-center justify-center gap-3"
+                                onClick={() => signInWithGoogle()}
+                                disabled={isLoading}
+                            >
+                                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                                    <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                    <path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                    <path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                    <path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                                </svg>
+                                SIGN IN WITH GOOGLE
+                            </Button>
                         </div>
                     </form>
                 </Form>
             </CardContent>
-            <CardFooter className="justify-center pb-8 pt-0 text-[11px] font-black uppercase tracking-[0.1em] text-muted-foreground/60">
-                Don't have an account? <Link href="/auth/register" className="text-primary hover:text-primary/80 transition-colors ml-2">Sign up</Link>
+            <CardFooter className="justify-center pb-8 pt-0 text-micro text-muted-foreground/60">
+                Don't have an account? <Link href="/auth/register" className="text-primary font-bold hover:text-primary/80 transition-colors ml-2">Sign up</Link>
             </CardFooter>
         </Card>
     )

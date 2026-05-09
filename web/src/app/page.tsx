@@ -6,6 +6,11 @@ import { Categories } from "@/features/landing/components/categories"
 import { FeaturedJobs } from "@/features/landing/components/featured-jobs"
 import { WhyChooseUs } from "@/features/landing/components/why-choose-us"
 import { StatsSection } from "@/features/landing/components/stats-section"
+import { Testimonials } from "@/features/landing/components/testimonials"
+import { FAQSection } from "@/features/landing/components/faq-section"
+import { FinalCTA } from "@/features/landing/components/final-cta"
+import { Integrations } from "@/features/landing/components/integrations"
+import { Roadmap } from "@/features/landing/components/roadmap"
 
 export default function LandingPage() {
   return (
@@ -16,8 +21,12 @@ export default function LandingPage() {
         <StatsSection />
         <Categories />
         <FeaturedJobs />
+        <Integrations />
         <WhyChooseUs />
-        {/* Testimonials could go here */}
+        <Roadmap />
+        <Testimonials />
+        <FAQSection />
+        <FinalCTA />
       </main>
     </div>
   )

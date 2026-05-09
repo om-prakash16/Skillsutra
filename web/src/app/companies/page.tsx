@@ -80,13 +80,12 @@ export default function CompaniesPage() {
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 blur-[150px] rounded-full pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-indigo-500/5 blur-[150px] rounded-full pointer-events-none" />
 
-            {/* Page Header */}
-            <div className="container px-4 mx-auto mb-16 relative z-10 text-center">
-                <div className="max-w-4xl mx-auto space-y-4">
-                    <h1 className="text-4xl md:text-7xl font-black font-heading tracking-tighter uppercase text-white">
-                        Partner <span className="text-gradient">Nodes</span>
+            <div className="container px-4 mx-auto mb-20 relative z-10 text-center">
+                <div className="max-w-4xl mx-auto space-y-6">
+                    <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight">
+                        Partner <span className="text-primary italic font-black">Network</span>
                     </h1>
-                    <p className="text-lg text-muted-foreground/80 font-medium max-w-2xl mx-auto">
+                    <p className="text-lg md:text-xl text-muted-foreground font-normal max-w-2xl mx-auto">
                         Explore the network of verified corporate entities. Browse our active organizations seeking top talent.
                     </p>
                 </div>
@@ -96,12 +95,12 @@ export default function CompaniesPage() {
                 <div className="flex flex-col lg:flex-row gap-10 items-start">
                     {/* Sidebar Filters */}
                     <aside className="w-full lg:w-80 shrink-0 sticky top-32">
-                        <div className="glass border-white/5 rounded-[2rem] p-8 shadow-2xl">
-                            <h2 className="text-sm font-black uppercase tracking-[0.2em] mb-8 flex items-center gap-3 text-white">
+                        <div className="glass border-white/5 rounded-3xl p-8 shadow-premium">
+                            <h2 className="text-micro text-muted-foreground font-bold mb-8 flex items-center gap-3">
                                 <div className="p-2 glass rounded-xl bg-primary/10 border-primary/20">
                                     <Search className="w-4 h-4 text-primary" />
                                 </div>
-                                Filter Matrix
+                                SEARCH FILTERS
                             </h2>
                             <CompanyFilters
                                 searchQuery={searchQuery}
@@ -118,10 +117,10 @@ export default function CompaniesPage() {
 
                     {/* Content Area */}
                     <div className="flex-1 w-full min-w-0">
-                        <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4 pb-4 border-b border-white/5">
+                        <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4 pb-4 border-b border-black/5 dark:border-white/5">
                             <div className="space-y-1">
-                                <h2 className="text-2xl font-black tracking-tight text-white">Active Registry</h2>
-                                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                                <h2 className="text-2xl font-bold tracking-tight">Active Registry</h2>
+                                <p className="text-micro text-muted-foreground/40 font-medium">
                                     Displaying {filteredCompanies.length} partner nodes
                                 </p>
                             </div>
@@ -129,8 +128,8 @@ export default function CompaniesPage() {
 
                         {isLoading ? (
                             <div className="py-32 flex flex-col items-center justify-center gap-6">
-                                <Loader2 className="w-12 h-12 animate-spin text-primary/50" />
-                                <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Indexing Corporate Network...</p>
+                                <Loader2 className="w-10 h-10 animate-spin text-primary/40" />
+                                <p className="text-micro text-muted-foreground/40 uppercase tracking-widest">Indexing Corporate Network...</p>
                             </div>
                         ) : filteredCompanies.length > 0 ? (
                             <>
@@ -145,46 +144,46 @@ export default function CompaniesPage() {
                                     <div className="mt-16 flex justify-center items-center gap-4">
                                         <Button
                                             variant="outline"
-                                            className="glass border-white/10 hover:border-white/20 hover:text-primary font-black uppercase tracking-[0.2em] text-[10px] h-12 px-6 rounded-xl transition-all"
+                                            className="h-11 px-6 rounded-xl border-black/10 hover:border-primary/50 text-micro font-bold tracking-widest transition-all"
                                             disabled={currentPage === 1}
                                             onClick={() => {
                                                 setCurrentPage(p => Math.max(1, p - 1))
                                                 window.scrollTo({ top: 300, behavior: 'smooth' })
                                             }}
                                         >
-                                            Previous
+                                            PREVIOUS
                                         </Button>
-                                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 glass px-6 h-12 rounded-xl border border-white/5">
-                                            Page <span className="text-primary text-xs mx-1">{currentPage}</span> of {totalPages}
+                                        <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/40 glass px-6 h-11 rounded-xl border border-black/5 dark:border-white/5">
+                                            PAGE <span className="text-primary mx-1">{currentPage}</span> OF {totalPages}
                                         </div>
                                         <Button
                                             variant="outline"
-                                            className="glass border-white/10 hover:border-white/20 hover:text-primary font-black uppercase tracking-[0.2em] text-[10px] h-12 px-6 rounded-xl transition-all"
+                                            className="h-11 px-6 rounded-xl border-black/10 hover:border-primary/50 text-micro font-bold tracking-widest transition-all"
                                             disabled={currentPage === totalPages}
                                             onClick={() => {
                                                 setCurrentPage(p => Math.min(totalPages, p + 1))
                                                 window.scrollTo({ top: 300, behavior: 'smooth' })
                                             }}
                                         >
-                                            Next
+                                            NEXT
                                         </Button>
                                     </div>
                                 )}
                             </>
                         ) : (
-                            <div className="text-center py-32 glass rounded-[3rem] border border-dashed border-white/10 shadow-2xl relative overflow-hidden">
+                            <div className="text-center py-32 glass rounded-3xl border border-dashed border-black/5 dark:border-white/5 relative overflow-hidden shadow-premium">
                                 <div className="absolute inset-0 bg-primary/5 blur-[100px] rounded-full" />
                                 <div className="relative z-10 flex flex-col items-center">
-                                    <div className="w-24 h-24 mb-6 rounded-3xl glass bg-white/5 border border-white/10 flex items-center justify-center shadow-xl">
-                                        <Building2 className="w-10 h-10 text-muted-foreground/40" />
+                                    <div className="w-16 h-16 mb-6 rounded-2xl glass bg-primary/10 border border-primary/20 flex items-center justify-center shadow-premium">
+                                        <Building2 className="w-8 h-8 text-primary" />
                                     </div>
-                                    <h3 className="text-2xl font-black tracking-tight text-white mb-2">No active nodes found</h3>
-                                    <p className="text-xs font-black uppercase tracking-[0.1em] text-muted-foreground/60 mb-8 max-w-md mx-auto">
+                                    <h3 className="text-2xl font-bold tracking-tight mb-2">No active nodes found</h3>
+                                    <p className="text-micro text-muted-foreground/60 mb-8 max-w-xs mx-auto uppercase tracking-widest">
                                         The filter matrix returned zero results. Adjust your parameters to discover more organizations.
                                     </p>
                                     <Button 
                                         variant="premium" 
-                                        className="h-12 px-8 rounded-xl shadow-[0_0_20px_rgba(var(--primary),0.3)]"
+                                        className="h-11 px-8 rounded-xl text-micro font-bold tracking-widest shadow-premium"
                                         onClick={() => {
                                             setSearchQuery("")
                                             setSelectedIndustries([])
@@ -192,7 +191,7 @@ export default function CompaniesPage() {
                                             setOnlyHiring(false)
                                         }}
                                     >
-                                        RESET MATRIX
+                                        RESET FILTERS
                                     </Button>
                                 </div>
                             </div>

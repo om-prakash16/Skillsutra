@@ -3,8 +3,10 @@ from typing import List, Optional
 
 from core.response import success_response
 from core.dependencies import get_current_user_id, get_company_id
-from modules.jobs.repository import job_repository
-from modules.jobs.schemas import JobCreate, JobResponse
+
+# Updated Imports to match new structure
+from modules.jobs.repos.job_repository import job_repository
+from modules.jobs.schemas.job_schemas import JobCreate, JobResponse
 from modules.jobs.services.discovery_service import discovery_service
 
 router = APIRouter()
@@ -15,15 +17,10 @@ async def list_jobs(
     offset: int = Query(0, ge=0),
     user_id: Optional[str] = Query(None)
 ):
-    """
-    List all available jobs with pagination.
-    If user_id is provided, includes personalized AI resonance scores.
-    """
+    """List all available jobs with optional AI scoring."""
     if user_id:
-        # Complex logic stays in specialized services
         data = await discovery_service.get_jobs_with_user_scores(user_id)
     else:
-        # Simple data access goes through repository
         data = await job_repository.list_jobs(limit=limit, offset=offset)
     
     return success_response(data=data)
@@ -40,10 +37,7 @@ async def create_job(
     user_id: str = Depends(get_current_user_id),
     company_id: str = Depends(get_company_id)
 ):
-    """
-    Post a new job opportunity.
-    Requires an authenticated Recruiter account with an active company profile.
-    """
+    """Post a new job opportunity."""
     job_data = payload.model_dump()
     job_data.update({
         "company_id": company_id,
@@ -52,11 +46,3 @@ async def create_job(
     
     result = await job_repository.create(job_data)
     return success_response(data=result, message="Job posting created successfully")
-
-@router.get("/company/my-postings", response_model=List[JobResponse])
-async def list_company_jobs(
-    company_id: str = Depends(get_company_id)
-):
-    """List all jobs posted by the current company."""
-    jobs = await job_repository.list_by_company(company_id)
-    return success_response(data=jobs)

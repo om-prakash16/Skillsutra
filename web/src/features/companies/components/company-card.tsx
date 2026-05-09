@@ -12,17 +12,17 @@ interface CompanyCardProps {
 
 export function CompanyCard({ company }: CompanyCardProps) {
   return (
-    <Card className="group overflow-hidden bg-card/20 backdrop-blur-xl border-primary/10 hover:border-primary/30 transition-all hover:shadow-[0_0_40px_-12px_rgba(var(--primary-rgb),0.2)]">
+    <Card className="group relative overflow-hidden glass border-black/5 dark:border-white/5 hover:border-primary/40 transition-all duration-500 rounded-3xl shadow-premium">
       <div className="p-6 space-y-5">
         {/* Branding Hub */}
         <div className="flex justify-between items-start">
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/10 to-indigo-600/10 border border-primary/5 p-3 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-             <Building2 className="w-8 h-8 text-primary" />
+          <div className="w-12 h-12 rounded-xl bg-primary/5 border border-primary/10 p-2.5 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+             <Building2 className="w-6 h-6 text-primary" />
           </div>
           {company.hiringStatus === "Actively Hiring" && (
-            <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-tighter">
-               <Sparkles className="w-3 h-3 mr-1" />
-               Hiring {company.openPositions} Roles
+            <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 px-3 py-1 text-micro font-bold tracking-widest rounded-lg">
+               <Sparkles className="w-3.5 h-3.5 mr-1.5" />
+               HIRING {company.openPositions} ROLES
             </Badge>
           )}
         </div>
@@ -39,22 +39,22 @@ export function CompanyCard({ company }: CompanyCardProps) {
         </div>
 
         {/* Physical Context */}
-        <div className="flex flex-wrap gap-y-2 gap-x-4">
-            <div className="flex items-center text-[10px] uppercase font-bold tracking-widest text-muted-foreground/60">
-                <MapPin className="w-3 h-3 mr-1.5 text-primary" />
+        <div className="flex flex-wrap gap-y-2 gap-x-6">
+            <div className="flex items-center text-micro font-bold text-muted-foreground/40">
+                <MapPin className="w-3.5 h-3.5 mr-2 text-primary/60" />
                 {company.location}
             </div>
-            <div className="flex items-center text-[10px] uppercase font-bold tracking-widest text-muted-foreground/60">
-                <Users className="w-3 h-3 mr-1.5 text-primary" />
-                {company.size} employees
+            <div className="flex items-center text-micro font-bold text-muted-foreground/40">
+                <Users className="w-3.5 h-3.5 mr-2 text-primary/60" />
+                {company.size} EMPLOYEES
             </div>
         </div>
 
-        <div className="pt-2 border-t border-primary/5">
-             <div className="flex flex-wrap gap-1.5">
-                <Badge variant="secondary" className="bg-background/50 text-[10px] py-0 px-2 font-medium">#{company.industry.split(' ')[0]}</Badge>
+        <div className="pt-4 border-t border-black/5 dark:border-white/5">
+             <div className="flex flex-wrap gap-2">
+                <Badge variant="secondary" className="bg-primary/5 text-primary text-micro py-0.5 px-2.5 font-bold rounded-md">#{company.industry.split(' ')[0]}</Badge>
                 {company.tags.slice(0, 2).map(tag => (
-                   <Badge key={tag} variant="outline" className="text-[10px] py-0 px-2 border-primary/10 opacity-70">#{tag}</Badge>
+                   <Badge key={tag} variant="outline" className="text-micro py-0.5 px-2.5 border-black/5 dark:border-white/10 text-muted-foreground/60 rounded-md">#{tag}</Badge>
                 ))}
              </div>
         </div>

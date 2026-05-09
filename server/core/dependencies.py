@@ -1,53 +1,36 @@
-from typing import Optional
-from fastapi import Depends, Header, HTTPException, status
-from core.supabase import get_supabase
-from core.exceptions import AuthorizationError, ExternalServiceError, ValidationError
+from typing import Optional, Dict, Any
+from fastapi import Depends
+from db.engine import db_client
+from core.exceptions import AuthorizationError, ExternalServiceError
 from modules.auth.core.service import get_current_user
 
 async def get_db():
-    """Dependency that returns the Supabase client or raises an error."""
-    db = get_supabase()
-    if not db:
+    """Returns the database client instance."""
+    if not db_client:
         raise ExternalServiceError(
-            message="Database connection is currently unavailable",
+            message="Database connection is unavailable",
             details={"service": "supabase"}
         )
-    return db
+    return db_client
 
-async def get_optional_db():
-    """Dependency that returns the Supabase client or None (for graceful degradation)."""
-    return get_supabase()
-
-async def get_current_user_id(user = Depends(get_current_user)) -> str:
-    """Extracts the user ID (UUID) from the authenticated user payload."""
-    user_id = user.get("sub") or user.get("id")
+async def get_current_user_id(user: Dict[str, Any] = Depends(get_current_user)) -> str:
+    """Returns the ID of the currently authenticated user."""
+    user_id = user.get("id")
     if not user_id:
-        raise AuthorizationError(message="Invalid user payload: missing ID")
+        raise AuthorizationError(message="Invalid authentication payload")
     return str(user_id)
-
-async def get_validated_wallet(
-    wallet: str = Header(..., alias="x-wallet-address"),
-) -> str:
-    """Validates the format of a Solana wallet address from headers."""
-    # Basic Solana wallet regex (base58, 32-44 characters)
-    import re
-    if not re.match(r"^[1-9A-HJ-NP-Za-km-z]{32,44}$", wallet):
-        if not wallet.startswith("DEV_"): # Allow demo wallets
-            raise ValidationError(
-                message="Invalid wallet address format",
-                details={"wallet": wallet}
-            )
-    return wallet
 
 async def get_company_id(
     user_id: str = Depends(get_current_user_id),
     db = Depends(get_db)
 ) -> str:
-    """Lookups and returns the company ID owned by the current user."""
-    res = db.table("companies").select("id").eq("created_by_user_id", user_id).limit(1).execute()
+    """
+    Retrieves the company ID associated with the current user.
+    Uses async execution for performance.
+    """
+    res = await db.table("companies").select("id").eq("created_by_user_id", user_id).limit(1).execute()
     if not res.data:
         raise AuthorizationError(
-            message="No company profile found for this user",
-            details={"user_id": user_id}
+            message="No company profile found. You must register as a company first."
         )
     return str(res.data[0]["id"])

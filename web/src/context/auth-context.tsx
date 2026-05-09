@@ -5,9 +5,6 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { supabase } from "@/lib/supabaseClient"
 import type { Session } from "@supabase/supabase-js"
-import { useWallet } from "@solana/wallet-adapter-react"
-import { useWalletModal } from "@solana/wallet-adapter-react-ui"
-import bs58 from "bs58"
 
 type UserRole = "user" | "company" | "admin"
 
@@ -16,7 +13,7 @@ interface User {
     name: string
     email: string
     role: UserRole
-    wallet_address: string
+    wallet_address?: string
     user_code?: string
     profile_data: any
     dynamic_profile_data?: any
@@ -26,8 +23,7 @@ interface AuthContextType {
     user: User | null
     token: string | null
     isLoading: boolean
-    walletLogin: (role?: string) => Promise<void>
-    demoLogin: (role?: string) => Promise<void>
+    signInWithGoogle: (role?: string) => Promise<void>
     login: (email: string, password: string) => Promise<void>
     logout: () => void
 }
@@ -98,140 +94,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false)
     }, [])
 
-    const { publicKey, signMessage, connected, disconnect } = useWallet()
-    const { setVisible } = useWalletModal()
-
-    const walletLogin = async (role = "user") => {
-        // If no wallet is connected, open the selection modal rather than
-        // throwing an error — much better UX for first-time users.
-        if (!publicKey || !signMessage) {
-            setVisible(true)
-            return
-        }
-
+    const signInWithGoogle = async (role = "user") => {
         setIsLoading(true)
         try {
-            const address = publicKey.toBase58()
-            const message = `Sign in to Best Hiring Tool\n\nWallet: ${address}\nTime: ${Date.now()}`
-            const encodedMessage = new TextEncoder().encode(message)
-            const signatureBytes = await signMessage(encodedMessage)
-
-            // Encode signature as base58 — matches what the backend expects
-            const signatureB58 = bs58.encode(signatureBytes)
-
-            const rawResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/wallet`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    wallet_address: address,
-                    message,
-                    signature: signatureB58,
-                    requested_role: role,
-                }),
+            const { error } = await supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: {
+                    redirectTo: `${window.location.origin}/auth/callback`,
+                    queryParams: {
+                        access_type: 'offline',
+                        prompt: 'consent',
+                    },
+                    data: {
+                        role: role
+                    }
+                }
             })
 
-            const json = await rawResponse.json()
-            if (!rawResponse.ok) throw new Error(json.detail || json.message || "Authentication failed")
-
-            // Support the new standardized response envelope
-            const data = (json && json.status === "success" && json.data) ? json.data : json;
-
-            localStorage.setItem("auth_token", data.access_token)
-            const isLocalhost = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-            document.cookie = `auth_token=${data.access_token}; path=/; max-age=86400; SameSite=Lax${isLocalhost ? "" : "; Secure"}`
-            setToken(data.access_token)
-            
-            // Use the real user data from the response instead of hardcoded values
-            setUser({
-                id: data.user_id,
-                name: data.name || `${address.slice(0, 4)}...${address.slice(-4)}`,
-                email: "",
-                role: data.role as UserRole,
-                wallet_address: data.wallet_address || address,
-                user_code: data.user_code || "",
-                profile_data: {},
-            })
-
-            toast.success("Signed in")
-            
-            const normalizedRole = (data.role || role).toLowerCase()
-            if (normalizedRole === "admin") {
-                router.push("/admin")
-            } else if (normalizedRole === "company") {
-                router.push("/company/dashboard")
-            } else {
-                router.push("/user/dashboard")
-            }
+            if (error) throw error
         } catch (err: any) {
-            console.error("[auth] wallet login failed:", err)
-            toast.error(err.message || "Sign in failed")
-        } finally {
-            setIsLoading(false)
-        }
-    }
-
-    const demoLogin = async (role = "user") => {
-        setIsLoading(true)
-        try {
-            // Check if we have a saved mock wallet for this specific role,
-            // otherwise generate a unique one. This ensures identities don't mix.
-            const storageKey = `sp_demo_wallet_${role.toLowerCase()}`
-            let mockWallet = localStorage.getItem(storageKey)
-            if (!mockWallet) {
-                const randomId = Math.random().toString(36).substring(2, 6)
-                mockWallet = `DEV_${role.toUpperCase()}_${randomId}`
-                localStorage.setItem(storageKey, mockWallet)
-            }
-
-            const message = `Sign in to Best Hiring Tool (DEMO MODE)\n\nRole: ${role}\nWallet: ${mockWallet}\nTime: ${Date.now()}`
-            
-            const rawResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/wallet`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    wallet_address: mockWallet,
-                    message,
-                    signature: "MOCK_DEMO_SIGNATURE",
-                    requested_role: role,
-                }),
-            })
-
-            const json = await rawResponse.json()
-            if (!rawResponse.ok) throw new Error(json.detail || json.message || "Authentication failed")
-
-            // Support the new standardized response envelope
-            const data = (json && json.status === "success" && json.data) ? json.data : json;
-
-            localStorage.setItem("auth_token", data.access_token)
-            const isLocalhost = typeof window !== "undefined" && (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-            document.cookie = `auth_token=${data.access_token}; path=/; max-age=86400; SameSite=Lax${isLocalhost ? "" : "; Secure"}`
-            setToken(data.access_token)
-            
-            // Use real user data from response
-            setUser({
-                id: data.user_id,
-                name: data.name || `Demo User (${mockWallet.slice(4)})`,
-                email: "",
-                role: data.role as UserRole,
-                wallet_address: data.wallet_address || mockWallet,
-                user_code: data.user_code || "",
-                profile_data: {},
-            })
-
-            toast.success("Signed in (Demo Mode)")
-            
-            const normalizedRole = (data.role || role).toLowerCase()
-            if (normalizedRole === "admin") {
-                router.push("/admin")
-            } else if (normalizedRole === "company") {
-                router.push("/company/dashboard")
-            } else {
-                router.push("/user/dashboard")
-            }
-        } catch (err: any) {
-            console.error("[auth] demo login failed:", err)
-            toast.error(err.message || "Sign in failed")
-        } finally {
+            console.error("[auth] google login failed:", err)
+            toast.error(err.message || "Google sign in failed")
             setIsLoading(false)
         }
     }
@@ -275,13 +158,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setToken(null)
         setUser(null)
         await supabase.auth.signOut()
-        if (connected) await disconnect()
         toast.info("Signed out")
         router.push("/auth/login")
     }
 
     return (
-        <AuthContext.Provider value={{ user, token, isLoading, walletLogin, demoLogin, login, logout }}>
+        <AuthContext.Provider value={{ user, token, isLoading, signInWithGoogle, login, logout }}>
             {children}
         </AuthContext.Provider>
     )
