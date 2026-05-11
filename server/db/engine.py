@@ -1,3 +1,4 @@
+from typing import Optional
 from supabase import create_async_client, AsyncClient
 from core.config import settings
 from core.logging import ProtocolLogger
