@@ -1,5 +1,6 @@
 fastapi
 uvicorn
+orjson
 pydantic
 langchain
 langchain-google-genai

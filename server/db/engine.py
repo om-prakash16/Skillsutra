@@ -24,13 +24,13 @@ async def init_db():
     global db_client
     db_client = await get_supabase_client()
 
-def check_db_health() -> bool:
+async def check_db_health() -> bool:
     """Enterprise-grade health check for database connectivity."""
     if not db_client:
         return False
     try:
         # Optimized heartbeat query
-        db_client.table("users").select("id").limit(1).execute()
+        await db_client.table("users").select("id").limit(1).execute()
         return True
     except Exception as e:
         logger.error(f"Database health check failed: {e}")

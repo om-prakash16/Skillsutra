@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Bookmark, Loader2 } from "lucide-react"
-import { useAuth } from "@/components/providers/auth-provider"
+import { useAuth } from "@/context/auth-context"
 import { api } from "@/lib/api/api-client"
 import { toast } from "sonner"
 
