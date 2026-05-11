@@ -372,6 +372,16 @@ All endpoints are versioned under `/api/v1/`. Interactive documentation is avail
 4. **Feature Flags** → Toggle features per user segment
 5. **Analytics** → View platform-wide engagement and hiring metrics
 
+### Testing the GitHub PR Feature (Hackathon Judges)
+
+To test the live GitHub Pull Request integration:
+1. **Navigate to Profile** → Go to the Candidate Profile (`/user/profile`).
+2. **Connect GitHub** → Ensure a valid GitHub username is linked to the profile.
+3. **Access Source Tab** → Click on the **GitHub** tab in the profile navigation.
+4. **Toggle PR Vault** → Look for the Vault Section and click the **Pull Requests** toggle next to "Repositories".
+5. **Verify Live Data** → The application will fetch the latest 100 PRs in real-time from GitHub, rendering them as beautifully styled cards showing their current status (Merged, Open, Closed), target repository, and dates.
+*(Note: If no GitHub account is linked, the platform gracefully falls back to a high-fidelity mock dataset to maintain a premium UI experience).*
+
 ---
 
 ## 🔒 Security Features
