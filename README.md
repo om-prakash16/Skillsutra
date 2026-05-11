@@ -85,6 +85,8 @@ The global hiring market is fundamentally broken:
 - **Interview Prep**: AI generates role-specific mock interview questions
 - **Salary Intelligence**: AI-powered salary benchmarking based on skills, experience, and location
 - **Career Risk Analysis**: Predicts career trajectory risks and suggests mitigation strategies
+- **GitHub PR Analysis**: Forensic analysis of pull request contributions to verify real-world project impact
+
 
 ### 🔐 Enterprise Authentication & RBAC
 - **Google OAuth + Supabase Auth**: Secure SSO with session management
@@ -314,6 +316,7 @@ All endpoints are versioned under `/api/v1/`. Interactive documentation is avail
 | `POST` | `/api/v1/ai/analyze-resume` | AI resume parsing + scoring |
 | `POST` | `/api/v1/ai/compare-jd-cv` | Semantic JD ↔ CV match |
 | `POST` | `/api/v1/ai/match-jd-candidates` | AI candidate ranking by JD |
+| `GET` | `/api/v1/ai/github/prs` | Fetch and analyze user pull requests |
 | `POST` | `/api/v1/ai/calculate-score` | Recalculate Proof Score |
 | `POST` | `/api/v1/ai/quiz/generate` | Generate skill assessment quiz |
 | `POST` | `/api/v1/ai/interview/generate` | AI mock interview questions |

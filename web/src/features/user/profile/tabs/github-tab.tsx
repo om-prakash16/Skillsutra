@@ -4,11 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Github, Play, Loader2 } from "lucide-react"
 import { UserProfile } from "@/types/profile"
 import Link from "next/link"
-import { MOCK_GITHUB_REPOS, GithubRepo } from "@/lib/mock-api/github-data"
+import { MOCK_GITHUB_REPOS, GithubRepo, GithubPR, MOCK_GITHUB_PRS } from "@/lib/mock-api/github-data"
 import { RepoCard } from "./github/repo-card"
+import { PRCard } from "./github/pr-card"
 import { GithubAnalysis } from "./github/analysis-card"
 import { TechStackChart } from "./github/tech-stack-chart"
 import { ActivityChart } from "./github/activity-chart"
+import { GitPullRequest, LayoutGrid } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
@@ -40,19 +42,48 @@ const fetchGithubRepos = async (username: string): Promise<GithubRepo[]> => {
     }))
 }
 
+const fetchGithubPRs = async (username: string): Promise<GithubPR[]> => {
+    const response = await fetch(`https://api.github.com/search/issues?q=author:${username}+type:pr&sort=updated&order=desc&per_page=100`)
+    if (!response.ok) {
+        throw new Error("Failed to fetch pull requests")
+    }
+    const data = await response.json()
+
+    return data.items.map((pr: any) => ({
+        id: pr.id.toString(),
+        title: pr.title,
+        state: pr.pull_request?.merged_at ? "merged" : pr.state,
+        url: pr.html_url,
+        repoName: pr.repository_url.split("/").slice(-1)[0],
+        createdAt: pr.created_at,
+        updatedAt: pr.updated_at
+    }))
+}
+
 export function GithubTab({ data, isEditing, onUpdate }: GithubTabProps) {
     const username = data.github.username
     const [filterStack, setFilterStack] = useState("All")
+    const [activeVault, setActiveVault] = useState<"repos" | "prs">("repos")
 
-    const { data: realRepos, isLoading, error } = useQuery({
+    const { data: realRepos, isLoading: isLoadingRepos } = useQuery({
         queryKey: ["github-repos-full", username],
         queryFn: () => fetchGithubRepos(username),
         enabled: !!username && username.length > 0,
         retry: 1
     })
 
+    const { data: realPRs, isLoading: isLoadingPRs } = useQuery({
+        queryKey: ["github-prs-full", username],
+        queryFn: () => fetchGithubPRs(username),
+        enabled: !!username && username.length > 0,
+        retry: 1
+    })
+
     // Use Real data if available, otherwise Mock data
     const displayRepos = realRepos || MOCK_GITHUB_REPOS
+    const displayPRs = realPRs || MOCK_GITHUB_PRS
+
+    const isLoading = isLoadingRepos || isLoadingPRs
 
     // 1. Calculate Stats
     const totalRepos = displayRepos.length
@@ -188,39 +219,78 @@ export function GithubTab({ data, isEditing, onUpdate }: GithubTabProps) {
             {/* Analysis Section */}
             <GithubAnalysis repos={displayRepos} />
 
-            {/* Repository Vault */}
+            {/* Vault Section */}
             <div className="space-y-6 pt-4">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex items-center gap-2">
-                        <h2 className="text-2xl font-bold tracking-tight">Repository Vault</h2>
-                        <span className="text-sm text-muted-foreground ml-2">{filteredRepos.length} Projects Manifested</span>
-                    </div>
-
-                    <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
-                        <span className="text-xs font-bold text-muted-foreground uppercase whitespace-nowrap mr-2">Filter By Stack:</span>
-                        {stacks.map(stack => (
+                    <div className="flex items-center gap-4">
+                        <div className="flex p-1 bg-muted/40 rounded-xl border border-border/50">
                             <button
-                                key={stack}
-                                onClick={() => setFilterStack(stack)}
+                                onClick={() => setActiveVault("repos")}
                                 className={cn(
-                                    "px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap",
-                                    filterStack === stack
-                                        ? "bg-primary text-primary-foreground shadow-md"
-                                        : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                                    "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+                                    activeVault === "repos" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
                                 )}
                             >
-                                {stack} {stack !== "All" && <span className="opacity-60 ml-1">{MOCK_GITHUB_REPOS.filter(r => r.language === stack).length}</span>}
+                                <LayoutGrid className="w-3.5 h-3.5" />
+                                Repositories
                             </button>
-                        ))}
+                            <button
+                                onClick={() => setActiveVault("prs")}
+                                className={cn(
+                                    "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all",
+                                    activeVault === "prs" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+                                )}
+                            >
+                                <GitPullRequest className="w-3.5 h-3.5" />
+                                Pull Requests
+                            </button>
+                        </div>
+                        <span className="text-sm text-muted-foreground ml-2">
+                            {activeVault === "repos" ? `${filteredRepos.length} Projects Manifested` : `${displayPRs.length} Contributions Identified`}
+                        </span>
                     </div>
+
+                    {activeVault === "repos" && (
+                        <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
+                            <span className="text-xs font-bold text-muted-foreground uppercase whitespace-nowrap mr-2">Filter By Stack:</span>
+                            {stacks.map(stack => (
+                                <button
+                                    key={stack}
+                                    onClick={() => setFilterStack(stack)}
+                                    className={cn(
+                                        "px-3 py-1 rounded-full text-xs font-medium transition-all whitespace-nowrap",
+                                        filterStack === stack
+                                            ? "bg-primary text-primary-foreground shadow-md"
+                                            : "bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground"
+                                    )}
+                                >
+                                    {stack} {stack !== "All" && <span className="opacity-60 ml-1">{displayRepos.filter(r => r.language === stack).length}</span>}
+                                </button>
+                            ))}
+                        </div>
+                    )}
                 </div>
 
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {filteredRepos.map((repo) => (
-                        <RepoCard key={repo.id} repo={repo} />
-                    ))}
-                </div>
+                {isLoading ? (
+                    <div className="flex flex-col items-center justify-center py-20 space-y-4">
+                        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+                        <p className="text-sm text-muted-foreground font-medium italic">Synchronizing with GitHub Nexus...</p>
+                    </div>
+                ) : (
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {activeVault === "repos" ? (
+                            filteredRepos.map((repo) => (
+                                <RepoCard key={repo.id} repo={repo} />
+                            ))
+                        ) : (
+                            displayPRs.map((pr) => (
+                                <PRCard key={pr.id} pr={pr} />
+                            ))
+                        )}
+                    </div>
+                )}
             </div>
         </div>
     )
 }
+

@@ -255,6 +255,7 @@ The frontend uses a feature-based module structure (`web/src/features/`) where e
 | Router | Endpoint | Capability |
 |--------|----------|------------|
 | **Resume Analysis** | `/ai/analyze-resume` | Extract skills, experience, education from PDF |
+| **GitHub PR Integration** | `/ai/github/prs` | Fetch and analyze user pull requests |
 | **JD-CV Matching** | `/ai/compare-jd-cv` | Deep semantic comparison with match score |
 | **Candidate Ranking** | `/ai/match-jd-candidates` | Upload JD → ranked shortlist of candidates |
 | **Proof Scoring** | `/ai/calculate-score` | Compute verified Proof Score |

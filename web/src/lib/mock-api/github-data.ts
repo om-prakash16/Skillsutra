@@ -177,3 +177,51 @@ export const MOCK_GITHUB_REPOS: GithubRepo[] = [
         isPublic: true
     }
 ]
+export interface GithubPR {
+    id: string
+    title: string
+    state: "open" | "closed" | "merged"
+    url: string
+    repoName: string
+    createdAt: string
+    updatedAt: string
+}
+
+export const MOCK_GITHUB_PRS: GithubPR[] = [
+    {
+        id: "101",
+        title: "feat: add support for dynamic routing in dashboard",
+        state: "merged",
+        url: "#",
+        repoName: "nextjs-dashboard",
+        createdAt: "2024-03-01T10:00:00Z",
+        updatedAt: "2024-03-05T14:30:00Z"
+    },
+    {
+        id: "102",
+        title: "fix: solve memory leak in scroll observer",
+        state: "closed",
+        url: "#",
+        repoName: "react-infinite-scroll",
+        createdAt: "2024-02-10T09:15:00Z",
+        updatedAt: "2024-02-15T11:00:00Z"
+    },
+    {
+        id: "103",
+        title: "docs: update contribution guidelines",
+        state: "open",
+        url: "#",
+        repoName: "algo-ds-python",
+        createdAt: "2024-03-08T18:20:00Z",
+        updatedAt: "2024-03-09T08:00:00Z"
+    },
+    {
+        id: "104",
+        title: "refactor: optimize docker layers for smaller images",
+        state: "merged",
+        url: "#",
+        repoName: "docker-microservices",
+        createdAt: "2024-01-15T11:45:00Z",
+        updatedAt: "2024-01-20T16:00:00Z"
+    }
+]
