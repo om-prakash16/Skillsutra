@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { api } from "@/lib/api/api-client"
+import { fetchWithAuth } from "@/lib/api/api-client"
 import { Button } from "@/components/ui/button"
 import { Trophy, Code, Target, ExternalLink } from "lucide-react"
 import Link from "next/link"
@@ -13,7 +13,7 @@ export default function CompetitionsPage() {
     useEffect(() => {
         const fetchComps = async () => {
             try {
-                const res = await api.get("/competitions/")
+                const res = await fetchWithAuth("/competitions/")
                 setCompetitions(res.data || [])
             } catch (err) {
                 console.error("Failed to fetch competitions", err)

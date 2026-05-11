@@ -38,8 +38,8 @@ const fetchTalentProfileById = async (id: string): Promise<UserProfile | null> =
             firstName: basicUser.name.split(" ")[0],
             lastName: basicUser.name.split(" ").slice(1).join(" "),
             title: basicUser.title, // Use title from Talent
-            location: basicUser.location,
-            avatar: basicUser.avatar,
+            location: basicUser.location || "",
+            avatar: basicUser.avatar || "",
             experienceLevel: basicUser.experienceLevel, // Use experienceLevel
             completion: basicUser.completion // Use completion
         }

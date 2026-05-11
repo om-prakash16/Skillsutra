@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Zap, Loader2, ArrowRight, Table, CheckCircle, Clock, Calendar, Search } from "lucide-react";
 import Link from "next/link";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
 export default function CandidateApplications() {
   const { user } = useAuth();

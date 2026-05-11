@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { api } from "@/lib/api/api-client"
+import { fetchWithAuth } from "@/lib/api/api-client"
 import { TalentCard } from "@/features/talent/components/talent-card"
 import { Bookmark, Loader2 } from "lucide-react"
 
@@ -12,7 +12,7 @@ export function SavedTalentList({ companyId }: { companyId: string }) {
     useEffect(() => {
         const fetchSaved = async () => {
             try {
-                const res = await api.get(`/talent-pool/${companyId}/saved`)
+                const res = await fetchWithAuth(`/talent-pool/${companyId}/saved`)
                 
                 // Map to match the TalentCard props
                 const mapped = res.data?.map((item: any) => {

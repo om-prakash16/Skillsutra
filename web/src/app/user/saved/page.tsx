@@ -11,6 +11,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Search, BookmarkX, ArrowRight } from "lucide-react"
 import { SAVED_JOBS, SavedJob } from "@/lib/mock-api/saved-jobs"
 import { SavedJobsSkeleton } from "@/features/user/saved-jobs-skeleton"

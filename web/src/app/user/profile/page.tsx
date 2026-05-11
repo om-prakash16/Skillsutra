@@ -214,7 +214,7 @@ export default function ProfilePage() {
             role: "New Role",
             company: "New Company",
             logo: "",
-            type: "Full-time",
+            type: "Full-time" as "Full-time" | "Part-time" | "Contract" | "Freelance",
             startDate: "2024",
             endDate: "Present",
             description: "Description..."

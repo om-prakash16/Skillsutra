@@ -172,6 +172,16 @@ export const api = {
         getRooms: () => fetchWithAuth("/chat/rooms"),
         getHistory: (roomId: string) => fetchWithAuth(`/chat/history/${roomId}`),
     },
+    competitions: {
+        get: () => fetchWithAuth("/competitions"),
+        post: (data: any) => fetchWithAuth("/competitions", { method: "POST", body: JSON.stringify(data) }),
+        delete: (id: string) => fetchWithAuth(`/competitions/${id}`, { method: "DELETE" })
+    },
+    talentPool: {
+        get: () => fetchWithAuth("/talent-pool"),
+        post: (data: any) => fetchWithAuth("/talent-pool", { method: "POST", body: JSON.stringify(data) }),
+        delete: (id: string) => fetchWithAuth(`/talent-pool/${id}`, { method: "DELETE" })
+    }
 };
 
 // ─── Domain-Specific API Modules (Preferred) ─────────────────

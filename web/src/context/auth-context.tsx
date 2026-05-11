@@ -106,8 +106,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     queryParams: {
                         access_type: 'offline',
                         prompt: 'consent',
-                    },
-                    data: {
                         role: role
                     }
                 }

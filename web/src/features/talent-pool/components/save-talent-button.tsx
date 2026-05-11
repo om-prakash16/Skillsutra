@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Bookmark, Loader2 } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
-import { api } from "@/lib/api/api-client"
+import { fetchWithAuth } from "@/lib/api/api-client"
 import { toast } from "sonner"
 
 interface SaveTalentButtonProps {
@@ -36,11 +36,11 @@ export function SaveTalentButton({ talentId, companyId, className }: SaveTalentB
         setIsLoading(true)
         try {
             if (isSaved) {
-                await api.delete(`/company/${cId}/unsave/${talentId}`)
+                await fetchWithAuth(`/company/${cId}/unsave/${talentId}`, { method: "DELETE" })
                 toast.success("Talent removed from your pool.")
                 setIsSaved(false)
             } else {
-                await api.post(`/talent-pool/${cId}/save`, { talent_id: talentId })
+                await fetchWithAuth(`/talent-pool/${cId}/save`, { method: "POST", body: JSON.stringify({ talent_id: talentId }) })
                 toast.success("Talent saved for future roles!")
                 setIsSaved(true)
             }

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { api } from "@/lib/api/api-client"
+import { fetchWithAuth } from "@/lib/api/api-client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
@@ -22,7 +22,7 @@ export default function PreferencesPage() {
     useEffect(() => {
         const fetchPrefs = async () => {
             try {
-                const res = await api.get("/competitions/preferences")
+                const res = await fetchWithAuth("/competitions/preferences")
                 if (res.data && Object.keys(res.data).length > 0) {
                     setPreferences({
                         interested_types: res.data.interested_types || [],
@@ -42,7 +42,7 @@ export default function PreferencesPage() {
     const handleSave = async () => {
         setSaving(true)
         try {
-            await api.post("/competitions/preferences", preferences)
+            await fetchWithAuth("/competitions/preferences", { method: "POST", body: JSON.stringify(preferences) })
             toast.success("Preferences updated successfully")
         } catch (err) {
             toast.error("Failed to save preferences")

@@ -1,5 +1,6 @@
 import EscrowButton from "@/features/bounty/components/EscrowButton";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 const MOCK_BOUNTIES = [
     { id: "bty_1", title: "Refactor Rust Anchor Contract", employer: "0xDefi...", reward: 2.5, skill: "Rust" },

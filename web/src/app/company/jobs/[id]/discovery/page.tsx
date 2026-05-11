@@ -11,7 +11,6 @@ import {
     ArrowLeft, 
     Brain, 
     CheckCircle2, 
-    ReputationScore, 
     Trophy,
     UserPlus,
     Loader2,
