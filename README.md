@@ -372,15 +372,25 @@ All endpoints are versioned under `/api/v1/`. Interactive documentation is avail
 4. **Feature Flags** → Toggle features per user segment
 5. **Analytics** → View platform-wide engagement and hiring metrics
 
-### Testing the GitHub PR Feature (Hackathon Judges)
+### 🧪 Testing Guide for Judges
 
-To test the live GitHub Pull Request integration:
-1. **Navigate to Profile** → Go to the Candidate Profile (`/user/profile`).
-2. **Connect GitHub** → Ensure a valid GitHub username is linked to the profile.
-3. **Access Source Tab** → Click on the **GitHub** tab in the profile navigation.
-4. **Toggle PR Vault** → Look for the Vault Section and click the **Pull Requests** toggle next to "Repositories".
-5. **Verify Live Data** → The application will fetch the latest 100 PRs in real-time from GitHub, rendering them as beautifully styled cards showing their current status (Merged, Open, Closed), target repository, and dates.
-*(Note: If no GitHub account is linked, the platform gracefully falls back to a high-fidelity mock dataset to maintain a premium UI experience).*
+To fully evaluate the platform's multi-sided marketplace, you can test different user roles:
+
+#### 1. Candidate Login (Default)
+- **How to Access**: Click "Sign in with Google" or connect a Solana wallet on the homepage.
+- **What to Test**: You are assigned the `USER` role. Upload a resume to see the AI generate your Proof Score. Build your profile, take assessments, and apply to jobs.
+- **Testing GitHub PRs**: Navigate to `/user/profile` -> **GitHub** tab. Enter a valid GitHub username, then click the **Pull Requests** toggle in the Vault section to see live PR fetching.
+
+#### 2. Company / Recruiter Login
+- **How to Access**: Log in normally, then navigate to the **Company Hub** via the navigation menu or by going to `/company/create`.
+- **What to Test**: Registering a company upgrades your session to the `COMPANY` role. You can now post jobs, view applicant Proof Scores, and use the AI matching engine to rank candidates against your uploaded Job Descriptions.
+
+#### 3. Admin Governance Login
+- **How to Access**: The `ADMIN` role is highly restricted. For local testing, elevate your user account by running this in your Supabase SQL editor:
+  ```sql
+  UPDATE user_roles SET role_id = (SELECT id FROM roles WHERE role_name = 'ADMIN') WHERE user_id = 'YOUR_USER_ID';
+  ```
+- **What to Test**: Unlocks the `/admin` dashboard. You can moderate users, verify companies, edit the live CMS content (which instantly updates the landing page without code deploys), and view platform analytics.
 
 ---
 
