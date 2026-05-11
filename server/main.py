@@ -27,7 +27,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
-    description="Production-grade AI verification engine and talent marketplace.",
+    description="SkillSutra — AI-powered talent verification and hiring platform. Replace resumes with Proof Scores.",
     version=settings.PROJECT_VERSION,
     default_response_class=ORJSONResponse,
     lifespan=lifespan,

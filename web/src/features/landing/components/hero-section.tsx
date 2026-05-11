@@ -11,27 +11,27 @@ export function HeroSection() {
   const { getVal } = useCMS();
   
   const content = {
-    title: getVal('hero', 'title', 'The Proof Engine. The Ultimate Talent.'),
-    subtitle: getVal('hero', 'subtitle', 'Verified Identity utilizes AI-driven intelligence and proof-of-work protocols to verify professional competence with mathematical precision. No more resume noise.'),
-    badge: getVal('hero', 'badge', 'The Paradigm Shift in Talent Verification')
+    title: getVal('hero', 'title', 'Verify Skills. Hire Intelligence.'),
+    subtitle: getVal('hero', 'subtitle', 'SkillSutra uses AI-driven Proof Scores and on-chain credentials to verify professional skills with mathematical precision. Stop screening resumes. Start hiring verified talent.'),
+    badge: getVal('hero', 'badge', 'AI-Powered Talent Verification Platform')
   };
 
   const [terminalLogs, setTerminalLogs] = useState<string[]>([
-    "Initializing Verified Identity Protocol v4.0.0...",
-    "Connecting to Intelligence Nodes...",
-    "Ready for AI verification."
+    "Initializing SkillSutra Engine v4.0.0...",
+    "Connecting to Supabase + Gemini AI...",
+    "Ready for resume verification."
   ]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
       const logs = [
-          "Analyzing professional proof repositories...",
-          "Decrypting verifiable credentials...",
-          "Running AI heuristic match engine...",
-          "Resonance matching: 98.4%",
-          "[SUCCESS] Identity Verified & Authenticated.",
-          "Generating Skill Verification Score...",
-          "Secure Nexus link established.",
+          "Uploading resume (PDF) for analysis...",
+          "Extracting skills: [React, TypeScript, Python, FastAPI]",
+          "Calculating experience: 4.5 years identified",
+          "Running AI forensic confidence check...",
+          "[SUCCESS] Proof Score: 87/100 — Verified.",
+          "Matching against 432 active job listings...",
+          "Top match: Senior Frontend Engineer (96% match)",
       ];
       
       let currentIdx = 0;
@@ -140,7 +140,7 @@ export function HeroSection() {
                         <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
                     </div>
                     <div className="flex items-center gap-2 text-micro font-bold text-primary/60">
-                        <TerminalSquare className="w-4 h-4" /> Nexus Intelligence Terminal
+                        <TerminalSquare className="w-4 h-4" /> SkillSutra AI Terminal
                     </div>
                     <div className="w-16" />
                 </div>

@@ -36,12 +36,12 @@ export function VisionManifest() {
         >
           {/* Headline Block */}
           <motion.div variants={itemVariants} className="max-w-4xl">
-            <h2 className="text-micro text-primary mb-6">Manifesto 01 / The Status Quo</h2>
+            <h2 className="text-micro text-primary mb-6">The Problem / Why This Exists</h2>
             <h3 className="text-5xl md:text-7xl font-extrabold tracking-tight uppercase leading-none text-white">
               Hiring is <span className="text-rose-600 font-black italic">Broken.</span>
             </h3>
             <p className="mt-8 text-lg md:text-xl text-white/40 font-normal leading-relaxed italic max-w-2xl">
-              Keyword stuffing. Resume inflation. Endless screening loops. The current system rewards the loudest claims, not the deepest skills.
+              78% of resumes contain misleading information. ATS systems reject qualified candidates. Recruiters spend 23+ hours screening per hire. The current system rewards the loudest claims, not the deepest skills.
             </p>
           </motion.div>
 
@@ -52,13 +52,13 @@ export function VisionManifest() {
               <h4 className="text-2xl font-extrabold italic uppercase tracking-tight text-white">The Legacy Path</h4>
               <ul className="space-y-4 text-white/40 font-medium italic text-sm">
                 <li className="flex gap-3">
-                  <span className="text-rose-500">✕</span> Unverified claims leading to 40% mis-hire rates.
+                  <span className="text-rose-500">✕</span> 78% of resumes contain misleading claims (HireRight Report).
                 </li>
                 <li className="flex gap-3">
-                  <span className="text-rose-500">✕</span> Manual screening that ignores 75% of qualified talent.
+                  <span className="text-rose-500">✕</span> 75% of qualified candidates are rejected by keyword-based ATS filters.
                 </li>
                 <li className="flex gap-3">
-                  <span className="text-rose-500">✕</span> Opaque processes that drain time and capital.
+                  <span className="text-rose-500">✕</span> Average cost of a bad hire: $17,000+ in wasted time and resources.
                 </li>
               </ul>
             </motion.div>
@@ -68,16 +68,16 @@ export function VisionManifest() {
                 <BrainCircuit className="w-20 h-20 text-primary" />
               </div>
               <Zap className="w-10 h-10 text-primary mb-2 group-hover:scale-105 transition-transform" />
-              <h4 className="text-2xl font-extrabold italic uppercase tracking-tight text-white">The Neural Path</h4>
+              <h4 className="text-2xl font-extrabold italic uppercase tracking-tight text-white">The SkillSutra Path</h4>
               <ul className="space-y-4 text-white/70 font-bold italic text-sm">
                 <li className="flex gap-3">
-                  <ShieldCheck className="w-5 h-5 text-primary shrink-0" /> AI-Verified Skill Syncing.
+                  <ShieldCheck className="w-5 h-5 text-primary shrink-0" /> AI-verified Proof Scores replace unverifiable resume claims.
                 </li>
                 <li className="flex gap-3">
-                  <Cpu className="w-5 h-5 text-primary shrink-0" /> Immutable reputation for tamper-proof trust.
+                  <Cpu className="w-5 h-5 text-primary shrink-0" /> On-chain credentials make skills tamper-proof and portable.
                 </li>
                 <li className="flex gap-3">
-                  <BrainCircuit className="w-5 h-5 text-primary shrink-0" /> Proactive Discovery of verified talent.
+                  <BrainCircuit className="w-5 h-5 text-primary shrink-0" /> Semantic AI matching connects the right talent to the right role.
                 </li>
               </ul>
             </motion.div>
@@ -85,25 +85,25 @@ export function VisionManifest() {
 
           {/* Closing Statement */}
           <motion.div variants={itemVariants} className="text-right space-y-6 ml-auto max-w-3xl">
-            <h2 className="text-micro text-primary mb-6">Manifesto 02 / The Future</h2>
+            <h2 className="text-micro text-primary mb-6">Our Vision / The Future</h2>
             <h3 className="text-4xl md:text-6xl font-extrabold tracking-tight uppercase leading-none text-white">
-              Reputation is the <span className="text-primary font-black italic">New Currency.</span>
+              Verified Skills are the <span className="text-primary font-black italic">New Currency.</span>
             </h3>
             <p className="mt-8 text-lg text-white/40 font-normal leading-relaxed italic max-w-xl ml-auto">
-              Welcome to Best Hiring Tool. We don't just find employees; we synchronize intelligence. Every proof is a verification. Every skill is a pulse.
+              SkillSutra replaces subjective hiring with mathematical precision. Every skill is AI-verified. Every credential is on-chain. Every match is data-driven.
             </p>
             <div className="pt-10 flex justify-end gap-12 opacity-30 grayscale hover:grayscale-0 hover:opacity-80 transition-all duration-700">
                 <div className="flex flex-col items-end">
                     <span className="text-2xl font-bold text-white tracking-tighter">0.4s</span>
-                    <span className="text-micro">Neural Synthesis</span>
+                    <span className="text-micro">Resume Analysis</span>
                 </div>
                 <div className="flex flex-col items-end">
-                    <span className="text-2xl font-bold text-white tracking-tighter">99.8%</span>
-                    <span className="text-micro">Trust Integrity</span>
+                    <span className="text-2xl font-bold text-white tracking-tighter">98.4%</span>
+                    <span className="text-micro">Match Accuracy</span>
                 </div>
                 <div className="flex flex-col items-end">
-                    <span className="text-2xl font-bold text-white tracking-tighter">∞</span>
-                    <span className="text-micro">Verified Future</span>
+                    <span className="text-2xl font-bold text-white tracking-tighter">60%</span>
+                    <span className="text-micro">Faster Hiring</span>
                 </div>
             </div>
           </motion.div>

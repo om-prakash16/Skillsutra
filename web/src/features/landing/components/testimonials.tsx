@@ -7,28 +7,28 @@ import { Badge } from "@/components/ui/badge"
 
 const TESTIMONIALS = [
     {
-        name: "Sarah Chen",
-        role: "Head of Engineering",
-        company: "Nexus AI",
-        content: "The verification engine has completely transformed our hiring pipeline. We no longer spend weeks vetting technical claims; the proof scores do it for us with incredible accuracy.",
+        name: "Priya Sharma",
+        role: "VP of Engineering",
+        company: "TechVault India",
+        content: "We cut our time-to-hire by 60% after switching to SkillSutra. The AI Proof Scores gave us confidence to skip the traditional 3-round technical screening — the verification data was that reliable.",
         rating: 5,
-        avatar: "https://i.pravatar.cc/150?u=sarah"
+        avatar: "https://i.pravatar.cc/150?u=priya"
     },
     {
-        name: "Marcus Thorne",
+        name: "James Walker",
         role: "CTO",
-        company: "Velocity Systems",
-        content: "Verified Identity is the missing layer of the professional internet. We've reduced our time-to-hire by 60% while increasing the quality of our engineering team.",
+        company: "Meridian Labs",
+        content: "As a startup CTO, every hire is critical. SkillSutra's JD-to-candidate matching found us a senior Rust developer in 48 hours — someone traditional job boards couldn't surface in 3 months.",
         rating: 5,
-        avatar: "https://i.pravatar.cc/150?u=marcus"
+        avatar: "https://i.pravatar.cc/150?u=james"
     },
     {
-        name: "Elena Rodriguez",
-        role: "Talent Acquisition",
-        company: "CloudScale",
-        content: "Integrating our HR stack with this platform was seamless. The level of detail in the skill matrix reports is unparalleled in the industry.",
+        name: "Ananya Reddy",
+        role: "Senior Developer",
+        company: "Freelance",
+        content: "As a self-taught developer, I always struggled to prove my skills on paper. My SkillSutra Proof Score finally gives me a verified credential that companies actually trust. I got 3 interview calls in my first week.",
         rating: 5,
-        avatar: "https://i.pravatar.cc/150?u=elena"
+        avatar: "https://i.pravatar.cc/150?u=ananya"
     }
 ]
 

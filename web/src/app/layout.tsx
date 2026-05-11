@@ -27,9 +27,9 @@ const headingFont = Plus_Jakarta_Sans({
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Best Hiring Tool | Verify Skills. Hire Intelligence.",
-    description: "The professional-grade AI verification engine for elite talent. Replace resumes with verified proof scores.",
-    keywords: "blockchain, ai hiring, solana, best hiring tool, talent verification",
+    title: "SkillSutra | AI-Powered Talent Verification & Hiring Platform",
+    description: "Replace resumes with verified Proof Scores. AI-powered skill verification, semantic JD matching, and on-chain credentials. Built with Next.js 16, FastAPI, Gemini AI, and Solana.",
+    keywords: "AI hiring, skill verification, proof scores, talent matching, Gemini AI, Solana, blockchain credentials, resume verification",
   };
 }
 

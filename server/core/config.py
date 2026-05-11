@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 class Settings(BaseModel):
     # --- Project Metadata ---
-    PROJECT_NAME: str = "Verified Identity Engine"
+    PROJECT_NAME: str = "SkillSutra"
     PROJECT_VERSION: str = "4.0.0"
     API_V1_STR: str = "/api/v1"
     
