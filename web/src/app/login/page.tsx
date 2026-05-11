@@ -3,10 +3,10 @@
 import { useAuth } from "@/context/auth-context";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Mail, ArrowRight, Loader2 } from "lucide-react";
+import { ShieldCheck, Mail, ArrowRight, Loader2, Users, Building, ShieldAlert } from "lucide-react";
 
 export default function LoginPage() {
-  const { signInWithGoogle, isLoading } = useAuth();
+  const { signInWithGoogle, demoLogin, isLoading } = useAuth();
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#050505] relative overflow-hidden">
@@ -57,7 +57,47 @@ export default function LoginPage() {
             <br />
             Verified skills. Direct opportunity. No noise.
         </p>
+
+        {/* Demo Login Buttons for Judges */}
+        <div className="mt-12 space-y-3 pt-6 border-t border-white/10">
+            <p className="text-center text-xs font-bold text-neutral-400 uppercase tracking-widest mb-4">
+                🧪 1-Click Demo Environments
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+                <Button 
+                    onClick={() => demoLogin("user")} 
+                    disabled={isLoading}
+                    variant="outline"
+                    className="h-10 text-xs bg-black/40 border-white/10 hover:bg-white/10 text-white flex-col gap-1 py-6"
+                >
+                    <Users className="w-4 h-4 mb-1 text-blue-400" />
+                    Candidate
+                </Button>
+                <Button 
+                    onClick={() => demoLogin("company")} 
+                    disabled={isLoading}
+                    variant="outline"
+                    className="h-10 text-xs bg-black/40 border-white/10 hover:bg-white/10 text-white flex-col gap-1 py-6"
+                >
+                    <Building className="w-4 h-4 mb-1 text-orange-400" />
+                    Company
+                </Button>
+                <Button 
+                    onClick={() => demoLogin("admin")} 
+                    disabled={isLoading}
+                    variant="outline"
+                    className="h-10 text-xs bg-black/40 border-white/10 hover:bg-white/10 text-white flex-col gap-1 py-6"
+                >
+                    <ShieldAlert className="w-4 h-4 mb-1 text-red-400" />
+                    Admin
+                </Button>
+            </div>
+            <p className="text-center text-[10px] text-neutral-500 mt-2">
+                These buttons instantly bypass authentication for evaluation purposes.
+            </p>
+        </div>
       </div>
     </div>
   );
 }
+

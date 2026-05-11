@@ -26,6 +26,7 @@ interface AuthContextType {
     isLoading: boolean
     signInWithGoogle: (role?: string) => Promise<void>
     login: (email: string, password: string) => Promise<void>
+    demoLogin: (role: "user" | "company" | "admin") => Promise<void>
     logout: () => void
 }
 
@@ -153,6 +154,53 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const demoLogin = async (role: "user" | "company" | "admin") => {
+        setIsLoading(true)
+        try {
+            // Use mock wallet credentials recognized by the backend verify_solana_signature
+            const wallet = `DEV_${role.toUpperCase()}_999`
+            const signature = "MOCK_DEMO_SIGNATURE"
+            const message = `Time: ${Date.now()} Demo login`
+
+            // We use the older API client method since it includes the requested_role parameter
+            // and the endpoint is "/auth/wallet"
+            const { fetchWithAuth, API_BASE_URL } = await import("@/lib/api/api-client")
+            
+            const response = await fetch(`${API_BASE_URL}/auth/wallet`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    wallet_address: wallet,
+                    signature: signature,
+                    message: message,
+                    requested_role: role
+                })
+            })
+
+            const json = await response.json()
+            if (!response.ok) throw new Error(json.message || "Demo login failed")
+            
+            const data = json.data || json
+            localStorage.setItem("auth_token", data.access_token)
+            setToken(data.access_token)
+            
+            toast.success(`Logged in as Demo ${role.toUpperCase()}`)
+            
+            if (role === "admin") {
+                router.push("/admin")
+            } else if (role === "company") {
+                router.push("/company/dashboard")
+            } else {
+                router.push("/user/dashboard")
+            }
+        } catch (err: any) {
+            console.error("[auth] demo login failed:", err)
+            toast.error(err.message || "Demo login failed")
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     const logout = async () => {
         localStorage.removeItem("auth_token")
         document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax"
@@ -164,7 +212,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <AuthContext.Provider value={{ user, token, isLoading, signInWithGoogle, login, logout }}>
+        <AuthContext.Provider value={{ user, token, isLoading, signInWithGoogle, login, demoLogin, logout }}>
             {children}
         </AuthContext.Provider>
     )

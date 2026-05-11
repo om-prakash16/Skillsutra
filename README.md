@@ -374,23 +374,21 @@ All endpoints are versioned under `/api/v1/`. Interactive documentation is avail
 
 ### 🧪 Testing Guide for Judges
 
-To fully evaluate the platform's multi-sided marketplace, you can test different user roles:
+To fully evaluate the platform's multi-sided marketplace without needing a Solana Wallet or Google Account, we have implemented **1-Click Demo Environments**.
 
-#### 1. Candidate Login (Default)
-- **How to Access**: Click "Sign in with Google" or connect a Solana wallet on the homepage.
-- **What to Test**: You are assigned the `USER` role. Upload a resume to see the AI generate your Proof Score. Build your profile, take assessments, and apply to jobs.
-- **Testing GitHub PRs**: Navigate to `/user/profile` -> **GitHub** tab. Enter a valid GitHub username, then click the **Pull Requests** toggle in the Vault section to see live PR fetching.
+#### How to Access:
+1. Navigate to the Login Page (`/login`).
+2. Look for the **🧪 1-Click Demo Environments** section at the bottom.
+3. Click on the role you wish to test:
 
-#### 2. Company / Recruiter Login
-- **How to Access**: Log in normally, then navigate to the **Company Hub** via the navigation menu or by going to `/company/create`.
-- **What to Test**: Registering a company upgrades your session to the `COMPANY` role. You can now post jobs, view applicant Proof Scores, and use the AI matching engine to rank candidates against your uploaded Job Descriptions.
+- **👤 Candidate (User Role)**
+  Instantly logs you in as a candidate. You can view the AI Proof Score, navigate to `/user/profile`, and test the **GitHub Pull Requests Vault**. (Ensure you enter a valid GitHub username first).
 
-#### 3. Admin Governance Login
-- **How to Access**: The `ADMIN` role is highly restricted. For local testing, elevate your user account by running this in your Supabase SQL editor:
-  ```sql
-  UPDATE user_roles SET role_id = (SELECT id FROM roles WHERE role_name = 'ADMIN') WHERE user_id = 'YOUR_USER_ID';
-  ```
-- **What to Test**: Unlocks the `/admin` dashboard. You can moderate users, verify companies, edit the live CMS content (which instantly updates the landing page without code deploys), and view platform analytics.
+- **🏢 Company (Recruiter Role)**
+  Instantly logs you in as a registered company. Navigate to the **Company Hub** to post jobs, view applicant Proof Scores, and use the AI Matching Engine.
+
+- **🛡️ Admin (Governance Role)**
+  Instantly logs you in with elevated privileges. Unlocks the `/admin` dashboard where you can moderate users, verify companies, and edit the live CMS content (which updates the landing page without code deploys).
 
 ---
 
