@@ -52,7 +52,7 @@ export function SaveTalentButton({ talentId, companyId, className }: SaveTalentB
         }
     }
 
-    if (user?.role !== "COMPANY") {
+    if (user?.role !== "company") {
         return null // Only companies can save talent
     }
 

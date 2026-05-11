@@ -17,6 +17,7 @@ interface User {
     user_code?: string
     profile_data: any
     dynamic_profile_data?: any
+    companies?: any[]
 }
 
 interface AuthContextType {
