@@ -3,7 +3,6 @@
 
   <!-- Professional Badges -->
   <img src="https://img.shields.io/badge/AI_POWERED-Google_Gemini-8E75C2?style=for-the-badge&logo=google-gemini&logoColor=white" alt="Gemini AI" />
-  <img src="https://img.shields.io/badge/SOLANA-Web3_Integrated-14F195?style=for-the-badge&logo=solana&logoColor=black" alt="Solana" />
   <img src="https://img.shields.io/badge/NEXT.JS_16-Production_Ready-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
   <img src="https://img.shields.io/badge/FASTAPI-v4.0-009688?style=for-the-badge&logo=fastapi&logoColor=white" alt="FastAPI" />
 
@@ -14,7 +13,7 @@
   <h3>AI-Powered Talent Verification & Hiring Platform</h3>
 
   <p align="center">
-    <b>Replace resumes with verifiable "Proof Scores." AI-verified skills. On-chain credentials. Instant talent matching.</b>
+    <b>Replace resumes with verifiable "Proof Scores." AI-verified skills. Instant talent matching.</b>
   </p>
 
   <p align="center">
@@ -44,7 +43,7 @@ The global hiring market is fundamentally broken:
 
 ## 💡 Our Solution
 
-**SkillSutra** is a full-stack AI-powered hiring platform that replaces traditional resumes with **Proof Scores** — mathematically computed, AI-verified, and optionally blockchain-anchored competency ratings.
+**SkillSutra** is a full-stack AI-powered hiring platform that replaces traditional resumes with **Proof Scores** — mathematically computed and AI-verified competency ratings.
 
 ### How It Works
 
@@ -119,11 +118,6 @@ The global hiring market is fundamentally broken:
 - **Schema Builder**: Dynamic profile schema management for custom fields
 - **Analytics Dashboard**: Platform-wide metrics, engagement data, and audit logs
 
-### 🔗 Solana Web3 Integration
-- **On-Chain Credentials**: Mint verified skills as NFT credentials on Solana (Anchor framework)
-- **Wallet Authentication**: Sign-in with Solana wallet (Phantom, Solflare)
-- **Solana Blinks/Actions**: Apply to jobs directly from X (Twitter) posts via Solana Actions
-
 ### 🎨 Premium UI/UX
 - **Motion-First Design**: Framer Motion animations throughout the entire experience
 - **Glassmorphic Dark Mode**: Professional, high-contrast interface with depth and blur effects
@@ -143,7 +137,7 @@ The global hiring market is fundamentally broken:
 │                                                                 │
 │  ┌──────────────┐  ┌────────────┐  ┌─────────────────────────┐ │
 │  │ Auth Context  │  │CMS Context │  │  Feature-Based Modules  │ │
-│  │ (Supabase)   │  │ (Live CMS) │  │  20 feature directories │ │
+│  │ (Local JWT)  │  │ (Live CMS) │  │  20 feature directories │ │
 │  └──────┬───────┘  └─────┬──────┘  └────────────┬────────────┘ │
 │         │                │                       │              │
 │  ┌──────┴────────────────┴───────────────────────┴───────────┐  │
@@ -168,10 +162,10 @@ The global hiring market is fundamentally broken:
 │  │  skill_graph · talent_pool · verification · vector        │ │
 │  └────────────────────────┬───────────────────────────────────┘ │
 └───────────────────────────┼─────────────────────────────────────┘
-                            │ Supabase Client
+                            │ asyncpg Adapter
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                SUPABASE (PostgreSQL + Auth + RLS)                │
+│             NATIVE POSTGRESQL (Local Port 5432)                  │
 │                                                                 │
 │  48 migrations · Full RLS policies · Row-level security         │
 │  Tables: users · companies · jobs · applications · ai_scores   │
@@ -192,8 +186,7 @@ The global hiring market is fundamentally broken:
 | **Backend** | FastAPI (Python 3.11+) | Async, type-safe, auto-documented API |
 | **AI Engine** | Google Gemini 1.5 Flash | Fast, accurate, structured JSON output |
 | **Database** | Native PostgreSQL (Local port `5432`) | Robust, self-contained, using `asyncpg` emulator |
-| **Blockchain** | Solana (Anchor) | Fast, low-cost credential minting (decommissioned locally) |
-| **Auth** | Supabase Auth + Google OAuth | Enterprise SSO with JWT sessions |
+| **Auth** | Local JWT Auth + Google OAuth | Secured session token management |
 | **Deployment** | Vercel (Frontend) + Docker | Zero-config, edge-optimized |
 
 ### 🛢️ Unified Local PostgreSQL Emulator (Supabase Emulation)
@@ -230,9 +223,6 @@ SkillSutra/
 ├── database/
 │   └── migrations/              # 48 sequential SQL migrations
 │
-├── contracts/                   # Solana Anchor programs (Rust)
-│   └── solana_anchor_programs/
-│
 ├── docker-compose.yml           # Local dev orchestration
 ├── Makefile                     # Dev shortcuts
 └── .env.example                 # Environment template
@@ -246,7 +236,7 @@ SkillSutra/
 
 - **Node.js** 18+ and **npm**
 - **Python** 3.11+ and **pip**
-- **Supabase** account (free tier works)
+- **PostgreSQL** (v15+) running locally on port 5432
 - **Google AI API Key** (for Gemini features)
 
 ### 1. Clone & Configure
@@ -260,8 +250,8 @@ cp .env.example .env
 cp .env.example web/.env.local
 
 # Fill in your credentials:
-#   SUPABASE_URL, SUPABASE_KEY, GOOGLE_API_KEY
-#   NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY
+#   DATABASE_URL, GOOGLE_API_KEY
+#   NEXT_PUBLIC_API_URL
 ```
 
 ### 2. Automated Setup (Recommended)
@@ -289,9 +279,9 @@ npm run dev
 
 ### 4. Database Setup
 
-Run migrations in order through the Supabase SQL editor, or use:
+Verify your local PostgreSQL is running and seed the initial schema content:
 ```bash
-supabase db push
+python server/scripts/seed_dummy_data.py
 ```
 
 ### 5. Verify Installation
@@ -310,7 +300,7 @@ All endpoints are versioned under `/api/v1/`. Interactive documentation is avail
 
 | Method | Endpoint | Description | Auth |
 |--------|----------|-------------|------|
-| `POST` | `/api/v1/auth/login` | Wallet-based login + JWT issuance | Public |
+| `POST` | `/api/v1/auth/login` | Form credentials login + JWT issuance | Public |
 | `POST` | `/api/v1/auth/google` | Google OAuth callback | Public |
 | `GET` | `/api/v1/profile/me` | Get current user profile | User |
 | `PUT` | `/api/v1/profile/update` | Update candidate profile | User |
@@ -384,7 +374,7 @@ All endpoints are versioned under `/api/v1/`. Interactive documentation is avail
 
 ### 🧪 Testing Guide for Judges
 
-To fully evaluate the platform's multi-sided marketplace without needing a Solana Wallet or Google Account, we have implemented **1-Click Demo Environments**.
+To fully evaluate the platform's multi-sided marketplace without needing a Google Account, we have implemented **1-Click Demo Environments**.
 
 #### How to Access:
 1. Navigate to the Login Page (`/login`).
@@ -410,7 +400,7 @@ To fully evaluate the platform's multi-sided marketplace without needing a Solan
 - **Security Headers**: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`
 - **Request Tracing**: Every request gets a unique `X-Request-ID` for debugging
 - **GZip Compression**: Automatic response compression for performance
-- **Row-Level Security**: Supabase RLS policies enforce data isolation at the database level
+- **Row-Level Constraints**: Native PostgreSQL table constraints and unified FastAPI guards enforce tenant isolation.
 - **Input Validation**: Pydantic schemas validate every request body
 
 ---
@@ -429,16 +419,10 @@ docker-compose down            # Stop everything
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `SUPABASE_URL` | ✅ | Your Supabase project URL |
-| `SUPABASE_KEY` | ✅ | Supabase anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | ✅ | Supabase service role key (backend) |
+| `DATABASE_URL` | ✅ | Local PostgreSQL connection string |
 | `GOOGLE_API_KEY` | ✅ | Google Gemini API key |
 | `JWT_SECRET` | ✅ | Secret for signing JWT tokens |
-| `NEXT_PUBLIC_SUPABASE_URL` | ✅ | Supabase URL (frontend) |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ✅ | Supabase anon key (frontend) |
 | `NEXT_PUBLIC_API_URL` | ✅ | Backend API URL |
-| `SOLANA_NETWORK` | Optional | `devnet` / `mainnet-beta` |
-| `SOLANA_RPC_URL` | Optional | Custom Solana RPC endpoint |
 
 ### Port Allocation
 
@@ -446,7 +430,7 @@ docker-compose down            # Stop everything
 |---------|------|-------------|
 | Next.js Frontend | `3000` | Web application |
 | FastAPI Backend | `8000` | REST API server |
-| Supabase | Cloud | Managed PostgreSQL |
+| PostgreSQL | `5432` | Local relational database |
 
 ---
 
