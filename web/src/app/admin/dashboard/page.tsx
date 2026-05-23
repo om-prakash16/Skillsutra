@@ -18,8 +18,7 @@ import {
     Zap,
     Users
 } from "lucide-react"
-import { QuickStats, PlatformActivityChart } from "@/features/admin/components/admin-charts"
-import ColosseumAnalysis from "@/features/admin/components/colosseum-analysis"
+import { QuickStats, PlatformActivityChart } from "@/features/admin/admin-charts"
 import { motion } from "framer-motion"
 import { cn } from "@/lib/utils"
 
@@ -167,8 +166,6 @@ export default function AdminDashboard() {
                 </div>
             </div>
 
-            <ColosseumAnalysis />
-
             <Card className="bg-background/20 backdrop-blur-3xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.4)] overflow-hidden relative group rounded-3xl">
                 {/* Accent line at the top */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -206,7 +203,7 @@ export default function AdminDashboard() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {stats?.recentUsers.map((u, i) => (
+                            {stats?.recentUsers.map((u: any, i: number) => (
                                 <motion.tr 
                                     key={u.id}
                                     initial={{ opacity: 0, y: 10 }}

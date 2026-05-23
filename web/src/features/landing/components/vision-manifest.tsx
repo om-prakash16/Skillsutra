@@ -46,38 +46,52 @@ export function VisionManifest() {
           </motion.div>
 
           {/* Comparison Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16">
-            <motion.div variants={itemVariants} className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 space-y-6 group hover:border-rose-500/30 transition-all duration-500">
-              <ShieldAlert className="w-10 h-10 text-rose-500 mb-2 group-hover:scale-105 transition-transform" />
-              <h4 className="text-2xl font-extrabold italic uppercase tracking-tight text-white">The Legacy Path</h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+            <motion.div 
+              variants={itemVariants} 
+              className="p-8 rounded-3xl bg-white/[0.01] border border-white/5 space-y-6 group hover:border-rose-500/20 hover:bg-rose-500/[0.01] transition-all duration-500 shadow-premium"
+            >
+              <ShieldAlert className="w-10 h-10 text-rose-500 mb-2 group-hover:scale-105 transition-transform duration-300" />
+              <h4 className="text-2xl font-extrabold italic uppercase tracking-tight text-white font-heading">The Legacy Path</h4>
               <ul className="space-y-4 text-white/40 font-medium italic text-sm">
-                <li className="flex gap-3">
-                  <span className="text-rose-500">✕</span> 78% of resumes contain misleading claims (HireRight Report).
+                <li className="flex gap-3 items-start">
+                  <span className="text-rose-500 font-bold">✕</span>
+                  <span>78% of resumes contain misleading claims (HireRight Report).</span>
                 </li>
-                <li className="flex gap-3">
-                  <span className="text-rose-500">✕</span> 75% of qualified candidates are rejected by keyword-based ATS filters.
+                <li className="flex gap-3 items-start">
+                  <span className="text-rose-500 font-bold">✕</span>
+                  <span>75% of qualified candidates are rejected by keyword-based ATS filters.</span>
                 </li>
-                <li className="flex gap-3">
-                  <span className="text-rose-500">✕</span> Average cost of a bad hire: $17,000+ in wasted time and resources.
+                <li className="flex gap-3 items-start">
+                  <span className="text-rose-500 font-bold">✕</span>
+                  <span>Average cost of a bad hire: $17,000+ in wasted time and resources.</span>
                 </li>
               </ul>
             </motion.div>
 
-            <motion.div variants={itemVariants} className="p-8 rounded-3xl bg-primary/5 border border-primary/20 space-y-6 group hover:border-primary/50 transition-all duration-500 relative overflow-hidden shadow-premium">
-              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
-                <BrainCircuit className="w-20 h-20 text-primary" />
+            <motion.div 
+              variants={itemVariants} 
+              className="p-8 rounded-3xl bg-primary/5 border border-primary/20 space-y-6 group hover:border-primary/40 hover:bg-primary/[0.08] transition-all duration-500 relative overflow-hidden shadow-floating"
+            >
+              <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform duration-500">
+                <BrainCircuit className="w-20 h-20 text-primary animate-pulse" />
               </div>
-              <Zap className="w-10 h-10 text-primary mb-2 group-hover:scale-105 transition-transform" />
-              <h4 className="text-2xl font-extrabold italic uppercase tracking-tight text-white">The SkillSutra Path</h4>
-              <ul className="space-y-4 text-white/70 font-bold italic text-sm">
-                <li className="flex gap-3">
-                  <ShieldCheck className="w-5 h-5 text-primary shrink-0" /> AI-verified Proof Scores replace unverifiable resume claims.
+              <div className="absolute top-0 left-12 right-12 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+              
+              <Zap className="w-10 h-10 text-primary mb-2 group-hover:scale-105 transition-transform duration-300" />
+              <h4 className="text-2xl font-extrabold italic uppercase tracking-tight text-white font-heading">The SkillSutra Path</h4>
+              <ul className="space-y-4 text-white/80 font-bold italic text-sm">
+                <li className="flex gap-3 items-start">
+                  <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <span>AI-verified Proof Scores replace unverifiable resume claims.</span>
                 </li>
-                <li className="flex gap-3">
-                  <Cpu className="w-5 h-5 text-primary shrink-0" /> On-chain credentials make skills tamper-proof and portable.
+                <li className="flex gap-3 items-start">
+                  <Cpu className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <span>On-chain credentials make skills tamper-proof and portable.</span>
                 </li>
-                <li className="flex gap-3">
-                  <BrainCircuit className="w-5 h-5 text-primary shrink-0" /> Semantic AI matching connects the right talent to the right role.
+                <li className="flex gap-3 items-start">
+                  <BrainCircuit className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                  <span>Semantic AI matching connects the right talent to the right role.</span>
                 </li>
               </ul>
             </motion.div>
@@ -86,24 +100,25 @@ export function VisionManifest() {
           {/* Closing Statement */}
           <motion.div variants={itemVariants} className="text-right space-y-6 ml-auto max-w-3xl">
             <h2 className="text-micro text-primary mb-6">Our Vision / The Future</h2>
-            <h3 className="text-4xl md:text-6xl font-extrabold tracking-tight uppercase leading-none text-white">
-              Verified Skills are the <span className="text-primary font-black italic">New Currency.</span>
+            <h3 className="text-4xl md:text-6xl font-extrabold tracking-tight uppercase leading-none text-white font-heading">
+              Verified Skills are the <span className="text-primary font-black italic bg-gradient-to-r from-emerald-400 to-indigo-400 bg-clip-text text-transparent">New Currency.</span>
             </h3>
             <p className="mt-8 text-lg text-white/40 font-normal leading-relaxed italic max-w-xl ml-auto">
               SkillSutra replaces subjective hiring with mathematical precision. Every skill is AI-verified. Every credential is on-chain. Every match is data-driven.
             </p>
-            <div className="pt-10 flex justify-end gap-12 opacity-30 grayscale hover:grayscale-0 hover:opacity-80 transition-all duration-700">
-                <div className="flex flex-col items-end">
-                    <span className="text-2xl font-bold text-white tracking-tighter">0.4s</span>
-                    <span className="text-micro">Resume Analysis</span>
+            
+            <div className="pt-10 flex justify-end gap-4 md:gap-6 flex-wrap">
+                <div className="glass border border-white/5 bg-[#0a0a0f]/40 p-6 rounded-2xl flex flex-col items-end min-w-[150px] shadow-premium hover:border-primary/20 transition-all duration-300">
+                    <span className="text-2xl md:text-3xl font-extrabold text-white tracking-tighter font-mono">0.4s</span>
+                    <span className="text-[10px] text-muted-foreground uppercase font-mono font-bold tracking-widest mt-1.5">Resume Analysis</span>
                 </div>
-                <div className="flex flex-col items-end">
-                    <span className="text-2xl font-bold text-white tracking-tighter">98.4%</span>
-                    <span className="text-micro">Match Accuracy</span>
+                <div className="glass border border-white/5 bg-[#0a0a0f]/40 p-6 rounded-2xl flex flex-col items-end min-w-[150px] shadow-premium hover:border-primary/20 transition-all duration-300">
+                    <span className="text-2xl md:text-3xl font-extrabold text-emerald-400 tracking-tighter font-mono">98.4%</span>
+                    <span className="text-[10px] text-muted-foreground uppercase font-mono font-bold tracking-widest mt-1.5">Match Accuracy</span>
                 </div>
-                <div className="flex flex-col items-end">
-                    <span className="text-2xl font-bold text-white tracking-tighter">60%</span>
-                    <span className="text-micro">Faster Hiring</span>
+                <div className="glass border border-white/5 bg-[#0a0a0f]/40 p-6 rounded-2xl flex flex-col items-end min-w-[150px] shadow-premium hover:border-primary/20 transition-all duration-300">
+                    <span className="text-2xl md:text-3xl font-extrabold text-primary tracking-tighter font-mono">60%</span>
+                    <span className="text-[10px] text-muted-foreground uppercase font-mono font-bold tracking-widest mt-1.5">Faster Hiring</span>
                 </div>
             </div>
           </motion.div>

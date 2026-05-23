@@ -32,13 +32,59 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
+  /* Upgraded Semantic Colors mapping */
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+
+  --color-verified: hsl(var(--verified));
+  --color-verified-foreground: hsl(var(--verified-foreground));
+
+  --color-premium: hsl(var(--premium));
+  --color-premium-foreground: hsl(var(--premium-foreground));
+
+  --color-inactive: hsl(var(--inactive));
+  --color-inactive-foreground: hsl(var(--inactive-foreground));
+
+  --color-pending: hsl(var(--pending));
+  --color-pending-foreground: hsl(var(--pending-foreground));
+
+  --color-ai-generated: hsl(var(--ai-generated));
+  --color-ai-generated-foreground: hsl(var(--ai-generated-foreground));
+
+  --color-highlighted: hsl(var(--highlighted));
+  --color-highlighted-foreground: hsl(var(--highlighted-foreground));
+
+  --color-focus: hsl(var(--focus));
+  --color-hover-overlay: var(--hover-overlay);
+  --color-active-overlay: var(--active-overlay);
+
+  /* Radius mapping */
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
+  /* Upgraded Motion System */
+  --ease-premium-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-premium-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+  --ease-spring-out: cubic-bezier(0.34, 1.56, 0.64, 1);
+
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
   --animate-marquee: marquee 40s linear infinite;
+  --animate-float: float 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  --animate-pulse-glow: pulse-glow 2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+
+  /* Upgraded Elevation System */
+  --shadow-glow-primary: var(--shadow-glow-primary);
+  --shadow-glow-secondary: var(--shadow-glow-secondary);
+  --shadow-floating: var(--shadow-floating);
+  --shadow-premium-hover: var(--shadow-premium-hover);
 
   @keyframes marquee {
     from {
@@ -53,7 +99,6 @@
     from {
       height: 0;
     }
-
     to {
       height: var(--radix-accordion-content-height);
     }
@@ -63,9 +108,28 @@
     from {
       height: var(--radix-accordion-content-height);
     }
-
     to {
       height: 0;
+    }
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      opacity: 0.6;
+      filter: drop-shadow(0 0 5px hsl(var(--primary) / 0.15));
+    }
+    50% {
+      opacity: 1;
+      filter: drop-shadow(0 0 15px hsl(var(--primary) / 0.35));
     }
   }
 
@@ -87,7 +151,6 @@
   --text-8xl: 6rem;       /* 96px */
 }
 
-
 :root {
   /* Enterprise Clean Light Theme */
   --background: 0 0% 100%;
@@ -105,24 +168,57 @@
   --secondary: 262.1 83.3% 57.8%;
   --secondary-foreground: 210 40% 98%;
 
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+
   --muted: 240 4.8% 95.9%;
   --muted-foreground: 240 3.8% 46.1%;
 
   --accent: 240 4.8% 95.9%;
   --accent-foreground: 240 5.9% 10%;
 
-  --destructive: 0 84.2% 60.2%;
-  --destructive-foreground: 210 40% 98%;
-
   --border: 240 5.9% 90%;
   --input: 240 5.9% 90%;
   --ring: 221.2 83.2% 53.3%;
 
-  --radius: 1.25rem; /* More modern, slightly softer corners */
+  --radius: 1.25rem; 
   
   --glass-background: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(0, 0, 0, 0.08);
   --gradient-to: 221.2 83.2% 53.3%; 
+
+  /* Semantic Status Tokens (Light Mode) */
+  --success: 142.1 76.2% 36.3%;
+  --success-foreground: 355.6 100% 97.3%;
+  --warning: 38 92% 50%;
+  --warning-foreground: 48 96% 96%;
+  --info: 199 89% 48%;
+  --info-foreground: 200 95% 98%;
+  
+  /* SaaS Experience States (Light Mode) */
+  --verified: 160 84% 39%;
+  --verified-foreground: 0 0% 100%;
+  --premium: 271 91.3% 65.1%;
+  --premium-foreground: 0 0% 100%;
+  --inactive: 240 3.8% 46.1%;
+  --inactive-foreground: 240 4.8% 95.9%;
+  --pending: 24.6 95% 53.1%;
+  --pending-foreground: 0 0% 100%;
+  --ai-generated: 280 85% 55%;
+  --ai-generated-foreground: 280 100% 98%;
+  --highlighted: 47.9 95.8% 53.1%;
+  --highlighted-foreground: 26 83.3% 14.1%;
+  --focus: 221.2 83.2% 53.3%;
+  
+  /* Overlays & Interactive States */
+  --hover-overlay: rgba(0, 0, 0, 0.04);
+  --active-overlay: rgba(0, 0, 0, 0.08);
+
+  /* Light Mode Custom Elevation Definitions */
+  --shadow-glow-primary: 0 0 25px -5px hsl(221.2 83.2% 53.3% / 0.2);
+  --shadow-glow-secondary: 0 0 25px -5px hsl(262.1 83.3% 57.8% / 0.2);
+  --shadow-floating: 0 0 0 1px rgba(0, 0, 0, 0.05), 0 12px 30px -10px rgba(0, 0, 0, 0.12), 0 4px 8px -4px rgba(0, 0, 0, 0.06);
+  --shadow-premium-hover: 0 0 0 1px rgba(0, 0, 0, 0.02), 0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 30px -5px hsl(221.2 83.2% 53.3% / 0.06);
 }
 
 .dark {
@@ -136,22 +232,20 @@
   --popover: 240 10% 4.5%;
   --popover-foreground: 0 0% 98%;
 
-  /* Precise Teal/Emerald Hybrid */
   --primary: 160 84% 45%;
   --primary-foreground: 222 47.1% 11.2%;
 
-  /* Sophisticated Electric Indigo */
   --secondary: 250 100% 65%;
   --secondary-foreground: 0 0% 98%;
+
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
 
   --muted: 240 5% 10%;
   --muted-foreground: 240 5% 65%;
 
   --accent: 250 100% 65%;
   --accent-foreground: 0 0% 98%;
-
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 0 0% 98%;
 
   --border: 240 5% 14%;
   --input: 240 5% 14%;
@@ -160,6 +254,39 @@
   --glass-background: rgba(10, 10, 15, 0.5);
   --glass-border: rgba(255, 255, 255, 0.06);
   --gradient-to: 250 100% 65%;
+
+  /* Semantic Status Tokens (Dark Mode) */
+  --success: 142.1 70.6% 45.3%;
+  --success-foreground: 144 61% 95%;
+  --warning: 48 96% 89%;
+  --warning-foreground: 38 92% 5%;
+  --info: 200 98% 39%;
+  --info-foreground: 0 0% 100%;
+  
+  /* SaaS Experience States (Dark Mode) */
+  --verified: 160 84% 45%;
+  --verified-foreground: 222 47.1% 11.2%;
+  --premium: 271 100% 71.4%;
+  --premium-foreground: 224 71.4% 4.1%;
+  --inactive: 240 5% 65%;
+  --inactive-foreground: 240 5% 10%;
+  --pending: 24.6 95% 53.1%;
+  --pending-foreground: 0 0% 98%;
+  --ai-generated: 290 100% 70%;
+  --ai-generated-foreground: 240 10% 4%;
+  --highlighted: 47.9 95.8% 35%;
+  --highlighted-foreground: 47.9 95.8% 96%;
+  --focus: 160 84% 45%;
+  
+  /* Overlays & Interactive States */
+  --hover-overlay: rgba(255, 255, 255, 0.04);
+  --active-overlay: rgba(255, 255, 255, 0.08);
+
+  /* Dark Mode Custom Elevation Definitions */
+  --shadow-glow-primary: 0 0 30px -5px hsl(160 84% 45% / 0.3);
+  --shadow-glow-secondary: 0 0 30px -5px hsl(250 100% 65% / 0.3);
+  --shadow-floating: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 16px 40px -16px rgba(0, 0, 0, 0.7), 0 0 50px -10px hsl(160 84% 45% / 0.05);
+  --shadow-premium-hover: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 40px -10px hsl(160 84% 45% / 0.15);
 }
 
 *,
@@ -316,6 +443,10 @@
     @apply text-transparent bg-clip-text bg-gradient-to-br from-primary via-primary to-[hsl(var(--gradient-to))];
   }
 
+  .text-gradient-ai {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-[#a855f7] via-[#ec4899] to-[#10b981];
+  }
+
   .bg-gradient-primary {
     @apply bg-gradient-to-br from-primary to-secondary;
   }
@@ -338,6 +469,54 @@
       0 2px 4px rgba(0, 0, 0, 0.2),
       0 20px 40px -20px rgba(0, 0, 0, 0.4),
       0 0 50px -10px hsl(var(--primary) / 0.1);
+  }
+
+  /* Shimmer Loading Skeleton Utility */
+  .shimmer {
+    position: relative;
+    overflow: hidden;
+    background: hsl(var(--muted) / 0.4);
+  }
+  
+  .shimmer::after {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.04) 20%,
+      rgba(255, 255, 255, 0.12) 60%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    animation: shimmer-anim 2s infinite linear;
+    content: '';
+  }
+  
+  .dark .shimmer::after {
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.01) 20%,
+      rgba(255, 255, 255, 0.04) 60%,
+      rgba(255, 255, 255, 0) 100%
+    );
+  }
+
+  @keyframes shimmer-anim {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* Accessible Focus Ring Utility */
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+  }
+
+  /* Interactive Active Micro-interaction scale */
+  .active-click {
+    @apply active:scale-98 transition-transform duration-100 ease-premium-out;
   }
 }
 

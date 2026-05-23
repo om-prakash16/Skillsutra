@@ -23,7 +23,7 @@ export function FeaturedJobs() {
 
             if (!error && data) {
                 // Map DB schema to JobCard props
-                const mappedJobs = data.map(job => ({
+                const mappedJobs = data.map((job: any) => ({
                     id: job.id,
                     title: job.title,
                     company: job.company_name || "Best Hiring Tool Partner",

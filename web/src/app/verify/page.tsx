@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { UploadCloud, FileText, CheckCircle, Loader2, ArrowRight, ShieldCheck, Cpu, Target, AlertCircle, Sparkles, FileSearch } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { useWallet } from "@solana/wallet-adapter-react"
 import { useAuth } from "@/context/auth-context"
 
 interface ParsedData {
@@ -26,7 +25,6 @@ interface MatchResult {
 }
 
 export default function VerifyPage() {
-    const { connected, publicKey } = useWallet()
     const { user } = useAuth()
     
     const [file, setFile] = useState<File | null>(null)
@@ -111,20 +109,15 @@ export default function VerifyPage() {
         }
     }
 
-    const handleMint = async () => {
-        if (!connected || !publicKey) {
-            toast.error("Please connect your Solana wallet first!")
-            return
-        }
+    const handleSave = async () => {
         setIsMinting(true)
         
-        // Simulating the Anchor smart contract interaction
-        // Expected flow: backend signs -> frontend confirms -> broadcast to network
+        // Simulating off-chain save of verified skills
         setTimeout(() => {
             setIsMinting(false)
             setMinted(true)
-            toast.success("Profile SBT Minted successfully to your wallet!")
-        }, 3000)
+            toast.success("Profile verified and saved successfully!")
+        }, 2000)
     }
 
     return (
@@ -144,7 +137,7 @@ export default function VerifyPage() {
                     Prove Your <span className="text-gradient">Potential</span>
                 </h1>
                 <p className="text-muted-foreground text-xl max-w-2xl mx-auto leading-relaxed font-medium opacity-80">
-                    Upload your standard resume. Our AI Engine extracts the cryptographic proof we need to mint your verified Profile NFT.
+                    Upload your standard resume. Our AI Engine extracts the cryptographic proof we need to generate your verified profile.
                 </p>
             </div>
 
@@ -486,25 +479,22 @@ export default function VerifyPage() {
                                             initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
                                             className="w-full h-16 rounded-2xl glass bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center gap-3 font-black uppercase tracking-widest text-xs shadow-2xl"
                                         >
-                                            <CheckCircle className="w-5 h-5" /> Secured On-Chain
+                                            <CheckCircle className="w-5 h-5" /> Profile Secured Off-Chain
                                         </motion.div>
                                     ) : (
                                         <div className="space-y-4">
                                             <Button 
-                                                onClick={handleMint}
+                                                onClick={handleSave}
                                                 disabled={isMinting}
                                                 variant="premium"
                                                 className="w-full h-16 rounded-2xl font-black uppercase tracking-widest shadow-2xl"
                                             >
                                                 {isMinting ? (
-                                                    <><Loader2 className="mr-3 h-5 w-5 animate-spin" /> Finalizing Ledger...</>
+                                                    <><Loader2 className="mr-3 h-5 w-5 animate-spin" /> Saving Profile...</>
                                                 ) : (
-                                                    'Mint Profile NFT (SBT)'
+                                                    'Save Verified Profile'
                                                 )}
                                             </Button>
-                                            {!connected && (
-                                                <p className="text-[9px] font-black text-rose-500 uppercase tracking-[0.2em] text-center italic">Wallet Not Connected • Ledger Entry Restricted</p>
-                                            )}
                                         </div>
                                     )}
                                 </AnimatePresence>

@@ -2,10 +2,10 @@ import asyncio
 import sys
 import uuid
 from core.supabase import get_supabase
-from modules.users.service import UserService
+from modules.users.core.service import UserService
 from modules.search.service import SearchService
-from modules.admin.service import AdminService
-from modules.ai.proof_service import ProofScoreService
+from modules.admin.core.service import AdminService
+from modules.ai.services.scoring_service import ProofScoreService
 from modules.analytics.service import AnalyticsService
 
 if sys.platform == "win32":
@@ -14,13 +14,15 @@ if sys.platform == "win32":
 
 async def run_super_audit():
     print("🚀 --- BEST HIRING TOOL: GLOBAL SYSTEM AUDIT --- 🚀")
+    from db.engine import init_db
+    await init_db()
     db = get_supabase()
     test_uid = str(uuid.uuid4())
     
     try:
         # 1. Identity & Creation
         print("\n[PHASE 1] Creating User & Generating BHT Identity...")
-        user_res = db.table("users").insert({
+        user_res = await db.table("users").insert({
             "id": test_uid,
             "email": "super_audit@example.com",
             "wallet_address": f"0xAUDIT_{test_uid[:8]}"
@@ -72,13 +74,13 @@ async def run_super_audit():
         print(f"📊 Dashboard: Total Users: {admin_stats['total_users']}, User Score: {user_stats['ai_proof_score']}")
 
         # Cleanup
-        db.table("users").delete().eq("id", test_uid).execute()
+        await db.table("users").delete().eq("id", test_uid).execute()
         print("\n✅ --- ALL FEATURES VALIDATED: SYSTEM PRODUCTION READY --- ✅")
 
     except Exception as e:
         print(f"\n❌ AUDIT FAILED: {str(e)}")
         # Partial cleanup
-        db.table("users").delete().eq("id", test_uid).execute()
+        await db.table("users").delete().eq("id", test_uid).execute()
 
 if __name__ == "__main__":
     asyncio.run(run_super_audit())

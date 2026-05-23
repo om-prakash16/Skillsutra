@@ -191,10 +191,20 @@ The global hiring market is fundamentally broken:
 | **State** | React Context + TanStack Query | Server state caching + auth context |
 | **Backend** | FastAPI (Python 3.11+) | Async, type-safe, auto-documented API |
 | **AI Engine** | Google Gemini 1.5 Flash | Fast, accurate, structured JSON output |
-| **Database** | Supabase (PostgreSQL) | Real-time, auth, storage, RLS in one |
-| **Blockchain** | Solana (Anchor) | Fast, low-cost credential minting |
+| **Database** | Native PostgreSQL (Local port `5432`) | Robust, self-contained, using `asyncpg` emulator |
+| **Blockchain** | Solana (Anchor) | Fast, low-cost credential minting (decommissioned locally) |
 | **Auth** | Supabase Auth + Google OAuth | Enterprise SSO with JWT sessions |
 | **Deployment** | Vercel (Frontend) + Docker | Zero-config, edge-optimized |
+
+### 🛢️ Unified Local PostgreSQL Emulator (Supabase Emulation)
+
+To make SkillSutra 100% self-contained and run-anywhere without external cloud dependencies, we developed a powerful **Supabase Client API Emulator** (`server/core/postgres_adapter.py`) using `asyncpg`. 
+
+- **Seamless Emulation**: Proxies all `db.table().select().eq().execute()` queries directly into optimized native PostgreSQL queries thread-safely.
+- **Native Full-Text Search (FTS)**: Translates `.text_search("fts", query)` transparently to PostgreSQL `@@ websearch_to_tsquery('english', $X)` on the denormalized database indexes.
+- **Array Overlap Filters**: Seamlessly converts tag filters `.overlaps("skills", skills)` into high-performance native array intersection queries (`&& $X`).
+- **Dynamic Upserts & Conflict Resolving**: Safely translates complex `UPSERT` statements to `ON CONFLICT (...) DO UPDATE` or `DO NOTHING` formats.
+- **Thread-safe Execution**: Uses a custom hybrid async loop bridging architecture (`nest_asyncio` + threadsafe futures) to allow blocking synchronous FastAPI tasks and concurrent asynchronous handlers to pool connections thread-safely.
 
 ### Monorepo Structure
 

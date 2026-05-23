@@ -16,6 +16,7 @@ class FeatureUpdateReq(BaseModel):
     is_enabled: bool
 
 @router.get("/list")
+@router.get("")
 async def get_all_features(admin=Depends(require_admin)):
     """Fetch all feature flags and their current status."""
     features = await feature_service.list_all_features()

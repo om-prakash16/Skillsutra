@@ -51,12 +51,14 @@ BEGIN
     u.full_name,
     COALESCE((SELECT array_agg(skill_name) FROM public.user_skills WHERE user_id = u.id), '{}'),
     COALESCE((SELECT proof_score FROM public.ai_scores WHERE user_id = u.id), 0.0),
-    u.location,
+    p.location,
     'Mid-Level', -- Placeholder, could be mapped from profile_data
     setweight(to_tsvector('english', coalesce(u.full_name, '')), 'A') ||
     setweight(to_tsvector('english', coalesce(u.bio, '')), 'B') ||
     setweight(to_tsvector('english', array_to_string(COALESCE((SELECT array_agg(skill_name) FROM public.user_skills WHERE user_id = u.id), '{}'), ' ')), 'A')
-  FROM public.users u WHERE u.id = v_user_id
+  FROM public.users u 
+  LEFT JOIN public.profiles p ON p.user_id = u.id
+  WHERE u.id = v_user_id
   ON CONFLICT (user_id) DO UPDATE SET
     full_name = EXCLUDED.full_name,
     skills = EXCLUDED.skills,

@@ -1,8 +1,10 @@
+import asyncio
 import datetime
 from core.supabase import get_supabase
 
-
-def seed_data():
+async def seed_data():
+    from db.engine import init_db
+    await init_db()
     db = get_supabase()
     if not db:
         print("[ERROR] Supabase client not initialized. Check .env")
@@ -10,17 +12,31 @@ def seed_data():
 
     print("--- Starting Data Seeding Protocol ---")
 
-    # 1. Use Existing Admin User (to bypass RLS/trigger issues on user-settings)
+    # 1. Use Existing Admin User
     user_id = "30811af7-47ed-475d-9a77-497c6fd47d88"  # Admin User
     print(f"[1/4] Using active Admin Node: {user_id}")
+
+    # Ensure admin user exists in DB first
+    try:
+        await db.table("users").insert({
+            "id": user_id,
+            "wallet_address": "0xadmin_wallet_address_30811af7",
+            "username": "admin",
+            "email": "admin@skillsutra.com",
+            "role": "admin",
+            "roles": ["admin"]
+        }).execute()
+        print("  + Admin user node established.")
+    except Exception as e:
+        print(f"  [!] Admin user node established or exists: {e}")
 
     # 2. Check/Assign COMPANY role
     print("[2/4] Verifying role permissions...")
     try:
-        role_resp = db.table("roles").select("id").eq("role_name", "COMPANY").execute()
+        role_resp = await db.table("roles").select("id").eq("role_name", "COMPANY").execute()
         if role_resp.data:
             role_id = role_resp.data[0]["id"]
-            existing_role = (
+            existing_role = await (
                 db.table("user_roles")
                 .select("*")
                 .eq("user_id", user_id)
@@ -28,7 +44,7 @@ def seed_data():
                 .execute()
             )
             if not existing_role.data:
-                db.table("user_roles").insert(
+                await db.table("user_roles").insert(
                     {"user_id": user_id, "role_id": role_id}
                 ).execute()
                 print("  + COMPANY role assigned.")
@@ -41,7 +57,7 @@ def seed_data():
     company_name = "Best Hiring Tool AI - Demo Corp"
     print(f"[3/4] Synthesizing dummy company node: {company_name}")
     try:
-        company_resp = (
+        company_resp = await (
             db.table("companies")
             .insert(
                 {
@@ -60,7 +76,7 @@ def seed_data():
         print(f"  + Company established: {company_id}")
 
         # Add as owner in company_members
-        db.table("company_members").insert(
+        await db.table("company_members").insert(
             {"company_id": company_id, "user_id": user_id, "company_role": "OWNER"}
         ).execute()
     except Exception as e:
@@ -74,7 +90,6 @@ def seed_data():
         {
             "title": "Senior AI Resonance Architect",
             "description": "Lead the development of our core semantic matching engine. Optimize RAG pipelines and vector database resonance.",
-            "skills_required": ["Python", "FastAPI", "OpenAI", "Vector DB", "PyTorch"],
             "experience_level": "Senior",
             "salary_range": "$160k - $220k",
             "job_type": "remote",
@@ -86,13 +101,6 @@ def seed_data():
         {
             "title": "Full-Stack Node Engineer (Identity Layer)",
             "description": "Build high-performance UIs using Next.js 14 and integrate them with our blockchain identity protocols.",
-            "skills_required": [
-                "React",
-                "Next.js",
-                "TypeScript",
-                "Tailwind CSS",
-                "Solana",
-            ],
             "experience_level": "Mid-Senior",
             "salary_range": "$130k - $180k",
             "job_type": "hybrid",
@@ -104,7 +112,6 @@ def seed_data():
         {
             "title": "Frontend Interface Designer",
             "description": "Craft premium, glassmorphic interfaces that wow our enterprise partners. Expert-level knowledge of Framer Motion is required.",
-            "skills_required": ["React", "Framer Motion", "CSS3", "Design Systems"],
             "experience_level": "Senior",
             "salary_range": "$110k - $160k",
             "job_type": "remote",
@@ -116,12 +123,6 @@ def seed_data():
         {
             "title": "Database Reliability Engineer",
             "description": "Ensure the high availability and integrity of our global hiring mesh. Focus on PostgreSQL and Supabase performance.",
-            "skills_required": [
-                "PostgreSQL",
-                "Supabase",
-                "Redis",
-                "Infrastructure as Code",
-            ],
             "experience_level": "Expert",
             "salary_range": "$150k - $200k",
             "job_type": "onsite",
@@ -133,7 +134,6 @@ def seed_data():
         {
             "title": "Junior Python Developer (Automation)",
             "description": "Develop and maintain background tasks and notification triggers for the Best Hiring Tool ecosystem.",
-            "skills_required": ["Python", "SQL", "Unit Testing", "REST APIs"],
             "experience_level": "Junior",
             "salary_range": "$70k - $100k",
             "job_type": "remote",
@@ -145,7 +145,6 @@ def seed_data():
         {
             "title": "Blockchain Protocol Lead",
             "description": "Design and implement soulbound NFT minting logic and on-chain resume verification smart contracts.",
-            "skills_required": ["Rust", "Solana", "Web3.js", "Cryptography"],
             "experience_level": "Senior",
             "salary_range": "$180k - $250k",
             "job_type": "hybrid",
@@ -157,7 +156,7 @@ def seed_data():
     ]
 
     for job in jobs_data:
-        db.table("jobs").insert(
+        await db.table("jobs").insert(
             {"company_id": company_id, **job, "is_active": True}
         ).execute()
         print(f"  + Added Job: {job['title']}")
@@ -165,6 +164,5 @@ def seed_data():
     print("\n--- Seeding Complete! ---")
     print(f"Company ID: {company_id}")
 
-
 if __name__ == "__main__":
-    seed_data()
+    asyncio.run(seed_data())

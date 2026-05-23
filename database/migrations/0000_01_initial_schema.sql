@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
     profile_picture TEXT,
     bio TEXT,
     reputation_score INTEGER DEFAULT 0,
+    role TEXT DEFAULT 'user',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

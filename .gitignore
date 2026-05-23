@@ -37,3 +37,9 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pip-log.txt
+
+# Database local binary data
+database/local_data/
+
+# Local build logs / temporary lists
+web/ts_errors.txt

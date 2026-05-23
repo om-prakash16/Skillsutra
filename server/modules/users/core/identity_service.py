@@ -25,7 +25,7 @@ class IdentityService:
         self, user_id: str, target_user_id: str
     ) -> Dict[str, Any]:
         sb = get_supabase()
-        if not db:
+        if not sb:
             raise Exception("DB unavailable")
 
         response = (

@@ -2,21 +2,32 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from typing import Dict, Any
 
 from core.response import success_response
-from core.dependencies import get_db, get_current_user_id
+from core.dependencies import get_db
 from modules.ai.services.team_analyzer_service import team_analyzer_service
+from modules.auth.core.guards import require_company_or_admin
 
 router = APIRouter()
 
 @router.get("/analyze")
 async def analyze_team_balance(
     company_id: str = Query(..., description="The ID of the company to analyze"),
-    user_id: str = Depends(get_current_user_id)
+    user: Dict[str, Any] = Depends(require_company_or_admin),
+    db = Depends(get_db)
 ):
     """
     Team Skill Balance Analyzer.
     Analyzes team vulnerabilities and skill gaps.
     """
-    # TODO: Add role check (COMPANY/OWNER)
+    user_id = user.get("id")
+    roles = [r.lower() for r in user.get("roles", [])]
+    if "admin" not in roles and "super_admin" not in roles:
+        # Check if the user is the creator of the company being analyzed
+        res = await db.table("companies").select("id").eq("created_by_user_id", user_id).eq("id", company_id).limit(1).execute()
+        if not res.data:
+            raise HTTPException(
+                status_code=403,
+                detail="You do not have permission to analyze this company's team balance."
+            )
     try:
         analysis = await team_analyzer_service.analyze_team_balance(company_id)
         return success_response(data=analysis)

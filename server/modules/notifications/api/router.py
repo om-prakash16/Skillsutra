@@ -5,6 +5,7 @@ from typing import Dict, Any
 from core.response import success_response
 from core.dependencies import get_db, get_current_user_id
 from modules.notifications.core.service import NotificationService
+from modules.auth.core.guards import require_admin
 
 router = APIRouter()
 notification_service = NotificationService()
@@ -39,10 +40,10 @@ async def get_activity_history(
 
 @router.get("/admin/global-logs")
 async def get_global_activity_logs(
-    limit: int = Query(100)
+    limit: int = Query(100),
+    admin=Depends(require_admin)
 ):
     """Audit trail for administrators."""
-    # TODO: Add require_admin guard
     db = await get_db()
-    response = db.table("activity_logs").select("*, users(full_name)").order("timestamp", desc=True).limit(limit).execute()
+    response = db.table("activity_logs").select("*, users(username, email, profile_picture)").order("timestamp", desc=True).limit(limit).execute()
     return success_response(data=response.data)

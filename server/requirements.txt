@@ -5,12 +5,10 @@ pydantic
 langchain
 langchain-google-genai
 google-generativeai
-supabase
+asyncpg
 python-dotenv
 python-multipart
 PyPDF2
-PyNaCl
-base58
 scikit-learn
 numpy
 PyJWT

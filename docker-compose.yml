@@ -1,5 +1,19 @@
 version: '3.8'
 services:
+  hiring-tool-db:
+    image: postgres:15-alpine
+    container_name: hiring_tool_db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=skillsutra
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hiring_tool_network
+
   hiring-tool-web:
     container_name: hiring_tool_web
     build:
@@ -8,11 +22,10 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
-      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
       - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
     depends_on:
       - hiring-tool-server
+      - hiring-tool-db
     volumes:
       - ./web:/app
       - /app/node_modules
@@ -28,13 +41,19 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - SUPABASE_URL=${SUPABASE_URL}
-      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - DATABASE_URL=postgresql://postgres:postgres@hiring-tool-db:5432/skillsutra
+      - JWT_SECRET=${JWT_SECRET:-bht_s3cur3_jwt_k3y_2026_pr0duct10n_r34dy}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    depends_on:
+      - hiring-tool-db
     volumes:
       - ./server:/app
     networks:
       - hiring_tool_network
+
+volumes:
+  postgres_data:
 
 networks:
   hiring_tool_network:

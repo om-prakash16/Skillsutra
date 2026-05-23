@@ -60,7 +60,7 @@ CREATE INDEX IF NOT EXISTS idx_usn_skill ON public.user_skill_nodes(skill_id);
 CREATE INDEX IF NOT EXISTS idx_usn_verified ON public.user_skill_nodes(is_verified);
 CREATE INDEX IF NOT EXISTS idx_usn_proof ON public.user_skill_nodes(proof_score DESC);
 
--- 4. Skill ↔ Project Links
+-- 4. Skill to Project Links
 CREATE TABLE IF NOT EXISTS public.skill_project_links (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_skill_node_id UUID NOT NULL REFERENCES public.user_skill_nodes(id) ON DELETE CASCADE,
@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS public.skill_endorsements (
     UNIQUE(user_skill_node_id, endorser_id)
 );
 
--- 7. Job ↔ Skill Requirements
+-- 7. Job to Skill Requirements
 CREATE TABLE IF NOT EXISTS public.job_skill_requirements (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     job_id UUID NOT NULL REFERENCES public.jobs(id) ON DELETE CASCADE,

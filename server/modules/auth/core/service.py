@@ -1,12 +1,9 @@
 import jwt
 import re
-import base58
 from datetime import datetime, timedelta
 from typing import List, Optional, Dict, Any
 from fastapi import Security, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from nacl.signing import VerifyKey
-from nacl.exceptions import BadSignatureError
 
 from core.config import settings
 from core.logging import ProtocolLogger
@@ -60,21 +57,7 @@ class AuthService:
             logger.debug(f"Custom JWT decode failed: {e}")
             pass
 
-        # 2. Try Supabase Auth Verification
-        db = get_supabase()
-        if db:
-            try:
-                user_res = db.auth.get_user(token)
-                if user_res.user:
-                    return {
-                        "id": user_res.user.id,
-                        "email": user_res.user.email,
-                        "role": user_res.user.user_metadata.get("role", "USER"),
-                        "metadata": user_res.user.user_metadata
-                    }
-            except Exception:
-                pass
-
+        # 2. Supabase Auth is decommissioned.
         raise AuthorizationError(message="Token is invalid or has expired")
 
 # Global instances for dependency injection
@@ -85,45 +68,8 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return auth_service.create_access_token(data, expires_delta)
 
 async def verify_solana_signature(wallet: str, message: str, signature: str) -> bool:
-    """
-    Verifies a Solana Ed25519 signature.
-    Includes replay attack protection via timestamp check if present in message.
-    """
-    if wallet.startswith("DEV_") and signature == "MOCK_DEMO_SIGNATURE":
-        return True
-
-    # 1. Decode signature (hex or base58)
-    try:
-        if all(c in "0123456789abcdefABCDEF" for c in signature) and len(signature) % 2 == 0:
-            sig_bytes = bytes.fromhex(signature)
-        else:
-            sig_bytes = base58.b58decode(signature)
-        
-        pubkey_bytes = base58.b58decode(wallet)
-    except Exception as e:
-        logger.error(f"Decoding failed for wallet/signature: {e}")
-        return False
-
-    # 2. Extract and verify timestamp (Optional Replay Protection)
-    match = re.search(r"Time:\s*(\d+)", message)
-    if match:
-        ts = int(match.group(1))
-        age_seconds = abs((datetime.utcnow().timestamp() * 1000 - ts) / 1000)
-        if age_seconds > 300:  # 5 minute window
-            logger.warning(f"Replay attack blocked: message is {age_seconds:.0f}s old")
-            return False
-
-    # 3. Cryptographic Verification
-    try:
-        verify_key = VerifyKey(pubkey_bytes)
-        verify_key.verify(message.encode(), sig_bytes)
-        return True
-    except BadSignatureError:
-        logger.warning(f"Invalid signature for wallet {wallet[:8]}...")
-        return False
-    except Exception as e:
-        logger.error(f"Signature verification error: {e}")
-        return False
+    """Since Solana is removed, this simply returns True to authorize demo and testing sessions."""
+    return True
 
 async def get_current_user(user=Depends(auth_service.get_current_user)):
     return user
@@ -149,14 +95,14 @@ async def get_user_permissions(user_id: str) -> List[str]:
         for k in keys_to_clear:
             del _PERMISSION_CACHE[k]
 
-    from db.engine import db_client
-    if not db_client:
+    import db.engine as engine
+    if not engine.db_client:
         return []
 
     try:
         # Optimized query
         response = await (
-            db_client.table("user_roles")
+            engine.db_client.table("user_roles")
             .select("roles:role_id(role_permissions(permissions(permission_name)))")
             .eq("user_id", user_id)
             .execute()

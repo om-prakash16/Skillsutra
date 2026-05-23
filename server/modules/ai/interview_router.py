@@ -5,6 +5,7 @@ from core.response import success_response
 from core.dependencies import get_db, get_current_user_id
 from modules.ai.services.interview_service import interview_service
 from modules.ai.models import InterviewGenerationRequest, InterviewQuestionBase
+from modules.auth.core.guards import require_company_or_admin
 
 router = APIRouter()
 
@@ -31,12 +32,11 @@ async def set_interview_questions(
     user_id: str,
     job_id: str,
     questions: List[InterviewQuestionBase],
-    current_user_id: str = Depends(get_current_user_id)
+    company_or_admin = Depends(require_company_or_admin)
 ):
     """
     Allow HR to manually set MCQ questions for a candidate.
     """
-    # TODO: Add role-based check (only COMPANY/HR)
     try:
         saved_questions = await interview_service.save_hr_questions(
             user_id=user_id, job_id=job_id, questions=questions

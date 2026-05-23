@@ -3,7 +3,8 @@ from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
 from core.supabase import get_supabase
 from core.response import success_response
-from core.dependencies import get_db, get_current_user_id
+from core.dependencies import get_db
+from modules.auth.core.guards import require_admin
 
 router = APIRouter()
 
@@ -47,11 +48,10 @@ async def get_profile_schema(db = Depends(get_db)):
 @router.post("/profile")
 async def create_profile_field(
     field: ProfileFieldCreate,
-    user_id: str = Depends(get_current_user_id),
+    admin=Depends(require_admin),
     db = Depends(get_db)
 ):
     """Add a new dynamic field to the profile schema. (Admin Only)"""
-    # TODO: Add explicit admin check
     response = db.table("profile_schema_fields").insert(field.model_dump()).execute()
     return success_response(data=response.data, message="Profile field created")
 
@@ -60,7 +60,7 @@ async def create_profile_field(
 async def update_profile_field(
     field_id: str,
     field: ProfileFieldUpdate,
-    user_id: str = Depends(get_current_user_id),
+    admin=Depends(require_admin),
     db = Depends(get_db)
 ):
     """Modify an existing dynamic profile field. (Admin Only)"""
@@ -77,7 +77,7 @@ async def update_profile_field(
 @router.delete("/profile/{field_id}")
 async def delete_profile_field(
     field_id: str,
-    user_id: str = Depends(get_current_user_id),
+    admin=Depends(require_admin),
     db = Depends(get_db)
 ):
     """Remove a dynamic field from the profile schema. (Admin Only)"""
@@ -88,7 +88,7 @@ async def delete_profile_field(
 @router.post("/profile/reorder")
 async def reorder_profile_fields(
     orders: List[Dict[str, Any]],
-    user_id: str = Depends(get_current_user_id),
+    admin=Depends(require_admin),
     db = Depends(get_db)
 ):
     """Update the display order of multiple fields. (Admin Only)"""

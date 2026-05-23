@@ -4,16 +4,15 @@ from typing import List, Optional
 from core.response import success_response
 from core.dependencies import get_db
 from modules.ai.services.recruiter_dashboard_service import recruiter_service
+from modules.auth.core.guards import require_company
 
 router = APIRouter()
 
-# TODO: Add real RBAC dependency here
-# from modules.auth.core.guards import require_company_role
 
 @router.get("/candidates/{job_id}")
 async def get_job_candidates(
     job_id: str,
-    # _ = Depends(require_company_role)
+    _ = Depends(require_company)
 ):
     """
     Get ranked candidate list for a specific job.
@@ -22,9 +21,11 @@ async def get_job_candidates(
     rankings = await recruiter_service.get_candidate_rankings(job_id)
     return success_response(data=rankings)
 
+
 @router.get("/insights/{job_id}")
 async def get_job_insights(
-    job_id: str
+    job_id: str,
+    _ = Depends(require_company)
 ):
     """
     Get predictive hiring insights and funnel analytics for a job.

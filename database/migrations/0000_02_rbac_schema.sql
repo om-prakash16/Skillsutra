@@ -8,6 +8,22 @@ CREATE TABLE IF NOT EXISTS public.staff_roles (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- Enterprise roles table (used in RLS policies)
+CREATE TABLE IF NOT EXISTS public.roles (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    role_name TEXT UNIQUE NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- Enterprise permissions table (used in RLS policies)
+CREATE TABLE IF NOT EXISTS public.permissions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    permission_name TEXT UNIQUE NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
 CREATE TABLE IF NOT EXISTS public.staff_permissions (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     role_id UUID REFERENCES public.staff_roles(id),

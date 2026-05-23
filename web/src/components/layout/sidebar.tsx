@@ -79,7 +79,6 @@ const adminNavGroups = [
         label: "Infrastructure",
         links: [
             { href: "/admin/profile", label: "Operational Nexus", icon: Fingerprint },
-            { href: "/admin/blockchain", label: "Blockchain Ledger", icon: ShieldAlert },
             { href: "/admin/features", label: "Feature Flags", icon: Zap },
             { href: "/admin/subscriptions", label: "SaaS Plans", icon: CreditCard },
             { href: "/admin/settings", label: "System Protocols", icon: Settings },
@@ -92,8 +91,12 @@ const userLinks = [
     { href: "/user/profile", label: "My Profile", icon: User },
     { href: "/user/applications", label: "Applications", icon: Briefcase },
     { href: "/user/saved", label: "Saved Jobs", icon: Bookmark },
-    { href: "/user/skills", label: "Skills & Credentials", icon: Zap },
-    { href: "/user/credentials", label: "NFT Portfolio", icon: Fingerprint },
+    { href: "/challenges", label: "Challenge Arena", icon: Code },
+    { href: "/roadmap", label: "AI Roadmaps", icon: Zap },
+    { href: "/competitions/teams", label: "Hackathons & Teams", icon: Users },
+    { href: "/github", label: "OS Contribution", icon: Activity },
+    { href: "/search/candidates", label: "Discover Talent", icon: Globe },
+    { href: "/user/skills", label: "Skills & Credentials", icon: ShieldCheck },
     { href: "/user/insights", label: "AI Insights", icon: Brain },
     { href: "/user/settings", label: "Settings", icon: Settings },
 ]

@@ -1,6 +1,9 @@
 import os
 from typing import List, Optional
 from pydantic import BaseModel, Field
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Settings(BaseModel):
     # --- Project Metadata ---

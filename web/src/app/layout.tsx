@@ -48,21 +48,21 @@ export default function RootLayout({
           disableTransitionOnChange
         >
             <QueryProvider>
-              <AuthProvider>
-                <CMSProvider>
-                  <SmoothScroll />
-                  <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden opacity-20 dark:opacity-40">
-                    <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
-                    <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/20 blur-[150px] rounded-full" />
-                  </div>
-                  <Navbar />
-                  <main className="flex-1 w-full relative min-h-screen pt-20 pb-24 md:pb-0">
-                    {children}
-                  </main>
-                  <Footer />
-                  <MobileNav />
-                </CMSProvider>
-              </AuthProvider>
+                <AuthProvider>
+                  <CMSProvider>
+                    <SmoothScroll />
+                    <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden opacity-20 dark:opacity-40">
+                      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
+                      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/20 blur-[150px] rounded-full" />
+                    </div>
+                    <Navbar />
+                    <main className="flex-1 w-full relative min-h-screen pt-20 pb-24 md:pb-0">
+                      {children}
+                    </main>
+                    <Footer />
+                    <MobileNav />
+                  </CMSProvider>
+                </AuthProvider>
             </QueryProvider>
           <Toaster position="top-center" richColors />
         </ThemeProvider>

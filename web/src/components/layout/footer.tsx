@@ -15,6 +15,9 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
     const isDashboard = ["/user", "/admin", "/company"].some(prefix => pathname?.startsWith(prefix))
 
     const [showBackToTop, setShowBackToTop] = useState(false)
+    const [blockNumber, setBlockNumber] = useState(124501)
+    const [latency, setLatency] = useState(14)
+    const [throughput, setThroughput] = useState(145)
 
     useEffect(() => {
         const handleScroll = () => {
@@ -23,6 +26,24 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
         window.addEventListener("scroll", handleScroll)
         return () => window.removeEventListener("scroll", handleScroll)
     }, [])
+
+    useEffect(() => {
+        if (isDashboard) return
+        const interval = setInterval(() => {
+            setBlockNumber(prev => prev + Math.floor(Math.random() * 2))
+            setLatency(prev => {
+                const change = Math.floor(Math.random() * 5) - 2
+                const newVal = prev + change
+                return newVal > 8 && newVal < 25 ? newVal : prev
+            })
+            setThroughput(prev => {
+                const change = Math.floor(Math.random() * 11) - 5
+                const newVal = prev + change
+                return newVal > 120 && newVal < 180 ? newVal : prev
+            })
+        }, 3000)
+        return () => clearInterval(interval)
+    }, [isDashboard])
 
     if (isDashboard && !forceVisible) return null
 
@@ -196,33 +217,78 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
                     ))}
                 </div>
 
-                <div className="pt-16 flex flex-col md:flex-row justify-between items-center gap-10 relative">
-                    <div className="flex flex-col md:flex-row items-center gap-8">
-                        <p className="text-xs text-muted-foreground font-medium">
-                            {copyright}
-                        </p>
-                        <div className="flex items-center gap-3 px-4 py-1.5 glass rounded-full group cursor-help border-primary/10">
+                {/* Protocol Telemetry Dashboard Control Panel */}
+                <div className="mt-8 border border-white/[0.03] dark:border-white/5 bg-black/5 dark:bg-[#07070a]/60 backdrop-blur-md p-6 rounded-3xl grid grid-cols-2 md:grid-cols-4 gap-6 items-center shadow-inner relative overflow-hidden">
+                    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
+                    
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
                             <motion.div 
-                                className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]"
-                                animate={{ opacity: [1, 0.4, 1], scale: [1, 1.2, 1] }}
-                                transition={{ duration: 2, repeat: Infinity }}
+                                className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]"
+                                animate={{ opacity: [1, 0.4, 1] }}
+                                transition={{ duration: 1.5, repeat: Infinity }}
                             />
-                            <span className="text-micro text-emerald-500 font-bold">Network Status: Nominal</span>
+                        </div>
+                        <div>
+                            <p className="text-[9px] text-muted-foreground uppercase font-mono font-semibold tracking-wider">NETWORK STATUS</p>
+                            <p className="text-xs font-bold text-emerald-500 font-mono">NOMINAL ({latency}ms)</p>
+                        </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center border border-primary/20">
+                            <Database className="w-4 h-4 text-primary" />
+                        </div>
+                        <div>
+                            <p className="text-[9px] text-muted-foreground uppercase font-mono font-semibold tracking-wider">LEDGER HEIGHT</p>
+                            <p className="text-xs font-bold text-foreground font-mono">BLOCK #{blockNumber.toLocaleString()}</p>
                         </div>
                     </div>
 
-                    <div className="flex items-center gap-10">
-                        <div className="hidden md:flex items-center gap-8">
-                            <div className="flex items-center gap-2.5 text-micro text-muted-foreground hover:text-foreground transition-colors cursor-pointer group/lang font-bold">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center border border-secondary/20">
+                            <Activity className="w-4 h-4 text-secondary" />
+                        </div>
+                        <div>
+                            <p className="text-[9px] text-muted-foreground uppercase font-mono font-semibold tracking-wider">THROUGHPUT</p>
+                            <p className="text-xs font-bold text-foreground font-mono">{throughput} ops/sec</p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center border border-white/10">
+                            <Globe className="w-4 h-4 text-muted-foreground" />
+                        </div>
+                        <div>
+                            <p className="text-[9px] text-muted-foreground uppercase font-mono font-semibold tracking-wider">GLOBAL GATEWAYS</p>
+                            <p className="text-xs font-bold text-foreground font-mono">42 ACTIVE NODES</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="pt-12 flex flex-col md:flex-row justify-between items-center gap-8 relative">
+                    <div className="flex flex-col md:flex-row items-center gap-4">
+                        <p className="text-xs text-muted-foreground font-medium">
+                            {copyright}
+                        </p>
+                        <div className="hidden md:block w-px h-4 bg-white/5" />
+                        <p className="text-[11px] text-muted-foreground font-mono">
+                            VERIFIED IDENTITY PROTOCOL v1.0.0
+                        </p>
+                    </div>
+
+                    <div className="flex items-center gap-8">
+                        <div className="hidden md:flex items-center gap-6">
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer group/lang font-bold">
                                 <Globe className="w-4 h-4 group-hover/lang:text-primary transition-colors" />
                                 <span>English (Global)</span>
                             </div>
-                            <div className="w-px h-5 bg-black/10 dark:bg-white/5" />
-                            <div className="flex items-center gap-3 text-micro text-muted-foreground">
+                            <div className="w-px h-4 bg-white/5" />
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                 <span className="opacity-40 uppercase tracking-widest text-[9px] font-bold">Powered by</span>
-                                <span className="font-bold tracking-tight flex items-center gap-2 text-foreground">
-                                    <Zap className="w-4 h-4 text-primary fill-primary" />
-                                    {siteName} v1.0
+                                <span className="font-bold tracking-tight flex items-center gap-1.5 text-foreground">
+                                    <Zap className="w-3.5 h-3.5 text-primary fill-primary" />
+                                    {siteName}
                                 </span>
                             </div>
                         </div>
@@ -234,10 +300,10 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.8, y: 10 }}
                                     onClick={scrollToTop}
-                                    className="p-4 rounded-2xl bg-primary text-primary-foreground shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all z-50 group hover:-translate-y-1"
+                                    className="p-3.5 rounded-xl bg-primary text-primary-foreground shadow-2xl shadow-primary/30 hover:bg-primary/90 transition-all z-50 group hover:-translate-y-1 active-click"
                                     aria-label="Back to top"
                                 >
-                                    <ArrowUp className="w-6 h-6 group-hover:-translate-y-1 transition-transform" />
+                                    <ArrowUp className="w-5 h-5 group-hover:-translate-y-1 transition-transform" />
                                 </motion.button>
                             )}
                         </AnimatePresence>

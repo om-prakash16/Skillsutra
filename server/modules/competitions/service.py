@@ -118,3 +118,170 @@ class CompetitionService:
                 notified_count += 1
 
         return {"notified_count": notified_count}
+
+    @staticmethod
+    async def save_competition(user_id: UUID, comp_id: UUID) -> Dict[str, Any]:
+        db = get_supabase()
+        if not db:
+            raise Exception("Database unavailable")
+        
+        # Check if already saved
+        existing = db.table("saved_competitions").select("*").eq("user_id", str(user_id)).eq("competition_id", str(comp_id)).execute()
+        if existing.data:
+            # Unsave (toggle)
+            db.table("saved_competitions").delete().eq("user_id", str(user_id)).eq("competition_id", str(comp_id)).execute()
+            return {"saved": False}
+        else:
+            db.table("saved_competitions").insert({"user_id": str(user_id), "competition_id": str(comp_id)}).execute()
+            return {"saved": True}
+
+    @staticmethod
+    async def get_saved_competitions(user_id: UUID) -> List[Dict[str, Any]]:
+        db = get_supabase()
+        if not db:
+            return []
+        res = db.table("saved_competitions").select("*, competitions(*)").eq("user_id", str(user_id)).execute()
+        return [item["competitions"] for item in res.data if item.get("competitions")] if res.data else []
+
+    @staticmethod
+    async def create_team(user_id: UUID, comp_id: UUID, name: str) -> Dict[str, Any]:
+        db = get_supabase()
+        if not db:
+            raise Exception("Database unavailable")
+        
+        # Create team
+        team_resp = db.table("teams").insert({
+            "name": name,
+            "competition_id": str(comp_id),
+            "leader_id": str(user_id)
+        }).execute()
+        
+        if not team_resp.data:
+            raise Exception("Failed to create team or team name already exists")
+            
+        team = team_resp.data[0]
+        # Auto join leader as ACCEPTED OWNER
+        db.table("team_members").insert({
+            "team_id": team["id"],
+            "user_id": str(user_id),
+            "role": "Team Leader",
+            "status": "accepted"
+        }).execute()
+        
+        return team
+
+    @staticmethod
+    async def join_team(user_id: UUID, team_id: UUID, role: str) -> Dict[str, Any]:
+        db = get_supabase()
+        if not db:
+            raise Exception("Database unavailable")
+            
+        res = db.table("team_members").insert({
+            "team_id": str(team_id),
+            "user_id": str(user_id),
+            "role": role,
+            "status": "pending"
+        }).execute()
+        
+        if res.data:
+            # Notify team leader
+            team_info = db.table("teams").select("*, users!leader_id(id)").eq("id", str(team_id)).single().execute()
+            if team_info.data:
+                leader_id = team_info.data["leader_id"]
+                await NotificationService.create_event_notification(
+                    user_id=leader_id,
+                    type="team_join_request",
+                    title="New Join Request",
+                    message=f"A developer requested to join your team '{team_info.data['name']}'.",
+                    link=f"/competitions/teams"
+                )
+            return res.data[0]
+        return {}
+
+    @staticmethod
+    async def invite_member(leader_id: UUID, team_id: UUID, invitee_id: UUID, role: str) -> Dict[str, Any]:
+        db = get_supabase()
+        if not db:
+            raise Exception("Database unavailable")
+            
+        # Verify leader_id is actually the leader
+        team_check = db.table("teams").select("leader_id").eq("id", str(team_id)).single().execute()
+        if not team_check.data or team_check.data["leader_id"] != str(leader_id):
+            raise Exception("Unauthorized: Only the team leader can invite members.")
+            
+        res = db.table("team_members").insert({
+            "team_id": str(team_id),
+            "user_id": str(invitee_id),
+            "role": role,
+            "status": "pending"
+        }).execute()
+        
+        if res.data:
+            await NotificationService.create_event_notification(
+                user_id=invitee_id,
+                type="team_invite",
+                title="Hackathon Team Invitation",
+                message="You have been invited to join a hackathon team.",
+                link="/competitions/teams"
+            )
+            return res.data[0]
+        return {}
+
+    @staticmethod
+    async def get_teams(comp_id: UUID) -> List[Dict[str, Any]]:
+        db = get_supabase()
+        if not db:
+            return []
+        # Fetch teams and join leader full_name
+        res = db.table("teams").select("*, leader:users!leader_id(full_name, user_code)").eq("competition_id", str(comp_id)).execute()
+        teams = res.data or []
+        for team in teams:
+            # fetch members
+            m_res = db.table("team_members").select("*, users(full_name, user_code)").eq("team_id", team["id"]).execute()
+            team["members"] = m_res.data or []
+        return teams
+
+    @staticmethod
+    async def get_my_teams(user_id: UUID) -> List[Dict[str, Any]]:
+        db = get_supabase()
+        if not db:
+            return []
+        
+        # Teams user is in
+        member_res = db.table("team_members").select("team_id").eq("user_id", str(user_id)).execute()
+        if not member_res.data:
+            return []
+            
+        team_ids = [m["team_id"] for m in member_res.data]
+        res = db.table("teams").select("*, competitions(title), leader:users!leader_id(full_name)").in_("id", team_ids).execute()
+        
+        teams = res.data or []
+        for team in teams:
+            m_res = db.table("team_members").select("*, users(full_name, user_code)").eq("team_id", team["id"]).execute()
+            team["members"] = m_res.data or []
+        return teams
+
+    @staticmethod
+    async def approve_member(leader_id: UUID, team_id: UUID, member_id: UUID, approve: bool) -> bool:
+        db = get_supabase()
+        if not db:
+            return False
+            
+        team_check = db.table("teams").select("leader_id, name").eq("id", str(team_id)).single().execute()
+        if not team_check.data or team_check.data["leader_id"] != str(leader_id):
+            return False
+            
+        if approve:
+            db.table("team_members").update({"status": "accepted"}).eq("team_id", str(team_id)).eq("user_id", str(member_id)).execute()
+            await NotificationService.create_event_notification(
+                user_id=member_id,
+                type="team_request_accepted",
+                title="Request Approved",
+                message=f"You have been accepted into the team '{team_check.data['name']}'.",
+                link="/competitions/teams"
+            )
+        else:
+            db.table("team_members").delete().eq("team_id", str(team_id)).eq("user_id", str(member_id)).execute()
+            
+        return True
+

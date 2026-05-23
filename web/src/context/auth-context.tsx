@@ -4,7 +4,16 @@ import React, { createContext, useContext, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { supabase } from "@/lib/supabaseClient"
-import type { Session } from "@supabase/supabase-js"
+
+// Inline type matching the emulator's session shape (no @supabase/supabase-js dependency)
+interface Session {
+    access_token: string
+    user: {
+        id: string
+        email?: string
+        user_metadata?: Record<string, any>
+    }
+}
 
 type UserRole = "user" | "company" | "admin"
 
@@ -78,7 +87,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
         })
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {
             if (session?.user) {
                 hydrateUser(session)
             } else {

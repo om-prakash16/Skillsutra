@@ -48,44 +48,69 @@ export function Roadmap() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {PHASES.map((phase, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: i * 0.1 }}
-                            className="relative"
-                        >
-                            <div className="glass p-8 rounded-3xl border-white/5 h-full space-y-6 shadow-premium group hover:border-primary/20 transition-all duration-500">
-                                <div className="flex justify-between items-start">
-                                    <div className="p-3 rounded-2xl bg-primary/10 border border-primary/20">
-                                        <phase.icon className="w-6 h-6 text-primary" />
+                    {PHASES.map((phase, i) => {
+                        const Icon = phase.icon;
+                        const isInProgress = phase.status === "In Progress";
+                        const isCompleted = phase.status === "Completed";
+                        
+                        return (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: i * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                                className="relative"
+                            >
+                                <div className={`glass p-8 rounded-3xl h-full space-y-6 transition-all duration-500 relative group ${
+                                    isInProgress 
+                                        ? "border-primary/30 shadow-floating bg-primary/[0.02]" 
+                                        : "border-white/5 shadow-premium hover:border-primary/20"
+                                }`}>
+                                    {/* Accent Top Border for active phase */}
+                                    {isInProgress && (
+                                        <div className="absolute top-0 left-12 right-12 h-px bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
+                                    )}
+
+                                    <div className="flex justify-between items-start">
+                                        <div className={`p-3 rounded-2xl border ${
+                                            isInProgress 
+                                                ? "bg-primary/20 border-primary/30 animate-float" 
+                                                : "bg-primary/10 border-primary/20"
+                                        }`}>
+                                            <Icon className={`w-6 h-6 ${isInProgress ? "text-primary" : "text-primary"}`} />
+                                        </div>
+                                        <Badge variant="outline" className={`text-micro px-3 py-1 rounded-lg font-mono ${
+                                            isCompleted ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
+                                            isInProgress ? "bg-primary/15 text-primary border-primary/30 animate-pulse-glow" :
+                                            "bg-muted/10 text-muted-foreground border-white/5"
+                                        }`}>
+                                            {phase.status.toUpperCase()}
+                                        </Badge>
                                     </div>
-                                    <Badge variant="outline" className={`text-micro px-3 py-1 rounded-lg ${
-                                        phase.status === "Completed" ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
-                                        phase.status === "In Progress" ? "bg-primary/10 text-primary border-primary/20" :
-                                        "bg-muted/10 text-muted-foreground border-white/5"
-                                    }`}>
-                                        {phase.status}
-                                    </Badge>
+                                    <h3 className="text-lg font-bold text-white font-heading">{phase.title}</h3>
+                                    <ul className="space-y-3">
+                                        {phase.items.map((item, j) => (
+                                            <li key={j} className="flex items-center gap-3 text-xs text-muted-foreground">
+                                                {isCompleted ? (
+                                                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                                                ) : isInProgress ? (
+                                                    <motion.div 
+                                                        animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
+                                                        transition={{ duration: 2, repeat: Infinity, delay: j * 0.2 }}
+                                                        className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 ml-1.5 mr-1"
+                                                    />
+                                                ) : (
+                                                    <Circle className="w-4 h-4 text-muted-foreground/30 shrink-0" />
+                                                )}
+                                                <span className={isInProgress ? "text-foreground/90 font-medium" : ""}>{item}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
                                 </div>
-                                <h3 className="text-lg font-bold">{phase.title}</h3>
-                                <ul className="space-y-3">
-                                    {phase.items.map((item, j) => (
-                                        <li key={j} className="flex items-center gap-3 text-xs text-muted-foreground">
-                                            {phase.status === "Completed" ? (
-                                                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                                            ) : (
-                                                <Circle className="w-4 h-4 text-muted-foreground/30 shrink-0" />
-                                            )}
-                                            {item}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        </motion.div>
-                    ))}
+                            </motion.div>
+                        );
+                    })}
                 </div>
             </div>
         </section>

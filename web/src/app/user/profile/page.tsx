@@ -12,6 +12,7 @@ import { ProjectsTab } from "@/features/user/profile/tabs/projects-tab"
 import { GithubTab } from "@/features/user/profile/tabs/github-tab"
 import { LeetcodeTab } from "@/features/user/profile/tabs/leetcode-tab"
 import { ApplicationsTab } from "@/features/user/profile/tabs/applications-tab"
+import { ReputationTab } from "@/features/user/profile/tabs/reputation-tab"
 import { SettingsTab } from "@/features/user/profile/tabs/settings-tab"
 import { DynamicProfileForm } from "@/features/profile/components/DynamicProfileForm"
 import { UserProfile, Skill, Experience, Education, Project } from "@/types/profile"
@@ -411,7 +412,8 @@ export default function ProfilePage() {
                             { value: "projects", label: "Ledger" },
                             { value: "github", label: "Source" },
                             { value: "applications", label: "Nexus" },
-                            { value: "matrix", label: "Matrix Profile", icon: Sparkles },
+                            { value: "reputation", label: "Reputation", icon: Sparkles },
+                            { value: "matrix", label: "Matrix Profile" },
                             { value: "settings", label: "Protocol" }
                         ].map((tab) => (
                             <TabsTrigger 
@@ -477,6 +479,9 @@ export default function ProfilePage() {
                     </TabsContent>
                     <TabsContent value="applications" className="animate-in fade-in-50 duration-500">
                         <ApplicationsTab data={activeData} />
+                    </TabsContent>
+                    <TabsContent value="reputation" className="animate-in fade-in-50 duration-500">
+                        <ReputationTab />
                     </TabsContent>
                     <TabsContent value="matrix" className="animate-in fade-in-50 duration-500">
                         <div className="glass rounded-[3rem] p-8 md:p-16 border-white/5 shadow-2xl">

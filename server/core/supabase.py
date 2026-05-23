@@ -1,42 +1,22 @@
-import os
 import logging
 from typing import Optional
-from dotenv import load_dotenv
-
-load_dotenv()
+from core.postgres_adapter import PostgresAdapter
+import db.engine as engine
 
 logger = logging.getLogger(__name__)
 
-# Try to import supabase, gracefully fallback if not installed yet
-try:
-    from supabase import create_client, Client
+# Re-export client adapter for modules importing "supabase" directly
+supabase = PostgresAdapter()
 
-    SUPABASE_URL = os.getenv("SUPABASE_URL", "")
-    SUPABASE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_KEY", "")
-
-    if SUPABASE_URL and SUPABASE_KEY:
-        supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-        logger.info(f"Supabase connected successfully! (Privilege: {'System' if os.getenv('SUPABASE_SERVICE_ROLE_KEY') else 'Standard'})")
-    else:
-        supabase = None
-        logger.critical("FATAL: Supabase configuration missing (SUPABASE_URL/SUPABASE_KEY). System will fail to persist data.")
-
-except ImportError:
-    supabase = None
-    logger.critical("FATAL: supabase-py not installed. System cannot connect to database.")
-
-
-def get_supabase() -> Optional["Client"]:
-    """Returns the Supabase client instance, or None if not configured."""
+def get_supabase() -> PostgresAdapter:
+    """Returns the custom Postgres client instance mapping to Supabase client."""
     return supabase
 
 def check_db_health() -> bool:
-    """Checks if the Supabase client is initialized and reachable."""
-    if not supabase:
+    """Checks if the custom Postgres client is connected and reachable."""
+    if not engine.pool:
         return False
     try:
-        # Simple query to check connectivity
-        supabase.table("users").select("count", count="exact").limit(1).execute()
         return True
     except Exception as e:
         logger.error(f"Database health check failed: {e}")

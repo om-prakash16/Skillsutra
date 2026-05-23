@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Body
 from modules.auth.core.service import get_current_user
 from modules.career.service import CareerService
 from modules.career.models import CareerGoalCreate, CareerTaskCreate
@@ -42,3 +42,35 @@ async def get_goals(current_user=Depends(get_current_user)):
         return await career_service.get_user_goals(current_user.get("sub"))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/roadmap/generate")
+async def generate_roadmap(target_role: str = Body(..., embed=True), current_user=Depends(get_current_user)):
+    user_id = current_user.get("sub")
+    try:
+        data = await career_service.generate_roadmap(user_id, target_role)
+        return {"status": "success", "data": data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/roadmap")
+async def get_roadmap(current_user=Depends(get_current_user)):
+    user_id = current_user.get("sub")
+    try:
+        data = await career_service.get_roadmap(user_id)
+        return {"status": "success", "data": data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.patch("/roadmap/milestone")
+async def update_roadmap_milestone(
+    roadmap_id: str = Body(..., embed=True),
+    new_index: int = Body(..., embed=True),
+    current_user=Depends(get_current_user)
+):
+    user_id = current_user.get("sub")
+    try:
+        data = await career_service.update_roadmap_milestone(user_id, roadmap_id, new_index)
+        return {"status": "success", "data": data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
