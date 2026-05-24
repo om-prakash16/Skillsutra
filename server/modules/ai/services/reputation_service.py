@@ -3,7 +3,7 @@ import logging
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 
-from core.supabase import get_supabase
+from core.db import get_db
 from core.cache import cache_result
 from modules.ai.services.github_service import github_scanner
 
@@ -16,7 +16,7 @@ class ReputationScoringService:
         Calculates and returns the composite developer reputation score for a user.
         Weighs projects, github PRs/commits, coding challenges solved, and hackathons.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             logger.warning(f"Database unavailable for scoring user {user_id}. Returning partial results.")
             return self._get_empty_score(user_id)

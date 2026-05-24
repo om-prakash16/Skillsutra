@@ -1,6 +1,6 @@
 from pydantic import create_model
 from typing import Dict, Any, List, Optional, Type
-from core.supabase import get_supabase
+from core.db import get_db
 import asyncio
 from cachetools import TTLCache
 from datetime import datetime
@@ -10,11 +10,11 @@ class DynamicValidationService:
     @staticmethod
     async def get_active_schema() -> List[Dict[str, Any]]:
         """Fetch the current profile schema from the database."""
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database connection unavailable for schema fetch")
 
-        response = (
+        response = await (
             db.table("profile_schema")
             .select("*")
             .eq("is_active", True)
@@ -93,7 +93,7 @@ class UserService:
         if user_id in UserService._PROFILE_CACHE:
             return UserService._PROFILE_CACHE[user_id]
 
-        db = get_supabase()
+        db = get_db()
         if not db: return {}
 
         # Define wrapper functions for asyncio.to_thread
@@ -160,13 +160,13 @@ class UserService:
         """
         Professional relational update flow with batch processing and dictionary linking.
         """
-        db = get_supabase()
+        db = get_db()
         if not db: return {"status": "error", "message": "Database connection failed"}
 
         # 1. Update Core Profile & User Metadata
         if "profile" in data:
             p = data["profile"]
-            db.table("profiles").upsert({
+            await db.table("profiles").upsert({
                 "user_id": user_id,
                 "full_name": p.get("full_name", "Anonymous"),
                 "headline": p.get("headline"),
@@ -178,41 +178,41 @@ class UserService:
             if "visibility" in p: u_meta["visibility"] = p["visibility"]
             if "username" in p: u_meta["username"] = p["username"]
             if u_meta:
-                db.table("users").update(u_meta).eq("id", user_id).execute()
+                await db.table("users").update(u_meta).eq("id", user_id).execute()
 
         # 2. Batch Update Experiences
         if "experiences" in data:
-            db.table("experiences").delete().eq("user_id", user_id).execute()
+            await db.table("experiences").delete().eq("user_id", user_id).execute()
             exps = [{**exp, "user_id": user_id} for exp in data["experiences"]]
-            if exps: db.table("experiences").insert(exps).execute()
+            if exps: await db.table("experiences").insert(exps).execute()
 
         # 3. Batch Update Projects
         if "projects" in data:
-            db.table("projects").delete().eq("user_id", user_id).execute()
+            await db.table("projects").delete().eq("user_id", user_id).execute()
             projs = [{**proj, "user_id": user_id} for proj in data["projects"]]
-            if projs: db.table("projects").insert(projs).execute()
+            if projs: await db.table("projects").insert(projs).execute()
 
         # 4. Batch Update Education
         if "education" in data:
-            db.table("education").delete().eq("user_id", user_id).execute()
+            await db.table("education").delete().eq("user_id", user_id).execute()
             edus = [{**edu, "user_id": user_id} for edu in data["education"]]
-            if edus: db.table("education").insert(edus).execute()
+            if edus: await db.table("education").insert(edus).execute()
 
         # 5. Professional Skill Linking (Dictionary Pattern)
         if "skills" in data:
             # skills format expected: [{"name": "Python", "proficiency": "Expert"}]
-            db.table("user_skills_relational").delete().eq("user_id", user_id).execute()
+            await db.table("user_skills_relational").delete().eq("user_id", user_id).execute()
             
             for s_item in data["skills"]:
                 s_name = s_item["name"]
                 # Find or Create Skill in Dictionary
-                skill_res = db.table("skills").select("id").eq("name", s_name).execute()
+                skill_res = await db.table("skills").select("id").eq("name", s_name).execute()
                 if not skill_res.data:
-                    skill_res = db.table("skills").insert({"name": s_name, "category": s_item.get("category")}).execute()
+                    skill_res = await db.table("skills").insert({"name": s_name, "category": s_item.get("category")}).execute()
                 
                 skill_id = skill_res.data[0]["id"]
                 # Link User to Skill
-                db.table("user_skills_relational").insert({
+                await db.table("user_skills_relational").insert({
                     "user_id": user_id,
                     "skill_id": skill_id,
                     "proficiency_level": s_item.get("proficiency", "Intermediate")
@@ -229,7 +229,7 @@ class UserService:
         """
         Public portfolio resolver by user_code.
         """
-        db = get_supabase()
+        db = get_db()
         user_res = db.table("users").select("id, visibility").eq("user_code", user_code).execute()
         if not user_res.data:
             return None

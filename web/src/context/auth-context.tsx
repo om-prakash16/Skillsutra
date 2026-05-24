@@ -1,27 +1,20 @@
 "use client"
 
-import React, { createContext, useContext, useState, useEffect } from "react"
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { supabase } from "@/lib/supabaseClient"
-
-// Inline type matching the emulator's session shape (no @supabase/supabase-js dependency)
-interface Session {
-    access_token: string
-    user: {
-        id: string
-        email?: string
-        user_metadata?: Record<string, any>
-    }
-}
+import { keycloak, initKeycloak, getToken } from "@/lib/keycloak"
+import { fetchWithAuth } from "@/lib/api/api-client"
 
 type UserRole = "user" | "company" | "admin"
 
 interface User {
     id: string
+    keycloak_id: string
     name: string
     email: string
     role: UserRole
+    roles: string[]
     wallet_address?: string
     user_code?: string
     profile_data: any
@@ -33,9 +26,11 @@ interface AuthContextType {
     user: User | null
     token: string | null
     isLoading: boolean
+    isAuthenticated: boolean
     signInWithGoogle: (role?: string) => Promise<void>
-    login: (email: string, password: string) => Promise<void>
-    demoLogin: (role: "user" | "company" | "admin") => Promise<void>
+    signInWithGitHub: (role?: string) => Promise<void>
+    signInWithApple: (role?: string) => Promise<void>
+    login: (role?: string) => Promise<void>
     logout: () => void
 }
 
@@ -45,181 +40,156 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [user, setUser] = useState<User | null>(null)
     const [token, setToken] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
     const router = useRouter()
 
-    // Hydrate user state from an active Supabase session on mount.
-    // Also subscribes to auth state changes for SSO / magic link flows.
-    useEffect(() => {
-        const hydrateUser = async (session: Session) => {
-            const metaRole = (session.user.user_metadata?.role as UserRole) || "user"
+    /**
+     * After Keycloak login, sync user to local DB and hydrate state.
+     */
+    const syncUser = useCallback(async (accessToken: string) => {
+        try {
+            // Call /auth/sync to ensure user exists in local PostgreSQL
+            const syncData = await fetchWithAuth("/auth/sync", {
+                method: "POST",
+                headers: { Authorization: `Bearer ${accessToken}` },
+            })
 
-            const { data: profile } = await supabase
-                .from("users")
-                .select("role, full_name, wallet_address, user_code, profile_data, dynamic_profile_data")
-                .eq("id", session.user.id)
-                .single()
+            // Call /auth/me for full user data
+            const meData = await fetchWithAuth("/auth/me", {
+                headers: { Authorization: `Bearer ${accessToken}` },
+            })
 
-            const role = (profile?.role as UserRole) || metaRole
-            const name =
-                profile?.full_name ||
-                session.user.user_metadata?.full_name ||
-                session.user.email?.split("@")[0] ||
-                "User"
+            const roles: string[] = syncData?.roles || meData?.roles || ["user"]
+            const primaryRole = (
+                roles.includes("admin") ? "admin" :
+                roles.includes("company") ? "company" : "user"
+            ) as UserRole
 
             setUser({
-                id: session.user.id,
-                name,
-                email: session.user.email || "",
-                role,
-                wallet_address: profile?.wallet_address || "",
-                user_code: profile?.user_code || "",
-                profile_data: profile?.profile_data || {},
-                dynamic_profile_data: profile?.dynamic_profile_data || {},
+                id: syncData?.user_id || meData?.local_id || meData?.sub || "",
+                keycloak_id: syncData?.keycloak_id || meData?.sub || "",
+                name: syncData?.name || meData?.name || "",
+                email: syncData?.email || meData?.email || "",
+                role: primaryRole,
+                roles,
+                wallet_address: meData?.wallet_address || "",
+                user_code: syncData?.user_code || meData?.user_code || "",
+                profile_data: meData?.profile_data || {},
+                dynamic_profile_data: meData?.dynamic_profile_data || {},
             })
-            setIsLoading(false)
+            setIsAuthenticated(true)
+        } catch (err: any) {
+            console.error("[auth] user sync failed:", err)
+            toast.error("Failed to sync user data")
+        }
+    }, [])
+
+    // Initialize Keycloak on mount
+    useEffect(() => {
+        let cancelled = false
+
+        const init = async () => {
+            try {
+                const authenticated = await initKeycloak()
+                if (cancelled) return
+
+                if (authenticated && keycloak.token) {
+                    setToken(keycloak.token)
+                    // Store token for fetchWithAuth compatibility
+                    localStorage.setItem("auth_token", keycloak.token)
+                    await syncUser(keycloak.token)
+                }
+            } catch (err) {
+                console.error("[auth] keycloak init failed:", err)
+            } finally {
+                if (!cancelled) setIsLoading(false)
+            }
         }
 
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session?.user) {
-                hydrateUser(session)
-            } else {
-                setIsLoading(false)
+        init()
+
+        // Set up token refresh interval
+        const refreshInterval = setInterval(async () => {
+            if (keycloak.authenticated) {
+                const freshToken = await getToken()
+                if (freshToken) {
+                    setToken(freshToken)
+                    localStorage.setItem("auth_token", freshToken)
+                } else {
+                    // Session expired
+                    setUser(null)
+                    setToken(null)
+                    setIsAuthenticated(false)
+                    localStorage.removeItem("auth_token")
+                }
             }
-        })
+        }, 30000) // Check every 30 seconds
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, session: Session | null) => {
-            if (session?.user) {
-                hydrateUser(session)
-            } else {
-                setUser(null)
-            }
-        })
+        return () => {
+            cancelled = true
+            clearInterval(refreshInterval)
+        }
+    }, [syncUser])
 
-        return () => subscription.unsubscribe()
-    }, [])
-
-    // Also check for our custom JWT in localStorage (wallet auth path).
-    useEffect(() => {
-        const storedToken = localStorage.getItem("auth_token")
-        if (storedToken) setToken(storedToken)
-        setIsLoading(false)
-    }, [])
-
+    /**
+     * Social login helpers — redirect to Keycloak with identity provider hint.
+     */
     const signInWithGoogle = async (role = "user") => {
         setIsLoading(true)
-        try {
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options: {
-                    redirectTo: `${window.location.origin}/auth/callback`,
-                    queryParams: {
-                        access_type: 'offline',
-                        prompt: 'consent',
-                        role: role
-                    }
-                }
-            })
-
-            if (error) throw error
-        } catch (err: any) {
-            console.error("[auth] google login failed:", err)
-            toast.error(err.message || "Google sign in failed")
-            setIsLoading(false)
-        }
+        // Store requested role so we can use it after redirect
+        localStorage.setItem("requested_role", role)
+        keycloak.login({ idpHint: "google" })
     }
-    const login = async (email: string, password: string) => {
+
+    const signInWithGitHub = async (role = "user") => {
         setIsLoading(true)
-        try {
-            const { data, error } = await supabase.auth.signInWithPassword({
-                email,
-                password,
-            })
-
-            if (error) throw error
-            if (!data.session) throw new Error("Login failed")
-
-            // Store token for fetchWithAuth compatibility
-            localStorage.setItem("auth_token", data.session.access_token)
-            setToken(data.session.access_token)
-
-            const metaRole = (data.user?.user_metadata?.role as string)?.toLowerCase() || "user"
-            
-            toast.success("Welcome back!")
-            if (metaRole === "admin") {
-                router.push("/admin")
-            } else if (metaRole === "company") {
-                router.push("/company/dashboard")
-            } else {
-                router.push("/user/dashboard")
-            }
-        } catch (err: any) {
-            console.error("[auth] login failed:", err)
-            toast.error(err.message || "Login failed")
-            throw err
-        } finally {
-            setIsLoading(false)
-        }
+        localStorage.setItem("requested_role", role)
+        keycloak.login({ idpHint: "github" })
     }
 
-    const demoLogin = async (role: "user" | "company" | "admin") => {
+    const signInWithApple = async (role = "user") => {
         setIsLoading(true)
-        try {
-            // Use mock wallet credentials recognized by the backend verify_solana_signature
-            const wallet = `DEV_${role.toUpperCase()}_999`
-            const signature = "MOCK_DEMO_SIGNATURE"
-            const message = `Time: ${Date.now()} Demo login`
-
-            // We use the older API client method since it includes the requested_role parameter
-            // and the endpoint is "/auth/wallet"
-            const { fetchWithAuth, API_BASE_URL } = await import("@/lib/api/api-client")
-            
-            const response = await fetch(`${API_BASE_URL}/auth/wallet`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    wallet_address: wallet,
-                    signature: signature,
-                    message: message,
-                    requested_role: role
-                })
-            })
-
-            const json = await response.json()
-            if (!response.ok) throw new Error(json.message || "Demo login failed")
-            
-            const data = json.data || json
-            localStorage.setItem("auth_token", data.access_token)
-            setToken(data.access_token)
-            
-            toast.success(`Logged in as Demo ${role.toUpperCase()}`)
-            
-            if (role === "admin") {
-                router.push("/admin")
-            } else if (role === "company") {
-                router.push("/company/dashboard")
-            } else {
-                router.push("/user/dashboard")
-            }
-        } catch (err: any) {
-            console.error("[auth] demo login failed:", err)
-            toast.error(err.message || "Demo login failed")
-        } finally {
-            setIsLoading(false)
-        }
+        localStorage.setItem("requested_role", role)
+        keycloak.login({ idpHint: "apple" })
     }
 
-    const logout = async () => {
+    /**
+     * Generic login — opens Keycloak's login page (email/password + social options).
+     */
+    const login = async (role = "user") => {
+        setIsLoading(true)
+        localStorage.setItem("requested_role", role)
+        keycloak.login()
+    }
+
+    /**
+     * Logout from both Keycloak and the app.
+     */
+    const logout = () => {
         localStorage.removeItem("auth_token")
+        localStorage.removeItem("requested_role")
         document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax"
         setToken(null)
         setUser(null)
-        await supabase.auth.signOut()
+        setIsAuthenticated(false)
         toast.info("Signed out")
-        router.push("/auth/login")
+        keycloak.logout({ redirectUri: `${window.location.origin}/auth/login` })
     }
 
     return (
-        <AuthContext.Provider value={{ user, token, isLoading, signInWithGoogle, login, demoLogin, logout }}>
+        <AuthContext.Provider
+            value={{
+                user,
+                token,
+                isLoading,
+                isAuthenticated,
+                signInWithGoogle,
+                signInWithGitHub,
+                signInWithApple,
+                login,
+                logout,
+            }}
+        >
             {children}
         </AuthContext.Provider>
     )

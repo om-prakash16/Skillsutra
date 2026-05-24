@@ -50,7 +50,7 @@ export function ProfileHeader({ user, isEditing, onUpdateAvatar, action }: any) 
               </div>
               <div className="relative h-2 w-full glass rounded-full border-white/5 overflow-hidden">
                 <div 
-                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary/50 to-primary shadow-[0_0_15px_rgba(var(--primary),0.5)] transition-all duration-1000 ease-out" 
+                    className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary/50 to-primary shadow-[0_0_15px_hsl(var(--primary)/0.5)] transition-all duration-1000 ease-out" 
                     style={{ width: `${user.completion}%` }} 
                 />
               </div>

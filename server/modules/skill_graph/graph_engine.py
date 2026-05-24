@@ -4,7 +4,7 @@ Replaces the hardcoded SKILL_GRAPH dict with a database-driven graph.
 """
 
 from typing import Dict, Any, List, Optional, Tuple
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class GraphEngine:
@@ -18,7 +18,7 @@ class GraphEngine:
         self._taxonomy_cache: Dict[str, str] = {}
 
     def _get_db(self):
-        return get_supabase()
+        return get_db()
 
     async def get_adjacency_list(self, skill_id: str) -> Dict[str, float]:
         """Fetch all neighbors for a skill from skill_relationships."""

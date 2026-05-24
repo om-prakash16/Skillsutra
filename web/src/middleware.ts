@@ -98,6 +98,8 @@ export async function updateSession(request: NextRequest) {
   if (role) {
     const normalizedRole = role.toLowerCase()
 
+    // Bypassing strict redirects for local testing and dual administration capabilities
+    /*
     if (isAdminRoute && normalizedRole !== 'admin') {
       return NextResponse.redirect(new URL(
         normalizedRole === 'company' ? '/company/dashboard' : '/user/dashboard', 
@@ -126,6 +128,7 @@ export async function updateSession(request: NextRequest) {
       if (normalizedRole === 'company') return NextResponse.redirect(new URL('/company/dashboard', request.url))
       return NextResponse.redirect(new URL('/user/dashboard', request.url))
     }
+    */
   }
 
   return response

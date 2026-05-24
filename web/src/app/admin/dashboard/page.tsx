@@ -1,7 +1,7 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { supabase } from "@/lib/supabaseClient"
+import { db } from "@/lib/db-client"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
@@ -32,10 +32,10 @@ export default function AdminDashboard() {
                 { count: activeJobs },
                 { data: recentUsers }
             ] = await Promise.all([
-                supabase.from('users').select('*', { count: 'exact', head: true }).neq('role', 'company').neq('role', 'admin'),
-                supabase.from('users').select('*', { count: 'exact', head: true }).eq('role', 'company'),
-                supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-                supabase.from('users').select('*').order('created_at', { ascending: false }).limit(5)
+                db.from('users').select('*', { count: 'exact', head: true }).neq('role', 'company').neq('role', 'admin'),
+                db.from('users').select('*', { count: 'exact', head: true }).eq('role', 'company'),
+                db.from('jobs').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+                db.from('users').select('*').order('created_at', { ascending: false }).limit(5)
             ])
 
             return {
@@ -99,7 +99,7 @@ export default function AdminDashboard() {
                         <Globe className="w-5 h-5 mr-3 group-hover:rotate-180 transition-transform duration-1000" />
                         <span className="font-bold tracking-tight">Intelligence Logs</span>
                     </Button>
-                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl px-10 h-14 shadow-[0_15px_30px_-10px_rgba(var(--primary),0.4)] border-t border-white/20 font-black tracking-tight text-lg group overflow-hidden relative">
+                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl px-10 h-14 shadow-[0_15px_30px_-10px_hsl(var(--primary)/0.4)] border-t border-white/20 font-black tracking-tight text-lg group overflow-hidden relative">
                         <span className="relative z-10">Deploy Asset</span>
                         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                     </Button>

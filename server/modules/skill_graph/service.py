@@ -4,7 +4,7 @@ Bridges taxonomy, graph engine, and user skill nodes.
 """
 
 from typing import Dict, Any, List, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 from modules.skill_graph.graph_engine import GraphEngine
 from modules.skill_graph.taxonomy_service import TaxonomyService
 from modules.skill_graph.ai_extractor import AISkillExtractor
@@ -21,7 +21,7 @@ class SkillGraphService:
         self.extractor = AISkillExtractor()
 
     def _get_db(self):
-        return get_supabase()
+        return get_db()
 
     # ── User Skill Nodes CRUD ──
 
@@ -102,10 +102,10 @@ class SkillGraphService:
             "ai_confidence": data.get("ai_confidence"),
         }
 
-        res = db.table("user_skill_nodes").upsert(insert_data, on_conflict="user_id,skill_id").execute()
+        res = await db.table("user_skill_nodes").upsert(insert_data, on_conflict="user_id,skill_id").execute()
 
         # Log usage event
-        db.table("skill_usage_events").insert({
+        await db.table("skill_usage_events").insert({
             "user_id": user_id,
             "skill_id": data["skill_id"],
             "event_type": "skill_added",
@@ -127,7 +127,7 @@ class SkillGraphService:
             update_data["proficiency_score"] = proficiency_map.get(update_data["proficiency_level"], 50)
 
         update_data["updated_at"] = "now()"
-        res = db.table("user_skill_nodes").update(update_data).eq("id", node_id).eq("user_id", user_id).execute()
+        res = await db.table("user_skill_nodes").update(update_data).eq("id", node_id).eq("user_id", user_id).execute()
         return res.data[0] if res.data else {"status": "updated"}
 
     async def remove_skill(self, user_id: str, node_id: str) -> Dict[str, Any]:
@@ -136,7 +136,7 @@ class SkillGraphService:
         if not db:
             return {"error": "No database"}
 
-        db.table("user_skill_nodes").delete().eq("id", node_id).eq("user_id", user_id).execute()
+        await db.table("user_skill_nodes").delete().eq("id", node_id).eq("user_id", user_id).execute()
         return {"status": "deleted", "id": node_id}
 
     async def bulk_add_skills(self, user_id: str, skills: List[Dict[str, Any]]) -> Dict[str, Any]:
@@ -158,11 +158,11 @@ class SkillGraphService:
         node_id = data["user_skill_node_id"]
 
         # Don't allow self-endorsement
-        node = db.table("user_skill_nodes").select("user_id, skill_id").eq("id", node_id).single().execute()
+        node = await db.table("user_skill_nodes").select("user_id, skill_id").eq("id", node_id).single().execute()
         if node.data and node.data["user_id"] == endorser_id:
             return {"error": "Cannot endorse your own skill"}
 
-        res = db.table("skill_endorsements").upsert({
+        res = await db.table("skill_endorsements").upsert({
             "user_skill_node_id": node_id,
             "endorser_id": endorser_id,
             "endorser_relationship": data.get("relationship", "colleague"),
@@ -171,7 +171,7 @@ class SkillGraphService:
 
         # Log event for proof score
         if node.data:
-            db.table("skill_usage_events").insert({
+            await db.table("skill_usage_events").insert({
                 "user_id": node.data["user_id"],
                 "skill_id": node.data["skill_id"],
                 "event_type": "endorsement_received",
@@ -213,7 +213,7 @@ class SkillGraphService:
         if not db:
             return {"error": "No database"}
         
-        res = db.table("skill_usage_events").insert({
+        res = await db.table("skill_usage_events").insert({
             "user_id": user_id,
             "skill_id": skill_id,
             "event_type": event_type,

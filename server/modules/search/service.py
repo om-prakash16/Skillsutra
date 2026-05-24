@@ -1,5 +1,5 @@
 from typing import List, Dict, Any, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 import asyncio
 from cachetools import TTLCache
 
@@ -20,7 +20,7 @@ class SearchService:
         if cache_key in SearchService._SEARCH_CACHE:
             return SearchService._SEARCH_CACHE[cache_key]
 
-        db = get_supabase()
+        db = get_db()
         if not db: return {"candidates": [], "jobs": []}
 
         # 1. Candidate Search
@@ -59,7 +59,7 @@ class SearchService:
         size: Optional[str] = None,
         location: Optional[str] = None
     ) -> List[Dict[str, Any]]:
-        db = get_supabase()
+        db = get_db()
         if not db: return []
 
         q = db.table("companies").select("*")

@@ -1,9 +1,9 @@
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 from typing import List, Dict, Any
 
 class ApplicationRepository:
     def __init__(self):
-        self.db = get_supabase()
+        self.db = get_db()
 
     def create(self, data: Dict[str, Any]):
         res = self.db.table("applications").insert(data).execute()

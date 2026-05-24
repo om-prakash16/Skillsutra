@@ -1,9 +1,9 @@
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 from typing import Optional, Dict, Any, List
 
 class UserRepository:
     def __init__(self):
-        self.db = get_supabase()
+        self.db = get_db()
 
     def get_full_profile(self, user_id: str) -> Dict[str, Any]:
         # Aggregate multiple tables

@@ -1,11 +1,11 @@
-from core.supabase import get_supabase
+from core.db import get_db
 import uuid
 
 
 def initialize_enterprise_roles():
-    db = get_supabase()
+    db = get_db()
     if not db:
-        print("Supabase not configured.")
+        print("Database not configured.")
         return
 
     roles_to_add = [

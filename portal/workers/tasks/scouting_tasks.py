@@ -1,7 +1,7 @@
 import asyncio
 from portal.apps.matching.controller import MatchingController
 from portal.apps.notifications.service import NotificationService
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 
 matching_controller = MatchingController()
 notification_service = NotificationService()
@@ -24,7 +24,7 @@ async def scout_candidates_for_job(ctx: dict, job_id: str, company_id: str):
 
     # 3. Store Suggestions (in a real app, we'd have a job_suggestions table)
     # For now, we notify the company.
-    db = get_supabase()
+    db = get_db()
     
     # Get company user_id
     company_res = db.table("company_members").select("user_id").eq("company_id", company_id).eq("company_role", "OWNER").single().execute()

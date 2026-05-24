@@ -103,7 +103,7 @@ export default function ChallengesPage() {
                             onClick={() => handleSelect(chall)}
                             className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer ${
                                 selectedChall?.id === chall.id 
-                                    ? "bg-primary/10 border-primary/40 shadow-[0_0_20px_rgba(var(--primary),0.1)]"
+                                    ? "bg-primary/10 border-primary/40 shadow-[0_0_20px_hsl(var(--primary)/0.1)]"
                                     : "bg-white/5 border-white/5 hover:border-white/20"
                             }`}
                         >

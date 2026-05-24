@@ -1,9 +1,9 @@
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 from typing import Dict, Any, List, Optional
 
 class CompanyRepository:
     def __init__(self):
-        self.db = get_supabase()
+        self.db = get_db()
 
     def create_company(self, name: str, user_id: str) -> Dict[str, Any]:
         res = self.db.table("companies").insert({

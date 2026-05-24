@@ -1,7 +1,7 @@
 import logging
 import datetime
 from typing import List, Dict, Any, Tuple, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 from core.exceptions import ExternalServiceError
 
 logger = logging.getLogger(__name__)
@@ -12,7 +12,7 @@ class AIFraudService:
 
     async def get_assessment_trust_report(self, assessment_id: str) -> Optional[Dict[str, Any]]:
         """Fetch existing fraud analysis for an assessment."""
-        db = get_supabase()
+        db = get_db()
         if not db: return None
         
         try:
@@ -42,7 +42,7 @@ class AIFraudService:
         }
 
         # Persist to database
-        db = get_supabase()
+        db = get_db()
         if db:
             try:
                 db.table("fraud_logs").upsert(report, on_conflict="assessment_id").execute()

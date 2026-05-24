@@ -1,22 +1,31 @@
 import asyncio
 import uuid
-from core.supabase import get_supabase
+from core.db import get_db
 from modules.projects.service import ProjectService
 from modules.skill_graph.service import SkillGraphService
 
 async def verify_proof_of_work_flow():
     print("--- VERIFYING STEP 2: PROJECT-TO-SKILL PROOF BOOST ---")
-    db = get_supabase()
+    from db.engine import init_db
+    await init_db()
+    db = get_db()
     project_service = ProjectService()
     skill_service = SkillGraphService()
 
     # 1. Setup: Ensure a test user and a test skill exist
     # (We'll use a known skill from the taxonomy: Python)
-    res = db.table("skill_taxonomy").select("id").eq("slug", "python").single().execute()
+    res = await db.table("skill_taxonomy").select("id").eq("slug", "python").single().execute()
     skill_id = res.data["id"]
     
     # Using a deterministic UUID for the test user to avoid clutter
     test_user_id = "00000000-0000-0000-0000-000000000001"
+    
+    # Ensure test user exists in users table
+    await db.table("users").upsert({
+        "id": test_user_id,
+        "email": "test_pow_user@example.com",
+        "wallet_address": "0xPOW_TEST_USER"
+    }).execute()
     
     # 2. Add skill to user (initial proof_score = 0)
     print("Initializing test skill for user...")
@@ -29,7 +38,6 @@ async def verify_proof_of_work_flow():
     project = await project_service.create_project(test_user_id, {
         "title": "Verification Test App",
         "description": "A project built to verify the PoW system.",
-        "role": "Lead Tester",
         "stack": ["Python", "Pytest"]
     })
     project_id = project["id"]
@@ -46,10 +54,10 @@ async def verify_proof_of_work_flow():
     )
 
     # 5. Verify the boost
-    # Wait a second for trigger to propagate if needed (Supabase triggers are immediate but let's be sure)
+    # Wait a second for trigger to propagate if needed (Database triggers are immediate but let's be sure)
     await asyncio.sleep(1)
     
-    updated_node_res = db.table("user_skill_nodes").select("proof_score").eq("id", node["id"]).single().execute()
+    updated_node_res = await db.table("user_skill_nodes").select("proof_score").eq("id", node["id"]).single().execute()
     updated_score = updated_node_res.data["proof_score"]
     
     print(f"Updated Proof Score: {updated_score}")
@@ -61,9 +69,10 @@ async def verify_proof_of_work_flow():
 
     # Cleanup
     print("Cleaning up...")
-    db.table("project_ledger").delete().eq("id", project_id).execute()
-    db.table("user_skill_nodes").delete().eq("id", node["id"]).execute()
-    db.table("skill_usage_events").delete().eq("user_id", test_user_id).execute()
+    await db.table("project_ledger").delete().eq("id", project_id).execute()
+    await db.table("user_skill_nodes").delete().eq("id", node["id"]).execute()
+    await db.table("skill_usage_events").delete().eq("user_id", test_user_id).execute()
+    await db.table("users").delete().eq("id", test_user_id).execute()
     print("[OK] Cleanup complete")
 
 if __name__ == "__main__":

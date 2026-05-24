@@ -54,7 +54,7 @@ export function FileUploader({ category, onUploadComplete, maxSize = 5 }: FileUp
     clearInterval(interval);
     setProgress(100);
     setIsUploading(false);
-    onUploadComplete?.('https://supabase-cdn-placeholder.url/mock-file.pdf');
+    onUploadComplete?.('https://cdn-placeholder.url/mock-file.pdf');
   };
 
   return (

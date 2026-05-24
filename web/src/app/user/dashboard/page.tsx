@@ -145,7 +145,7 @@ export default function UserDashboard() {
                                             cx="108" cy="108" r="96" 
                                             fill="none" stroke="currentColor" strokeWidth="12" 
                                             strokeDasharray={603} strokeDashoffset={603 * (1 - 0.8)}
-                                            className="text-primary drop-shadow-[0_0_15px_rgba(var(--primary),0.4)]"
+                                            className="text-primary drop-shadow-[0_0_15px_hsl(var(--primary)/0.4)]"
                                             strokeLinecap="round"
                                         />
                                     </svg>

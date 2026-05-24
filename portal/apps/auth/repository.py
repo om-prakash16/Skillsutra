@@ -1,9 +1,9 @@
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 from typing import Optional, Dict, Any
 
 class AuthRepository:
     def __init__(self):
-        self.db = get_supabase()
+        self.db = get_db()
 
     def get_user_by_wallet(self, wallet_address: str) -> Optional[Dict[str, Any]]:
         res = self.db.table("users").select("*").eq("wallet_address", wallet_address).execute()

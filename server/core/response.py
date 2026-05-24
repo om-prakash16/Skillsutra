@@ -7,7 +7,8 @@ def success_response(
     data: Any = None,
     meta: Optional[Dict[str, Any]] = None,
     status_code: int = 200,
-    request_id: Optional[str] = None
+    request_id: Optional[str] = None,
+    message: Optional[str] = None
 ) -> Dict[str, Any]:
     """
     Standardized success response envelope.
@@ -21,6 +22,12 @@ def success_response(
         "api_version": settings.PROJECT_VERSION
     }
     
+    if message is not None:
+        response["message"] = message
+        if meta is None:
+            meta = {}
+        meta["message"] = message
+        
     if meta:
         response["meta"] = meta
         

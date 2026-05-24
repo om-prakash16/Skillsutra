@@ -4,7 +4,7 @@ Project Ledger Service — Business logic for projects and Proof-of-Work.
 
 from typing import List, Optional, Dict, Any
 from uuid import UUID
-from core.supabase import get_supabase
+from core.db import get_db
 from modules.skill_graph.service import SkillGraphService
 
 import os
@@ -14,7 +14,7 @@ import google.generativeai as genai
 
 class ProjectService:
     def __init__(self):
-        self.db = get_supabase()
+        self.db = get_db()
         self.skill_service = SkillGraphService()
         
         # Initialize AI for repo analysis
@@ -26,20 +26,20 @@ class ProjectService:
             self.model = None
 
     async def list_user_projects(self, user_id: UUID) -> List[Dict[str, Any]]:
-        res = self.db.table("project_ledger").select("*").eq("user_id", str(user_id)).execute()
+        res = await self.db.table("project_ledger").select("*").eq("user_id", str(user_id)).execute()
         return res.data
 
     async def create_project(self, user_id: UUID, data: Dict[str, Any]) -> Dict[str, Any]:
         data["user_id"] = str(user_id)
-        res = self.db.table("project_ledger").insert(data).execute()
+        res = await self.db.table("project_ledger").insert(data).execute()
         return res.data[0]
 
     async def update_project(self, user_id: UUID, project_id: UUID, data: Dict[str, Any]) -> Dict[str, Any]:
-        res = self.db.table("project_ledger").update(data).eq("id", str(project_id)).eq("user_id", str(user_id)).execute()
+        res = await self.db.table("project_ledger").update(data).eq("id", str(project_id)).eq("user_id", str(user_id)).execute()
         return res.data[0]
 
     async def delete_project(self, user_id: UUID, project_id: UUID) -> bool:
-        self.db.table("project_ledger").delete().eq("id", str(project_id)).eq("user_id", str(user_id)).execute()
+        await self.db.table("project_ledger").delete().eq("id", str(project_id)).eq("user_id", str(user_id)).execute()
         return True
 
     async def link_skills_to_project(self, user_id: UUID, project_id: UUID, skill_ids: List[UUID], usage_context: str = "", weight: float = 1.0):
@@ -49,7 +49,7 @@ class ProjectService:
         results = []
         for skill_id in skill_ids:
             # 1. Get the user_skill_node for this user/skill
-            node_res = self.db.table("user_skill_nodes").select("id").eq("user_id", str(user_id)).eq("skill_id", str(skill_id)).execute()
+            node_res = await self.db.table("user_skill_nodes").select("id").eq("user_id", str(user_id)).eq("skill_id", str(skill_id)).execute()
             
             if not node_res.data:
                 # If user doesn't have the skill, add it first
@@ -65,7 +65,7 @@ class ProjectService:
                 "usage_context": usage_context,
                 "contribution_weight": weight
             }
-            self.db.table("skill_project_links").upsert(link_data).execute()
+            await self.db.table("skill_project_links").upsert(link_data).execute()
 
             # 3. Trigger proof score event
             # Use the existing SkillGraphService event logger

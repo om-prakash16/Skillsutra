@@ -19,7 +19,7 @@ import {
     SelectTrigger, 
     SelectValue 
 } from "@/components/ui/select"
-import { supabase } from "@/lib/supabaseClient"
+import { db } from "@/lib/db-client"
 import { toast } from "sonner"
 import { Loader2, ShieldCheck, User as UserIcon, Mail, ShieldAlert } from "lucide-react"
 
@@ -55,7 +55,7 @@ export function EditUserModal({ user, isOpen, onClose, onSuccess }: EditUserModa
         setIsLoading(true)
         
         try {
-            const { error } = await supabase
+            const { error } = await db
                 .from('users')
                 .update({
                     full_name: formData.full_name,

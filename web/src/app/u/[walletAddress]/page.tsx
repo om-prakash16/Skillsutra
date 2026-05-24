@@ -8,7 +8,7 @@ interface PageProps {
     }
 }
 
-// Mocking the Supabase Project Ledger query
+// Mocking the Database Project Ledger query
 const getLiveLedger = async (wallet: string) => {
     return [
         { id: 1, name: "DeFi Yield Aggregator", stack: ["Solana", "Rust"], score: 98, hash: "0x89ab...cd45" },

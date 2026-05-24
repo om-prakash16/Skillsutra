@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { db } from "@/lib/db-client"
 import { JobCard } from "@/components/shared/job-card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
@@ -14,7 +14,7 @@ export function FeaturedJobs() {
 
     useEffect(() => {
         const fetchJobs = async () => {
-            const { data, error } = await supabase
+            const { data, error } = await db
                 .from('jobs')
                 .select('*')
                 .eq('is_active', true)

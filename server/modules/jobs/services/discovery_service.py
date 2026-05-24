@@ -1,6 +1,6 @@
 import logging
 from typing import List, Dict, Any, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 from core.exceptions import NotFoundError, ExternalServiceError
 from core.cache import cache_result
 
@@ -14,7 +14,7 @@ class DiscoveryService:
     @cache_result(ttl=300)
     async def get_recommended_candidates(self, job_id: str, limit: int = 10) -> List[Dict[str, Any]]:
         """AI Discovery: Matches public talent to a specific job."""
-        db = get_supabase()
+        db = get_db()
         if not db: return []
 
         # 1. Fetch Job
@@ -43,7 +43,7 @@ class DiscoveryService:
 
     async def get_jobs_with_user_scores(self, user_id: str) -> List[Dict[str, Any]]:
         """Fetches active jobs and calculates personalized AI match scores."""
-        db = get_supabase()
+        db = get_db()
         
         # Parallel fetch
         import asyncio

@@ -50,7 +50,7 @@ const defaultEvents: TimelineEvent[] = [
         title: 'Lead Protocol Engineer',
         description: 'Architected the core verification layer for The Best Hiring Tool.',
         type: 'verified',
-        tech: ['TypeScript', 'FastAPI', 'Supabase']
+        tech: ['TypeScript', 'FastAPI', 'Keycloak']
     }
 ];
 
@@ -88,7 +88,7 @@ export function SkillTimeline({ events = defaultEvents, className }: SkillTimeli
                         )}
                     >
                         {/* Dot on line */}
-                        <div className="absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-background border-2 border-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.5)] z-20 hidden md:block" />
+                        <div className="absolute left-1/2 -translate-x-1/2 w-4 h-4 bg-background border-2 border-primary rounded-full shadow-[0_0_10px_hsl(var(--primary)/0.5)] z-20 hidden md:block" />
 
                         {/* Content Card */}
                         <div className="w-full md:w-[45%]">

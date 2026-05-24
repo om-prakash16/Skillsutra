@@ -6,7 +6,7 @@ Handles project submissions, AI scoring, and on-chain hash generation.
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from typing import Optional, List
-from core.supabase import get_supabase
+from core.db import get_db
 from core.response import success_response
 from core.dependencies import get_db, get_current_user_id
 from datetime import datetime

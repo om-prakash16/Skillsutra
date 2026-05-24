@@ -2,7 +2,7 @@ import os
 import json
 from typing import Dict, Any
 from datetime import datetime
-from core.supabase import get_supabase
+from core.db import get_db
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
 
@@ -27,7 +27,7 @@ class MarketIntelligenceService:
         """
         Aggregate live demand and supply data for the platform Heatmap.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database unavailable")
 

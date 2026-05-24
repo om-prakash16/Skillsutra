@@ -1,6 +1,6 @@
 import uuid
 from typing import Dict, Any
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class AnalyticsService:
@@ -15,7 +15,7 @@ class AnalyticsService:
     @staticmethod
     async def get_user_analytics(user_id: uuid.UUID) -> Dict[str, Any]:
         """Career metrics for the candidate dashboard."""
-        db = get_supabase()
+        db = get_db()
         uid = str(user_id)
         
         import asyncio
@@ -55,7 +55,7 @@ class AnalyticsService:
     @staticmethod
     async def get_company_analytics(user_id: uuid.UUID) -> Dict[str, Any]:
         """Recruitment pipeline metrics for the company dashboard."""
-        db = get_supabase()
+        db = get_db()
         uid = str(user_id)
 
         # Jobs posted by this user
@@ -98,7 +98,7 @@ class AnalyticsService:
     @staticmethod
     async def get_admin_analytics() -> Dict[str, Any]:
         """Platform-wide health and growth metrics with 7-day trends."""
-        db = get_supabase()
+        db = get_db()
         from datetime import datetime, timedelta
 
         # 1. Totals
@@ -166,7 +166,7 @@ class AnalyticsService:
     @staticmethod
     async def get_public_stats() -> Dict[str, Any]:
         """Aggregate totals for the public landing page."""
-        db = get_supabase()
+        db = get_db()
 
         users = db.table("users").select("id", count="exact").execute()
         companies = db.table("companies").select("id", count="exact").execute()

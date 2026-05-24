@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Depends
 from typing import Dict, Any
 from modules.auth.core.enterprise_auth import require_enterprise_key
-from core.supabase import get_supabase
+from core.db import get_db
 
 router = APIRouter()
 
@@ -13,7 +13,7 @@ async def get_candidate_summary(
     """
     Enterprise-only candidate verification lookup.
     """
-    db = get_supabase()
+    db = get_db()
     if not db:
         return {"error": "DB Unavailable"}
 
@@ -79,7 +79,7 @@ async def get_verification_proof(
     """
     Detailed verification artifact for a specific skill.
     """
-    db = get_supabase()
+    db = get_db()
     if not db:
         return {"error": "DB Unavailable"}
 

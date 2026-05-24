@@ -86,8 +86,8 @@ async def handle_job_posted(data: dict):
     Triggers job alerts for candidates with 'ai_recommendations' enabled
     and a skill match > 70%.
     """
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     if not db:
         return
 
@@ -102,7 +102,7 @@ async def handle_job_posted(data: dict):
     # We fetch users and their profile_data to check for matches
     try:
         # Get users who have 'ai_recommendations' set to true in their JSONB prefs
-        # Supabase/PostgREST syntax for JSONB filter: notification_prefs->>ai_recommendations.eq.true
+        # Database/PostgREST syntax for JSONB filter: notification_prefs->>ai_recommendations.eq.true
         active_subs = (
             db.table("user_settings")
             .select("user_id, users(email, full_name, profile_data)")

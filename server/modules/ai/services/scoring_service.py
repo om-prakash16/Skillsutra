@@ -12,7 +12,7 @@ class ProofScoreService:
         """
         Calculates the aggregate Proof Score from multiple signals or by user ID.
         """
-        from core.supabase import get_supabase
+        from core.db import get_db
         
         if isinstance(arg, str):
             user_id = arg
@@ -42,7 +42,7 @@ class ProofScoreService:
             elif final_score >= 50: level = "Bronze"
             
             # Persist score
-            db = get_supabase()
+            db = get_db()
             if db:
                 await db.table("ai_scores").upsert({
                     "user_id": user_id,

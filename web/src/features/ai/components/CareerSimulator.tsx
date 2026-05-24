@@ -90,7 +90,7 @@ export function CareerSimulator() {
                                 className={cn(
                                     "p-4 rounded-xl border transition-all duration-500 flex items-center gap-4 cursor-pointer",
                                     activeIndex === idx 
-                                        ? "bg-primary/20 border-primary shadow-[0_0_20px_rgba(var(--primary),0.2)] scale-105" 
+                                        ? "bg-primary/20 border-primary shadow-[0_0_20px_hsl(var(--primary)/0.2)] scale-105" 
                                         : "bg-white/5 border-white/5 opacity-40 hover:opacity-100"
                                 )}
                                 onClick={() => setActiveIndex(idx)}

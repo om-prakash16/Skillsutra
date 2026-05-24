@@ -18,7 +18,7 @@ export function RoleSelector({ value, onChange }: RoleSelectorProps) {
                     className={cn(
                         "flex flex-col items-center justify-center rounded-2xl border-2 p-6 cursor-pointer transition-all duration-300 relative overflow-hidden group hover:scale-[1.02] active:scale-[0.98]",
                         value === "user" 
-                            ? "border-primary bg-primary/[0.08] shadow-[0_20px_40px_-15px_rgba(var(--primary),0.2)]" 
+                            ? "border-primary bg-primary/[0.08] shadow-[0_20px_40px_-15px_hsl(var(--primary)/0.2)]" 
                             : "border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10"
                     )}
                 >
@@ -50,7 +50,7 @@ export function RoleSelector({ value, onChange }: RoleSelectorProps) {
                     className={cn(
                         "flex flex-col items-center justify-center rounded-2xl border-2 p-6 cursor-pointer transition-all duration-300 relative overflow-hidden group hover:scale-[1.02] active:scale-[0.98]",
                         value === "company" 
-                            ? "border-primary bg-primary/[0.08] shadow-[0_20px_40px_-15px_rgba(var(--primary),0.2)]" 
+                            ? "border-primary bg-primary/[0.08] shadow-[0_20px_40px_-15px_hsl(var(--primary)/0.2)]" 
                             : "border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10"
                     )}
                 >

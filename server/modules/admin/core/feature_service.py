@@ -1,6 +1,6 @@
 import uuid
 from typing import List, Dict, Any
-from core.supabase import get_supabase
+from core.db import get_db
 
 # In-memory cache for feature flags to reduce DB hits
 _FEATURE_CACHE: Dict[str, bool] = {}
@@ -16,7 +16,7 @@ class FeatureFlagService:
         if feature_name in _FEATURE_CACHE and not force_refresh:
             return _FEATURE_CACHE[feature_name]
 
-        db = get_supabase()
+        db = get_db()
         response = (
             db.table("feature_flags")
             .select("is_enabled")
@@ -34,7 +34,7 @@ class FeatureFlagService:
         """
         Fetch all features for admin dashboard.
         """
-        db = get_supabase()
+        db = get_db()
         response = (
             db.table("feature_flags")
             .select("*")
@@ -49,7 +49,7 @@ class FeatureFlagService:
         Update feature status with audit logging.
         """
         global _FEATURE_CACHE
-        db = get_supabase()
+        db = get_db()
 
         db.table("feature_flags").update(
             {

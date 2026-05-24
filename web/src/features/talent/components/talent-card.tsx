@@ -81,7 +81,7 @@ export function TalentCard({ talent }: TalentCardProps) {
             </div>
             <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                 <div 
-                    className="h-full bg-primary shadow-[0_0_10px_rgba(var(--primary),0.5)] transition-all duration-1000" 
+                    className="h-full bg-primary shadow-[0_0_10px_hsl(var(--primary)/0.5)] transition-all duration-1000" 
                     style={{ width: `${talent.completion}%` }}
                 />
             </div>

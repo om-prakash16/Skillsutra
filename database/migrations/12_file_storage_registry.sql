@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS public.files (
     user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
     category TEXT NOT NULL CHECK (category IN ('avatar', 'resume', 'portfolio', 'certificate', 'logo', 'nft_metadata')),
     file_name TEXT NOT NULL,
-    storage_path TEXT NOT NULL UNIQUE, -- Supabase Bucket Path
+    storage_path TEXT NOT NULL UNIQUE, -- Storage Path
     ipfs_cid TEXT UNIQUE, -- Optional; for decentralized storage
     mime_type TEXT NOT NULL,
     size_bytes BIGINT NOT NULL,

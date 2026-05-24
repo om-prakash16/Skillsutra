@@ -6,7 +6,7 @@ import os
 import json
 import re
 from typing import Dict, Any, List, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class AISkillExtractor:
@@ -137,7 +137,7 @@ Return ONLY a valid JSON array. No markdown."""
 
     async def _match_to_taxonomy(self, extracted: List[Dict]) -> List[Dict[str, Any]]:
         """Match extracted skills against the taxonomy for normalization."""
-        db = get_supabase()
+        db = get_db()
         if not db:
             return extracted
 

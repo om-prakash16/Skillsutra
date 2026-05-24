@@ -47,7 +47,7 @@ export default function AdminLayout({
                             transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                             className="absolute -top-12 -right-12 w-24 h-24 bg-primary/20 blur-2xl rounded-full"
                         />
-                        <Zap className="h-16 w-16 text-primary relative z-10 drop-shadow-[0_0_15px_rgba(var(--primary),0.8)]" />
+                        <Zap className="h-16 w-16 text-primary relative z-10 drop-shadow-[0_0_15px_hsl(var(--primary)/0.8)]" />
                     </div>
                 </motion.div>
 

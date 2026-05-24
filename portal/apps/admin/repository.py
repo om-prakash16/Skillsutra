@@ -1,10 +1,10 @@
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 from typing import Dict, Any, List, Optional
 import asyncio
 
 class AdminRepository:
     def __init__(self):
-        self.db = get_supabase()
+        self.db = get_db()
 
     async def get_system_metrics(self) -> Dict[str, Any]:
         tasks = [

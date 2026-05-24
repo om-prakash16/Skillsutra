@@ -150,8 +150,8 @@ async def get_related_skills(
     related = await graph.bfs_traverse(skill_id, depth=depth)
 
     # Resolve IDs back to names
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     named = {}
     if db and related:
         ids = list(related.keys())

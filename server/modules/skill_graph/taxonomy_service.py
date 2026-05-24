@@ -3,14 +3,14 @@ Taxonomy Service — Master skill dictionary CRUD and fuzzy search.
 """
 
 from typing import Dict, Any, List, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class TaxonomyService:
     """Manages the skill_taxonomy table: CRUD, search, hierarchy."""
 
     def _get_db(self):
-        return get_supabase()
+        return get_db()
 
     async def list_skills(
         self, category: Optional[str] = None, page: int = 1, page_size: int = 50

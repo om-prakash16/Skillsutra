@@ -10,15 +10,15 @@ from dotenv import load_dotenv
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 load_dotenv()
 
-from supabase import create_client
+# from database import create_client
 
 # -- Configuration --
-SUPABASE_URL = os.getenv("SUPABASE_URL", "")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY", "") 
-SERVICE_KEY  = os.getenv("SUPABASE_SERVICE_KEY", "")
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+DATABASE_KEY = os.getenv("DATABASE_KEY", "") 
+SERVICE_KEY  = os.getenv("DATABASE_SERVICE_KEY", "")
 
-key_to_use = SERVICE_KEY if SERVICE_KEY else SUPABASE_KEY
-db = create_client(SUPABASE_URL, key_to_use) if SUPABASE_URL and key_to_use else None
+key_to_use = SERVICE_KEY if SERVICE_KEY else DATABASE_KEY
+db = create_client(DATABASE_URL, key_to_use) if DATABASE_URL and key_to_use else None
 
 # -- Data Pools --
 FIRST_NAMES = ["Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Heidi", "Ivan", "Judy", "Kevin", "Laura", "Mike", "Nina", "Oscar", "Paul", "Quinn", "Rose", "Steve", "Tara"]

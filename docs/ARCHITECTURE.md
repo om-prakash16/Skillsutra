@@ -18,7 +18,7 @@ Core Services Layer
  ├── Web3 Credential Engine
         ↓
 Data Layer
- ├── PostgreSQL (Supabase)
+ ├── PostgreSQL (PostgreSQL)
  ├── Vector Database (pgvector)
  ├── Redis Cache
         ↓
@@ -102,5 +102,5 @@ stored in candidate wallet
 ---
 
 ## 🛠️ Security Infrastructure
-- **Role-Based Access Control (RBAC)**: Enforced at both the FastAPI API Gateway level and Supabase RLS level.
+- **Role-Based Access Control (RBAC)**: Enforced at both the FastAPI API Gateway level and PostgreSQL RLS level.
 - **Audit Logging**: Every administrative toggle and on-chain sync is strictly audited for transparency.

@@ -19,7 +19,7 @@ import {
     SelectTrigger, 
     SelectValue 
 } from "@/components/ui/select"
-import { supabase } from "@/lib/supabaseClient"
+import { db } from "@/lib/db-client"
 import { toast } from "sonner"
 import { Loader2, Briefcase, Globe, Info, Zap } from "lucide-react"
 
@@ -57,7 +57,7 @@ export function EditJobModal({ job, isOpen, onClose, onSuccess }: EditJobModalPr
         setIsLoading(true)
         
         try {
-            const { error } = await supabase
+            const { error } = await db
                 .from('jobs')
                 .update({
                     title: formData.title,

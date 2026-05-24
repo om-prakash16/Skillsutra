@@ -1,6 +1,6 @@
 from typing import Dict, Any
 from datetime import datetime
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class GrowthTrackingService:
@@ -13,7 +13,7 @@ class GrowthTrackingService:
         """
         Retrieves growth trajectory and achieved milestones for a user.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database unavailable")
 
@@ -85,7 +85,7 @@ class GrowthTrackingService:
         """
         Hook to check if a user just met a milestone threshold.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return
 

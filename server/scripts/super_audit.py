@@ -1,7 +1,7 @@
 import asyncio
 import sys
 import uuid
-from core.supabase import get_supabase
+from core.db import get_db
 from modules.users.core.service import UserService
 from modules.search.service import SearchService
 from modules.admin.core.service import AdminService
@@ -16,7 +16,7 @@ async def run_super_audit():
     print("🚀 --- BEST HIRING TOOL: GLOBAL SYSTEM AUDIT --- 🚀")
     from db.engine import init_db
     await init_db()
-    db = get_supabase()
+    db = get_db()
     test_uid = str(uuid.uuid4())
     
     try:

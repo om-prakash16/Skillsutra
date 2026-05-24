@@ -41,7 +41,7 @@ export function FilterSidebar({ onFilterChange, type }: FilterSidebarProps) {
             </AccordionTrigger>
             <AccordionContent className="space-y-8 pt-4">
               <div className="flex items-baseline justify-between">
-                <span className="text-4xl font-black italic text-primary drop-shadow-[0_0_15px_rgba(var(--primary),0.3)]">{minScore[0]}</span>
+                <span className="text-4xl font-black italic text-primary drop-shadow-[0_0_15px_hsl(var(--primary)/0.3)]">{minScore[0]}</span>
                 <Zap className="w-5 h-5 fill-primary text-primary animate-pulse" />
               </div>
               <Slider 

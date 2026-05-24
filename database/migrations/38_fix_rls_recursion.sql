@@ -8,7 +8,7 @@ DROP POLICY IF EXISTS "Members can view team" ON public.company_members;
 
 -- 2. Implement a non-recursive policy for team visibility
 -- We use a subquery directed specifically at the row level check without re-triggering the same policy
--- In Supabase, a common pattern is to check user_id directly for individual access
+-- In PostgreSQL, a common pattern is to check user_id directly for individual access
 -- and use a SECURITY DEFINER function for complex cross-row checks to avoid recursion.
 
 CREATE OR REPLACE FUNCTION public.is_company_member(cid UUID)

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from typing import Optional, List, Dict, Any
-from core.supabase import get_supabase
+from core.db import get_db
 from core.response import success_response
 from core.dependencies import get_db
 from modules.auth.core.guards import require_admin

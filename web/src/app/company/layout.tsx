@@ -26,7 +26,7 @@ export default function CompanyLayout({
                     <div className="absolute inset-0 bg-primary/30 blur-[120px] rounded-full" />
                     <div className="bg-white/5 p-8 rounded-[2.5rem] border border-white/10 relative backdrop-blur-3xl shadow-2xl shadow-black/50 overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent opacity-50" />
-                        <Building2 className="h-16 w-16 text-primary relative z-10 drop-shadow-[0_0_15px_rgba(var(--primary),0.8)]" />
+                        <Building2 className="h-16 w-16 text-primary relative z-10 drop-shadow-[0_0_15px_hsl(var(--primary)/0.8)]" />
                     </div>
                 </motion.div>
 

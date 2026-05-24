@@ -79,8 +79,8 @@ async def list_users(
     admin=Depends(require_admin)
 ):
     """List all registered users."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("users").select("*, profiles(*)").limit(limit).execute()
     return success_response(data=res.data)
 
@@ -91,8 +91,8 @@ async def update_user(
     admin=Depends(require_admin)
 ):
     """Update user metadata, status, or role."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("users").update(payload).eq("wallet_address", wallet).execute()
     return success_response(data=res.data[0] if res.data else {}, message="User updated successfully")
 
@@ -102,8 +102,8 @@ async def flag_user(
     admin=Depends(require_admin)
 ):
     """Flag a user for moderator review."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     target_wallet = payload.get("wallet") or payload.get("wallet_address")
     reason = payload.get("reason", "Suspicious activity detected")
     severity = payload.get("severity", "medium")
@@ -151,8 +151,8 @@ async def update_schema_field(
     admin=Depends(require_admin)
 ):
     """Update an existing schema field."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("profile_schema_fields").update(field).eq("id", id).execute()
     return success_response(data=res.data[0] if res.data else {}, message="Schema field updated")
 
@@ -162,8 +162,8 @@ async def delete_schema_field(
     admin=Depends(require_admin)
 ):
     """Delete a schema field."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     db.table("profile_schema_fields").delete().eq("id", id).execute()
     return success_response(message="Schema field deleted")
 
@@ -171,24 +171,24 @@ async def delete_schema_field(
 @router.get("/companies")
 async def get_companies(admin=Depends(require_admin)):
     """Fetch all registered corporate entities."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("companies").select("*").execute()
     return success_response(data=res.data)
 
 @router.patch("/companies/{id}/verify")
 async def verify_company(id: str, admin=Depends(require_admin)):
     """Mark a company as verified."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("companies").update({"verified": True}).eq("id", id).execute()
     return success_response(data=res.data[0] if res.data else {}, message="Company verified successfully")
 
 @router.delete("/companies/{id}")
 async def delete_company(id: str, admin=Depends(require_admin)):
     """Delete a company."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     db.table("companies").delete().eq("id", id).execute()
     return success_response(message="Company deleted successfully")
 
@@ -196,24 +196,24 @@ async def delete_company(id: str, admin=Depends(require_admin)):
 @router.get("/all-jobs")
 async def get_all_jobs(admin=Depends(require_admin)):
     """Fetch all job posts globally."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("jobs").select("*, companies(name)").execute()
     return success_response(data=res.data)
 
 @router.delete("/jobs/{id}")
 async def delete_job(id: str, admin=Depends(require_admin)):
     """Delete a job post."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     db.table("jobs").delete().eq("id", id).execute()
     return success_response(message="Job deleted successfully")
 
 @router.get("/all-applications")
 async def get_all_applications(admin=Depends(require_admin)):
     """Fetch all applications globally."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("applications").select("*, jobs(title), users(full_name)").execute()
     return success_response(data=res.data)
 
@@ -221,8 +221,8 @@ async def get_all_applications(admin=Depends(require_admin)):
 @router.get("/skills")
 async def get_skills(admin=Depends(require_admin)):
     """Fetch global skills taxonomy dictionary."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("skills").select("*").execute()
     return success_response(data=res.data)
 
@@ -232,8 +232,8 @@ async def create_skill(
     admin=Depends(require_admin)
 ):
     """Add a new skill to the global taxonomy."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("skills").insert(payload).execute()
     return success_response(data=res.data[0] if res.data else {}, message="Skill created successfully")
 
@@ -241,8 +241,8 @@ async def create_skill(
 @router.get("/blockchain/transactions")
 async def get_blockchain_transactions(admin=Depends(require_admin)):
     """Fetch indexed ledger transactions."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("blockchain_transactions").select("*").order("timestamp", desc=True).execute()
     return success_response(data=res.data)
 
@@ -253,8 +253,8 @@ async def get_reports(
     admin=Depends(require_admin)
 ):
     """Get all moderation reports (users and jobs)."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     
     uq = db.table("user_reports").select("*, users!reporter_id(full_name), reported:users!reported_user_id(full_name)")
     if status:
@@ -299,8 +299,8 @@ async def resolve_report(
     admin=Depends(require_admin)
 ):
     """Resolve user or job report."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     report_id = payload.get("id") or payload.get("report_id")
     report_type = payload.get("type", "user")
     status = payload.get("status", "resolved")
@@ -316,8 +316,8 @@ async def resolve_report(
 @router.get("/subscriptions")
 async def get_subscriptions(admin=Depends(require_admin)):
     """Fetch all platform subscription tiers."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("platform_subscriptions").select("*").execute()
     return success_response(data=res.data)
 
@@ -328,8 +328,8 @@ async def update_subscription(
     admin=Depends(require_admin)
 ):
     """Update subscription settings for a tier."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("platform_subscriptions").update(payload).eq("id", id).execute()
     return success_response(data=res.data[0] if res.data else {}, message="Subscription updated successfully")
 
@@ -340,8 +340,8 @@ async def get_skill_flags(
     admin=Depends(require_admin)
 ):
     """Get all flagged skill certifications in moderation queue."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     q = db.table("skill_verification_flags").select("*")
     if status:
         q = q.eq("status", status)
@@ -355,8 +355,8 @@ async def review_skill_flag(
     admin=Depends(require_admin)
 ):
     """Approve or reject a flagged skill verification badge."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     status = payload.get("status", "approved")
     notes = payload.get("review_notes", "")
     reviewer_wallet = admin.get("wallet_address", "")
@@ -376,8 +376,8 @@ async def get_tickets(
     admin=Depends(require_admin)
 ):
     """Get all support tickets."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     q = db.table("support_tickets").select("*, users!user_id(full_name)")
     if status:
         q = q.eq("status", status)
@@ -391,8 +391,8 @@ async def update_ticket(
     admin=Depends(require_admin)
 ):
     """Update priority, status, or assignee of a ticket."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     payload["updated_at"] = "now()"
     res = db.table("support_tickets").update(payload).eq("id", id).execute()
     return success_response(data=res.data[0] if res.data else {}, message="Ticket updated successfully")
@@ -401,8 +401,8 @@ async def update_ticket(
 @router.get("/audit-logs")
 async def get_audit_logs(admin=Depends(require_admin)):
     """Fetch immutable administrator governance actions logs."""
-    from core.supabase import get_supabase
-    db = get_supabase()
+    from core.db import get_db
+    db = get_db()
     res = db.table("staff_audit_logs").select("*").order("created_at", desc=True).execute()
     return success_response(data=res.data)
 

@@ -209,10 +209,10 @@ export default function EnterpriseApiPage() {
                                 exit={{ opacity: 0, scale: 0.95 }}
                                 className="fixed inset-0 z-[100] flex items-center justify-center p-6 backdrop-blur-sm bg-black/60"
                             >
-                                <Card className="w-full max-w-lg bg-[#0a0a0a] border-primary/30 shadow-[0_0_50px_rgba(var(--primary),0.2)] overflow-hidden">
+                                <Card className="w-full max-w-lg bg-[#0a0a0a] border-primary/30 shadow-[0_0_50px_hsl(var(--primary)/0.2)] overflow-hidden">
                                     <div className="h-1 bg-gradient-to-r from-primary to-blue-500" />
                                     <CardHeader className="text-center pt-8">
-                                        <div className="bg-primary/20 w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-primary/30 shadow-[0_0_20px_rgba(var(--primary),0.3)]">
+                                        <div className="bg-primary/20 w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-4 border border-primary/30 shadow-[0_0_20px_hsl(var(--primary)/0.3)]">
                                             <ShieldCheck className="w-8 h-8 text-primary" />
                                         </div>
                                         <CardTitle className="text-2xl font-black italic uppercase tracking-tighter">Security Credentials Generated</CardTitle>

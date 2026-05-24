@@ -1,9 +1,9 @@
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 from typing import List, Dict, Any
 
 class MatchingRepository:
     def __init__(self):
-        self.db = get_supabase()
+        self.db = get_db()
 
     def get_active_jobs(self, limit: int = 100) -> List[Dict[str, Any]]:
         res = self.db.table("jobs").select("*").eq("status", "open").limit(limit).execute()

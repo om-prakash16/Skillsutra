@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from typing import Optional, List
 from modules.auth.core.service import get_current_user
 from modules.ai.services.github_service import github_scanner
-from core.supabase import get_supabase
+from core.db import get_db
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -77,7 +77,7 @@ async def get_github_activity(
         metrics = await github_scanner.analyze_repositories(username)
         
         # Persist stats in github_contributions table
-        db = get_supabase()
+        db = get_db()
         if db:
             db.table("github_contributions").upsert({
                 "user_id": user_id,

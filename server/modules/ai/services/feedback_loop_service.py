@@ -5,7 +5,7 @@ to improve matching accuracy over time.
 """
 
 from typing import Dict, Any
-from core.supabase import get_supabase
+from core.db import get_db
 import datetime
 
 
@@ -42,7 +42,7 @@ class FeedbackLoopService:
             "review_submitted": False,
         }
 
-        db = get_supabase()
+        db = get_db()
         if db:
             try:
                 db.table("activity_events").insert(
@@ -97,7 +97,7 @@ class FeedbackLoopService:
             )
 
         # Apply Proof-Score adjustment in DB
-        db = get_supabase()
+        db = get_db()
         if db:
             try:
                 user_resp = (

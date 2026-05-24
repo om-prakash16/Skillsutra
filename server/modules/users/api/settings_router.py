@@ -6,7 +6,7 @@ Manages notification preferences, privacy rules, and job preferences.
 from fastapi import APIRouter, Depends, HTTPException, Body
 from typing import Dict, Any
 from modules.auth.core.service import get_current_user
-from core.supabase import get_supabase
+from core.db import get_db
 
 router = APIRouter()
 
@@ -14,7 +14,7 @@ router = APIRouter()
 async def get_my_settings(current_user=Depends(get_current_user)):
     """Fetch the settings for the currently authenticated user."""
     user_id = current_user["sub"]
-    db = get_supabase()
+    db = get_db()
     if not db:
         raise HTTPException(status_code=500, detail="Database unavailable")
 
@@ -46,7 +46,7 @@ async def update_settings(
 ):
     """Update user-specific preferences or privacy rules."""
     user_id = current_user["sub"]
-    db = get_supabase()
+    db = get_db()
     if not db:
         raise HTTPException(status_code=500, detail="Database unavailable")
 

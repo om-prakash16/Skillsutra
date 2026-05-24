@@ -37,7 +37,7 @@ export default function CandidateApplications() {
   const getStatusColor = (status: string) => {
     switch(status.toLowerCase()) {
         case 'applied': return 'bg-white/5 text-white/50 border-white/10';
-        case 'shortlisted': return 'bg-primary/10 text-primary border-primary/20 shadow-[0_0_10px_rgba(var(--primary),0.2)]';
+        case 'shortlisted': return 'bg-primary/10 text-primary border-primary/20 shadow-[0_0_10px_hsl(var(--primary)/0.2)]';
         case 'interview': return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
         case 'hired': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
         case 'rejected': return 'bg-rose-500/10 text-rose-500 border-rose-500/20';

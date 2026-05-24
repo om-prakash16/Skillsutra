@@ -55,7 +55,7 @@ async def evaluate_soft_skills(
         scenario_type=payload.scenario_id
     )
 
-    # Persist to Supabase
+    # Persist to Database
     db = await get_db()
     try:
         db.table("soft_skill_assessments").upsert({

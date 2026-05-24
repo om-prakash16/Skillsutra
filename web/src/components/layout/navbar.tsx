@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -33,6 +34,11 @@ export function Navbar() {
     const { getVal, getJson } = useCMS()
     const scrolled = useScrolled()
     const pathname = usePathname()
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+
+    useEffect(() => {
+        setIsMobileMenuOpen(false)
+    }, [pathname])
 
     const navLinks = getJson("navbar", "links") || [
         { href: "/verify", label: "Verify Resume" },
@@ -60,7 +66,7 @@ export function Navbar() {
                 {/* Logo - Hide on Dashboard as Sidebar has logo */}
                 {!isDashboard && (
                     <Link href="/" className="flex items-center gap-3 group shrink-0">
-                        <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-all shadow-[0_0_20px_rgba(var(--primary),0.15)] backdrop-blur-md border border-primary/20 shrink-0">
+                        <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-all shadow-[0_0_20px_hsl(var(--primary)/0.15)] backdrop-blur-md border border-primary/20 shrink-0">
                             <ShieldCheck className="w-6 h-6 text-primary fill-primary/10" />
                         </div>
                         <span className="text-xl font-bold font-heading tracking-tight text-gradient leading-none">
@@ -191,7 +197,7 @@ export function Navbar() {
 
                 {/* Mobile Menu */}
                 <div className="md:hidden flex items-center gap-2">
-                    <Sheet>
+                    <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                         <SheetTrigger asChild>
                             <Button variant="ghost" size="icon">
                                 <Menu className="w-5 h-5" />

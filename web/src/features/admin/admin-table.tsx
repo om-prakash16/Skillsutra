@@ -122,7 +122,7 @@ export function AdminTableRow({
             )}
             {children}
             {isSelected && (
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary shadow-[0_0_8px_rgba(var(--primary),0.5)]" />
+                <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.5)]" />
             )}
         </motion.tr>
     )

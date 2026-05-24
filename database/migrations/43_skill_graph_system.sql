@@ -182,7 +182,7 @@ INSERT INTO public.skill_taxonomy (name, slug, category) VALUES
 ('Postman', 'postman', 'tool'), ('VS Code', 'vscode', 'tool'), ('Jira', 'jira', 'tool'),
 -- Databases
 ('PostgreSQL', 'postgresql', 'database'), ('MongoDB', 'mongodb', 'database'), ('Redis', 'redis', 'database'),
-('MySQL', 'mysql', 'database'), ('Supabase', 'supabase', 'database'), ('Firebase', 'firebase', 'database'),
+('MySQL', 'mysql', 'database'), ('PostgreSQL', 'postgresql', 'database'), ('Firebase', 'firebase', 'database'),
 ('DynamoDB', 'dynamodb', 'database'), ('Elasticsearch', 'elasticsearch', 'database'),
 -- Cloud
 ('AWS', 'aws', 'cloud'), ('Google Cloud', 'gcp', 'cloud'), ('Azure', 'azure', 'cloud'),
@@ -268,3 +268,4 @@ COMMENT ON TABLE public.user_skill_nodes IS 'Per-user skill graph nodes with pro
 COMMENT ON TABLE public.skill_usage_events IS 'Temporal skill usage events for proof score calculation.';
 COMMENT ON TABLE public.skill_endorsements IS 'Peer endorsements for skill verification.';
 COMMENT ON TABLE public.job_skill_requirements IS 'Structured job-to-skill mapping replacing TEXT[] arrays.';
+

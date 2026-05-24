@@ -5,7 +5,7 @@ import hashlib
 from typing import Dict, Any, List, Optional
 from datetime import datetime
 
-from core.supabase import get_supabase
+from core.db import get_db
 from core.exceptions import ExternalServiceError, NotFoundError
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
@@ -50,7 +50,7 @@ class SimulationEngineService:
         
         sim_id = f"sim_{hashlib.md5(f'{wallet}{job_title}{datetime.utcnow()}'.encode()).hexdigest()[:12]}"
         
-        db = get_supabase()
+        db = get_db()
         if db:
             try:
                 db.table("simulation_sessions").insert({
@@ -95,7 +95,7 @@ class SimulationEngineService:
             input_variables=["role", "description", "criteria", "code"],
         )
 
-        db = get_supabase()
+        db = get_db()
         role = "backend"
         desc = "General Backend Task"
         crit = "Functionality and Clean Code"

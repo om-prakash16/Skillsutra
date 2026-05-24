@@ -1,12 +1,12 @@
 from typing import List, Dict, Any, Optional
 from uuid import UUID
-from core.supabase import get_supabase
+from core.db import get_db
 from modules.notifications.core.service import NotificationService
 
 class CompetitionService:
     @staticmethod
     async def create_competition(data: Dict[str, Any], user_id: UUID) -> Dict[str, Any]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database service unavailable")
 
@@ -31,7 +31,7 @@ class CompetitionService:
 
     @staticmethod
     async def get_competitions() -> List[Dict[str, Any]]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
 
@@ -40,7 +40,7 @@ class CompetitionService:
 
     @staticmethod
     async def update_preferences(user_id: UUID, data: Dict[str, Any]) -> Dict[str, Any]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database service unavailable")
 
@@ -61,7 +61,7 @@ class CompetitionService:
 
     @staticmethod
     async def get_preferences(user_id: UUID) -> Dict[str, Any]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             return {}
 
@@ -73,7 +73,7 @@ class CompetitionService:
         """
         Finds users whose preferences match the competition and sends them a notification.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database service unavailable")
 
@@ -121,7 +121,7 @@ class CompetitionService:
 
     @staticmethod
     async def save_competition(user_id: UUID, comp_id: UUID) -> Dict[str, Any]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database unavailable")
         
@@ -137,7 +137,7 @@ class CompetitionService:
 
     @staticmethod
     async def get_saved_competitions(user_id: UUID) -> List[Dict[str, Any]]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
         res = db.table("saved_competitions").select("*, competitions(*)").eq("user_id", str(user_id)).execute()
@@ -145,7 +145,7 @@ class CompetitionService:
 
     @staticmethod
     async def create_team(user_id: UUID, comp_id: UUID, name: str) -> Dict[str, Any]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database unavailable")
         
@@ -172,7 +172,7 @@ class CompetitionService:
 
     @staticmethod
     async def join_team(user_id: UUID, team_id: UUID, role: str) -> Dict[str, Any]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database unavailable")
             
@@ -200,7 +200,7 @@ class CompetitionService:
 
     @staticmethod
     async def invite_member(leader_id: UUID, team_id: UUID, invitee_id: UUID, role: str) -> Dict[str, Any]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database unavailable")
             
@@ -229,7 +229,7 @@ class CompetitionService:
 
     @staticmethod
     async def get_teams(comp_id: UUID) -> List[Dict[str, Any]]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
         # Fetch teams and join leader full_name
@@ -243,7 +243,7 @@ class CompetitionService:
 
     @staticmethod
     async def get_my_teams(user_id: UUID) -> List[Dict[str, Any]]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
         
@@ -263,7 +263,7 @@ class CompetitionService:
 
     @staticmethod
     async def approve_member(leader_id: UUID, team_id: UUID, member_id: UUID, approve: bool) -> bool:
-        db = get_supabase()
+        db = get_db()
         if not db:
             return False
             

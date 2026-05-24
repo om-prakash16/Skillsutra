@@ -1,5 +1,5 @@
 from typing import Dict, Any, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 from core.events import bus
 from modules.notifications.core.service import NotificationService
 
@@ -16,7 +16,7 @@ class IdentityProofService:
         """
         Submit a document for identity verification.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("DB unavailable")
 
@@ -51,7 +51,7 @@ class IdentityProofService:
         """
         Approve or reject a user's identity proof.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("DB unavailable")
 

@@ -88,7 +88,7 @@ The global hiring market is fundamentally broken:
 
 
 ### 🔐 Enterprise Authentication & RBAC
-- **Google OAuth + Supabase Auth**: Secure SSO with session management
+- **Google OAuth + PostgreSQL Auth**: Secure SSO with session management
 - **Three-Tier Role System**: `User` (candidate) · `Company` (recruiter) · `Admin` (governance)
 - **Centralized Guards**: All backend endpoints protected by reusable FastAPI dependency guards
 - **JWT Token Management**: Short-lived access tokens with automatic refresh
@@ -189,9 +189,9 @@ The global hiring market is fundamentally broken:
 | **Auth** | Local JWT Auth + Google OAuth | Secured session token management |
 | **Deployment** | Vercel (Frontend) + Docker | Zero-config, edge-optimized |
 
-### 🛢️ Unified Local PostgreSQL Emulator (Supabase Emulation)
+### 🛢️ Unified Local PostgreSQL Emulator (PostgreSQL Emulation)
 
-To make SkillSutra 100% self-contained and run-anywhere without external cloud dependencies, we developed a powerful **Supabase Client API Emulator** (`server/core/postgres_adapter.py`) using `asyncpg`. 
+To make SkillSutra 100% self-contained and run-anywhere without external cloud dependencies, we developed a powerful **Database client API Emulator** (`server/core/postgres_adapter.py`) using `asyncpg`. 
 
 - **Seamless Emulation**: Proxies all `db.table().select().eq().execute()` queries directly into optimized native PostgreSQL queries thread-safely.
 - **Native Full-Text Search (FTS)**: Translates `.text_search("fts", query)` transparently to PostgreSQL `@@ websearch_to_tsquery('english', $X)` on the denormalized database indexes.
@@ -374,21 +374,7 @@ All endpoints are versioned under `/api/v1/`. Interactive documentation is avail
 
 ### 🧪 Testing Guide for Judges
 
-To fully evaluate the platform's multi-sided marketplace without needing a Google Account, we have implemented **1-Click Demo Environments**.
-
-#### How to Access:
-1. Navigate to the Login Page (`/login`).
-2. Look for the **🧪 1-Click Demo Environments** section at the bottom.
-3. Click on the role you wish to test:
-
-- **👤 Candidate (User Role)**
-  Instantly logs you in as a candidate. You can view the AI Proof Score, navigate to `/user/profile`, and test the **GitHub Pull Requests Vault**. (Ensure you enter a valid GitHub username first).
-
-- **🏢 Company (Recruiter Role)**
-  Instantly logs you in as a registered company. Navigate to the **Company Hub** to post jobs, view applicant Proof Scores, and use the AI Matching Engine.
-
-- **🛡️ Admin (Governance Role)**
-  Instantly logs you in with elevated privileges. Unlocks the `/admin` dashboard where you can moderate users, verify companies, and edit the live CMS content (which updates the landing page without code deploys).
+To fully evaluate the platform's multi-sided marketplace, you can test all the different roles by signing up with your Google account. We recommend registering as a Candidate first, and then using the Admin interface to change your own role to test the Company and Admin features.
 
 ---
 

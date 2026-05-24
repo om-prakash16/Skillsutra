@@ -59,7 +59,7 @@ GROUP BY
     u.id, u.username, u.reputation_score, u.bio;
 
 -- 3. pgvector placeholder (If extension exists)
--- Uncomment for production if pgvector is enabled in Supabase
+-- Uncomment for production if pgvector is enabled
 -- CREATE INDEX IF NOT EXISTS idx_users_embedding ON public.users USING ivfflat (embedding vector_cosine_ops);
 
 -- 4. Sorting & Filter Optimization Indexes

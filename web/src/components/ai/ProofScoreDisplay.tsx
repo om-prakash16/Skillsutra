@@ -31,7 +31,7 @@ export function ProofScoreDisplay({ scores, isLoading }: ProofScoreProps) {
   return (
     <Card className="glass overflow-hidden relative border-t-primary/20 backdrop-blur-2xl rounded-3xl">
       <CardHeader className="text-center pt-10 pb-2 space-y-6">
-        <div className="mx-auto inline-flex items-center justify-center p-4 rounded-2xl bg-primary/20 border border-primary/30 shadow-[0_0_30px_rgba(var(--primary),0.2)]">
+        <div className="mx-auto inline-flex items-center justify-center p-4 rounded-2xl bg-primary/20 border border-primary/30 shadow-[0_0_30px_hsl(var(--primary)/0.2)]">
           <Zap className="w-10 h-10 text-primary" />
         </div>
         <div>

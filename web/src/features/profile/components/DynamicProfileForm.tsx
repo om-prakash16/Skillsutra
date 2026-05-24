@@ -118,7 +118,7 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
             {[1, 2, 3, 4, 5].map((s) => (
                 <div 
                   key={s} 
-                  className={`h-1 w-12 rounded-full transition-all ${s <= step ? 'bg-primary shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]' : 'bg-muted'}`} 
+                  className={`h-1 w-12 rounded-full transition-all ${s <= step ? 'bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.5)]' : 'bg-muted'}`} 
                 />
             ))}
          </div>
@@ -355,7 +355,7 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
           {step === 5 && (
              <div className="space-y-6">
                 <div className="space-y-4 text-center py-10">
-                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 border border-primary/20 shadow-[0_0_20px_rgba(var(--primary-rgb),0.2)]">
+                    <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4 border border-primary/20 shadow-[0_0_20px_hsl(var(--primary)/0.2)]">
                         <Sparkles className="w-10 h-10 text-primary animate-pulse" />
                     </div>
                     <h3 className="text-2xl font-black tracking-tight font-heading">Ready for Verification</h3>

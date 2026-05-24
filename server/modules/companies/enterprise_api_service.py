@@ -1,7 +1,7 @@
 import secrets
 import hashlib
 from typing import Dict, Any, Optional, List
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class EnterpriseApiService:
@@ -23,7 +23,7 @@ class EnterpriseApiService:
         raw_key = f"sk_{secrets.token_urlsafe(32)}"
         key_hash = hashlib.sha256(raw_key.encode()).hexdigest()
 
-        db = get_supabase()
+        db = get_db()
         if db:
             db.table("enterprise_api_keys").insert(
                 {
@@ -46,7 +46,7 @@ class EnterpriseApiService:
 
         key_hash = hashlib.sha256(api_key.encode()).hexdigest()
 
-        db = get_supabase()
+        db = get_db()
         if not db:
             return None
 
@@ -72,7 +72,7 @@ class EnterpriseApiService:
         """
         List all API keys for a specific company.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
 
@@ -90,7 +90,7 @@ class EnterpriseApiService:
         """
         Deactivate an API key.
         """
-        db = get_supabase()
+        db = get_db()
         if db:
             db.table("enterprise_api_keys").update({"is_active": False}).eq(
                 "id", key_id

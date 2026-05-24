@@ -4,7 +4,7 @@ from typing import List, Dict, Any
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import PromptTemplate
 from modules.ai.models import AIAnalysisResponse, SkillGapResponse, AIScoreResponse
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class EvaluationService:
@@ -103,7 +103,7 @@ class EvaluationService:
         proof_score = round(proof_score, 2)
 
         # Persistence (SECTION 7 & 9)
-        db = get_supabase()
+        db = get_db()
         if db:
             # 1. Update latest state
             db.table("ai_scores").upsert(

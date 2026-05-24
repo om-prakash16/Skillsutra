@@ -36,9 +36,9 @@ async def get_id_status(
     try:
         target_uid = user_id or current_user["sub"]
         # Standard implementation would fetch from user_identities
-        from core.supabase import get_supabase
+        from core.db import get_db
 
-        sb = get_supabase()
+        sb = get_db()
         res = (
             sb.table("user_identities").select("*").eq("user_id", target_uid).execute()
         )

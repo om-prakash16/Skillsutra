@@ -1,6 +1,6 @@
 import uuid
 from typing import List, Dict, Any, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 from modules.notifications.core.service import NotificationService
 
 
@@ -23,7 +23,7 @@ class JobService:
         """
         Create a job post.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database service unavailable")
         
@@ -83,7 +83,7 @@ class JobService:
         """
         Public job board with AI match score preview. Optimized with parallel data fetching.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
 
@@ -129,7 +129,7 @@ class JobService:
         """
         Fetch job details with company info.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return {}
         try:
@@ -150,7 +150,7 @@ class JobService:
         """
         Application Flow + AI Match Score. Parallelized data retrieval.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database service unavailable")
 
@@ -274,7 +274,7 @@ class JobService:
         """
         Update application status (Shortlist, Hire, etc.)
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return {}
 
@@ -329,7 +329,7 @@ class JobService:
         """
         Fetch applications for a company's jobs, optionally filtered by job_id.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
 
@@ -351,7 +351,7 @@ class JobService:
         """
         Save a job for later review.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database service unavailable")
 
@@ -380,7 +380,7 @@ class JobService:
         """
         Remove a job from saved list.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return False
 
@@ -398,7 +398,7 @@ class JobService:
         """
         Fetch all jobs saved by the candidate.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
 
@@ -417,7 +417,7 @@ class JobService:
         """
         AI Discovery: Find best-fit public talent for a job.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
 
@@ -459,7 +459,7 @@ class JobService:
         """
         Fetch all jobs for a company with application metadata.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
 
@@ -502,7 +502,7 @@ class JobService:
         """
         Record assessment results and update application score/status.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database unavailable")
 

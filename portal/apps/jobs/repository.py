@@ -1,9 +1,9 @@
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 from typing import List, Dict, Any, Optional
 
 class JobRepository:
     def __init__(self):
-        self.db = get_supabase()
+        self.db = get_db()
 
     def create(self, data: Dict[str, Any]) -> Dict[str, Any]:
         res = self.db.table("jobs").insert(data).execute()

@@ -1,6 +1,6 @@
 from uuid import UUID
 from typing import Optional, Dict, Any, List
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class NotificationService:
@@ -16,7 +16,7 @@ class NotificationService:
         """
         Create a new persistent notification in the database.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return None
 
@@ -46,7 +46,7 @@ class NotificationService:
         """
         Record a persistent activity log for user history.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return None
 
@@ -70,7 +70,7 @@ class NotificationService:
         """
         Fetch notifications for a specific user.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
         response = (
@@ -88,7 +88,7 @@ class NotificationService:
         """
         Mark a notification as read.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             return
         db.table("notifications").update({"status": "read"}).eq(

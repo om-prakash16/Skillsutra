@@ -2,7 +2,7 @@ import os
 import json
 import google.generativeai as genai
 from typing import Dict, Any, List
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 
 class AIService:
     def __init__(self):
@@ -12,7 +12,7 @@ class AIService:
             self.model = genai.GenerativeModel("gemini-1.5-flash-latest")
         else:
             self.model = None
-        self.db = get_supabase()
+        self.db = get_db()
 
     async def analyze_resume(self, resume_text: str) -> Dict[str, Any]:
         """

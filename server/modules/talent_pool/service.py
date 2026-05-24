@@ -1,6 +1,6 @@
 from typing import List, Dict, Any, Optional
 from uuid import UUID
-from core.supabase import get_supabase
+from core.db import get_db
 from modules.notifications.core.service import NotificationService
 
 class TalentPoolService:
@@ -9,7 +9,7 @@ class TalentPoolService:
         """
         Save a talent for future roles for a specific company.
         """
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database service unavailable")
 
@@ -53,7 +53,7 @@ class TalentPoolService:
 
     @staticmethod
     async def remove_saved_talent(company_id: UUID, talent_id: UUID) -> bool:
-        db = get_supabase()
+        db = get_db()
         if not db:
             return False
 
@@ -68,7 +68,7 @@ class TalentPoolService:
 
     @staticmethod
     async def get_saved_talent(company_id: UUID) -> List[Dict[str, Any]]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
 

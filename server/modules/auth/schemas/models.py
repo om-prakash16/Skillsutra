@@ -2,26 +2,25 @@ from pydantic import BaseModel
 from typing import Optional
 
 
-class WalletLoginRequest(BaseModel):
-    wallet_address: str
-    message: str
-    signature: str
-    requested_role: Optional[str] = "USER"
+class UserSyncRequest(BaseModel):
+    """Request body for POST /auth/sync — syncs Keycloak user to local DB."""
+    requested_role: Optional[str] = None
 
 
-class AdminLoginRequest(BaseModel):
-    email: str
-    password: str
+class RoleAssignRequest(BaseModel):
+    """Request body for POST /auth/assign-role — admin role assignment."""
+    user_id: str
+    role: str
 
 
 class AuthTokenResponse(BaseModel):
-    access_token: str
-    token_type: str = "bearer"
-    role: str
+    """Standard auth response shape."""
     user_id: str
-    user_code: Optional[str] = None
-    wallet_address: str
+    keycloak_id: str
+    email: str
     name: str
+    roles: list[str]
+    user_code: Optional[str] = None
 
 
 class CompanyCreate(BaseModel):
@@ -30,7 +29,7 @@ class CompanyCreate(BaseModel):
 
 class CompanyInvite(BaseModel):
     company_id: str
-    wallet_address: str
+    email: str
     role: str = "VIEWER"
 
 

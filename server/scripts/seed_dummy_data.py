@@ -1,13 +1,13 @@
 import asyncio
 import datetime
-from core.supabase import get_supabase
+from core.db import get_db
 
 async def seed_data():
     from db.engine import init_db
     await init_db()
-    db = get_supabase()
+    db = get_db()
     if not db:
-        print("[ERROR] Supabase client not initialized. Check .env")
+        print("[ERROR] Database client not initialized. Check .env")
         return
 
     print("--- Starting Data Seeding Protocol ---")
@@ -122,7 +122,7 @@ async def seed_data():
         },
         {
             "title": "Database Reliability Engineer",
-            "description": "Ensure the high availability and integrity of our global hiring mesh. Focus on PostgreSQL and Supabase performance.",
+            "description": "Ensure the high availability and integrity of our global hiring mesh. Focus on PostgreSQL and Database performance.",
             "experience_level": "Expert",
             "salary_range": "$150k - $200k",
             "job_type": "onsite",

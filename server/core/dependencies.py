@@ -9,7 +9,7 @@ async def get_db():
     if not engine.db_client:
         raise ExternalServiceError(
             message="Database connection is unavailable",
-            details={"service": "supabase"}
+            details={"service": "database"}
         )
     return engine.db_client
 

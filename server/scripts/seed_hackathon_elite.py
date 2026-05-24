@@ -3,7 +3,7 @@ import uuid
 import os
 from datetime import datetime
 from dotenv import load_dotenv
-from supabase import create_client, Client
+# from database import create_client, Client
 
 # Load environment variables
 load_dotenv()
@@ -12,14 +12,14 @@ def run_elite_seeding():
     """
     Actually populates the database with Elite Hackathon data.
     """
-    url = os.getenv("SUPABASE_URL")
-    key = os.getenv("SUPABASE_SERVICE_KEY")
+    url = os.getenv("DATABASE_URL")
+    key = os.getenv("DATABASE_SERVICE_KEY")
     
     if not url or not key:
-        print("Error: SUPABASE_URL or SUPABASE_SERVICE_KEY missing.")
+        print("Error: DATABASE_URL or DATABASE_SERVICE_KEY missing.")
         return
 
-    supabase: Client = create_client(url, key)
+    db: Client = create_client(url, key)
 
     # IDs for linking
     sarah_id = str(uuid.uuid4())
@@ -58,7 +58,7 @@ def run_elite_seeding():
     ]
     
     for user in users:
-        supabase.table("users").upsert(user).execute()
+        db.table("users").upsert(user).execute()
 
     # 2. Seed Projects
     projects = [
@@ -81,7 +81,7 @@ def run_elite_seeding():
     ]
     
     for project in projects:
-        supabase.table("project_ledger").upsert(project).execute()
+        db.table("project_ledger").upsert(project).execute()
 
     print("Seeding complete. Best Hiring Tool environment is now RATED ELITE.")
 

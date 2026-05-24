@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useAuth } from "@/context/auth-context"
-import { supabase } from "@/lib/supabaseClient"
+import { db } from "@/lib/db-client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -43,7 +43,7 @@ export default function PostJobPage() {
 
         setIsLoading(true)
         try {
-            const { error } = await supabase
+            const { error } = await db
                 .from('jobs')
                 .insert({
                     title: formData.title,

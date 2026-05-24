@@ -8,22 +8,37 @@ load_dotenv()
 class Settings(BaseModel):
     # --- Project Metadata ---
     PROJECT_NAME: str = "SkillSutra"
-    PROJECT_VERSION: str = "4.0.0"
+    PROJECT_VERSION: str = "5.0.0"
     API_V1_STR: str = "/api/v1"
     
     # --- Infrastructure ---
     ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
     DEBUG: bool = ENVIRONMENT == "development"
     
-    # --- Database (Supabase) ---
-    SUPABASE_URL: str = os.getenv("SUPABASE_URL", "")
-    SUPABASE_KEY: str = os.getenv("SUPABASE_KEY", "")
-    SUPABASE_SERVICE_ROLE_KEY: Optional[str] = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
+    # --- Database (Local PostgreSQL) ---
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "postgresql://postgres:postgres@localhost:5432/skillsutra")
     
-    # --- Security ---
-    JWT_SECRET: str = os.getenv("JWT_SECRET", "super-secure-placeholder-secret-change-me")
-    JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7 # 7 days
+    # --- Keycloak Auth ---
+    KEYCLOAK_URL: str = os.getenv("KEYCLOAK_URL", "http://localhost:8080")
+    KEYCLOAK_REALM: str = os.getenv("KEYCLOAK_REALM", "skillsutra")
+    KEYCLOAK_API_CLIENT_ID: str = os.getenv("KEYCLOAK_API_CLIENT_ID", "skillsutra-api")
+    KEYCLOAK_API_CLIENT_SECRET: str = os.getenv("KEYCLOAK_API_CLIENT_SECRET", "")
+    
+    @property
+    def KEYCLOAK_ISSUER(self) -> str:
+        return f"{self.KEYCLOAK_URL}/realms/{self.KEYCLOAK_REALM}"
+    
+    @property
+    def KEYCLOAK_JWKS_URL(self) -> str:
+        return f"{self.KEYCLOAK_ISSUER}/protocol/openid-connect/certs"
+    
+    @property
+    def KEYCLOAK_TOKEN_URL(self) -> str:
+        return f"{self.KEYCLOAK_ISSUER}/protocol/openid-connect/token"
+    
+    @property
+    def KEYCLOAK_ADMIN_URL(self) -> str:
+        return f"{self.KEYCLOAK_URL}/admin/realms/{self.KEYCLOAK_REALM}"
     
     # --- CORS ---
     BACKEND_CORS_ORIGINS: List[str] = [
@@ -33,7 +48,3 @@ class Settings(BaseModel):
 
 # Global instance
 settings = Settings()
-
-# Validation check
-if not settings.SUPABASE_URL or not settings.SUPABASE_KEY:
-    print("WARNING: Database configuration missing. Some features may not work.")

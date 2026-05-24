@@ -51,7 +51,7 @@ export default function ApplicationModeration() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
             <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tight flex items-center gap-4 text-white">
-              <Users className="w-10 h-10 text-primary drop-shadow-[0_0_15px_rgba(var(--primary),0.8)]" /> 
+              <Users className="w-10 h-10 text-primary drop-shadow-[0_0_15px_hsl(var(--primary)/0.8)]" /> 
               Hiring Lifecycle Telemetry
             </h1>
             <p className="text-muted-foreground text-lg mt-3">

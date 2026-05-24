@@ -1,6 +1,6 @@
 import logging
 from typing import List, Dict, Any, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 from core.exceptions import NotFoundError, ExternalServiceError, ValidationError
 
 logger = logging.getLogger(__name__)
@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 class JobService:
     async def create_job(self, data: Dict[str, Any]) -> Dict[str, Any]:
         """Creates a new job posting."""
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise ExternalServiceError("Database unavailable")
 
@@ -55,7 +55,7 @@ class JobService:
 
     async def get_job_details(self, job_id: str) -> Dict[str, Any]:
         """Fetches detailed job information."""
-        db = get_supabase()
+        db = get_db()
         try:
             res = db.table("jobs").select("*, companies(name)").eq("id", job_id).single().execute()
             if not res.data:
@@ -69,12 +69,12 @@ class JobService:
 
     async def list_jobs(self, is_active: bool = True) -> List[Dict[str, Any]]:
         """Lists jobs, optionally filtered by status."""
-        db = get_supabase()
+        db = get_db()
         res = db.table("jobs").select("*, companies(name)").eq("is_active", is_active).order("created_at", desc=True).execute()
         return res.data or []
 
     async def update_job(self, job_id: str, data: Dict[str, Any]) -> Dict[str, Any]:
-        db = get_supabase()
+        db = get_db()
         res = db.table("jobs").update(data).eq("id", job_id).execute()
         if not res.data:
             raise NotFoundError(f"Job {job_id} not found")

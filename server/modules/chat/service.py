@@ -1,17 +1,17 @@
 from typing import List, Dict, Any
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class ChatService:
     async def get_rooms(self) -> List[Dict[str, Any]]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             return []
         resp = sb.table("discussion_rooms").select("*").eq("is_active", True).execute()
         return resp.data if resp.data else []
 
     async def create_room(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             raise Exception("DB unavailable")
         resp = sb.table("discussion_rooms").insert(data).execute()
@@ -20,7 +20,7 @@ class ChatService:
     async def save_message(
         self, room_id: str, user_id: str, content: str
     ) -> Dict[str, Any]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             raise Exception("DB unavailable")
 
@@ -51,7 +51,7 @@ class ChatService:
         return msg
 
     async def get_history(self, room_id: str, limit: int = 50) -> List[Dict[str, Any]]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             return []
 

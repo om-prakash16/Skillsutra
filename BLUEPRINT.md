@@ -1,6 +1,6 @@
 # SkillSutra — Technical Blueprint
 
-> **Version**: 4.0.0 | **Stack**: Next.js 16 · FastAPI · Supabase (PostgreSQL) · Google Gemini AI · Solana Web3 · Framer Motion
+> **Version**: 4.0.0 | **Stack**: Next.js 16 · FastAPI · PostgreSQL · Google Gemini AI · Solana Web3 · Framer Motion
 
 A production-grade, AI-powered hiring platform that replaces traditional resumes with verifiable **Proof Scores** — computed by AI, optionally anchored on-chain, and matched semantically to job descriptions.
 
@@ -70,10 +70,10 @@ Company posts JD → AI extracts requirements → Semantic matching
 │  │  /api/v1/ai/*       → 16 AI sub-routers         │    │
 │  └──────────┬──────────────────────────────────────┘    │
 └─────────────┼───────────────────────────────────────────┘
-              │ Supabase Client
+              │ Database client
               ▼
 ┌─────────────────────────────────────────────────────────┐
-│           Supabase (PostgreSQL + Auth + RLS)              │
+│           PostgreSQL (PostgreSQL + Auth + RLS)              │
 │  48 migrations · Row-Level Security · Real-time         │
 │  users · companies · jobs · applications · ai_scores    │
 │  skill_graph · nft_credentials · feature_flags · cms    │
@@ -102,7 +102,7 @@ Company posts JD → AI extracts requirements → Semantic matching
 │       │   ├── providers/      # Query, smooth-scroll, wallet providers
 │       │   └── ui/             # Atomic UI: Button, Card, Input, Badge...
 │       ├── context/            # React Context providers
-│       │   ├── auth-context.tsx    # Supabase auth + user state
+│       │   ├── auth-context.tsx    # PostgreSQL auth + user state
 │       │   └── cms-context.tsx     # Live CMS content hydration
 │       ├── features/           # 20 feature-scoped modules
 │       │   ├── landing/        # Hero, Vision, Stats, Testimonials, FAQ
@@ -305,7 +305,7 @@ git clone https://github.com/om-prakash16/Skillsutra.git
 cd Skillsutra
 cp .env.example .env
 cp .env.example web/.env.local
-# Fill in: SUPABASE_URL, SUPABASE_KEY, GOOGLE_API_KEY
+# Fill in: PostgreSQL_URL, PostgreSQL_KEY, GOOGLE_API_KEY
 
 # Quick start
 make install    # Install all dependencies

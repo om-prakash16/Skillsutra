@@ -38,12 +38,17 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
 // API module bindings
 export const api = {
     auth: {
-        login: (wallet: string, signature: string, message: string, requested_role: string = "user") => 
-            fetchWithAuth("/auth/wallet", { 
+        sync: (requested_role?: string) => 
+            fetchWithAuth("/auth/sync", { 
                 method: "POST", 
-                body: JSON.stringify({ wallet_address: wallet, signature, message, requested_role }) 
+                body: JSON.stringify({ requested_role }) 
             }),
-        me: () => fetchWithAuth("/auth/me")
+        me: () => fetchWithAuth("/auth/me"),
+        assignRole: (user_id: string, role: string) =>
+            fetchWithAuth("/auth/assign-role", {
+                method: "POST",
+                body: JSON.stringify({ user_id, role })
+            }),
     },
     profile: {
         getSchema: () => fetchWithAuth("/profile/schema"),

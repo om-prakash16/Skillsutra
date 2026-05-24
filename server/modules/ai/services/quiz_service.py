@@ -5,7 +5,7 @@ import logging
 from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 import google.generativeai as genai
-from core.supabase import get_supabase
+from core.db import get_db
 from core.exceptions import NotFoundError, ValidationError, ExternalServiceError
 
 logger = logging.getLogger(__name__)
@@ -29,7 +29,7 @@ class QuizService:
         else:
             questions = await self._generate_ai_questions(skill, difficulty, count)
 
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise ExternalServiceError("Database unavailable for quiz generation")
 
@@ -96,7 +96,7 @@ class QuizService:
     async def evaluate_submission(
         self, quiz_id: str, wallet: str, answers: Dict[str, str]
     ) -> Dict[str, Any]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise ExternalServiceError("Database unavailable for evaluation")
 

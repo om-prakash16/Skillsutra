@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class IdentityService:
@@ -7,7 +7,7 @@ class IdentityService:
     async def update_privacy_settings(
         self, user_id: str, visibility: str
     ) -> Dict[str, Any]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             raise Exception("DB unavailable")
 
@@ -24,7 +24,7 @@ class IdentityService:
     async def request_connection(
         self, user_id: str, target_user_id: str
     ) -> Dict[str, Any]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             raise Exception("DB unavailable")
 
@@ -43,7 +43,7 @@ class IdentityService:
         return response.data[0] if response.data else {}
 
     async def list_connections(self, user_id: str) -> List[Dict[str, Any]]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             return []
 
@@ -77,7 +77,7 @@ class IdentityService:
 
     # --- History (Work & Education) ---
     async def get_user_timeline(self, user_id: str) -> Dict[str, Any]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             return {"work": [], "education": []}
 
@@ -101,7 +101,7 @@ class IdentityService:
     async def add_work_history(
         self, user_id: str, data: Dict[str, Any]
     ) -> Dict[str, Any]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             raise Exception("DB unavailable")
 

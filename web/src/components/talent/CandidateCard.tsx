@@ -29,7 +29,7 @@ export function CandidateCard({ name, role, score, skills }: { name: string, rol
         </div>
         <div className="text-right">
           <div className="text-sm text-muted-foreground uppercase font-bold tracking-tight">Proof Score</div>
-          <div className="text-2xl font-black text-primary drop-shadow-[0_0_8px_rgba(var(--primary),0.3)]">{score}</div>
+          <div className="text-2xl font-black text-primary drop-shadow-[0_0_8px_hsl(var(--primary)/0.3)]">{score}</div>
         </div>
       </div>
     </Card>

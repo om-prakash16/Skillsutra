@@ -2,6 +2,8 @@ import asyncio
 from modules.skill_graph.service import SkillGraphService
 
 async def test():
+    from db.engine import init_db
+    await init_db()
     service = SkillGraphService()
     print("Testing Taxonomy Search...")
     try:

@@ -1,9 +1,9 @@
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 from typing import Dict, Any, List
 
 class NotificationRepository:
     def __init__(self):
-        self.db = get_supabase()
+        self.db = get_db()
 
     def create_notification(self, data: Dict[str, Any]):
         res = self.db.table("notifications").insert(data).execute()

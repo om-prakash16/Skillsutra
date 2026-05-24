@@ -178,7 +178,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                             <div className={cn(
                                 "flex items-center gap-3 px-3 h-11 rounded-xl transition-all duration-300 relative overflow-hidden",
                                 isActive
-                                    ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.1)]"
+                                    ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
                                     : "text-white/40 hover:text-white/80 hover:bg-white/5"
                             )}>
                                 {isActive && (

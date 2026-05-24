@@ -1,5 +1,5 @@
 from typing import Optional
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 async def record_event(
@@ -18,7 +18,7 @@ async def record_event(
     job applications, profile updates, admin actions, etc. Intentionally
     fire-and-forget so it never blocks the calling endpoint.
     """
-    db = get_supabase()
+    db = get_db()
     if not db:
         return
 
@@ -41,7 +41,7 @@ async def record_event(
 
 async def get_user_timeline(user_id: str, limit: int = 20):
     """Fetch recent events for a single user."""
-    db = get_supabase()
+    db = get_db()
     result = (
         db.table("activity_events")
         .select("*")
@@ -60,7 +60,7 @@ async def get_company_timeline(user_id: str, limit: int = 20):
     Includes the company user's own actions plus candidate events
     that are linked to jobs owned by the company.
     """
-    db = get_supabase()
+    db = get_db()
 
     # Own actions first
     own = (
@@ -77,7 +77,7 @@ async def get_company_timeline(user_id: str, limit: int = 20):
 
 async def get_admin_timeline(limit: int = 50):
     """Fetch the global event stream — all actors, all roles."""
-    db = get_supabase()
+    db = get_db()
     result = (
         db.table("activity_events")
         .select("*")

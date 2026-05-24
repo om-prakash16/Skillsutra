@@ -1,7 +1,7 @@
 import logging
 import uuid
 from typing import List, Dict, Any, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 from core.exceptions import NotFoundError, ExternalServiceError, ValidationError
 from modules.notifications.core.service import NotificationService
 
@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 class ApplicationService:
     async def apply_to_job(self, job_id: str, candidate_id: str) -> Dict[str, Any]:
         """Handles the job application flow."""
-        db = get_supabase()
+        db = get_db()
         if not db: raise ExternalServiceError("Database unavailable")
 
         # 1. Verify existence and fetch context
@@ -88,7 +88,7 @@ class ApplicationService:
 
     async def update_status(self, app_id: str, status: str, recruiter_id: str) -> Dict[str, Any]:
         """Updates the status of an application and notifies the candidate."""
-        db = get_supabase()
+        db = get_db()
         
         # Verify app exists
         app_res = db.table("applications").select("*, jobs(title)").eq("id", app_id).single().execute()
@@ -114,12 +114,12 @@ class ApplicationService:
         return res.data[0]
 
     async def get_user_applications(self, user_id: str) -> List[Dict[str, Any]]:
-        db = get_supabase()
+        db = get_db()
         res = db.table("applications").select("*, jobs(title, companies(name))").eq("candidate_id", user_id).execute()
         return res.data or []
 
     async def submit_assessment(self, app_id: str, score: float, answers: List[Any]) -> Dict[str, Any]:
-        db = get_supabase()
+        db = get_db()
         res = db.table("applications").update({
             "assessment_score": score,
             "assessment_results": {"answers": answers},

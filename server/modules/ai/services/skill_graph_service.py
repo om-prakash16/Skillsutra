@@ -96,7 +96,7 @@ class SkillGraphService:
             "cloud": 0.8,
             "microservices": 0.82,
         },
-        "postgresql": {"sql": 0.92, "supabase": 0.85, "database": 0.9, "django": 0.7},
+        "postgresql": {"sql": 0.92, "database": 0.85, "database": 0.9, "django": 0.7},
         "machine learning": {
             "python": 0.8,
             "tensorflow": 0.88,

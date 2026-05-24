@@ -31,7 +31,7 @@ export function MobileNav() {
                             className={cn(
                                 "p-2 rounded-xl transition-all duration-300",
                                 isActive 
-                                    ? "bg-primary/20 text-primary shadow-[0_0_15px_rgba(var(--primary),0.3)]" 
+                                    ? "bg-primary/20 text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]" 
                                     : "text-muted-foreground/60 hover:text-white"
                             )}
                         >
@@ -40,7 +40,7 @@ export function MobileNav() {
                         {isActive && (
                             <motion.div 
                                 layoutId="mobile-nav-active"
-                                className="absolute -top-1 w-1 h-1 bg-primary rounded-full shadow-[0_0_10px_rgba(var(--primary),0.8)]"
+                                className="absolute -top-1 w-1 h-1 bg-primary rounded-full shadow-[0_0_10px_hsl(var(--primary)/0.8)]"
                             />
                         )}
                         <span className={cn(

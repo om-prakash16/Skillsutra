@@ -1,10 +1,10 @@
 from typing import List, Dict, Any, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class CareerService:
     async def create_goal(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             raise Exception("DB unavailable")
 
@@ -24,7 +24,7 @@ class CareerService:
         return response.data[0] if response.data else {}
 
     async def add_task(self, data: Dict[str, Any]) -> Dict[str, Any]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             raise Exception("DB unavailable")
 
@@ -45,7 +45,7 @@ class CareerService:
         return response.data[0] if response.data else {}
 
     async def get_user_goals(self, user_id: str) -> List[Dict[str, Any]]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             return []
 
@@ -75,7 +75,7 @@ class CareerService:
         return goals
 
     async def generate_roadmap(self, user_id: str, target_role: str) -> Dict[str, Any]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             raise Exception("DB unavailable")
 
@@ -140,14 +140,14 @@ class CareerService:
         return response.data[0] if response.data else {}
 
     async def get_roadmap(self, user_id: str) -> Optional[Dict[str, Any]]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             return None
         res = sb.table("career_roadmaps").select("*").eq("user_id", user_id).order("updated_at", desc=True).limit(1).execute()
         return res.data[0] if res.data else None
 
     async def update_roadmap_milestone(self, user_id: str, roadmap_id: str, new_index: int) -> Dict[str, Any]:
-        sb = get_supabase()
+        sb = get_db()
         if not sb:
             raise Exception("DB unavailable")
         res = sb.table("career_roadmaps").update({

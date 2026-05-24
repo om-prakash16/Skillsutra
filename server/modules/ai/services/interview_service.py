@@ -4,7 +4,7 @@ import uuid
 import logging
 from typing import List, Dict, Any, Optional
 import google.generativeai as genai
-from core.supabase import get_supabase
+from core.db import get_db
 from modules.ai.models import InterviewQuestionBase
 
 logger = logging.getLogger(__name__)
@@ -22,7 +22,7 @@ class InterviewService:
         self, user_id: str, job_id: str, count: int = 10
     ) -> List[Dict[str, Any]]:
         """Generate personalized MCQ interview questions based on candidate profile and job requirements."""
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database service unavailable")
 
@@ -107,7 +107,7 @@ Return ONLY a JSON array of objects:
             raise Exception(f"AI Interview Generation failed: {str(e)}")
 
     async def get_questions(self, user_id: str, job_id: Optional[str] = None) -> List[Dict[str, Any]]:
-        db = get_supabase()
+        db = get_db()
         if not db: return []
         query = db.table("ai_interview_questions").select("*").eq("user_id", user_id)
         if job_id: query = query.eq("job_id", job_id)

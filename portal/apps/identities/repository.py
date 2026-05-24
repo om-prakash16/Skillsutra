@@ -1,9 +1,9 @@
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 from typing import Dict, Any, Optional
 
 class IdentityRepository:
     def __init__(self):
-        self.db = get_supabase()
+        self.db = get_db()
 
     def upsert_identity(self, data: Dict[str, Any]):
         res = self.db.table("user_identities").upsert(data).execute()

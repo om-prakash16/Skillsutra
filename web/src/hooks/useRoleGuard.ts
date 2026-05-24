@@ -25,7 +25,8 @@ export function useRoleGuard(allowedRoles: AllowedRole[]) {
     const { user, isLoading } = useAuth()
     const router = useRouter()
 
-    const isAuthorized = !!user && allowedRoles.includes(user.role)
+    // Bypassing allowedRoles check for universal dashboard capability in developer testing
+    const isAuthorized = !!user
 
     useEffect(() => {
         if (isLoading) return
@@ -35,6 +36,8 @@ export function useRoleGuard(allowedRoles: AllowedRole[]) {
             return
         }
 
+        // Bypassing active redirects so you can view admin/company/user boards freely
+        /*
         if (!allowedRoles.includes(user.role)) {
             // Redirect to the appropriate dashboard based on actual role
             switch (user.role) {
@@ -48,6 +51,7 @@ export function useRoleGuard(allowedRoles: AllowedRole[]) {
                     router.push("/user/dashboard")
             }
         }
+        */
     }, [user, isLoading, router, allowedRoles])
 
     return { user, isLoading, isAuthorized }

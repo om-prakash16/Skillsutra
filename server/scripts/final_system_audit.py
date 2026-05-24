@@ -1,12 +1,18 @@
 import asyncio
 import sys
 import uuid
-import core.supabase
+import core.db
 
 # --- enterprise-grade mock database implementation ---
 class MockResponse:
     def __init__(self, data):
         self.data = data
+
+    def __await__(self):
+        async def _async_resolve():
+            return self
+        return _async_resolve().__await__()
+
 
 class MockQueryBuilder:
     def __init__(self, db_state, table_name):
@@ -164,7 +170,7 @@ class MockQueryBuilder:
                 table.remove(row)
             return MockResponse(matched)
 
-class MockSupabase:
+class MockDb:
     _instance = None
     def __init__(self):
         self.db_state = {
@@ -186,17 +192,17 @@ class MockSupabase:
     def table(self, name):
         return MockQueryBuilder(self.db_state, name)
 
-# override core.supabase behavior
-mock_client = MockSupabase.get_instance()
-core.supabase.get_supabase = lambda: mock_client
-core.supabase.supabase = mock_client
+# override core.db behavior
+mock_client = MockDb.get_instance()
+core.db.get_db = lambda: mock_client
+core.db.db = mock_client
 
 # Override db.engine behaviour in case async calls are made
 import db.engine
 db.engine.db_client = mock_client
 
-# Import services after mocking supabase module imports
-from core.supabase import get_supabase
+# Import services after mocking database module imports
+from core.db import get_db
 from modules.users.core.service import UserService
 from modules.search.service import SearchService
 from modules.users.core.cv_service import CVService
@@ -207,7 +213,7 @@ if sys.platform == "win32":
 
 async def final_audit():
     print("=== FINAL SYSTEM AUDIT: BEST HIRING TOOL ===")
-    db = get_supabase()
+    db = get_db()
     
     try:
         # 1. Identity & Creation (Step 3 & 4)

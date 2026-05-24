@@ -4,7 +4,7 @@ import logging
 from datetime import datetime, timedelta
 from fastapi import Security, HTTPException, Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 from typing import List, Optional
 
 logger = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ async def get_current_user(
     credentials: HTTPAuthorizationCredentials = Security(security),
 ):
     """
-    Validates the custom JWT or Supabase JWT and returns the user payload.
+    Validates the custom JWT or Keycloak JWT and returns the user payload.
     """
     token = credentials.credentials
 
@@ -54,14 +54,14 @@ async def get_current_user(
     except jwt.PyJWTError:
         pass
 
-    # 2. Try Supabase Auth Verification
-    sb = get_supabase()
+    # 2. Try Keycloak Auth Verification
+    sb = get_db()
     if sb:
         try:
-            # We call Supabase API to verify the token
+            # We call Keycloak API to verify the token
             user_res = sb.auth.get_user(token)
             if user_res.user:
-                # Map Supabase user to our payload format
+                # Map Keycloak user to our payload format
                 return {
                     "sub": user_res.user.id,
                     "id": user_res.user.id,
@@ -87,7 +87,7 @@ async def get_user_permissions(user_id: str) -> List[str]:
         if datetime.utcnow() < expiry:
             return cache_data
 
-    sb = get_supabase()
+    sb = get_db()
     if not sb:
         return ["job.create", "profile.edit"] # Minimal safe default
 
@@ -156,3 +156,4 @@ def require_role(min_role: str):
         return user
 
     return role_checker
+

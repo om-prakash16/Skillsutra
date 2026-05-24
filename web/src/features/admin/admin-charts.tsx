@@ -53,7 +53,7 @@ export function PlatformActivityChart() {
                     </div>
                     <div className="flex items-center gap-2">
                         <div className="flex px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20 items-center gap-2">
-                            <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_rgba(var(--primary),0.8)]" />
+                            <div className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_hsl(var(--primary)/0.8)]" />
                             <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Live Data</span>
                         </div>
                     </div>

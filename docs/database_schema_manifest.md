@@ -17,7 +17,7 @@ This document outlines the **Master Relational Architecture** of the Best Hiring
 ### 3. Web3 & Verification State
 *   **`users` ➔ `nft_records`**: Tracks which skill certificates or profile NFTs are currently active on the Solana blockchain.
 *   **`users` ➔ `metadata_versions`**: Maintains a historical trail of IPFS CIDs for verifiable identity playback.
-*   **`sync_status`**: Monitors the consistency of the "Dual-State" architecture (Supabase vs. IPFS).
+*   **`sync_status`**: Monitors the consistency of the "Dual-State" architecture (PostgreSQL vs. IPFS).
 
 ---
 

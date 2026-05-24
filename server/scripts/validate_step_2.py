@@ -1,6 +1,6 @@
 import asyncio
 import sys
-from core.supabase import get_supabase
+from core.db import get_db
 
 # Set stdout to use utf-8 to avoid encoding issues on Windows
 if sys.platform == "win32":
@@ -9,9 +9,9 @@ if sys.platform == "win32":
 
 async def validate_database_and_identity():
     print("--- VALIDATING STEP 2 & 3 ---")
-    db = get_supabase()
+    db = get_db()
     if not db:
-        print("[FAIL] Supabase connection failed")
+        print("[FAIL] Database connection failed")
         return
 
     # 1. Test Insert (Checking if trigger works)

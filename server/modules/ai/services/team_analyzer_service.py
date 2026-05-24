@@ -5,7 +5,7 @@ skill overlaps, and recommends ideal hire profiles.
 """
 
 from typing import Dict, Any
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class TeamAnalyzerService:
@@ -13,7 +13,7 @@ class TeamAnalyzerService:
         """
         Analyze the skill distribution of a company's team.
         """
-        db = get_supabase()
+        db = get_db()
         team_members = []
 
         # 1. Fetch team members and their profiles

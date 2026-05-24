@@ -7,7 +7,7 @@ from fastapi import APIRouter, Depends, HTTPException, Body
 from uuid import UUID
 from typing import Dict, Any, List
 from modules.auth.core.service import get_current_user
-from core.supabase import get_supabase
+from core.db import get_db
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 @router.get("/")
 async def get_challenges():
     """List all coding challenges in the arena."""
-    db = get_supabase()
+    db = get_db()
     if not db:
         return {"status": "error", "message": "Database unavailable"}
     
@@ -32,7 +32,7 @@ async def submit_challenge(
     Submits a coding solution and runs it in a Node.js sandbox environment against test cases.
     """
     user_id = user.get("sub")
-    db = get_supabase()
+    db = get_db()
     if not db:
         raise HTTPException(status_code=500, detail="Database unavailable")
 

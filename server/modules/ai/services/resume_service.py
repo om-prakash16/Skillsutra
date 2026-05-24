@@ -1,7 +1,7 @@
 import os
 import json
 from typing import List, Dict, Any
-from core.supabase import get_supabase
+from core.db import get_db
 import google.generativeai as genai
 from modules.ai.models import ParsedResume, JDMatchResult
 
@@ -15,7 +15,7 @@ class ResumeService:
         else:
             self.model = None
             
-        self.db = get_supabase()
+        self.db = get_db()
 
     async def analyze_resume(self, user_id: str, resume_text: str) -> Dict[str, Any]:
         """
@@ -66,7 +66,7 @@ class ResumeService:
                 "education": parsed_data.get("education", []),
             }
 
-            # Store in ai_scores table (Supabase)
+            # Store in ai_scores table (Database)
             try:
                 if self.db:
                     self.db.table("ai_scores").upsert(

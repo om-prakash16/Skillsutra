@@ -175,7 +175,7 @@ export default function RoadmapPage() {
                                         isCompleted 
                                             ? "bg-primary/20 border-primary text-primary" 
                                             : isActive 
-                                                ? "bg-black border-primary text-primary shadow-[0_0_15px_rgba(var(--primary),0.3)] animate-pulse" 
+                                                ? "bg-black border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)] animate-pulse" 
                                                 : "bg-white/5 border-white/5 text-muted-foreground"
                                     }`}>
                                         {isCompleted ? (

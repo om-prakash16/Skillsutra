@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from typing import Dict, Any, List, Optional
 import json
-from core.supabase import get_supabase
+from core.db import get_db
 
 router = APIRouter()
 
@@ -15,7 +15,7 @@ async def db_select(
     offset: Optional[int] = None,
     single: bool = False
 ):
-    db = get_supabase()
+    db = get_db()
     q = db.table(table_name).select(select)
     
     if filters:
@@ -55,13 +55,13 @@ async def db_select(
 
 @router.post("/{table_name}")
 async def db_insert(table_name: str, payload: Any):
-    db = get_supabase()
+    db = get_db()
     res = await db.table(table_name).insert(payload).execute()
     return {"data": res.data}
 
 @router.patch("/{table_name}")
 async def db_update(table_name: str, payload: Dict[str, Any]):
-    db = get_supabase()
+    db = get_db()
     data = payload.get("data")
     filters = payload.get("filters")
     
@@ -84,7 +84,7 @@ async def db_update(table_name: str, payload: Dict[str, Any]):
 
 @router.delete("/{table_name}")
 async def db_delete(table_name: str, filters: str):
-    db = get_supabase()
+    db = get_db()
     q = db.table(table_name).delete()
     try:
         parsed_filters = json.loads(filters)

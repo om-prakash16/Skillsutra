@@ -1,6 +1,6 @@
 import logging
 from typing import Dict, Any, List, Optional
-from core.supabase import get_supabase
+from core.db import get_db
 from core.cache import cache_result
 from datetime import datetime, timedelta
 
@@ -10,7 +10,7 @@ class RecruiterDashboardService:
     @cache_result(ttl=600) # Cache analytics for 10 minutes
     async def get_candidate_rankings(self, job_id: str) -> List[Dict[str, Any]]:
         """Rank applicants by Proof-Score and match relevance."""
-        db = get_supabase()
+        db = get_db()
         if not db: return []
 
         try:
@@ -54,7 +54,7 @@ class RecruiterDashboardService:
 
     async def get_hiring_time_prediction(self, job_id: str) -> Dict[str, Any]:
         """Predict time-to-fill based on real pipeline velocity."""
-        db = get_supabase()
+        db = get_db()
         if not db: return {"prediction": "Unknown"}
 
         try:
@@ -104,7 +104,7 @@ class RecruiterDashboardService:
     @cache_result(ttl=3600) # Cache trends for 1 hour
     async def get_skill_demand_trends(self) -> List[Dict[str, Any]]:
         """Calculate real skill demand trends from job postings."""
-        db = get_supabase()
+        db = get_db()
         if not db: return []
 
         try:
@@ -131,7 +131,7 @@ class RecruiterDashboardService:
 
     async def get_engagement_funnel(self, job_id: str) -> Dict[str, Any]:
         """Aggregate real funnel metrics from the applications table."""
-        db = get_supabase()
+        db = get_db()
         if not db: return {}
 
         try:

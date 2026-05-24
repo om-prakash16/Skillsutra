@@ -1,5 +1,5 @@
 -- 00_auth_mock.sql
--- Create the auth schema for local database compatibility with Supabase RLS
+-- Create the auth schema for local database compatibility with PostgreSQL RLS
 
 CREATE SCHEMA IF NOT EXISTS auth;
 

@@ -1,9 +1,9 @@
-from portal.core.supabase import get_supabase
+from portal.core.db import get_db
 from typing import List, Dict, Any
 
 class CourseRepository:
     def __init__(self):
-        self.db = get_supabase()
+        self.db = get_db()
 
     def get_courses_by_skills(self, skills: List[str]) -> List[Dict[str, Any]]:
         """

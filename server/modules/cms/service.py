@@ -1,11 +1,11 @@
 from typing import List, Dict, Any
-from core.supabase import get_supabase
+from core.db import get_db
 
 
 class CMSService:
     @staticmethod
     async def get_all_active() -> List[Dict[str, Any]]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
         response = db.table("site_content").select("*").eq("is_active", True).execute()
@@ -13,7 +13,7 @@ class CMSService:
 
     @staticmethod
     async def get_by_section(section: str) -> List[Dict[str, Any]]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             return []
         response = (
@@ -27,7 +27,7 @@ class CMSService:
 
     @staticmethod
     async def upsert_content(data: Dict[str, Any], updated_by: str) -> Dict[str, Any]:
-        db = get_supabase()
+        db = get_db()
         if not db:
             raise Exception("Database unavailable")
 
@@ -52,7 +52,7 @@ class CMSService:
 
     @staticmethod
     async def deactivate_key(section: str, key: str) -> bool:
-        db = get_supabase()
+        db = get_db()
         if not db:
             return False
         db.table("site_content").update({"is_active": False}).eq(

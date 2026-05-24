@@ -14,6 +14,27 @@ services:
     networks:
       - hiring_tool_network
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2
+    container_name: skillsutra_keycloak
+    command: start-dev --import-realm
+    ports:
+      - "8080:8080"
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL=jdbc:postgresql://hiring-tool-db:5432/skillsutra
+      - KC_DB_USERNAME=postgres
+      - KC_DB_PASSWORD=postgres
+      - KC_DB_SCHEMA=keycloak
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+    depends_on:
+      - hiring-tool-db
+    networks:
+      - hiring_tool_network
+
   hiring-tool-web:
     container_name: hiring_tool_web
     build:
@@ -23,9 +44,13 @@ services:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+      - NEXT_PUBLIC_KEYCLOAK_URL=http://localhost:8080
+      - NEXT_PUBLIC_KEYCLOAK_REALM=skillsutra
+      - NEXT_PUBLIC_KEYCLOAK_CLIENT_ID=skillsutra-web
     depends_on:
       - hiring-tool-server
       - hiring-tool-db
+      - keycloak
     volumes:
       - ./web:/app
       - /app/node_modules
@@ -42,11 +67,14 @@ services:
       - "8000:8000"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@hiring-tool-db:5432/skillsutra
-      - JWT_SECRET=${JWT_SECRET:-bht_s3cur3_jwt_k3y_2026_pr0duct10n_r34dy}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - KEYCLOAK_URL=http://keycloak:8080
+      - KEYCLOAK_REALM=skillsutra
+      - KEYCLOAK_API_CLIENT_ID=skillsutra-api
+      - KEYCLOAK_API_CLIENT_SECRET=${KEYCLOAK_API_CLIENT_SECRET:-}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
     depends_on:
       - hiring-tool-db
+      - keycloak
     volumes:
       - ./server:/app
     networks:

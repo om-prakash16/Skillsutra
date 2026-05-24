@@ -9,7 +9,7 @@ const INTEGRATIONS = [
     { name: "GitHub", icon: Github, color: "text-[#181717]" },
     { name: "Google", icon: Globe, color: "text-[#4285F4]" },
     { name: "Discord", icon: Cpu, color: "text-[#5865F2]" },
-    { name: "Supabase", icon: Layers, color: "text-[#3ECF8E]" },
+    { name: "PostgreSQL", icon: Layers, color: "text-[#3ECF8E]" },
     { name: "Postmark", icon: Mail, color: "text-[#FF6B6B]" },
 ]
 
