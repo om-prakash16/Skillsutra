@@ -49,7 +49,7 @@ async def predict_salary_fmv(
     score_delta = max(0, proof_score - 500)
     premium_percentage = (score_delta / 100) * 0.04
 
-    rare_skills = [s.lower() for s in ["rust", "solana", "anchor", "go", "zkp"]]
+    rare_skills = [s.lower() for s in ["rust", "blockchain", "anchor", "go", "zkp"]]
     user_skills_lower = [s.lower() for s in skills]
     if any(rs in user_skills_lower for rs in rare_skills):
         premium_percentage += 0.08

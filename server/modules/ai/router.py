@@ -113,6 +113,6 @@ async def status_stream_demo():
     """Mock stream for terminal UI."""
     return success_response(data=[
         "> SYSTEM ONLINE",
-        "> CONNECTED TO SOLANA",
+        "> CONNECTED TO BLOCKCHAIN",
         "> AI CORE READY"
     ])

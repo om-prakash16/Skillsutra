@@ -109,7 +109,7 @@ export default function UserDashboard() {
                         isLoading={isLoading} 
                         data={aiData?.analysis || {
                             strengths: ["FastAPI Architecture", "Real-time Synchronization", "Neural Matching"],
-                            missing_skills: ["Solana Smart Contracts", "On-chain Identity Proofing"],
+                            missing_skills: ["Blockchain Smart Contracts", "On-chain Identity Proofing"],
                             recommendations: ["Upgrade to Senior Protocol status", "Contribute to the Proof-of-Work Ledger"]
                         }} 
                     />

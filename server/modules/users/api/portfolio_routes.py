@@ -147,7 +147,7 @@ def _calculate_project_score(data: ProjectSubmission) -> int:
         score += 5
 
     # Advanced tech detection
-    advanced_tech = {"Rust", "Solana", "Cairo", "ZK", "Anchor", "Move", "Sui"}
+    advanced_tech = {"Rust", "Blockchain", "Cairo", "ZK", "Anchor", "Move", "Sui"}
     if any(t in advanced_tech for t in data.tech_stack):
         score += 10
 

@@ -20,6 +20,6 @@ INSERT INTO public.profile_schema_fields (label, key, type, section_name, displa
 ('Full Name', 'full_name', 'text', 'Basic Info', 1),
 ('Professional Bio', 'bio', 'text', 'Basic Info', 2),
 ('GitHub Portfolio', 'github_url', 'url', 'Professional Info', 3),
-('Solana Wallet', 'solana_wallet', 'text', 'Web3 Identity', 4),
+('Blockchain Wallet', 'blockchain_wallet', 'text', 'Web3 Identity', 4),
 ('LinkedIn Profile', 'linkedin_url', 'url', 'Professional Info', 5)
 ON CONFLICT (key) DO NOTHING;

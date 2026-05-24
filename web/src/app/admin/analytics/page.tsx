@@ -28,7 +28,7 @@ const USER_GROWTH = [
 ];
 
 const SKILL_DEMAND = [
-  { label: 'Solana', value: 85 },
+  { label: 'Blockchain', value: 85 },
   { label: 'React', value: 92 },
   { label: 'Python', value: 64 },
   { label: 'Rust', value: 78 },
@@ -86,7 +86,7 @@ export default function AdminAnalyticsPage() {
             title="Sovereign NFTs" 
             value="8,920" 
             trend={28.5} 
-            description="Total Solana-verified skill badges minted."
+            description="Total Blockchain-verified skill badges minted."
             icon={Database} 
           />
           <MetricCard 
@@ -149,7 +149,7 @@ export default function AdminAnalyticsPage() {
                         </div>
                         <div>
                             <p className="text-sm font-bold text-foreground">AI Observation: Save-to-Apply Friction</p>
-                            <p className="text-xs text-muted-foreground">High "Save" volume on Senior Rust roles, but only 12% application rate. Candidates may lack specific Solana verification badges.</p>
+                            <p className="text-xs text-muted-foreground">High "Save" volume on Senior Rust roles, but only 12% application rate. Candidates may lack specific Blockchain verification badges.</p>
                         </div>
                     </div>
                 </div>

@@ -28,7 +28,7 @@ VALUES
 -- SEO Metadata
 ('seo', 'default_title', 'SkillProof AI | Standardizing Global Talent', '{}'),
 ('seo', 'default_description', 'High-assurance career verification and sovereign professional identity for the decentralized hiring economy.', '{}'),
-('seo', 'keywords', 'blockchain, ai hiring, solana, nft skills, web3 talent', '{}'),
+('seo', 'keywords', 'blockchain, ai hiring, blockchain, nft skills, web3 talent', '{}'),
 
 -- Navbar Configuration
 ('navbar', 'links', '[{"label": "Jobs", "href": "/jobs"}, {"label": "Talent", "href": "/talent"}, {"label": "Verify", "href": "/verify"}]', '{"type": "link_list"}'),
@@ -45,7 +45,7 @@ VALUES
 -- Hero Section
 ('hero', 'badge', 'The Future of Web3 Talent is Here', '{}'),
 ('hero', 'title', 'Verify Skills. Hire Intelligence.', '{}'),
-('hero', 'subtitle', 'SkillProof AI uses Gemini 1.5 and Solana to verify professional expertise with on-chain precision. no more resume inflation.', '{}'),
+('hero', 'subtitle', 'SkillProof AI uses Gemini 1.5 and Blockchain to verify professional expertise with on-chain precision. no more resume inflation.', '{}'),
 
 -- Stats Section
 ('stats', 'users_count_label', 'Active Talent Profiles', '{}'),
@@ -56,7 +56,7 @@ VALUES
 ('features', 'title', 'The SkillProof Paradigm', '{}'),
 ('features', 'subtitle', 'We''ve discarded traditional hiring friction for verified cryptographic certainty.', '{}'),
 ('features', 'cards', '[
-    {"title": "Precision Verification", "description": "On-chain proof of expertise verified through Solana-based NFT skill badges.", "icon": "ShieldCheck"},
+    {"title": "Precision Verification", "description": "On-chain proof of expertise verified through Blockchain-based NFT skill badges.", "icon": "ShieldCheck"},
     {"title": "AI Insights", "description": "Gemini 1.5 analyzes resumes and technical repo data to find perfect matches.", "icon": "Zap"},
     {"title": "Reputation Engine", "description": "Build a sovereign, cross-platform reputation that goes wherever you go.", "icon": "BarChart3"},
     {"title": "Global Talent", "description": "Connect with a distributed workforce spanning hundreds of countries.", "icon": "Users"}

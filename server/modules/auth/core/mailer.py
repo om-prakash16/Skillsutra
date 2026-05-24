@@ -25,7 +25,7 @@ class MailerService:
             </p>
             <div style="margin-top: 30px; padding: 20px; border: 1px solid #1e1e1e; border-radius: 12px; background: #0a0a0a;">
                 <p style="margin: 0; font-size: 14px; color: #71717a;">Status: <b>Verified</b></p>
-                <p style="margin: 0; font-size: 14px; color: #71717a;">Network: <b>Solana Mainnet Nexus</b></p>
+                <p style="margin: 0; font-size: 14px; color: #71717a;">Network: <b>Blockchain Mainnet Nexus</b></p>
             </div>
             <p style="margin-top: 40px; font-size: 12px; color: #3f3f46;">
                 Best Hiring Tool Core | Reputation over Resumes.

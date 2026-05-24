@@ -127,7 +127,7 @@ export default function IdentityNexusPage() {
                                  "Not Yet Verified"}
                             </h2>
                             <p className="text-muted-foreground font-medium italic">
-                                {isVerified ? "Your identity is secured on the Solana Nexus." : 
+                                {isVerified ? "Your identity is secured on the Blockchain Nexus." : 
                                  isPending ? "Our AI and Human auditors are analyzing your submission." : 
                                  isRejected ? `Rejection Reason: ${status.rejection_reason || "Invalid document image."}` :
                                  "Submit hardware-backed documentation to increase trust score."}

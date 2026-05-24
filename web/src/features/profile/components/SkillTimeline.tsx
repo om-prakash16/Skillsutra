@@ -31,10 +31,10 @@ const defaultEvents: TimelineEvent[] = [
     {
         id: '2',
         year: '2022',
-        title: 'Solana Ecosystem Entry',
+        title: 'Blockchain Ecosystem Entry',
         description: 'Certified Rust & Anchor developer via Best Hiring Tool AI Forensics.',
         type: 'verified',
-        tech: ['Rust', 'Anchor', 'Solana']
+        tech: ['Rust', 'Anchor', 'Blockchain']
     },
     {
         id: '3',

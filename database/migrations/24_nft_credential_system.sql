@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS public.nft_records CASCADE;
 CREATE TABLE IF NOT EXISTS public.nft_records (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID REFERENCES public.users(id) ON DELETE CASCADE,
-    nft_address TEXT UNIQUE NOT NULL, -- Solana Mint Address
+    nft_address TEXT UNIQUE NOT NULL, -- Blockchain Mint Address
     nft_type TEXT NOT NULL, -- 'profile', 'skill', 'achievement'
     metadata_cid TEXT NOT NULL, -- IPFS CID
     is_active BOOLEAN DEFAULT TRUE,

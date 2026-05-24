@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import { Briefcase, Search, Filter, CheckCircle2, XCircle, AlertCircle, ExternalLink, Building2, MapPin, Clock } from "lucide-react"
 
 const mockJobs = [
-    { id: "JOB-401", title: "Senior Rust Engineer", company: "Solana Labs", location: "Remote", status: "Pending Approval", type: "Full-time", posted: "2h ago" },
+    { id: "JOB-401", title: "Senior Rust Engineer", company: "Blockchain Labs", location: "Remote", status: "Pending Approval", type: "Full-time", posted: "2h ago" },
     { id: "JOB-402", title: "Frontend Lead (Next.js)", company: "Magic Eden", location: "Berlin, DE", status: "Active", type: "Contract", posted: "5h ago" },
     { id: "JOB-403", title: "Smart Contract Auditor", company: "CertiK", location: "New York, US", status: "Flagged", type: "Full-time", posted: "1d ago" },
     { id: "JOB-404", title: "Marketing Director", company: "Phantom", location: "San Francisco, US", status: "Active", type: "Full-time", posted: "2d ago" },

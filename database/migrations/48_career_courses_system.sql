@@ -22,7 +22,7 @@ CREATE INDEX IF NOT EXISTS idx_courses_skills ON public.courses USING GIN (skill
 INSERT INTO public.courses (title, provider, skills_taught, difficulty_level)
 VALUES 
 ('Mastering FastAPI & Real-time APIs', 'Skillsutra Academy', ARRAY['FastAPI', 'Python', 'WebSockets'], 'Intermediate'),
-('Solana Smart Contract Development', 'Solana Foundation', ARRAY['Rust', 'Solana', 'Anchor'], 'Advanced'),
+('Blockchain Smart Contract Development', 'Blockchain Foundation', ARRAY['Rust', 'Blockchain', 'Anchor'], 'Advanced'),
 ('Next.js 14 Masterclass', 'Vercel', ARRAY['Next.js', 'React', 'TypeScript'], 'Beginner'),
 ('DevOps for Scale', 'Internal', ARRAY['Docker', 'Kubernetes', 'CI/CD'], 'Advanced');
 

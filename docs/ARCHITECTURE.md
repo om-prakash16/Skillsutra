@@ -23,7 +23,7 @@ Data Layer
  ├── Redis Cache
         ↓
 Blockchain Layer
- ├── Solana (Anchor Programs)
+ ├── Blockchain (Anchor Programs)
  ├── IPFS Storage
 ```
 
@@ -57,7 +57,7 @@ best-hiring-tool/
 │         └── analytics_worker.py
 │
 ├── contracts/             # Web3 Smart Contracts
-│    └── solana_anchor_programs/
+│    └── blockchain_anchor_programs/
 │
 ├── infra/                 # DevOps & Deployment Infrastructure
 │    ├── docker/
@@ -94,7 +94,7 @@ metadata generated
       ↓
 uploaded to IPFS
       ↓
-NFT minted on Solana
+NFT minted on Blockchain
       ↓
 stored in candidate wallet
 ```

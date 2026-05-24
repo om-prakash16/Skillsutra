@@ -224,7 +224,7 @@ export default function UserSettingsPage() {
                             <Lock className="w-5 h-5 text-white/20" />
                             <div className="space-y-1">
                                 <p className="text-sm font-black uppercase tracking-wide text-white">Wallet Connection</p>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Authenticated via Solana Protocol</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Authenticated via Blockchain Protocol</p>
                             </div>
                         </div>
                         <Badge variant="outline" className="border-emerald-500/20 text-emerald-400 bg-emerald-500/5 text-[9px] font-black uppercase tracking-widest">

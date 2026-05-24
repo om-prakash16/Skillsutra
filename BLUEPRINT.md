@@ -1,6 +1,6 @@
 # SkillSutra — Technical Blueprint
 
-> **Version**: 4.0.0 | **Stack**: Next.js 16 · FastAPI · PostgreSQL · Google Gemini AI · Solana Web3 · Framer Motion
+> **Version**: 4.0.0 | **Stack**: Next.js 16 · FastAPI · PostgreSQL · Google Gemini AI · Blockchain Web3 · Framer Motion
 
 A production-grade, AI-powered hiring platform that replaces traditional resumes with verifiable **Proof Scores** — computed by AI, optionally anchored on-chain, and matched semantically to job descriptions.
 
@@ -181,9 +181,9 @@ Company posts JD → AI extracts requirements → Semantic matching
 ├── database/
 │   └── migrations/             # 48 ordered SQL migrations
 │
-├── contracts/                  # Solana programs (Anchor framework)
+├── contracts/                  # Blockchain programs (Anchor framework)
 │   ├── Anchor.toml
-│   └── solana_anchor_programs/
+│   └── blockchain_anchor_programs/
 │
 ├── docker-compose.yml          # Local dev environment orchestration
 ├── Makefile                    # Dev shortcuts: make dev, make install
@@ -325,7 +325,7 @@ cd web && npm run dev
 | AI Skill Verification | ✕ | ✕ | ✓ Gemini 1.5 |
 | Proof Scores | ✕ | ✕ | ✓ 0-100 scale |
 | JD ↔ CV Matching | Basic | Basic | ✓ Semantic AI |
-| On-Chain Credentials | ✕ | ✕ | ✓ Solana NFT |
+| On-Chain Credentials | ✕ | ✕ | ✓ Blockchain NFT |
 | Resume Fraud Detection | ✕ | ✕ | ✓ AI forensics |
 | Admin CMS | ✕ | ✕ | ✓ Full CMS |
 | Open API | Limited | Limited | ✓ 100+ endpoints |

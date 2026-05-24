@@ -55,20 +55,20 @@ class SkillGraphService:
             "rest api": 0.7,
         },
         "rust": {
-            "solana": 0.85,
+            "blockchain": 0.85,
             "anchor": 0.9,
             "systems programming": 0.88,
             "webassembly": 0.7,
             "smart contracts": 0.8,
         },
-        "solana": {
+        "blockchain": {
             "rust": 0.85,
             "anchor": 0.95,
             "web3": 0.9,
             "smart contracts": 0.92,
             "blockchain": 0.88,
         },
-        "anchor": {"solana": 0.95, "rust": 0.9, "smart contracts": 0.92, "web3": 0.85},
+        "anchor": {"blockchain": 0.95, "rust": 0.9, "smart contracts": 0.92, "web3": 0.85},
         "django": {"python": 0.9, "rest api": 0.85, "postgresql": 0.75, "orm": 0.8},
         "fastapi": {
             "python": 0.92,
@@ -118,14 +118,14 @@ class SkillGraphService:
             "systems programming": 0.82,
         },
         "web3": {
-            "solana": 0.9,
+            "blockchain": 0.9,
             "ethereum": 0.88,
             "smart contracts": 0.92,
             "blockchain": 0.95,
             "defi": 0.8,
         },
         "smart contracts": {
-            "solana": 0.88,
+            "blockchain": 0.88,
             "rust": 0.8,
             "web3": 0.92,
             "anchor": 0.92,

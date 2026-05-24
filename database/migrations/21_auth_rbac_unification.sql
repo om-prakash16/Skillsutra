@@ -1,5 +1,5 @@
 -- 21_auth_rbac_unification.sql
--- Unified Solana Wallet Auth and Multi-Tenant RBAC
+-- Unified Blockchain Wallet Auth and Multi-Tenant RBAC
 
 -- 1. Roles & Permissions System
 DROP TABLE IF EXISTS public.user_roles CASCADE; -- Drop dependent first

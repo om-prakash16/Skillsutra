@@ -38,7 +38,7 @@ INSERT INTO public.feature_flags (feature_name, is_enabled, category, descriptio
 ('enable_skill_gap_analysis', TRUE, 'ai', 'AI-driven identification of missing professional skills.'),
 -- Web3 Features
 ('enable_profile_nft', FALSE, 'web3', 'Sovereign identity anchoring via NFT profiles.'),
-('enable_skill_nft', FALSE, 'web3', 'Minting of on-chain skill verification badges on Solana.'),
+('enable_skill_nft', FALSE, 'web3', 'Minting of on-chain skill verification badges on Blockchain.'),
 ('enable_metadata_sync', FALSE, 'web3', 'Real-time synchronization of profile data to IPFS/Arweave.'),
 -- Marketplace Features
 ('enable_job_posting', TRUE, 'marketplace', 'Core capability for companies to create new listings.'),

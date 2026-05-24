@@ -52,7 +52,7 @@ export const COMPANIES: Company[] = [
     hiringStatus: "Actively Hiring",
     openPositions: 12,
     website: "https://nexuslabs.io",
-    tags: ["Rust", "Solana", "DeFi"]
+    tags: ["Rust", "Blockchain", "DeFi"]
   },
   {
     id: "2",

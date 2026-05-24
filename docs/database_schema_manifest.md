@@ -1,6 +1,6 @@
 # Best Hiring Tool: Database Schema Manifest & Relationships
 
-This document outlines the **Master Relational Architecture** of the Best Hiring Tool platform. The schema is designed for high-assurance, multi-tenant SaaS operations while maintaining a verifiable link to the Solana blockchain.
+This document outlines the **Master Relational Architecture** of the Best Hiring Tool platform. The schema is designed for high-assurance, multi-tenant SaaS operations while maintaining a verifiable link to the Blockchain blockchain.
 
 ## 🏛️ Core Entity Relationships
 
@@ -15,7 +15,7 @@ This document outlines the **Master Relational Architecture** of the Best Hiring
 *   **`jobs` ➔ `applications`**: Connects candidates to opportunities. Includes an `ai_match_score` for recruiter prioritization.
 
 ### 3. Web3 & Verification State
-*   **`users` ➔ `nft_records`**: Tracks which skill certificates or profile NFTs are currently active on the Solana blockchain.
+*   **`users` ➔ `nft_records`**: Tracks which skill certificates or profile NFTs are currently active on the Blockchain blockchain.
 *   **`users` ➔ `metadata_versions`**: Maintains a historical trail of IPFS CIDs for verifiable identity playback.
 *   **`sync_status`**: Monitors the consistency of the "Dual-State" architecture (PostgreSQL vs. IPFS).
 

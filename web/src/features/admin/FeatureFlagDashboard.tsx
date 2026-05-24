@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Flag, Rocket, Settings2, ShieldCheck, Zap } from "lucide-react"
 
 const FLAGS = [
-    { id: "enable_skill_nft", label: "SKILL NFT MINTING", description: "Enable automated Solana NFT issuance for verified skills", icon: Zap, category: "blockchain" },
+    { id: "enable_skill_nft", label: "SKILL NFT MINTING", description: "Enable automated Blockchain NFT issuance for verified skills", icon: Zap, category: "blockchain" },
     { id: "enable_ai_quiz", label: "AI QUIZ PIPELINE", description: "Activate dynamic MCQ generation and automated grading", icon: Rocket, category: "ai" },
     { id: "enable_referral", label: "REFERRAL PROGRAM", description: "Enable on-chain referral rewards for user onboarding", icon: Settings2, category: "growth" },
     { id: "public_job_board", label: "PUBLIC JOB BOARD", description: "Toggle visibility of the global talent marketplace", icon: Flag, category: "core" }

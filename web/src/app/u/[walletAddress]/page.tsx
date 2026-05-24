@@ -11,7 +11,7 @@ interface PageProps {
 // Mocking the Database Project Ledger query
 const getLiveLedger = async (wallet: string) => {
     return [
-        { id: 1, name: "DeFi Yield Aggregator", stack: ["Solana", "Rust"], score: 98, hash: "0x89ab...cd45" },
+        { id: 1, name: "DeFi Yield Aggregator", stack: ["Blockchain", "Rust"], score: 98, hash: "0x89ab...cd45" },
         { id: 2, name: "Zero-Knowledge Voting", stack: ["Cairo", "Next.js"], score: 92, hash: "0x12ef...89ab" },
         { id: 3, name: "AI Agent Trading Bot", stack: ["Python", "FastAPI"], score: 95, hash: "0x34cd...efa1" },
     ];
@@ -46,7 +46,7 @@ export default async function PublicPortfolio({ params }: PageProps) {
                     <h2 className="text-2xl font-bold flex items-center gap-2">
                         <Code2 className="w-6 h-6" /> Live Project Ledger
                     </h2>
-                    <p className="text-muted-foreground">Immutable proof-of-work hashes verified directly via the Solana blockchain.</p>
+                    <p className="text-muted-foreground">Immutable proof-of-work hashes verified directly via the Blockchain blockchain.</p>
 
                     <div className="grid gap-4">
                         {ledger.map(project => (

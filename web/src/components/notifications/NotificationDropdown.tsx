@@ -20,7 +20,7 @@ const mockNotifications: Notification[] = [
         id: "1",
         type: "nft",
         title: "Skill NFT Verified",
-        message: "Your React Architect SBT has been successfully minted to Solana devnet.",
+        message: "Your React Architect SBT has been successfully minted to Blockchain devnet.",
         time: "2m ago",
         isRead: false
     },
@@ -28,7 +28,7 @@ const mockNotifications: Notification[] = [
         id: "2",
         type: "job",
         title: "Elite Match Found",
-        message: "AI matched your profile with 'Lead Protocol Engineer' at Solana Labs (98% match).",
+        message: "AI matched your profile with 'Lead Protocol Engineer' at Blockchain Labs (98% match).",
         time: "1h ago",
         isRead: false
     },
@@ -36,7 +36,7 @@ const mockNotifications: Notification[] = [
         id: "3",
         type: "verify",
         title: "Forensic Analysis Complete",
-        message: "GitHub Repository 'solana-defi-vault' verified. Forensic Confidence: 94%.",
+        message: "GitHub Repository 'blockchain-defi-vault' verified. Forensic Confidence: 94%.",
         time: "3h ago",
         isRead: false
     }

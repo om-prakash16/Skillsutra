@@ -168,7 +168,7 @@ Return ONLY a valid JSON array. No markdown."""
             "node.js": ("Node.js", "framework"), "docker": ("Docker", "tool"),
             "kubernetes": ("Kubernetes", "tool"), "aws": ("AWS", "cloud"),
             "postgresql": ("PostgreSQL", "database"), "mongodb": ("MongoDB", "database"),
-            "rust": ("Rust", "language"), "solana": ("Blockchain", "concept"),
+            "rust": ("Rust", "language"), "blockchain": ("Blockchain", "concept"),
             "machine learning": ("Machine Learning", "concept"),
             "tensorflow": ("TensorFlow", "ai_ml"), "pytorch": ("PyTorch", "ai_ml"),
         }

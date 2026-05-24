@@ -209,7 +209,7 @@ DO $$
 DECLARE
     v_python UUID; v_js UUID; v_ts UUID; v_rust UUID; v_react UUID; v_nextjs UUID;
     v_django UUID; v_fastapi UUID; v_flask UUID; v_node UUID; v_docker UUID; v_k8s UUID;
-    v_solana UUID; v_anchor UUID; v_web3 UUID; v_sc UUID; v_pg UUID; v_rest UUID;
+    v_blockchain UUID; v_anchor UUID; v_web3 UUID; v_sc UUID; v_pg UUID; v_rest UUID;
     v_ml UUID; v_ds UUID; v_pandas UUID; v_tf UUID; v_pytorch UUID;
     v_go UUID; v_vue UUID; v_angular UUID; v_redis UUID; v_mongo UUID;
 BEGIN
@@ -225,7 +225,7 @@ BEGIN
     SELECT id INTO v_node FROM public.skill_taxonomy WHERE slug='express';
     SELECT id INTO v_docker FROM public.skill_taxonomy WHERE slug='docker';
     SELECT id INTO v_k8s FROM public.skill_taxonomy WHERE slug='kubernetes';
-    SELECT id INTO v_solana FROM public.skill_taxonomy WHERE slug='blockchain';
+    SELECT id INTO v_blockchain FROM public.skill_taxonomy WHERE slug='blockchain';
     SELECT id INTO v_anchor FROM public.skill_taxonomy WHERE slug='anchor';
     SELECT id INTO v_web3 FROM public.skill_taxonomy WHERE slug='web3';
     SELECT id INTO v_sc FROM public.skill_taxonomy WHERE slug='smart-contracts';

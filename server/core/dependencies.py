@@ -21,7 +21,7 @@ async def get_current_user_id(user: Dict[str, Any] = Depends(get_current_user)) 
     return str(user_id)
 
 async def get_validated_wallet(user: Dict[str, Any] = Depends(get_current_user)) -> str:
-    """Since Solana is removed, this simply returns the authenticated user's ID."""
+    """Since Blockchain is removed, this simply returns the authenticated user's ID."""
     user_id = user.get("id") or user.get("sub")
     if not user_id:
         raise AuthorizationError(message="No authenticated user ID found.")

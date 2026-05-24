@@ -40,7 +40,7 @@ export default function StaffNFTActivity() {
                     </button>
                     <button className="flex items-center gap-2 px-6 py-3 bg-indigo-500/20 border border-indigo-500/30 rounded-2xl text-indigo-400 text-xs font-bold uppercase tracking-widest">
                         <ExternalLink className="w-4 h-4" />
-                        Solana Explorer
+                        Blockchain Explorer
                     </button>
                 </div>
             </header>

@@ -24,7 +24,7 @@ const mockFlags: NftFlag[] = [
     { id: "f2", nft_mint: "9XyZ...MnP", candidate:"0xdef...real",  skill:"React",           reason:"github_suspicious", ai_score:61,  expected_score:80, status:"flagged",           flagged_by:"mod_anita", age:"5h"  },
     { id: "f3", nft_mint: "7AbC...WeQ", candidate:"0xghi...test",  skill:"Machine Learning",reason:"duplicate_cert",    ai_score:88,  expected_score:88, status:"approved",          flagged_by:"ver_priya", age:"1d"  },
     { id: "f4", nft_mint: "KkLl...ZZa", candidate:"0xjkl...sus",   skill:"Rust",            reason:"invalid_proof",     ai_score:5,   expected_score:70, status:"retest_requested",  flagged_by:"ver_priya", age:"3h"  },
-    { id: "f5", nft_mint: "BcDe...FgH", candidate:"0xmno...ok",    skill:"Solana",          reason:"manual_review",     ai_score:78,  expected_score:80, status:"flagged",           flagged_by:"mod_anita", age:"30m" },
+    { id: "f5", nft_mint: "BcDe...FgH", candidate:"0xmno...ok",    skill:"Blockchain",          reason:"manual_review",     ai_score:78,  expected_score:80, status:"flagged",           flagged_by:"mod_anita", age:"30m" },
 ]
 
 const reasonLabels: Record<FlagReason, string> = {

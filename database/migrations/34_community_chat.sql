@@ -27,7 +27,7 @@ INSERT INTO discussion_rooms (room_name, category, description)
 VALUES 
 ('AI & LLM Innovations', 'AI', 'Discuss GPT, Gemini, and the future of LLMs.'),
 ('Fullstack Frontiers', 'Engineering', 'Next.js, FastAPI, and building scalable apps.'),
-('Solana Ecosystem', 'Web3', 'Building on Solana and decentralized credentials.'),
+('Blockchain Ecosystem', 'Web3', 'Building on Blockchain and decentralized credentials.'),
 ('Career Strategy Hub', 'Soft Skills', 'Resume tips, interview prep, and career growth.')
 ON CONFLICT (room_name) DO NOTHING;
 

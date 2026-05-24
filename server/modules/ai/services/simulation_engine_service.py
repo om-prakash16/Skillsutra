@@ -37,7 +37,7 @@ class SimulationEngineService:
 
     def detect_role_from_job(self, job_title: str, job_description: str, required_skills: List[str]) -> str:
         combined = f"{job_title} {job_description} {' '.join(required_skills)}".lower()
-        if any(kw in combined for kw in ["solana", "anchor", "smart contract"]): return "smart_contract"
+        if any(kw in combined for kw in ["blockchain", "anchor", "smart contract"]): return "smart_contract"
         if any(kw in combined for kw in ["data scien", "machine learning"]): return "data_science"
         if any(kw in combined for kw in ["react", "frontend", "ui"]): return "frontend"
         if any(kw in combined for kw in ["docker", "kubernetes", "devops"]): return "devops"

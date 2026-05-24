@@ -38,9 +38,9 @@ def _extract_timestamp_from_message(message: str) -> Optional[int]:
     return None
 
 
-async def verify_solana_signature(wallet: str, message: str, signature: str) -> bool:
+async def verify_blockchain_signature(wallet: str, message: str, signature: str) -> bool:
     """
-    Verifies a Solana Ed25519 signature.
+    Verifies a Blockchain Ed25519 signature.
     """
     if wallet.startswith("DEV_") and signature == "MOCK_DEMO_SIGNATURE":
         return True

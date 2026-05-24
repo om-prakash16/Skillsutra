@@ -49,7 +49,7 @@ export function useSyncManager() {
             body: JSON.stringify({ entity_type: type, tx_hash: txHash })
         });
         await fetchSyncStatus();
-        toast.success("Identity synchronized with Solana!");
+        toast.success("Identity synchronized with Blockchain!");
     } catch (err) {
         console.error(err);
     }

@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS public.activity_logs (
     entity_type TEXT, -- 'job', 'user', 'nft'
     entity_id UUID,
     description TEXT,
-    tx_hash TEXT, -- Solana reference
+    tx_hash TEXT, -- Blockchain reference
     timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

@@ -13,8 +13,8 @@ The Best Hiring Tool platform utilizes a "Dual-State Architecture" combining hig
 *   **AI Service Layer**: Powered by **LangChain**, integrating directly into the FastAPI backend. Responsible for parsing resumes, calculating skill scores, generating semantic matches between candidates and jobs, and dynamically generating reputation insights.
 *   **Database Layer**: Hosted on **PostgreSQL**. Acts as the primary off-chain source of truth for fast, editable data including dynamic schemas, user profiles, AI scores, and configuration states.
 *   **Storage Layer**: Utilizes **IPFS** for decentralized metadata storage. Ensures that JSON snapshots of profile and skill data are immutable and publicly accessible to support on-chain verification.
-*   **Blockchain Layer**: Built on the **Solana** blockchain using **Anchor** smart contracts and the **Metaplex** standard. Handles the issuance of NFTs representing skills and identities, leveraging on-chain records for tamper-proof verification of credentials and activity hashes.
-*   **Indexing Layer**: Utilizes **Helius or Shyft API** to monitor and index Solana transactions, feeding finality states back into the backend for real-time dashboard observability.
+*   **Blockchain Layer**: Built on the **Blockchain** blockchain using **Anchor** smart contracts and the **Metaplex** standard. Handles the issuance of NFTs representing skills and identities, leveraging on-chain records for tamper-proof verification of credentials and activity hashes.
+*   **Indexing Layer**: Utilizes **Helius or Shyft API** to monitor and index Blockchain transactions, feeding finality states back into the backend for real-time dashboard observability.
 
 ---
 
@@ -27,10 +27,10 @@ The system comprises interconnected but distinct physical and logical components
 *   **AI Engine**: A logical component within the FastAPI backend managing LLM integrations and scoring models.
 *   **PostgreSQL database**: The relational data store containing structured application data and RBAC enforcement via RLS policies.
 *   **IPFS Storage**: The decentralized file system holding metadata JSON payloads and candidate documents.
-*   **Solana Programs**: The on-chain smart contracts (created via Anchor) where transaction instructions for NFT minting and state anchoring are executed.
+*   **Blockchain Programs**: The on-chain smart contracts (created via Anchor) where transaction instructions for NFT minting and state anchoring are executed.
 
 **Communication Flow**:
-The frontend makes synchronous HTTP requests to the FastAPI backend. The backend asynchronously communicates with PostgreSQL (via PostgREST/SQL APIs), IPFS (via Pinata/native gateways), and the AI Engine (via LangChain). For blockchain interactions, the backend prepares metadata and CIDs, while the frontend leverages a local wallet adapter to sign and submit transactions directly to the Solana RPC. Finality is confirmed via the Indexer (Helius/Shyft) communicating back to the backend.
+The frontend makes synchronous HTTP requests to the FastAPI backend. The backend asynchronously communicates with PostgreSQL (via PostgREST/SQL APIs), IPFS (via Pinata/native gateways), and the AI Engine (via LangChain). For blockchain interactions, the backend prepares metadata and CIDs, while the frontend leverages a local wallet adapter to sign and submit transactions directly to the Blockchain RPC. Finality is confirmed via the Indexer (Helius/Shyft) communicating back to the backend.
 
 ---
 
@@ -44,13 +44,13 @@ The frontend makes synchronous HTTP requests to the FastAPI backend. The backend
     *   **Metadata Generation**: The backend formats the verified data into a Metaplex-compliant JSON structure.
     *   **IPFS Upload**: The backend uploads the JSON metadata to IPFS and retrieves the unique Content Identifier (CID).
     *   **Transaction Preparation**: The backend returns the CID and necessary instruction parameters to the frontend.
-4.  **Blockchain Execution**: The frontend prompts the user's wallet to sign the transaction, updating the Solana smart contract with the new CID or state hash.
+4.  **Blockchain Execution**: The frontend prompts the user's wallet to sign the transaction, updating the Blockchain smart contract with the new CID or state hash.
 
 ---
 
 ## SECTION 4 — Core Modules
 
-*   **Authentication System**: Integrates Solana wallet adapters with JWT session validation, linking cryptographic identity to PostgreSQL user records.
+*   **Authentication System**: Integrates Blockchain wallet adapters with JWT session validation, linking cryptographic identity to PostgreSQL user records.
 *   **Dynamic Profile Schema System**: A metadata-driven engine where admins can define custom profile fields and validation rules without code changes.
 *   **AI Scoring Engine**: Analyzes textual inputs and historical data to assign quantifiable scores to skills and job match probabilities.
 *   **NFT Minting System**: Orchestrates the creation of Metaplex NFTs representing verifiable digital identities and individual skill achievements.
@@ -71,7 +71,7 @@ The frontend makes synchronous HTTP requests to the FastAPI backend. The backend
 4.  **Metadata uploaded to IPFS**: The JSON is pinned to IPFS.
 5.  **CID stored in database**: The new CID is recorded in the `metadata_versions` table, and the sync status is marked as `pending`.
 6.  **User syncs profile**: The user clicks the "Sync to Blockchain" button on the frontend.
-7.  **Solana transaction updates NFT CID**: The frontend wallet signs a transaction modifying the on-chain NFT metadata URI to point to the new IPFS CID.
+7.  **Blockchain transaction updates NFT CID**: The frontend wallet signs a transaction modifying the on-chain NFT metadata URI to point to the new IPFS CID.
 8.  **Status updated**: The indexing system detects the finalized transaction and updates the PostgreSQL `sync_status` to `synced`.
 
 ---
@@ -95,7 +95,7 @@ The frontend makes synchronous HTTP requests to the FastAPI backend. The backend
 3.  **AI indexes job skills**: The AI Engine extracts key requirements and updates semantic search vectors.
 4.  **User applies**: A candidate submits their profile and cover letter against the job ID.
 5.  **Application stored in PostgreSQL**: The backend creates a record in the `applications` table, triggering an initial AI match evaluation.
-6.  **Application reference stored on Solana**: A cryptographic hash of the application state is anchored on-chain to prevent tampering and provide verifiable proof of submission.
+6.  **Application reference stored on Blockchain**: A cryptographic hash of the application state is anchored on-chain to prevent tampering and provide verifiable proof of submission.
 
 ---
 
@@ -104,7 +104,7 @@ The frontend makes synchronous HTTP requests to the FastAPI backend. The backend
 1.  **Detect profile changes**: Row-level database triggers or application logic identifies a mutation in user data.
 2.  **Generate metadata**: The backend compiles a new metadata payload.
 3.  **Upload to IPFS**: The payload is pinned, generating a new CID.
-4.  **Update CID on Solana**: A user-approved transaction writes the new CID to the blockchain.
+4.  **Update CID on Blockchain**: A user-approved transaction writes the new CID to the blockchain.
 5.  **Update sync status**: The backend `TransactionMonitorService` confirms finality and transitions the `sync_status` table from `pending` to `synced`.
 
 ---
@@ -122,7 +122,7 @@ The PostgreSQL database handles the rapid off-chain state. Key tables include:
 *   `feature_flags`: Boolean toggles for dynamic platform configuration.
 *   `notifications`: Queue for user alerts.
 *   `activity_logs`: Audit trail for systemic and administrative actions.
-*   `nft_records`: Local index mapping wallet ownership to minted Solana tokens.
+*   `nft_records`: Local index mapping wallet ownership to minted Blockchain tokens.
 *   `metadata_versions`: History tracking for IPFS CID revisions.
 *   `sync_status`: State definitions tracking off-chain to on-chain parity.
 
@@ -182,7 +182,7 @@ To maintain focus and velocity, the Minimum Viable Product isolates these core m
 
 ## SECTION 15 — Constraints
 
-*   **Avoid Changing Tech Stack**: Strictly adhere to Next.js, FastAPI, PostgreSQL, IPFS, and Solana. Do not introduce new overarching frameworks.
-*   **Ensure Compatibility with Solana NFT Metadata**: Metadata schemas strictly match Metaplex JSON standards.
+*   **Avoid Changing Tech Stack**: Strictly adhere to Next.js, FastAPI, PostgreSQL, IPFS, and Blockchain. Do not introduce new overarching frameworks.
+*   **Ensure Compatibility with Blockchain NFT Metadata**: Metadata schemas strictly match Metaplex JSON standards.
 *   **Maintain Modular Architecture**: Code structure must silo logic properly to avoid tightly coupled systems that slow down future refactoring.
 *   **Avoid Tightly Coupled Components**: Synchronous requests from frontend must not be blocked by slow blockchain finality. The asynchronous Data Sync Manager handles all lag gracefully.

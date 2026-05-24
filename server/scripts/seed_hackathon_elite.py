@@ -38,7 +38,7 @@ def run_elite_seeding():
             "profile_data": {
                 "title": "Principal Protocol Architect",
                 "bio": "Specializing in high-throughput L1/L2 orchestration.",
-                "skills": ["Rust", "Solana", "Anchor"],
+                "skills": ["Rust", "Blockchain", "Anchor"],
                 "soft_skills": ["Architectural Leadership", "Mentorship"]
             }
         },
@@ -65,10 +65,10 @@ def run_elite_seeding():
         {
             "id": str(uuid.uuid4()),
             "user_id": sarah_id,
-            "title": "Solana Shield Protocol",
+            "title": "Blockchain Shield Protocol",
             "description": "Zero-knowledge transaction mixer.",
             "stack": ["Rust", "Anchor"],
-            "github_url": "https://github.com/sarah/solana-shield"
+            "github_url": "https://github.com/sarah/blockchain-shield"
         },
         {
             "id": str(uuid.uuid4()),

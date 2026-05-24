@@ -22,7 +22,7 @@ export const TALENT_DATA: Talent[] = [
     location: "Lisbon, PT",
     experience: "6 Years",
     experienceLevel: "Senior",
-    skills: ["React", "TypeScript", "Node.js", "Solana"],
+    skills: ["React", "TypeScript", "Node.js", "Blockchain"],
     availability: "Immediate",
     completion: 95,
     verified: true
@@ -48,7 +48,7 @@ export const TALENT_DATA: Talent[] = [
     location: "London, UK",
     experience: "8 Years",
     experienceLevel: "Senior",
-    skills: ["Rust", "Solana", "Anchor", "Core Rust"],
+    skills: ["Rust", "Blockchain", "Anchor", "Core Rust"],
     availability: "1 Month",
     completion: 100,
     verified: true

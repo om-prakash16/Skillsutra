@@ -20,7 +20,7 @@ export const USER_PROFILE: UserProfile = {
   skills: [
     { name: "Next.js", level: "Expert" },
     { name: "FastAPI", level: "Advanced" },
-    { name: "Solana", level: "Intermediate" },
+    { name: "Blockchain", level: "Intermediate" },
     { name: "Gemini AI", level: "Advanced" }
   ],
   experience: [],

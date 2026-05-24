@@ -2,10 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   transpilePackages: [
-    '@solana/wallet-adapter-base',
-    '@solana/wallet-adapter-react',
-    '@solana/wallet-adapter-react-ui',
-    '@solana/web3.js',
+    '@blockchain/wallet-adapter-base',
+    '@blockchain/wallet-adapter-react',
+    '@blockchain/wallet-adapter-react-ui',
+    '@blockchain/web3.js',
     '@noble/curves',
     '@noble/hashes'
   ],

@@ -51,7 +51,7 @@ class JobOptimizerService:
         """Suggest proximate skills based on current skills."""
         # Simple proximity mapping
         proximity_map = {
-            "solana": ["Anchor Framework", "Rust", "Web3.js"],
+            "blockchain": ["Anchor Framework", "Rust", "Web3.js"],
             "react": ["Next.js", "Tailwind CSS", "TypeScript"],
             "fastapi": ["Pydantic", "SQLAlchemy", "PostgreSQL"],
             "python": ["Pandas", "NumPy", "Scikit-Learn"],
@@ -166,7 +166,7 @@ class JobOptimizerService:
 
         # Skill premium logic
         premium = 0
-        rare_skills = ["rust", "solana", "zkp", "golang", "kubernetes"]
+        rare_skills = ["rust", "blockchain", "zkp", "golang", "kubernetes"]
         for s in skills:
             if s.lower() in rare_skills:
                 premium += 0.05
@@ -183,7 +183,7 @@ class JobOptimizerService:
         """Determine how hard it will be to fill this role based on skill supply."""
         rarity_map = {
             "rust": 85,
-            "solana": 92,
+            "blockchain": 92,
             "anchor": 95,
             "zkp": 98,
             "kubernetes": 75,

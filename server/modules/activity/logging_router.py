@@ -19,7 +19,7 @@ async def get_activity_logs(user_id: Optional[UUID] = None):
 
 @router.post("/activity", response_model=ActivityLogResponse)
 async def log_activity(log: ActivityLogCreate):
-    """Record a platform action with optional Solana transaction hash."""
+    """Record a platform action with optional Blockchain transaction hash."""
     return {}
 
 
