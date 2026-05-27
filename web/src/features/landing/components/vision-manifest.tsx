@@ -2,8 +2,11 @@
 
 import { motion } from 'framer-motion';
 import { BrainCircuit, ShieldAlert, Zap, ShieldCheck, Cpu } from 'lucide-react';
+import { useCMS } from '@/context/cms-context';
 
 export function VisionManifest() {
+  const { getVal, getJson } = useCMS();
+  const brandName = getVal("global", "site_name", "SkillProof AI");
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -36,12 +39,12 @@ export function VisionManifest() {
         >
           {/* Headline Block */}
           <motion.div variants={itemVariants} className="max-w-4xl">
-            <h2 className="text-micro text-primary mb-6">The Problem / Why This Exists</h2>
+            <h2 className="text-micro text-primary mb-6">{getVal('vision', 'pre_title', 'The Problem / Why This Exists')}</h2>
             <h3 className="text-5xl md:text-7xl font-extrabold tracking-tight uppercase leading-none text-white">
-              Hiring is <span className="text-rose-600 font-black italic">Broken.</span>
+              {getVal('vision', 'title_part1', 'Hiring is')} <span className="text-rose-600 font-black italic">{getVal('vision', 'title_part2', 'Broken.')}</span>
             </h3>
             <p className="mt-8 text-lg md:text-xl text-white/40 font-normal leading-relaxed italic max-w-2xl">
-              78% of resumes contain misleading information. ATS systems reject qualified candidates. Recruiters spend 23+ hours screening per hire. The current system rewards the loudest claims, not the deepest skills.
+              {getVal('vision', 'problem_text', '78% of resumes contain misleading information. ATS systems reject qualified candidates. Recruiters spend 23+ hours screening per hire. The current system rewards the loudest claims, not the deepest skills.')}
             </p>
           </motion.div>
 
@@ -79,7 +82,7 @@ export function VisionManifest() {
               <div className="absolute top-0 left-12 right-12 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
               
               <Zap className="w-10 h-10 text-primary mb-2 group-hover:scale-105 transition-transform duration-300" />
-              <h4 className="text-2xl font-extrabold italic uppercase tracking-tight text-white font-heading">The SkillSutra Path</h4>
+              <h4 className="text-2xl font-extrabold italic uppercase tracking-tight text-white font-heading">The {brandName} Path</h4>
               <ul className="space-y-4 text-white/80 font-bold italic text-sm">
                 <li className="flex gap-3 items-start">
                   <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
@@ -87,7 +90,7 @@ export function VisionManifest() {
                 </li>
                 <li className="flex gap-3 items-start">
                   <Cpu className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                  <span>On-chain credentials make skills tamper-proof and portable.</span>
+                  <span>platform credentials make skills tamper-proof and portable.</span>
                 </li>
                 <li className="flex gap-3 items-start">
                   <BrainCircuit className="w-5 h-5 text-primary shrink-0 mt-0.5" />
@@ -99,12 +102,12 @@ export function VisionManifest() {
 
           {/* Closing Statement */}
           <motion.div variants={itemVariants} className="text-right space-y-6 ml-auto max-w-3xl">
-            <h2 className="text-micro text-primary mb-6">Our Vision / The Future</h2>
+            <h2 className="text-micro text-primary mb-6">{getVal('vision', 'vision_pre_title', 'Our Vision / The Future')}</h2>
             <h3 className="text-4xl md:text-6xl font-extrabold tracking-tight uppercase leading-none text-white font-heading">
-              Verified Skills are the <span className="text-primary font-black italic bg-gradient-to-r from-emerald-400 to-indigo-400 bg-clip-text text-transparent">New Currency.</span>
+              {getVal('vision', 'vision_title_part1', 'Verified Skills are the')} <span className="text-primary font-black italic bg-gradient-to-r from-emerald-400 to-indigo-400 bg-clip-text text-transparent">{getVal('vision', 'vision_title_part2', 'New Currency.')}</span>
             </h3>
             <p className="mt-8 text-lg text-white/40 font-normal leading-relaxed italic max-w-xl ml-auto">
-              SkillSutra replaces subjective hiring with mathematical precision. Every skill is AI-verified. Every credential is on-chain. Every match is data-driven.
+              {getVal('vision', 'vision_text', `${brandName} replaces subjective hiring with mathematical precision. Every skill is AI-verified. Every credential is platform. Every match is data-driven.`)}
             </p>
             
             <div className="pt-10 flex justify-end gap-4 md:gap-6 flex-wrap">

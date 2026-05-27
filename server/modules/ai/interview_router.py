@@ -1,8 +1,8 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
-from typing import List, Dict, Any, Optional
+from fastapi import APIRouter, Depends, Query
+from typing import List, Optional
 
 from core.response import success_response
-from core.dependencies import get_db, get_current_user_id
+from core.dependencies import get_current_user_id
 from modules.ai.services.interview_service import interview_service
 from modules.ai.models import InterviewGenerationRequest, InterviewQuestionBase
 from modules.auth.core.guards import require_company_or_admin

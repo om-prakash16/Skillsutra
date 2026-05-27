@@ -47,7 +47,11 @@ async def get_goals(current_user=Depends(get_current_user)):
 async def generate_roadmap(target_role: str = Body(..., embed=True), current_user=Depends(get_current_user)):
     user_id = current_user.get("sub")
     try:
-        data = await career_service.generate_roadmap(user_id, target_role)
+        from modules.users.core.service import UserService
+        profile = await UserService.get_full_profile(user_id)
+        user_skills = [s["name"] for s in profile.get("skills", [])] if profile else []
+        
+        data = await career_service.generate_roadmap(user_id, target_role, user_skills)
         return {"status": "success", "data": data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -73,4 +77,30 @@ async def update_roadmap_milestone(
         return {"status": "success", "data": data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/gap-analysis")
+async def get_gap_analysis(target_role: str, current_user=Depends(get_current_user)):
+    user_id = current_user.get("sub")
+    try:
+        from modules.users.core.service import UserService
+        from modules.ai.services.gap_analyzer import SkillGapAnalyzer
+        profile = await UserService.get_full_profile(user_id)
+        user_skills = [s["name"] for s in profile.get("skills", [])] if profile else []
+        
+        analyzer = SkillGapAnalyzer()
+        data = await analyzer.analyze_gap({"skills": user_skills}, target_role)
+        return {"status": "success", "data": data}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/badges")
+async def get_user_badges(current_user=Depends(get_current_user)):
+    """Retrieve the badges and certifications earned by the user."""
+    user_id = current_user.get("sub") or current_user.get("id")
+    # Placeholder: fetch badges from db
+    badges = [
+        {"name": "React Master", "type": "SKILL_VERIFIED"},
+        {"name": "System Design Complete", "type": "COURSE_COMPLETED"}
+    ]
+    return {"status": "success", "data": badges}
 

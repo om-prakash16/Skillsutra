@@ -1,11 +1,10 @@
 import asyncio
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 from datetime import datetime
 
 from core.db import get_db
 from core.cache import cache_result
-from modules.ai.services.github_service import github_scanner
 
 logger = logging.getLogger(__name__)
 

@@ -1,8 +1,8 @@
 import logging
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 from core.db import get_db
 from core.cache import cache_result
-from datetime import datetime, timedelta
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
 

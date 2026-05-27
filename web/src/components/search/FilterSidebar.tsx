@@ -23,7 +23,7 @@ export function FilterSidebar({ onFilterChange, type }: FilterSidebarProps) {
             TECHNICAL STACK
           </AccordionTrigger>
           <AccordionContent className="space-y-5 pt-2">
-            {['FastAPI', 'React', 'Blockchain', 'Rust', 'Next.js'].map(skill => (
+            {['FastAPI', 'React', 'infrastructure', 'Rust', 'Next.js'].map(skill => (
               <div key={skill} className="flex items-center space-x-4 group">
                 <Checkbox id={skill} className="border-white/10 w-5 h-5 rounded-md data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
                 <Label htmlFor={skill} className="text-sm font-black text-muted-foreground group-hover:text-foreground cursor-pointer transition-colors uppercase tracking-tight">

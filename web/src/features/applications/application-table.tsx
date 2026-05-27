@@ -1,4 +1,4 @@
-import Link from "next/link"
+﻿import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -10,7 +10,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import { Eye, ExternalLink, MoreHorizontal } from "lucide-react"
-import { Application } from "@/lib/mock-api/applications"
+import { Application } from '@/types'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface ApplicationTableProps {

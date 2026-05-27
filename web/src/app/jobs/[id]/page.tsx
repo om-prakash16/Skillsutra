@@ -2,6 +2,8 @@
 
 import { useAuth } from "@/context/auth-context";
 import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { api } from "@/lib/api/api-client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,63 +17,37 @@ export default function JobDetails() {
   const { id } = useParams();
   const router = useRouter();
   
-  const [job, setJob] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isApplying, setIsApplying] = useState(false);
   const [applied, setApplied] = useState(false);
 
-  useEffect(() => {
-    if (id) fetchJob();
-  }, [id]);
+  const { data: job, isLoading } = useQuery({
+    queryKey: ["jobDetail", id],
+    queryFn: () => api.jobs.details(id as string),
+    enabled: !!id
+  });
 
-  const fetchJob = async () => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs/${id}`);
-      const data = await res.json();
-      setJob(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
+  const applyMutation = useMutation({
+    mutationFn: (jobId: string) => api.jobs.apply(jobId),
+    onSuccess: (data) => {
+      toast.success(`Application Sent! AI Match: ${data.match_score}%`, {
+          description: "Your personalized skill assessment is now ready in your dashboard.",
+          duration: 5000,
+      });
+      setApplied(true);
+      setTimeout(() => {
+          router.push("/user/applications");
+      }, 3000);
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to apply");
     }
-  };
+  });
 
   const handleApply = async () => {
     if (!user) {
-        router.push("/login");
+        router.push("/auth/login");
         return;
     }
-    setIsApplying(true);
-    try {
-      const token = localStorage.getItem("auth_token");
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/applications/${id}/apply`, {
-        method: "POST",
-        headers: { 
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}` 
-        },
-        body: JSON.stringify({ job_id: id, candidate_id: user.id })
-      });
-
-      const data = await res.json();
-      if (res.ok) {
-        toast.success(`Application Sent! AI Match: ${data.match_score}%`, {
-            description: "Your personalized skill assessment is now ready in your dashboard.",
-            duration: 5000,
-        });
-        setApplied(true);
-        // Short delay before redirect to allow user to see the match score
-        setTimeout(() => {
-            router.push("/user/applications");
-        }, 3000);
-      } else {
-        throw new Error(data.detail);
-      }
-    } catch (err: any) {
-      toast.error(err.message);
-    } finally {
-      setIsApplying(false);
-    }
+    applyMutation.mutate(id as string);
   };
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-12 h-12 animate-spin text-primary" /></div>;
@@ -119,11 +95,11 @@ export default function JobDetails() {
                     ) : (
                         <Button 
                             onClick={handleApply} 
-                            disabled={isApplying}
+                            disabled={applyMutation.isPending}
                             variant="premium"
                             className="w-full h-16 rounded-2xl"
                         >
-                            {isApplying ? <Loader2 className="w-7 h-7 animate-spin" /> : <><ShieldCheck className="w-6 h-6 mr-3" /> APPLY NOW</>}
+                            {applyMutation.isPending ? <Loader2 className="w-7 h-7 animate-spin" /> : <><ShieldCheck className="w-6 h-6 mr-3" /> APPLY NOW</>}
                         </Button>
                     )}
                 </CardContent>
@@ -165,7 +141,7 @@ export default function JobDetails() {
                         <CardTitle className="text-lg font-black uppercase tracking-[0.2em] opacity-40">Verification Logic</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6 text-sm font-medium text-muted-foreground">
-                        <p>This job requires a verified on-chain identity and a Proof Score of at least <span className="text-foreground font-black">500</span>.</p>
+                        <p>This job requires a verified platform identity and a Proof Score of at least <span className="text-foreground font-black">500</span>.</p>
                         <ul className="space-y-4">
                             <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary" /> Identity Hash Check</li>
                             <li className="flex items-center gap-3"><div className="w-1.5 h-1.5 rounded-full bg-primary" /> Skill Credential Link</li>

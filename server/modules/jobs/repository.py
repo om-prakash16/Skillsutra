@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from core.db import get_db
 from core.exceptions import NotFoundError, ExternalServiceError
 from core.logging import ProtocolLogger

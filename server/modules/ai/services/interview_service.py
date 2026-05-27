@@ -1,11 +1,9 @@
 import os
 import json
-import uuid
 import logging
 from typing import List, Dict, Any, Optional
 import google.generativeai as genai
 from core.db import get_db
-from modules.ai.models import InterviewQuestionBase
 
 logger = logging.getLogger(__name__)
 

@@ -1,8 +1,8 @@
-'use client';
+﻿'use client';
 
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Company } from '@/lib/mock-api/companies';
+import { Company } from '@/types';
 import { Building2, Users, MapPin, ArrowUpRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 

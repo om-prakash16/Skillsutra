@@ -3,7 +3,6 @@ from typing import Dict, Any, List, Optional, Type
 from core.db import get_db
 import asyncio
 from cachetools import TTLCache
-from datetime import datetime
 
 
 class DynamicValidationService:
@@ -82,6 +81,7 @@ class DynamicValidationService:
 
         return attributes
 class UserService:
+    # DEPRECATED: Please use ProfileService (server/modules/profile/service.py) which uses SQLAlchemy
     # Cache for 2 minutes (120 seconds) with max 1000 items
     _PROFILE_CACHE = TTLCache(maxsize=1000, ttl=120)
 
@@ -108,7 +108,7 @@ class UserService:
             return db.table("users").select("*, profiles(*)").eq("id", user_id).execute()
 
         try:
-            # Execute all queries in parallel via threads (since client is sync)
+            # Try parallel fetch
             res_user, res_skills, res_exp, res_proj, res_edu, res_scores = await asyncio.gather(
                 asyncio.to_thread(run_user_q),
                 asyncio.to_thread(run_q, "user_skills_relational", "*, skills(name, category)"),
@@ -118,9 +118,13 @@ class UserService:
                 asyncio.to_thread(run_q, "ai_scores", "*")
             )
         except Exception as e:
-            print(f"Parallel fetch error: {e}")
-            # Fallback to sequential or return empty if fatal
-            return {}
+            print(f"Parallel fetch error: {e}. Falling back to sequential.")
+            res_user = run_user_q()
+            res_skills = run_q("user_skills_relational", "*, skills(name, category)")
+            res_exp = run_q("experiences", "*", "start_date")
+            res_proj = run_q("projects", "*", "start_date")
+            res_edu = run_q("education", "*", "start_date")
+            res_scores = run_q("ai_scores", "*")
         
         user_data = res_user.data[0] if res_user.data else {}
         skills_data = res_skills.data if res_skills.data else []

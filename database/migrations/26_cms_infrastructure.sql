@@ -27,12 +27,12 @@ VALUES
 
 -- SEO Metadata
 ('seo', 'default_title', 'SkillProof AI | Standardizing Global Talent', '{}'),
-('seo', 'default_description', 'High-assurance career verification and sovereign professional identity for the decentralized hiring economy.', '{}'),
-('seo', 'keywords', 'blockchain, ai hiring, blockchain, nft skills, web3 talent', '{}'),
+('seo', 'default_description', 'High-assurance career verification and professional identity for the digital hiring economy.', '{}'),
+('seo', 'keywords', 'ai hiring, verified skills, tech talent, machine learning, career matching', '{}'),
 
 -- Navbar Configuration
 ('navbar', 'links', '[{"label": "Jobs", "href": "/jobs"}, {"label": "Talent", "href": "/talent"}, {"label": "Verify", "href": "/verify"}]', '{"type": "link_list"}'),
-('navbar', 'cta_label', 'Connect Wallet', '{}'),
+('navbar', 'cta_label', 'Sign In', '{}'),
 
 -- Footer Configuration
 ('footer', 'columns', '[
@@ -43,20 +43,20 @@ VALUES
 ('footer', 'social_links', '[{"platform": "twitter", "url": "https://twitter.com/skillproof"}, {"platform": "github", "url": "https://github.com/skillproof"}]', '{"type": "social_list"}'),
 
 -- Hero Section
-('hero', 'badge', 'The Future of Web3 Talent is Here', '{}'),
+('hero', 'badge', 'The Future of Verified Talent is Here', '{}'),
 ('hero', 'title', 'Verify Skills. Hire Intelligence.', '{}'),
-('hero', 'subtitle', 'SkillProof AI uses Gemini 1.5 and Blockchain to verify professional expertise with on-chain precision. no more resume inflation.', '{}'),
+('hero', 'subtitle', 'SkillProof AI uses Gemini 1.5 to verify professional expertise with precision. No more resume inflation.', '{}'),
 
 -- Stats Section
 ('stats', 'users_count_label', 'Active Talent Profiles', '{}'),
 ('stats', 'companies_count_label', 'Hiring Partners', '{}'),
-('stats', 'nfts_minted_label', 'Proof NFTs Minted', '{}'),
+('stats', 'nfts_minted_label', 'Skills Verified', '{}'),
 
 -- Features (Why Choose Us)
 ('features', 'title', 'The SkillProof Paradigm', '{}'),
 ('features', 'subtitle', 'We''ve discarded traditional hiring friction for verified cryptographic certainty.', '{}'),
 ('features', 'cards', '[
-    {"title": "Precision Verification", "description": "On-chain proof of expertise verified through Blockchain-based NFT skill badges.", "icon": "ShieldCheck"},
+    {"title": "Precision Verification", "description": "Proof of expertise verified through AI-driven skill assessments.", "icon": "ShieldCheck"},
     {"title": "AI Insights", "description": "Gemini 1.5 analyzes resumes and technical repo data to find perfect matches.", "icon": "Zap"},
     {"title": "Reputation Engine", "description": "Build a sovereign, cross-platform reputation that goes wherever you go.", "icon": "BarChart3"},
     {"title": "Global Talent", "description": "Connect with a distributed workforce spanning hundreds of countries.", "icon": "Users"}
@@ -68,7 +68,7 @@ VALUES
 ('sectors', 'list', '[
     {"name": "Software Engineering", "count": 1240, "icon": "Code2", "color": "indigo"},
     {"name": "AI & Data Science", "count": 850, "icon": "Cpu", "color": "purple"},
-    {"name": "Blockchain & Web3", "count": 620, "icon": "Bitcoin", "color": "orange"},
+    {"name": "Cloud Architecture", "count": 620, "icon": "Cloud", "color": "orange"},
     {"name": "Product & Design", "count": 480, "icon": "Globe2", "color": "rose"},
     {"name": "Cybersecurity", "count": 320, "icon": "ShieldCheck", "color": "emerald"},
     {"name": "Growth & Analytics", "count": 210, "icon": "BarChart4", "color": "blue"}

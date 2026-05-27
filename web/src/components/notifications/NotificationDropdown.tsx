@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 
 interface Notification {
     id: string
-    type: 'job' | 'nft' | 'system' | 'verify'
+    type: 'job' | 'Verifications' | 'system' | 'verify'
     title: string
     message: string
     time: string
@@ -18,9 +18,9 @@ interface Notification {
 const mockNotifications: Notification[] = [
     {
         id: "1",
-        type: "nft",
-        title: "Skill NFT Verified",
-        message: "Your React Architect SBT has been successfully minted to Blockchain devnet.",
+        type: "Verifications",
+        title: "Skill Verifications Verified",
+        message: "Your React Architect SBT has been successfully minted to infrastructure devnet.",
         time: "2m ago",
         isRead: false
     },
@@ -28,7 +28,7 @@ const mockNotifications: Notification[] = [
         id: "2",
         type: "job",
         title: "Elite Match Found",
-        message: "AI matched your profile with 'Lead Protocol Engineer' at Blockchain Labs (98% match).",
+        message: "AI matched your profile with 'Lead Protocol Engineer' at infrastructure Labs (98% match).",
         time: "1h ago",
         isRead: false
     },
@@ -36,7 +36,7 @@ const mockNotifications: Notification[] = [
         id: "3",
         type: "verify",
         title: "Forensic Analysis Complete",
-        message: "GitHub Repository 'blockchain-defi-vault' verified. Forensic Confidence: 94%.",
+        message: "GitHub Repository 'infrastructure-defi-vault' verified. Forensic Confidence: 94%.",
         time: "3h ago",
         isRead: false
     }
@@ -70,13 +70,13 @@ export function NotificationDropdown({ onResetCount }: { onResetCount: () => voi
                             >
                                 <div className={cn(
                                     "mt-1 p-2 rounded-full",
-                                    notif.type === 'nft' && "bg-purple-500/10 text-purple-600",
+                                    notif.type === 'Verifications' && "bg-purple-500/10 text-purple-600",
                                     notif.type === 'job' && "bg-blue-500/10 text-blue-600",
                                     notif.type === 'verify' && "bg-green-500/10 text-green-600",
                                     notif.type === 'system' && "bg-orange-500/10 text-orange-600",
                                 )}
                                 >
-                                    {notif.type === 'nft' && <Award className="h-4 w-4" />}
+                                    {notif.type === 'Verifications' && <Award className="h-4 w-4" />}
                                     {notif.type === 'job' && <Briefcase className="h-4 w-4" />}
                                     {notif.type === 'verify' && <Check className="h-4 w-4" />}
                                     {notif.type === 'system' && <Bell className="h-4 w-4" />}

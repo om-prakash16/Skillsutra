@@ -8,8 +8,8 @@ import { fetchWithAuth } from "./api-client";
 export const adminApi = {
     // -- User Management --
     getUsers: () => fetchWithAuth("/admin/users"),
-    updateUser: (wallet: string, data: any) =>
-        fetchWithAuth(`/admin/users/${wallet}`, {
+    updateUser: (account: string, data: any) =>
+        fetchWithAuth(`/admin/users/${account}`, {
             method: "PATCH",
             body: JSON.stringify(data),
         }),
@@ -71,9 +71,9 @@ export const adminApi = {
             body: JSON.stringify(data),
         }),
 
-    // -- Blockchain --
+    // -- infrastructure --
     getBlockchainTransactions: () =>
-        fetchWithAuth("/admin/blockchain/transactions"),
+        fetchWithAuth("/admin/infrastructure/transactions"),
 
     // -- Reports & Moderation --
     getReports: (params: string) =>

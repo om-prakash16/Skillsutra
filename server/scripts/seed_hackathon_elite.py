@@ -1,7 +1,5 @@
-import json
 import uuid
 import os
-from datetime import datetime
 from dotenv import load_dotenv
 # from database import create_client, Client
 

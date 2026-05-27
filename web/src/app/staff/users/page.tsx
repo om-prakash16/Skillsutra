@@ -42,7 +42,7 @@ export default function StaffUserModeration() {
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-primary transition-colors" />
                         <input 
                             type="text" 
-                            placeholder="Search by wallet label or handle..." 
+                            placeholder="Search by account label or handle..." 
                             className="bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-6 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/40 transition-all w-[300px] backdrop-blur-md"
                         />
                     </div>
@@ -58,7 +58,7 @@ export default function StaffUserModeration() {
                 >
                     {/* Mock data for demonstration - in production this would be mapped from a users array */}
                     {[
-                        { id: "1", full_name: "Alice Blockchain", status: "active", reputation_score: 980, created_at: "2024-01-10" },
+                        { id: "1", full_name: "Alice infrastructure", status: "active", reputation_score: 980, created_at: "2024-01-10" },
                         { id: "2", full_name: "Bob Rust", status: "suspended", reputation_score: 420, created_at: "2023-11-15" }
                     ].map((user, i) => (
                         <tr 

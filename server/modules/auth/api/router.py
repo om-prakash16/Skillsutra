@@ -22,7 +22,6 @@ async def sync_user(
     Called by the frontend after every successful Keycloak login.
     Creates the user record if it doesn't exist, updates if it does.
     """
-    import db.engine as engine
     from core.db import get_db
     db = get_db()
     if not db:
@@ -107,7 +106,6 @@ async def sync_user(
 @router.get("/me")
 async def get_me(user=Depends(get_current_user)):
     """Return the current user's session data from Keycloak JWT."""
-    import db.engine as engine
     from core.db import get_db
     db = get_db()
     

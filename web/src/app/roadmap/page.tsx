@@ -4,17 +4,17 @@ import { useState, useEffect } from "react"
 import { fetchWithAuth } from "@/lib/api/api-client"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Loader2, Route, Compass, CheckCircle2, ChevronRight, Sparkles, Star } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Loader2, Route, Compass, CheckCircle2, ChevronRight, Sparkles, Star, Target, TrendingUp, AlertCircle } from "lucide-react"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
 
 export default function RoadmapPage() {
     const [roadmap, setRoadmap] = useState<any>(null)
+    const [gapAnalysis, setGapAnalysis] = useState<any>(null)
     const [loading, setLoading] = useState(true)
     const [generating, setGenerating] = useState(false)
-    const [selectedRole, setSelectedRole] = useState("Backend Developer")
-
-    const roles = ["Backend Developer", "AI Engineer", "Frontend Developer"]
+    const [customRole, setCustomRole] = useState("")
 
     useEffect(() => {
         const fetchRoadmap = async () => {
@@ -22,6 +22,11 @@ export default function RoadmapPage() {
                 const res = await fetchWithAuth("/career/roadmap")
                 if (res.status === "success" && res.data) {
                     setRoadmap(res.data)
+                    // Fetch gap analysis for active roadmap target role
+                    const gapRes = await fetchWithAuth(`/career/gap-analysis?target_role=${encodeURIComponent(res.data.target_role)}`)
+                    if (gapRes.status === "success") {
+                        setGapAnalysis(gapRes.data)
+                    }
                 }
             } catch (err) {
                 console.error(err)
@@ -33,15 +38,25 @@ export default function RoadmapPage() {
     }, [])
 
     const handleGenerate = async () => {
+        if (!customRole.trim()) {
+            toast.error("Please enter a target role.")
+            return
+        }
+
         setGenerating(true)
         try {
+            const gapRes = await fetchWithAuth(`/career/gap-analysis?target_role=${encodeURIComponent(customRole)}`)
+            if (gapRes.status === "success") {
+                setGapAnalysis(gapRes.data)
+            }
+
             const res = await fetchWithAuth("/career/roadmap/generate", {
                 method: "POST",
-                body: JSON.stringify({ target_role: selectedRole })
+                body: JSON.stringify({ target_role: customRole })
             })
             if (res.status === "success" && res.data) {
                 setRoadmap(res.data)
-                toast.success(`Generated custom AI roadmap for ${selectedRole}!`)
+                toast.success(`Generated custom AI roadmap for ${customRole}!`)
             }
         } catch (err) {
             console.error(err)
@@ -84,7 +99,7 @@ export default function RoadmapPage() {
     }
 
     return (
-        <div className="min-h-screen pt-28 pb-16 px-4 md:px-8 max-w-5xl mx-auto space-y-12 relative overflow-hidden">
+        <div className="min-h-screen pt-28 pb-16 px-4 md:px-8 max-w-6xl mx-auto space-y-12 relative overflow-hidden">
             <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-primary/5 blur-[150px] -z-10 rounded-full" />
             
             <div className="border-b border-white/5 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -101,34 +116,27 @@ export default function RoadmapPage() {
             {/* Generator Panel */}
             <div className="glass border-white/5 p-8 rounded-[2rem] space-y-6">
                 <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                    <Compass className="w-5 h-5 text-primary" /> Choose Your Trajectory
+                    <Compass className="w-5 h-5 text-primary" /> Define Your Target Role
                 </h3>
                 
-                <div className="flex flex-wrap gap-3">
-                    {roles.map((role) => (
-                        <button
-                            key={role}
-                            onClick={() => setSelectedRole(role)}
-                            className={`px-6 py-3 rounded-2xl border text-xs font-black uppercase tracking-widest transition-all ${
-                                selectedRole === role 
-                                    ? "bg-primary text-black border-primary font-black shadow-lg"
-                                    : "bg-white/5 border-white/5 text-muted-foreground hover:bg-white/10 hover:text-white"
-                            }`}
-                        >
-                            {role}
-                        </button>
-                    ))}
-                </div>
-
-                <div className="flex justify-end pt-2">
+                <div className="flex flex-col md:flex-row gap-4 items-center">
+                    <div className="flex-1 w-full relative">
+                        <Input 
+                            value={customRole}
+                            onChange={(e) => setCustomRole(e.target.value)}
+                            placeholder="e.g. Senior Machine Learning Engineer, Full Stack Web3 Developer..."
+                            className="bg-white/5 border-white/10 text-white h-12 rounded-xl pl-12 font-medium"
+                        />
+                        <Target className="w-5 h-5 text-muted-foreground absolute left-4 top-3.5" />
+                    </div>
                     <Button 
                         onClick={handleGenerate}
                         disabled={generating}
-                        className="h-12 px-8 rounded-xl text-xs font-bold tracking-widest uppercase gap-2"
+                        className="h-12 px-8 rounded-xl text-xs font-bold tracking-widest uppercase gap-2 w-full md:w-auto"
                     >
                         {generating ? (
                             <>
-                                <Loader2 className="w-4 h-4 animate-spin" /> GENERATING ROADMAP
+                                <Loader2 className="w-4 h-4 animate-spin" /> ANALYZING GAPS & PATH
                             </>
                         ) : (
                             <>
@@ -138,6 +146,49 @@ export default function RoadmapPage() {
                     </Button>
                 </div>
             </div>
+
+            {gapAnalysis && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div className="glass p-6 rounded-3xl border-white/5 space-y-4 col-span-1 md:col-span-2">
+                        <h4 className="text-lg font-bold flex items-center gap-2 text-white">
+                            <TrendingUp className="w-5 h-5 text-primary" /> Skill Gap Analysis
+                        </h4>
+                        
+                        <div className="space-y-4">
+                            <div>
+                                <h5 className="text-xs uppercase tracking-widest font-bold text-emerald-400 mb-2">Verified Skills (Have)</h5>
+                                <div className="flex flex-wrap gap-2">
+                                    {gapAnalysis.current_skills?.map((s: string) => (
+                                        <Badge key={s} variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20">{s}</Badge>
+                                    ))}
+                                    {(!gapAnalysis.current_skills || gapAnalysis.current_skills.length === 0) && (
+                                        <span className="text-xs text-muted-foreground italic">No verified skills found.</span>
+                                    )}
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h5 className="text-xs uppercase tracking-widest font-bold text-rose-400 mb-2">Missing Skills (Need)</h5>
+                                <div className="flex flex-wrap gap-2">
+                                    {gapAnalysis.missing_skills?.map((s: string) => (
+                                        <Badge key={s} variant="outline" className="bg-rose-500/10 text-rose-400 border-rose-500/20">{s}</Badge>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="glass p-6 rounded-3xl border-white/5 space-y-4 col-span-1 flex flex-col justify-center items-center text-center">
+                        <h4 className="text-xs uppercase font-bold tracking-widest text-muted-foreground">Readiness Score</h4>
+                        <div className="text-6xl font-black text-white relative">
+                            {gapAnalysis.readiness_score}%
+                        </div>
+                        <p className="text-xs text-muted-foreground max-w-[200px]">
+                            Your current alignment with the {gapAnalysis.target_role} role.
+                        </p>
+                    </div>
+                </div>
+            )}
 
             {/* Roadmap Timeline */}
             {roadmap ? (
@@ -171,7 +222,7 @@ export default function RoadmapPage() {
                                     className="flex gap-8 items-start"
                                 >
                                     {/* Timeline Node Icon */}
-                                    <div className={`w-20 h-20 rounded-[1.5rem] flex items-center justify-center border-2 z-10 transition-all ${
+                                    <div className={`w-20 h-20 rounded-[1.5rem] flex items-center justify-center border-2 z-10 transition-all flex-shrink-0 ${
                                         isCompleted 
                                             ? "bg-primary/20 border-primary text-primary" 
                                             : isActive 
@@ -202,7 +253,7 @@ export default function RoadmapPage() {
                                         <ul className="space-y-3.5 mb-6">
                                             {node.tasks.map((task: string, taskIdx: number) => (
                                                 <li key={taskIdx} className="text-sm text-muted-foreground flex items-center gap-3">
-                                                    <div className={`w-2 h-2 rounded-full ${isCompleted ? 'bg-primary' : isActive ? 'bg-primary/50' : 'bg-muted-foreground/30'}`} />
+                                                    <div className={`w-2 h-2 rounded-full flex-shrink-0 ${isCompleted ? 'bg-primary' : isActive ? 'bg-primary/50' : 'bg-muted-foreground/30'}`} />
                                                     {task}
                                                 </li>
                                             ))}
@@ -224,8 +275,10 @@ export default function RoadmapPage() {
                         })}
                     </div>
                 </div>
-            ) : (
-                <div className="text-center py-24 glass rounded-[3rem] border-white/5 border-dashed max-w-md mx-auto">
+            ) : null}
+            
+            {!roadmap && !loading && !gapAnalysis && (
+                <div className="text-center py-24 glass rounded-[3rem] border-white/5 border-dashed max-w-md mx-auto mt-12">
                     <Compass className="w-12 h-12 text-white/20 mx-auto mb-4" />
                     <p className="text-[11px] font-black uppercase tracking-widest text-white/50">No active roadmap path selected.</p>
                 </div>

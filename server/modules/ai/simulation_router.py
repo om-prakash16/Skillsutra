@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
 
 from core.response import success_response
-from core.dependencies import get_db, get_validated_wallet
+from core.dependencies import get_validated_wallet
 from modules.ai.services.simulation_engine_service import simulation_service
 
 router = APIRouter()

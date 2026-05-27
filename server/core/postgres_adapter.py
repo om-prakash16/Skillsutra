@@ -1,7 +1,7 @@
 import re
 import json
 import logging
-from typing import Any, List, Dict, Optional
+from typing import Any, List, Optional
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +53,8 @@ def serialize_param(col: str, val: Any) -> Any:
     if isinstance(val, (dict, list)):
         return json.dumps(val)
     return val
+
+
 
 class DatabaseResponse:
     def __init__(self, data: Any, count: Optional[int] = None):
@@ -504,6 +506,22 @@ class QueryBuilder:
             logger.error(f"SQL execution failed: {e}\nSQL: {sql}\nParams: {params}")
             raise e
 
+import warnings
+
 class PostgresAdapter:
+    """
+    DEPRECATED: Custom PostgreSQL Query Builder mapping to Supabase-style syntax.
+    DO NOT USE for new features. Use SQLAlchemy AsyncSession instead.
+    """
+    def __init__(self, pool=None):
+        warnings.warn(
+            "PostgresAdapter is deprecated and will be removed in Phase 3. "
+            "Please use SQLAlchemy models from core.database instead.",
+            DeprecationWarning,
+            stacklevel=2
+        )
+        self.pool = pool
+        self._table = None
+
     def table(self, table_name: str) -> QueryBuilder:
         return QueryBuilder(table_name)

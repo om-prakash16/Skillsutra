@@ -18,8 +18,7 @@ export async function updateSession(request: NextRequest) {
     '/dashboard/skills':       '/user/skills',
     '/dashboard/portfolio':    '/user/dashboard',
     '/dashboard/reputation':   '/user/dashboard',
-    '/dashboard/nfts':         '/user/credentials',
-    '/dashboard/nft':          '/user/credentials',
+    '/dashboard/Verifications':         '/user/credentials',
     '/dashboard/insights':     '/user/insights',
     '/dashboard/career':       '/user/dashboard',
     '/dashboard/interview':    '/user/dashboard',
@@ -89,7 +88,7 @@ export async function updateSession(request: NextRequest) {
 
   // ─── AUTHENTICATION GUARD ─────────────────────────────────────────
   if (!role && (isAdminRoute || isCompanyRoute || isUserRoute)) {
-    const redirectUrl = new URL('/login', request.url)
+    const redirectUrl = new URL('/auth/login', request.url)
     redirectUrl.searchParams.set('redirectedFrom', path)
     return NextResponse.redirect(redirectUrl)
   }
@@ -123,7 +122,7 @@ export async function updateSession(request: NextRequest) {
       }
     }
 
-    if (path.startsWith('/auth') || path === '/login' || path === '/signup') {
+    if (path.startsWith('/auth') || path === '/auth/login' || path === '/auth/register') {
       if (normalizedRole === 'admin') return NextResponse.redirect(new URL('/admin', request.url))
       if (normalizedRole === 'company') return NextResponse.redirect(new URL('/company/dashboard', request.url))
       return NextResponse.redirect(new URL('/user/dashboard', request.url))

@@ -88,7 +88,7 @@ export default function IdentityNexusPage() {
                     Secure your <span className="text-primary">Nexus Identity.</span>
                 </h1>
                 <p className="text-xl text-muted-foreground font-medium leading-relaxed max-w-2xl">
-                    Verify your credentials to unlock the Blue Check of Trust, higher job visibility, and on-chain verification badges.
+                    Verify your credentials to unlock the Blue Check of Trust, higher job visibility, and platform verification badges.
                 </p>
             </div>
 
@@ -127,7 +127,7 @@ export default function IdentityNexusPage() {
                                  "Not Yet Verified"}
                             </h2>
                             <p className="text-muted-foreground font-medium italic">
-                                {isVerified ? "Your identity is secured on the Blockchain Nexus." : 
+                                {isVerified ? "Your identity is secured on the infrastructure Nexus." : 
                                  isPending ? "Our AI and Human auditors are analyzing your submission." : 
                                  isRejected ? `Rejection Reason: ${status.rejection_reason || "Invalid document image."}` :
                                  "Submit hardware-backed documentation to increase trust score."}

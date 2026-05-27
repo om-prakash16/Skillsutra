@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from core.response import success_response
 from core.dependencies import get_db, get_current_user_id
 from modules.ai.services.career_risk_service import career_service

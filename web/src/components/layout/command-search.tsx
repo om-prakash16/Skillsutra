@@ -90,7 +90,7 @@ export function CommandSearch() {
         { id: 'a10', title: 'Resonance Tuning (AI Config)', icon: <Brain className="w-4 h-4 text-rose-500"/>, href: '/admin/ai-config', category: 'Admin Intelligence' },
         { id: 'a11', title: 'AI Evaluation Logs', icon: <Activity className="w-4 h-4 text-rose-500"/>, href: '/admin/ai-logs', category: 'Admin Intelligence' },
         { id: 'a12', title: 'Job Oversight & Moderation', icon: <Briefcase className="w-4 h-4 text-rose-500"/>, href: '/admin/jobs', category: 'Admin Intelligence' },
-        { id: 'a13', title: 'Blockchain Ledger Sync', icon: <Fingerprint className="w-4 h-4 text-rose-500"/>, href: '/admin/blockchain', category: 'Admin Infrastructure' },
+        { id: 'a13', title: 'infrastructure Ledger Sync', icon: <Fingerprint className="w-4 h-4 text-rose-500"/>, href: '/admin/infrastructure', category: 'Admin Infrastructure' },
         { id: 'a14', title: 'Feature Flags Toggle', icon: <Zap className="w-4 h-4 text-rose-500"/>, href: '/admin/features', category: 'Admin Infrastructure' },
         { id: 'a15', title: 'SaaS Plan Billing Matrix', icon: <CreditCard className="w-4 h-4 text-rose-500"/>, href: '/admin/subscriptions', category: 'Admin Infrastructure' },
         { id: 'a16', title: 'System Protocols Configuration', icon: <Settings className="w-4 h-4 text-rose-500"/>, href: '/admin/settings', category: 'Admin Infrastructure' }

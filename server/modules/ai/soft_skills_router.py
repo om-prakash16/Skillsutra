@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
 
 from core.response import success_response
 from core.dependencies import get_db, get_validated_wallet

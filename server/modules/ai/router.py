@@ -1,12 +1,14 @@
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
-from typing import List, Dict, Any, Optional
+from typing import Optional
 import io
 import PyPDF2
 
 from core.response import success_response
-from core.dependencies import get_db, get_current_user_id, get_validated_wallet
+from core.dependencies import get_validated_wallet
 from modules.ai.services.resume_service import resume_service
 from modules.ai.services.reputation_service import reputation_service
+from modules.ai.tasks import analyze_resume_task
+from celery.result import AsyncResult
 
 # Import sub-routers
 from modules.ai.quiz_router import router as quiz_router
@@ -25,6 +27,7 @@ from modules.ai.team_analyzer_router import router as team_analyzer_router
 from modules.ai.career_risk_router import router as career_risk_router
 from modules.ai.pitch_router import router as pitch_router
 from modules.ai.scoring_router import router as scoring_router
+from modules.ai.career_assistant_router import router as career_assistant_router
 
 router = APIRouter()
 
@@ -45,6 +48,7 @@ router.include_router(job_optimizer_router, prefix="/job-optimizer", tags=["Job 
 router.include_router(team_analyzer_router, prefix="/team-analyzer", tags=["Team Analyzer"])
 router.include_router(career_risk_router, prefix="/career-risk", tags=["Career Risk"])
 router.include_router(pitch_router, prefix="/pitch", tags=["Pitch"])
+router.include_router(career_assistant_router, tags=["Career Assistant"])
 
 async def extract_text_from_file(file: UploadFile) -> str:
     content = await file.read()
@@ -61,19 +65,26 @@ async def extract_text_from_file(file: UploadFile) -> str:
 async def analyze_resume_endpoint(
     file: UploadFile = File(...)
 ):
-    """Parse uploaded resume and extract skills/experience."""
+    """Queue uploaded resume for AI parsing and return job_id."""
     text = await extract_text_from_file(file)
-    result = await resume_service.analyze_resume(user_id="anonymous", resume_text=text)
     
-    frontend_data = {
-        "skills": result.get("extracted_skills", []),
-        "soft_skills": result.get("soft_skills", []),
-        "experience_years": result.get("experience_years", 0),
-        "roles": [result.get("primary_role", "Developer")],
-        "education": result.get("education", []),
-        "confidence": result.get("forensic_confidence", 85)
-    }
-    return success_response(data=frontend_data)
+    # Enqueue task to Celery
+    task = analyze_resume_task.delay(user_id="anonymous", resume_text=text)
+    
+    return success_response(data={"job_id": task.id, "status": "processing"})
+
+@router.get("/status/{job_id}")
+async def get_task_status(job_id: str):
+    """Poll for the result of an asynchronous AI task."""
+    task_result = AsyncResult(job_id)
+    if task_result.state == 'PENDING':
+        return success_response(data={"job_id": job_id, "status": "pending"})
+    elif task_result.state == 'SUCCESS':
+        return success_response(data={"job_id": job_id, "status": "completed", "result": task_result.result})
+    elif task_result.state == 'FAILURE':
+        return success_response(data={"job_id": job_id, "status": "failed", "error": str(task_result.info)})
+    else:
+        return success_response(data={"job_id": job_id, "status": task_result.state})
 
 @router.post("/compare-jd-cv")
 async def analyze_jd_cv_endpoint(
@@ -93,10 +104,15 @@ async def analyze_jd_cv_endpoint(
 
 @router.post("/match-jd-candidates")
 async def match_jd_candidates_endpoint(
-    jd: UploadFile = File(...)
+    jd: Optional[UploadFile] = File(None),
+    jd_text_input: Optional[str] = Form(None)
 ):
     """Find best candidates for a given JD."""
-    jd_text = await extract_text_from_file(jd)
+    jd_text = await extract_text_from_file(jd) if jd else jd_text_input
+    
+    if not jd_text:
+        raise HTTPException(status_code=400, detail="Missing Job Description")
+        
     matches = await resume_service.match_candidates_to_jd(jd_text=jd_text)
     return success_response(data=matches)
 

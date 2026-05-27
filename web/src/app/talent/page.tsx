@@ -9,7 +9,10 @@ import { TalentSkeleton } from "@/features/talent/components/talent-skeleton"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Search, Filter, SlidersHorizontal, Upload, Loader2, Sparkles, X } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
+import { Search, Filter, SlidersHorizontal, Upload, Loader2, Sparkles, X, FileText } from "lucide-react"
 import { publicApi } from "@/lib/api/public-api"
 import { toast } from "sonner"
 
@@ -34,7 +37,8 @@ const fetchTalentFromApi = async (params: FetchParams) => {
     const response = await publicApi.search.candidates(searchParams.toString())
     
     // Map backend search results to Talent frontend model
-    const data = response.candidates.map((c: any) => ({
+    const candidates = response.data?.candidates || response.data || []
+    const data = (Array.isArray(candidates) ? candidates : []).map((c: any) => ({
         id: c.user_id,
         name: c.full_name,
         title: c.headline || "Professional",
@@ -67,6 +71,8 @@ function TalentContent() {
 
     const [isMatching, setIsMatching] = useState(false)
     const [matchedTalent, setMatchedTalent] = useState<any[] | null>(null)
+    const [jdText, setJdText] = useState("")
+    const [isJdModalOpen, setIsJdModalOpen] = useState(false)
 
     const updateSearch = (term: string) => {
         setMatchedTalent(null)
@@ -77,16 +83,14 @@ function TalentContent() {
         router.replace(`${pathname}?${params.toString()}`, { scroll: false })
     }
 
-    const handleJdMatch = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files?.[0]) return
-        const file = e.target.files[0]
-        
+    const performMatch = async (file: File | null, text: string = "") => {
         setIsMatching(true)
+        setIsJdModalOpen(false)
         const toastId = toast.loading("AI Foreman initiating AST neural matching...")
         
         try {
-            const res = await publicApi.ai.matchByJd(file)
-            const mapped = res.matches.map((c: any) => ({
+            const res = await publicApi.ai.matchByJd(file, text)
+            const mapped = (res.data || []).map((c: any) => ({
                 id: c.user_id,
                 name: c.full_name,
                 title: c.headline || "Professional",
@@ -104,9 +108,15 @@ function TalentContent() {
             setMatchedTalent(mapped)
             toast.success("Resonance found. Displaying top candidates.", { id: toastId })
         } catch (err) {
-            toast.error("Forensic match failed. Verify PDF integrity.", { id: toastId })
+            toast.error("Forensic match failed. Verify input integrity.", { id: toastId })
         } finally {
             setIsMatching(false)
+        }
+    }
+
+    const handleJdMatchFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files?.[0]) {
+            performMatch(e.target.files[0])
         }
     }
 
@@ -177,16 +187,57 @@ function TalentContent() {
                                      </SheetContent>
                                  </Sheet>
                                  <div className="hidden sm:block h-10 w-px bg-white/5 mx-2" />
-                                 <Button 
-                                     variant="premium"
-                                     className="h-14 px-8 rounded-2xl shadow-2xl shadow-primary/20 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest"
-                                     disabled={isMatching}
-                                     onClick={() => document.getElementById("jd-upload")?.click()}
-                                 >
-                                     {isMatching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
-                                     Match by Spec (JD)
-                                 </Button>
-                                 <input id="jd-upload" type="file" className="hidden" accept=".pdf" onChange={handleJdMatch} />
+                                 <Dialog open={isJdModalOpen} onOpenChange={setIsJdModalOpen}>
+                                     <DialogTrigger asChild>
+                                         <Button 
+                                             variant="premium"
+                                             className="h-14 px-8 rounded-2xl shadow-2xl shadow-primary/20 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest"
+                                             disabled={isMatching}
+                                         >
+                                             {isMatching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
+                                             Match by Spec (JD)
+                                         </Button>
+                                     </DialogTrigger>
+                                     <DialogContent className="sm:max-w-xl glass border-white/10 rounded-[2.5rem] p-8 max-h-[90vh] overflow-y-auto">
+                                         <DialogHeader>
+                                             <DialogTitle className="text-2xl font-black italic uppercase tracking-tight text-white mb-2">Neural JD Match</DialogTitle>
+                                         </DialogHeader>
+                                         <Tabs defaultValue="pdf" className="w-full mt-6">
+                                             <TabsList className="grid w-full grid-cols-2 h-12 glass border-white/5 p-1 rounded-xl mb-6">
+                                                 <TabsTrigger value="pdf" className="rounded-lg text-[10px] font-black uppercase tracking-widest data-[state=active]:bg-primary/20 data-[state=active]:text-primary">PDF Upload</TabsTrigger>
+                                                 <TabsTrigger value="text" className="rounded-lg text-[10px] font-black uppercase tracking-widest data-[state=active]:bg-primary/20 data-[state=active]:text-primary">Paste Text</TabsTrigger>
+                                             </TabsList>
+                                             <TabsContent value="pdf" className="space-y-4">
+                                                 <div 
+                                                    className="border-2 border-dashed border-white/10 rounded-2xl p-10 text-center hover:bg-white/5 transition-colors cursor-pointer group"
+                                                    onClick={() => document.getElementById("jd-upload")?.click()}
+                                                 >
+                                                     <div className="w-16 h-16 bg-white/[0.03] rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                                                         <Upload className="w-8 h-8 text-white/20 group-hover:text-primary transition-colors" />
+                                                     </div>
+                                                     <p className="text-[11px] font-black uppercase tracking-widest text-white/50">Click to upload JD PDF</p>
+                                                 </div>
+                                                 <input id="jd-upload" type="file" className="hidden" accept=".pdf" onChange={(e) => handleJdMatchFile(e)} />
+                                             </TabsContent>
+                                             <TabsContent value="text" className="space-y-4">
+                                                 <Textarea 
+                                                     placeholder="Paste your Job Description here..."
+                                                     className="min-h-[200px] max-h-[40vh] overflow-y-auto glass border-white/5 rounded-2xl focus:border-primary/30 transition-all font-mono text-sm resize-none"
+                                                     value={jdText}
+                                                     onChange={(e) => setJdText(e.target.value)}
+                                                 />
+                                                 <Button 
+                                                     variant="premium" 
+                                                     className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
+                                                     onClick={() => performMatch(null, jdText)}
+                                                     disabled={!jdText.trim()}
+                                                 >
+                                                     <FileText className="w-4 h-4" /> Analyze Text Spec
+                                                 </Button>
+                                             </TabsContent>
+                                         </Tabs>
+                                     </DialogContent>
+                                 </Dialog>
                              </div>
                         </div>
                     </div>

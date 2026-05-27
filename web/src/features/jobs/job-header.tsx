@@ -1,7 +1,7 @@
-import { Badge } from "@/components/ui/badge"
+﻿import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MapPin, Briefcase, DollarSign, Clock, Users, Bookmark, Share2, Star } from "lucide-react"
-import type { Job } from "@/lib/mock-api/jobs"
+import type { Job } from '@/types'
 
 interface JobHeaderProps {
     job: Job

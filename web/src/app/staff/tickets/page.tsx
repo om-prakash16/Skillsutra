@@ -4,8 +4,8 @@ import { motion } from "framer-motion"
 import { MessageSquare, Clock, CheckCircle2, User, ChevronRight, Filter, Search } from "lucide-react"
 
 const mockTickets = [
-    { id: "TK-1001", user: "0x12...abc", subject: "Wallet connection failing on mobile", category: "Technical", status: "Open", priority: "High", time: "2h ago" },
-    { id: "TK-1002", user: "0x44...efg", subject: "Skill NFT not showing in dashboard", category: "Sync", status: "In Progress", priority: "Normal", time: "5h ago" },
+    { id: "TK-1001", user: "0x12...abc", subject: "account connection failing on mobile", category: "Technical", status: "Open", priority: "High", time: "2h ago" },
+    { id: "TK-1002", user: "0x44...efg", subject: "Skill Verifications not showing in dashboard", category: "Sync", status: "In Progress", priority: "Normal", time: "5h ago" },
     { id: "TK-1003", user: "0x98...zyx", subject: "Profile verification taking too long", category: "Verification", status: "Open", priority: "Urgent", time: "1h ago" },
     { id: "TK-1004", user: "0x33...lmn", subject: "Change company name request", category: "Profile", status: "Resolved", priority: "Low", time: "1d ago" },
 ]

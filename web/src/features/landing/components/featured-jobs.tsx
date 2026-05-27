@@ -7,10 +7,17 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { publicApi } from '@/lib/api/public-api';
 import { Loader2 } from 'lucide-react';
+import { useCMS } from '@/context/cms-context';
 
 export function FeaturedJobs() {
   const [jobs, setJobs] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { getVal } = useCMS();
+  
+  const title = getVal("landing", "featured_jobs_title", "Featured Requisitions");
+  const subtitle = getVal("landing", "featured_jobs_subtitle", "Top roles at verified professional organizations seeking high-fidelity talent.");
+  
+  const titleParts = title.split(" ");
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -36,10 +43,10 @@ export function FeaturedJobs() {
                 </Badge>
             </div>
             <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight">
-                Featured <span className="text-primary italic font-black">Requisitions</span>
+                {titleParts[0]} <span className="text-primary italic font-black">{titleParts.slice(1).join(" ")}</span>
             </h2>
             <p className="text-muted-foreground text-base max-w-xl mx-auto">
-                Top roles at verified professional organizations seeking high-fidelity talent.
+                {subtitle}
             </p>
         </div>
 

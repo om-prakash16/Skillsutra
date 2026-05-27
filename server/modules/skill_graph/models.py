@@ -5,7 +5,6 @@ Request/Response schemas for the enterprise skill graph API.
 
 from pydantic import BaseModel, Field
 from typing import List, Optional, Dict, Any
-from datetime import datetime
 from enum import Enum
 
 

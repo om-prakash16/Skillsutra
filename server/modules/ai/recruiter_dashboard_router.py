@@ -1,8 +1,6 @@
-from fastapi import APIRouter, Depends, Query
-from typing import List, Optional
+from fastapi import APIRouter, Depends
 
 from core.response import success_response
-from core.dependencies import get_db
 from modules.ai.services.recruiter_dashboard_service import recruiter_service
 from modules.auth.core.guards import require_company
 

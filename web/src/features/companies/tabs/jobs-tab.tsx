@@ -1,6 +1,6 @@
-import { Company } from "@/lib/mock-api/companies"
+﻿import { Company } from '@/types'
 import { JobCard } from "@/components/shared/job-card"
-import { JOBS } from "@/lib/mock-data"
+import { JOBS } from '@/types'
 
 export function JobsTab({ company }: { company: Company }) {
     // Filter jobs for this company (mock: using company name matching or just showing random ones for demo if ID missing)

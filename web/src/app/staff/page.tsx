@@ -55,7 +55,7 @@ export default function StaffDashboard() {
                     icon={AlertCircle} 
                     trend="-2 today" 
                     trendUp={true}
-                    description="NFT authenticity checks"
+                    description="Verifications authenticity checks"
                 />
                 <AdminStatsCard 
                     title="Active Users" 
@@ -84,7 +84,7 @@ export default function StaffDashboard() {
                         {[
                             { title: "Review Report #892", type: "Security", time: "12m ago" },
                             { title: "Resolve Ticket #102", type: "Support", time: "45m ago" },
-                            { title: "Flagged NFT: Python Expert", type: "Verification", time: "1h ago" },
+                            { title: "Flagged Verifications: Python Expert", type: "Verification", time: "1h ago" },
                             { title: "Suspicious Job Post detected", type: "Moderation", time: "3h ago" }
                         ].map((task, i) => (
                             <motion.div 

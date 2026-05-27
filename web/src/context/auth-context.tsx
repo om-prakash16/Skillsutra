@@ -3,21 +3,20 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { keycloak, initKeycloak, getToken } from "@/lib/keycloak"
-import { fetchWithAuth } from "@/lib/api/api-client"
+import { login as apiLogin, signup as apiSignup, refreshSession as apiRefreshSession, logout as apiLogout, me as apiMe } from "@/lib/api/auth-api"
 
 type UserRole = "user" | "company" | "admin"
 
 interface User {
     id: string
-    keycloak_id: string
+    keycloak_id?: string // Deprecated
     name: string
     email: string
     role: UserRole
     roles: string[]
     wallet_address?: string
     user_code?: string
-    profile_data: any
+    profile_data?: any
     dynamic_profile_data?: any
     companies?: any[]
 }
@@ -29,8 +28,8 @@ interface AuthContextType {
     isAuthenticated: boolean
     signInWithGoogle: (role?: string) => Promise<void>
     signInWithGitHub: (role?: string) => Promise<void>
-    signInWithApple: (role?: string) => Promise<void>
-    login: (role?: string) => Promise<void>
+    loginUser: (data: any) => Promise<void>
+    signupUser: (data: any) => Promise<void>
     logout: () => void
 }
 
@@ -43,137 +42,113 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const router = useRouter()
 
-    /**
-     * After Keycloak login, sync user to local DB and hydrate state.
-     */
-    const syncUser = useCallback(async (accessToken: string) => {
-        try {
-            // Call /auth/sync to ensure user exists in local PostgreSQL
-            const syncData = await fetchWithAuth("/auth/sync", {
-                method: "POST",
-                headers: { Authorization: `Bearer ${accessToken}` },
-            })
-
-            // Call /auth/me for full user data
-            const meData = await fetchWithAuth("/auth/me", {
-                headers: { Authorization: `Bearer ${accessToken}` },
-            })
-
-            const roles: string[] = syncData?.roles || meData?.roles || ["user"]
-            const primaryRole = (
-                roles.includes("admin") ? "admin" :
-                roles.includes("company") ? "company" : "user"
-            ) as UserRole
-
-            setUser({
-                id: syncData?.user_id || meData?.local_id || meData?.sub || "",
-                keycloak_id: syncData?.keycloak_id || meData?.sub || "",
-                name: syncData?.name || meData?.name || "",
-                email: syncData?.email || meData?.email || "",
-                role: primaryRole,
-                roles,
-                wallet_address: meData?.wallet_address || "",
-                user_code: syncData?.user_code || meData?.user_code || "",
-                profile_data: meData?.profile_data || {},
-                dynamic_profile_data: meData?.dynamic_profile_data || {},
-            })
-            setIsAuthenticated(true)
-        } catch (err: any) {
-            console.error("[auth] user sync failed:", err)
-            toast.error("Failed to sync user data")
+    useEffect(() => {
+        let cancelled = false;
+        
+        const init = async () => {
+            const storedToken = localStorage.getItem("accessToken")
+            const refreshToken = localStorage.getItem("refreshToken")
+            
+            if (storedToken) {
+                try {
+                    setToken(storedToken)
+                    // Fetch real user from backend
+                    const realUser = await apiMe()
+                    setUser(realUser)
+                    setIsAuthenticated(true)
+                } catch (error) {
+                    console.error("Token validation failed:", error)
+                    localStorage.removeItem("accessToken")
+                    localStorage.removeItem("refreshToken")
+                    document.cookie = "auth_token=; path=/; max-age=0;"
+                    setToken(null)
+                    setUser(null)
+                    setIsAuthenticated(false)
+                }
+            } else {
+                setIsAuthenticated(false)
+            }
+            if (!cancelled) setIsLoading(false)
+        }
+        
+        init()
+        
+        return () => {
+            cancelled = true
         }
     }, [])
 
-    // Initialize Keycloak on mount
-    useEffect(() => {
-        let cancelled = false
-
-        const init = async () => {
-            try {
-                const authenticated = await initKeycloak()
-                if (cancelled) return
-
-                if (authenticated && keycloak.token) {
-                    setToken(keycloak.token)
-                    // Store token for fetchWithAuth compatibility
-                    localStorage.setItem("auth_token", keycloak.token)
-                    await syncUser(keycloak.token)
-                }
-            } catch (err) {
-                console.error("[auth] keycloak init failed:", err)
-            } finally {
-                if (!cancelled) setIsLoading(false)
-            }
-        }
-
-        init()
-
-        // Set up token refresh interval
-        const refreshInterval = setInterval(async () => {
-            if (keycloak.authenticated) {
-                const freshToken = await getToken()
-                if (freshToken) {
-                    setToken(freshToken)
-                    localStorage.setItem("auth_token", freshToken)
-                } else {
-                    // Session expired
-                    setUser(null)
-                    setToken(null)
-                    setIsAuthenticated(false)
-                    localStorage.removeItem("auth_token")
-                }
-            }
-        }, 30000) // Check every 30 seconds
-
-        return () => {
-            cancelled = true
-            clearInterval(refreshInterval)
-        }
-    }, [syncUser])
-
-    /**
-     * Social login helpers — redirect to Keycloak with identity provider hint.
-     */
     const signInWithGoogle = async (role = "user") => {
         setIsLoading(true)
-        // Store requested role so we can use it after redirect
         localStorage.setItem("requested_role", role)
-        keycloak.login({ idpHint: "google" })
+        window.location.href = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/auth/oauth/google/url`
     }
 
     const signInWithGitHub = async (role = "user") => {
         setIsLoading(true)
         localStorage.setItem("requested_role", role)
-        keycloak.login({ idpHint: "github" })
+        window.location.href = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/auth/oauth/github/url`
     }
 
-    const signInWithApple = async (role = "user") => {
+    const loginUser = async (data: any) => {
         setIsLoading(true)
-        localStorage.setItem("requested_role", role)
-        keycloak.login({ idpHint: "apple" })
+        try {
+            const result = await apiLogin(data)
+            localStorage.setItem("accessToken", result.access_token)
+            localStorage.setItem("refreshToken", result.refresh_token)
+            document.cookie = `auth_token=${result.access_token}; path=/; max-age=86400; SameSite=Lax`
+            setToken(result.access_token)
+            
+            // Fetch user profile so role guard doesn't kick us out
+            const realUser = await apiMe()
+            setUser(realUser)
+            setIsAuthenticated(true)
+            
+            toast.success("Logged in successfully")
+            
+            if (realUser?.role === "admin") {
+                router.push("/admin")
+            } else if (realUser?.role === "company") {
+                router.push("/company/dashboard")
+            } else {
+                router.push("/user/dashboard")
+            }
+        } catch (err: any) {
+            toast.error(err.message || "Login failed")
+            throw err
+        } finally {
+            setIsLoading(false)
+        }
     }
 
-    /**
-     * Generic login — opens Keycloak's login page (email/password + social options).
-     */
-    const login = async (role = "user") => {
+    const signupUser = async (data: any) => {
         setIsLoading(true)
-        localStorage.setItem("requested_role", role)
-        keycloak.login()
+        try {
+            await apiSignup(data)
+            await loginUser({ email_or_username: data.email, password: data.password })
+        } catch (err: any) {
+            toast.error(err.message || "Signup failed")
+            throw err
+        } finally {
+            setIsLoading(false)
+        }
     }
 
-    /**
-     * Logout from both Keycloak and the app.
-     */
-    const logout = () => {
-        localStorage.removeItem("auth_token")
-        localStorage.removeItem("requested_role")
+    const logout = async () => {
+        const refresh = localStorage.getItem("refreshToken")
+        if (refresh) {
+            try {
+                await apiLogout(refresh)
+            } catch (e) {}
+        }
+        localStorage.removeItem("accessToken")
+        localStorage.removeItem("refreshToken")
         document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax"
         setToken(null)
         setUser(null)
         setIsAuthenticated(false)
         toast.info("Signed out")
-        keycloak.logout({ redirectUri: `${window.location.origin}/auth/login` })
+        router.push("/auth/login")
     }
 
     return (
@@ -185,8 +160,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 isAuthenticated,
                 signInWithGoogle,
                 signInWithGitHub,
-                signInWithApple,
-                login,
+                loginUser,
+                signupUser,
                 logout,
             }}
         >

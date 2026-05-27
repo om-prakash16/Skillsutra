@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,36 +8,25 @@ import { Badge } from "@/components/ui/badge";
 import { Briefcase, MapPin, DollarSign, Search, Filter, ArrowRight, Loader2, Zap } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api/api-client";
 
 export default function JobMarketplace() {
   const { user } = useAuth();
-  const [jobs, setJobs] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchJobs();
-  }, [user]);
-
-  const fetchJobs = async () => {
-    try {
-      const url = user?.id 
-        ? `${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs/list?user_id=${user.id}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/api/v1/jobs/list`;
-      
-      const res = await fetch(url);
-      const data = await res.json();
-      setJobs(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
+  const { data: jobs = [], isLoading } = useQuery({
+    queryKey: ['jobs', user?.id],
+    queryFn: async () => {
+      // In production, we'd use the search endpoint instead of fetching all
+      const response = await api.jobs.list();
+      return Array.isArray(response) ? response : [];
     }
-  };
+  });
 
   const filteredJobs = jobs.filter(job => 
-    job.title.toLowerCase().includes(search.toLowerCase()) ||
-    job.companies?.company_name.toLowerCase().includes(search.toLowerCase())
+    job.title?.toLowerCase().includes(search.toLowerCase()) ||
+    job.companies?.company_name?.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
@@ -99,7 +88,7 @@ export default function JobMarketplace() {
 
 function JobCard({ job, user }: { job: any, user: any }) {
     return (
-        <Card className="group relative overflow-hidden glass border-black/5 dark:border-white/5 hover:border-primary/40 transition-all duration-500 rounded-3xl shadow-premium">
+        <Card className="group relative overflow-hidden glass border-black/5 dark:border-white/5 hover:border-primary/40 transition-all duration-500 rounded-3xl shadow-premium flex flex-col">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl -z-10 rounded-full group-hover:bg-primary/10 transition-colors" />
             
             <CardHeader className="relative overflow-hidden pt-10 px-8">
@@ -132,23 +121,28 @@ function JobCard({ job, user }: { job: any, user: any }) {
             <CardFooter className="p-8 pt-6 border-t border-black/5 dark:border-white/5 mt-auto relative z-10">
                 {user ? (
                    <div className="w-full flex items-center justify-between gap-4">
-                      <div className="flex flex-col gap-1">
-                         <span className="text-micro text-muted-foreground/30">AI Resonance</span>
-                         <span className={`text-xl font-bold italic flex items-center gap-2 ${
+                      <div className="flex flex-col gap-2 max-w-[60%]">
+                         <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">AI Resonance</span>
+                         <span className={`text-2xl font-black italic flex items-center gap-2 ${
                             (job.ai_match_percentage || 0) > 70 ? 'text-emerald-500' : 'text-amber-500'
                          }`}>
-                            <Zap className={`w-4 h-4 ${(job.ai_match_percentage || 0) > 70 ? 'fill-emerald-500/20' : 'fill-amber-500/20'}`} /> 
+                            <Zap className={`w-5 h-5 ${(job.ai_match_percentage || 0) > 70 ? 'fill-emerald-500/20' : 'fill-amber-500/20'}`} /> 
                             {job.ai_match_percentage || 0}%
                          </span>
+                         {job.match_reason && (
+                             <p className="text-[10px] text-muted-foreground line-clamp-2 leading-relaxed">
+                                 {job.match_reason}
+                             </p>
+                         )}
                       </div>
-                      <Link href={`/jobs/${job.id}`} className="flex-shrink-0">
-                        <Button variant="premium" className="h-11 px-6 text-micro font-bold tracking-widest rounded-xl">
-                            DETAILS <ArrowRight className="w-3.5 h-3.5 ml-2 group-hover:translate-x-1 transition-transform" />
+                      <Link href={`/jobs/${job.id}`} className="flex-shrink-0 self-end">
+                        <Button variant="premium" className="h-12 px-6 text-[10px] font-black tracking-widest uppercase rounded-xl">
+                            DETAILS <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                         </Button>
                       </Link>
                    </div>
                 ) : (
-                   <Link href="/login" className="w-full">
+                   <Link href="/auth/login" className="w-full">
                       <Button variant="outline" className="w-full h-11 border-black/10 hover:border-primary/50 font-bold uppercase text-micro tracking-widest rounded-xl transition-all">
                          SIGN IN TO APPLY
                       </Button>

@@ -1,4 +1,4 @@
-import { STATS } from "@/lib/mock-data"
+﻿import { STATS } from '@/types'
 
 export function StatsSection() {
     return (

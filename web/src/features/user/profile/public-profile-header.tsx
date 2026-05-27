@@ -1,9 +1,9 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+﻿import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { MapPin, Download, Mail, Briefcase, CheckCircle2, MessageSquare } from "lucide-react"
-import { UserProfile } from "@/lib/mock-api/user-profile"
+import { UserProfile } from '@/types'
 import {
     Dialog,
     DialogContent,

@@ -1,7 +1,7 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+﻿import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Company } from "@/lib/mock-api/companies"
+import { Company } from '@/types'
 import { MapPin, Building2, Users, Calendar, Globe, Plus } from "lucide-react"
 import Link from "next/link"
 
@@ -69,7 +69,7 @@ export function CompanyHeader({ company }: CompanyHeaderProps) {
                     <div className="ml-auto">
                         {company.hiringStatus === "Actively Hiring" && (
                             <Badge variant="secondary" className="bg-green-500/10 text-green-700 hover:bg-green-500/20 border-green-500/20">
-                                ⭐ Actively Hiring
+                                â­ Actively Hiring
                             </Badge>
                         )}
                     </div>

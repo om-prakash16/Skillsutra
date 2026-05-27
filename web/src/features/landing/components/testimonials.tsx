@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { Quote, Star, BadgeCheck } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useCMS } from "@/context/cms-context"
 
 const TESTIMONIALS = [
     {
@@ -33,6 +34,9 @@ const TESTIMONIALS = [
 ]
 
 export function Testimonials() {
+    const { getJson } = useCMS()
+    const testimonialsList = getJson("landing", "testimonials") || TESTIMONIALS;
+
     return (
         <section className="py-24 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -49,7 +53,7 @@ export function Testimonials() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    {TESTIMONIALS.map((testimonial, i) => (
+                    {testimonialsList.map((testimonial: any, i: number) => (
                         <motion.div
                             key={i}
                             initial={{ opacity: 0, y: 20 }}

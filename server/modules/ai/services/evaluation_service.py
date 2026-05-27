@@ -1,72 +1,34 @@
-import os
-import json
 from typing import List, Dict, Any
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.prompts import PromptTemplate
 from modules.ai.models import AIAnalysisResponse, SkillGapResponse, AIScoreResponse
 from core.db import get_db
 
-
 class EvaluationService:
     def __init__(self):
-        self.api_key = os.getenv("GOOGLE_API_KEY")
-        self.llm = (
-            ChatGoogleGenerativeAI(
-                temperature=0.2, google_api_key=self.api_key, model="gemini-1.5-flash"
-            )
-            if self.api_key
-            else None
-        )
+        pass
 
     async def analyze_resume(self, profile_data: Dict[str, Any]) -> AIAnalysisResponse:
         """
-        Resume Analysis.
+        Resume Analysis based on local rule sets.
         Extracts strengths, gaps, and recommendations from structured profile data.
         """
-        if not self.llm:
-            return AIAnalysisResponse(
-                strengths=["Python", "SQL"],
-                missing_skills=["Docker", "Kubernetes"],
-                recommendations=[
-                    "Build a containerized project",
-                    "Learn cloud orchestration",
-                ],
-            )
+        skills = profile_data.get("skills", [])
+        strengths = skills[:3] if skills else ["General Professional Experience"]
+        
+        missing_skills = []
+        if "docker" not in [s.lower() for s in skills]:
+            missing_skills.append("Docker")
+        if "cloud" not in [s.lower() for s in skills] and "aws" not in [s.lower() for s in skills]:
+            missing_skills.append("Cloud Computing (AWS/GCP)")
+            
+        recommendations = ["Build a complete end-to-end project"]
+        if missing_skills:
+            recommendations.append(f"Focus on learning {missing_skills[0]} to improve your backend infrastructure knowledge.")
 
-        prompt = PromptTemplate(
-            template="""Analyze the following candidate profile and provide strategic career insights.
-            
-            Profile:
-            Skills: {skills}
-            Experience: {experience}
-            Projects: {projects}
-            Education: {education}
-            
-            Return a JSON object only with exactly these keys:
-            - strengths (list of strings)
-            - missing_skills (list of strings)
-            - recommendations (list of strings)
-            """,
-            input_variables=["skills", "experience", "projects", "education"],
+        return AIAnalysisResponse(
+            strengths=strengths,
+            missing_skills=missing_skills,
+            recommendations=recommendations,
         )
-
-        try:
-            formatted_prompt = prompt.format(
-                skills=", ".join(profile_data.get("skills", [])),
-                experience=json.dumps(profile_data.get("experience", [])),
-                projects=json.dumps(profile_data.get("projects", [])),
-                education=json.dumps(profile_data.get("education", [])),
-            )
-            response = self.llm.invoke(formatted_prompt)
-            # Remove markdown code blocks if any
-            content = response.content.replace("```json", "").replace("```", "").strip()
-            data = json.loads(content)
-            return AIAnalysisResponse(**data)
-        except Exception as e:
-            print(f"AI Analysis Error: {e}")
-            return AIAnalysisResponse(
-                strengths=[], missing_skills=[], recommendations=[]
-            )
 
     async def calculate_skill_score(self, skills: List[str]) -> float:
         """
@@ -74,7 +36,6 @@ class EvaluationService:
         """
         if not skills:
             return 0.0
-        # Basic heuristic: breadth and known high-value skill presence
         score = min(len(skills) * 8, 100)
         return float(score)
 
@@ -82,30 +43,24 @@ class EvaluationService:
         self, user_id: str, profile_data: Dict[str, Any]
     ) -> AIScoreResponse:
         """
-        Proof Score (Important).
+        Proof Score.
         Formula: 0.4 * skill_score + 0.3 * project_score + 0.3 * experience_score.
         """
-        # Calculate individual components (0-100)
         skill_score = await self.calculate_skill_score(profile_data.get("skills", []))
 
-        # Project complexity heuristic
         projects = profile_data.get("projects", [])
         project_score = min(len(projects) * 20, 100) if projects else 0.0
 
-        # Experience level heuristic
         experience = profile_data.get("experience", [])
         experience_score = min(len(experience) * 15, 100) if experience else 0.0
 
-        # Weighted calculation
         proof_score = (
             (0.4 * skill_score) + (0.3 * project_score) + (0.3 * experience_score)
         )
         proof_score = round(proof_score, 2)
 
-        # Persistence (SECTION 7 & 9)
         db = get_db()
         if db:
-            # 1. Update latest state
             db.table("ai_scores").upsert(
                 {
                     "user_id": user_id,
@@ -117,7 +72,6 @@ class EvaluationService:
                 }
             ).execute()
 
-            # 2. Log History Snapshot for Growth Tracking
             db.table("ai_score_history").insert(
                 {
                     "user_id": user_id,
@@ -140,34 +94,25 @@ class EvaluationService:
         self, profile_data: Dict[str, Any], target_role: str
     ) -> SkillGapResponse:
         """
-        Skill Gap Analysis.
+        Skill Gap Analysis via local mappings.
         """
-        if not self.llm:
-            return SkillGapResponse(
-                missing_skills=["FastAPI", "Docker"],
-                learning_roadmap=["Watch FastAPI tutorials", "Study Docker networking"],
-            )
-
-        prompt = PromptTemplate(
-            template="""Compare candidate skills against the standard for a {target_role}.
-            Skills: {skills}
+        role_lower = target_role.lower()
+        required_skills = ["Communication"]
+        if "data" in role_lower:
+            required_skills = ["Python", "SQL", "Statistics"]
+        elif "frontend" in role_lower:
+            required_skills = ["React", "CSS", "JavaScript"]
+        elif "backend" in role_lower:
+            required_skills = ["Python", "Docker", "Database Design"]
             
-            Return JSON only:
-            - missing_skills (list)
-            - learning_roadmap (list)
-            """,
-            input_variables=["target_role", "skills"],
-        )
+        current_skills = [s.lower() for s in profile_data.get("skills", [])]
+        missing = [s for s in required_skills if s.lower() not in current_skills]
+        
+        roadmap = [f"Complete a short tutorial on {s}" for s in missing]
+        if not roadmap:
+            roadmap = ["Apply for the role immediately, you are highly qualified."]
 
-        try:
-            response = self.llm.invoke(
-                prompt.format(
-                    target_role=target_role,
-                    skills=", ".join(profile_data.get("skills", [])),
-                )
-            )
-            content = response.content.replace("```json", "").replace("```", "").strip()
-            data = json.loads(content)
-            return SkillGapResponse(**data)
-        except Exception:
-            return SkillGapResponse(missing_skills=[], learning_roadmap=[])
+        return SkillGapResponse(
+            missing_skills=missing,
+            learning_roadmap=roadmap
+        )

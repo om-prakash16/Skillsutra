@@ -1,5 +1,5 @@
-import { GithubRepo } from "../mock-api/github-data";
-import { GithubAnalysisReport } from "../mock-api/github-analysis";
+﻿import { GithubRepo } from '@/types';
+import { GithubAnalysisReport } from '@/types';
 
 export const generateAnalysisReport = (repos: GithubRepo[]): GithubAnalysisReport => {
     // 1. Calculate Language Frequency

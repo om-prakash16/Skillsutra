@@ -1,41 +1,59 @@
-import os
 import numpy as np
-import asyncio
+import os
+import logging
 from typing import List, Dict, Any
 from sklearn.metrics.pairwise import cosine_similarity
-from langchain_google_genai import GoogleGenerativeAIEmbeddings
+import google.generativeai as genai
 
+logger = logging.getLogger(__name__)
 
 class JobMatcher:
     def __init__(self):
         self.api_key = os.getenv("GOOGLE_API_KEY")
-        self.embeddings_model = (
-            GoogleGenerativeAIEmbeddings(
-                google_api_key=self.api_key, model="models/text-embedding-004"
-            )
-            if self.api_key
-            else None
-        )
+        if self.api_key:
+            genai.configure(api_key=self.api_key)
+            self.model_name = "models/text-embedding-004"
+        else:
+            self.model_name = None
 
     async def get_embedding(self, text: str) -> List[float]:
-        if not self.embeddings_model:
+        if not self.model_name or not text.strip():
             return np.random.rand(768).tolist()
-        return await self.embeddings_model.aembed_query(text)
+        try:
+            result = genai.embed_content(
+                model=self.model_name,
+                content=text,
+                task_type="retrieval_document"
+            )
+            return result['embedding']
+        except Exception as e:
+            logger.error(f"Gemini embedding failed: {e}")
+            return np.random.rand(768).tolist()
 
     async def get_embeddings_batch(self, texts: List[str]) -> List[List[float]]:
-        if not self.embeddings_model:
+        if not self.model_name:
             return [np.random.rand(768).tolist() for _ in texts]
-        return await self.embeddings_model.aembed_documents(texts)
+        try:
+            valid_texts = [t if t.strip() else "Unknown" for t in texts]
+            result = genai.embed_content(
+                model=self.model_name,
+                content=valid_texts,
+                task_type="retrieval_document"
+            )
+            return result['embedding']
+        except Exception as e:
+            logger.error(f"Gemini batch embedding failed: {e}")
+            return [np.random.rand(768).tolist() for _ in texts]
 
     async def match(
         self, profile_data: Dict[str, Any], job_list: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
         """
-        Ranks jobs by semantic similarity to the user profile using batch embeddings.
+        Ranks jobs by semantic similarity to the user profile using Gemini Embeddings.
         """
         if not profile_data or not job_list:
             return [
-                {"job_id": j.get("id"), "title": j.get("title"), "match_score": 0.0}
+                {"job_id": j.get("id"), "title": j.get("title"), "match_score": 0.0, "match_reason": "No data available."}
                 for j in job_list
             ]
 
@@ -57,24 +75,25 @@ class JobMatcher:
             ]
             job_texts.append(" ".join([p for p in job_parts if p.strip()]).strip() or "General Job")
 
-        # 3. Batch Embeddings (Parallel)
-        # We need the profile embedding + all job embeddings
+        # 3. Gemini Embeddings
         all_texts = [profile_text] + job_texts
         embeddings = await self.get_embeddings_batch(all_texts)
         
-        profile_vec = embeddings[0]
+        profile_vec = [embeddings[0]]
         job_vecs = embeddings[1:]
 
         # 4. Calculate Scores
         results = []
         for i, job in enumerate(job_list):
             try:
-                similarity = cosine_similarity([profile_vec], [job_vecs[i]])[0][0]
+                similarity = cosine_similarity(profile_vec, [job_vecs[i]])[0][0]
+                # Normalize similarity from [-1, 1] to [0, 100] approximately
+                # Embeddings are often strictly positive, but just in case:
+                sim_score = max(0.0, float(similarity))
+                match_score = round(sim_score * 100, 2)
             except Exception:
-                similarity = 0.0
+                match_score = 0.0
 
-            match_score = round(float(similarity) * 100, 2)
-            
             # Reasoning
             job_skills = set([s.lower() for s in job.get("skills_required", [])])
             cand_skills = set([s.lower() for s in profile_data.get("skills", [])])
@@ -94,7 +113,7 @@ class JobMatcher:
         self, job_data: Dict[str, Any], candidate_list: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
         """
-        Ranks candidates by semantic similarity to a specific job using batch embeddings.
+        Ranks candidates by semantic similarity to a specific job using Gemini Embeddings.
         """
         if not job_data or not candidate_list:
             return []
@@ -110,7 +129,7 @@ class JobMatcher:
         # 2. Prepare Candidate Texts
         candidate_texts = []
         for candidate in candidate_list:
-            profile = candidate.get("profile_data", {})
+            profile = candidate.get("profile_data", {}) or {}
             candidate_parts = [
                 str(candidate.get("full_name", "")),
                 str(candidate.get("bio", "")),
@@ -118,24 +137,24 @@ class JobMatcher:
             ]
             candidate_texts.append(" ".join([p for p in candidate_parts if p.strip()]).strip() or "Anonymous Talent")
 
-        # 3. Batch Embeddings
+        # 3. Gemini Embeddings
         all_texts = [job_text] + candidate_texts
         embeddings = await self.get_embeddings_batch(all_texts)
         
-        job_vec = embeddings[0]
+        job_vec = [embeddings[0]]
         candidate_vecs = embeddings[1:]
 
         # 4. Calculate Scores
         results = []
         for i, candidate in enumerate(candidate_list):
             try:
-                similarity = cosine_similarity([job_vec], [candidate_vecs[i]])[0][0]
+                similarity = cosine_similarity(job_vec, [candidate_vecs[i]])[0][0]
+                sim_score = max(0.0, float(similarity))
+                match_score = round(sim_score * 100, 2)
             except Exception:
-                similarity = 0.0
-
-            match_score = round(float(similarity) * 100, 2)
+                match_score = 0.0
             
-            profile = candidate.get("profile_data", {})
+            profile = candidate.get("profile_data", {}) or {}
             job_skills = set([s.lower() for s in job_data.get("skills_required", [])])
             cand_skills = set([s.lower() for s in profile.get("skills", [])])
             shared = list(job_skills.intersection(cand_skills))

@@ -26,25 +26,50 @@ async def get_room_history(
 
 @router.websocket("/ws/{room_id}")
 async def websocket_endpoint(websocket: WebSocket, room_id: str):
-    # Auth is tricky over WS, we usually pass token as query param
-    # For now, we connect, but in production, we'd verify JWT from header/query
-
-    await manager.connect(websocket, room_id)
+    await manager.connect(websocket, room_id=room_id)
     try:
         while True:
             data = await websocket.receive_text()
             payload = json.loads(data)
 
+            # Handle heartbeat pong from client
+            if payload.get("type") == "pong":
+                manager.handle_pong(websocket)
+                continue
+
             # Save message to DB
             saved_msg = await chat_service.save_message(
-                room_id=room_id, user_id=payload["user_id"], content=payload["content"]
+                room_id=room_id, user_id=payload.get("user_id", "system"), content=payload.get("content", "")
             )
 
             # Broadcast to everyone in the room
             await manager.broadcast(json.dumps(saved_msg), room_id)
 
     except WebSocketDisconnect:
-        manager.disconnect(websocket, room_id)
+        manager.disconnect(websocket, room_id=room_id)
     except Exception as e:
         print(f"WS Error: {e}")
-        manager.disconnect(websocket, room_id)
+        manager.disconnect(websocket, room_id=room_id)
+
+@router.websocket("/ws")
+async def global_websocket_endpoint(websocket: WebSocket, token: str = Query(None)):
+    user_id = token if token else "anonymous"
+    
+    await manager.connect(websocket, user_id=user_id)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            try:
+                payload = json.loads(data)
+                if payload.get("type") == "pong":
+                    manager.handle_pong(websocket)
+                elif payload.get("type") == "ping":
+                    await websocket.send_text(json.dumps({"type": "pong"}))
+            except Exception:
+                pass
+    except WebSocketDisconnect:
+        manager.disconnect(websocket, user_id=user_id)
+    except Exception as e:
+        print(f"Global WS Error: {e}")
+        manager.disconnect(websocket, user_id=user_id)
+

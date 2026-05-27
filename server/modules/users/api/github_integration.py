@@ -3,7 +3,7 @@ import httpx
 import logging
 import random
 from fastapi import APIRouter, Depends, Query, HTTPException
-from typing import Optional, List
+from typing import Optional
 from modules.auth.core.service import get_current_user
 from modules.ai.services.github_service import github_scanner
 from core.db import get_db

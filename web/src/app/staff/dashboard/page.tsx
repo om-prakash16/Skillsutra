@@ -8,7 +8,7 @@ const mockStats = [
     { label: "Open Reports",     value: 12,  icon: Flag,        color: "text-red-400",    bg: "bg-red-500/10",    href: "/staff/reports" },
     { label: "Active Tickets",   value: 28,  icon: Ticket,      color: "text-yellow-400", bg: "bg-yellow-500/10", href: "/staff/tickets" },
     { label: "Users Flagged",    value: 5,   icon: Users,       color: "text-orange-400", bg: "bg-orange-500/10", href: "/staff/users" },
-    { label: "NFT Flags",        value: 3,   icon: Shield,      color: "text-violet-400", bg: "bg-violet-500/10", href: "/staff/nft-monitor" },
+    { label: "Verifications Flags",        value: 3,   icon: Shield,      color: "text-violet-400", bg: "bg-violet-500/10", href: "/staff/Verifications-monitor" },
     { label: "Jobs Pending",     value: 7,   icon: Briefcase,   color: "text-blue-400",   bg: "bg-blue-500/10",   href: "/staff/jobs" },
     { label: "Resolved Today",   value: 19,  icon: CheckCircle2,color: "text-green-400",  bg: "bg-green-500/10",  href: "/staff/reports" },
 ]
@@ -16,15 +16,15 @@ const mockStats = [
 const mockActivity = [
     { id: 1, action: "flagged suspicious profile",      user: "mod_anita",  target: "0xabc...123", time: "2m ago",  type: "flag" },
     { id: 2, action: "resolved support ticket #284",    user: "sup_rahul",  target: "Ticket",      time: "8m ago",  type: "resolve" },
-    { id: 3, action: "approved skill NFT",              user: "ver_priya",  target: "React NFT",   time: "21m ago", type: "approve" },
+    { id: 3, action: "approved skill Verifications",              user: "ver_priya",  target: "React Verifications",   time: "21m ago", type: "approve" },
     { id: 4, action: "flagged spam job posting",        user: "mod_anita",  target: "Job #592",    time: "1h ago",  type: "flag" },
-    { id: 5, action: "requested skill re-verification", user: "ver_priya",  target: "Python NFT",  time: "3h ago",  type: "retest" },
+    { id: 5, action: "requested skill re-verification", user: "ver_priya",  target: "Python Verifications",  time: "3h ago",  type: "retest" },
 ]
 
 const priorityQueue = [
     { id: 1, type: "User Report",  priority: "critical", subject: "Fake profile with cloned GitHub",   age: "12h" },
     { id: 2, type: "Job Report",   priority: "high",     subject: "Spam job by unverified company",   age: "3h" },
-    { id: 3, type: "Support",      priority: "urgent",   subject: "Wallet stuck — can't apply to jobs", age: "45m" },
+    { id: 3, type: "Support",      priority: "urgent",   subject: "account stuck — can't apply to jobs", age: "45m" },
 ]
 
 const priorityColors: Record<string, string> = {

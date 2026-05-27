@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api/api-client";
 import { FilterSidebar } from "@/components/search/FilterSidebar";
 import { SortDropdown } from "@/components/search/SortDropdown";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -11,25 +13,14 @@ import { Search, Users, Zap, MapPin, GraduationCap, ArrowRight, Loader2, Star } 
 import Link from "next/link";
 
 export default function CandidateDiscovery() {
-  const [candidates, setCandidates] = useState<any[]>([]);
   const [search, setSearch] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    fetchCandidates();
-  }, []);
+  const { data: searchResponse, isLoading } = useQuery({
+    queryKey: ["candidateSearch", search],
+    queryFn: () => api.search.candidates(`query=${search}`)
+  });
 
-  const fetchCandidates = async () => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/search/candidates`);
-      const data = await res.json();
-      setCandidates(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const candidates = Array.isArray(searchResponse?.candidates) ? searchResponse.candidates : (Array.isArray(searchResponse) ? searchResponse : []);
 
   return (
     <div className="min-h-screen py-24 px-6 relative overflow-hidden">
@@ -43,7 +34,7 @@ export default function CandidateDiscovery() {
              Discover <br />Top Talent.
            </h1>
            <p className="text-muted-foreground max-w-2xl text-xl font-medium opacity-80 leading-relaxed">
-             Real-time candidate discovery powered by <span className="text-foreground">AI Proof Scores</span> and verified technical credentials with on-chain precision.
+             Real-time candidate discovery powered by <span className="text-foreground">AI Proof Scores</span> and verified technical credentials with platform precision.
            </p>
         </div>
 

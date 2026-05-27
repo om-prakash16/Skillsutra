@@ -485,7 +485,17 @@ export default function ProfilePage() {
                     </TabsContent>
                     <TabsContent value="matrix" className="animate-in fade-in-50 duration-500">
                         <div className="glass rounded-[3rem] p-8 md:p-16 border-white/5 shadow-2xl">
-                             <DynamicProfileForm />
+                             <DynamicProfileForm 
+                                initialData={{
+                                    firstName: activeData.basic.firstName,
+                                    lastName: activeData.basic.lastName,
+                                    bio: activeData.basic.bio,
+                                    primaryRole: activeData.basic.title,
+                                    skills: activeData.skills.map(s => s.name).join(", "),
+                                    experience: activeData.experience.map(e => ({ ...e, type: e.type || "Full-time" })),
+                                    education: activeData.education
+                                }} 
+                             />
                         </div>
                     </TabsContent>
                     <TabsContent value="settings" className="animate-in fade-in-50 duration-500">

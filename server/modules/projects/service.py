@@ -2,7 +2,7 @@
 Project Ledger Service — Business logic for projects and Proof-of-Work.
 """
 
-from typing import List, Optional, Dict, Any
+from typing import List, Dict, Any
 from uuid import UUID
 from core.db import get_db
 from modules.skill_graph.service import SkillGraphService

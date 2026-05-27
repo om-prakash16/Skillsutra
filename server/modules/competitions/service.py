@@ -1,4 +1,4 @@
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from uuid import UUID
 from core.db import get_db
 from modules.notifications.core.service import NotificationService
@@ -113,7 +113,7 @@ class CompetitionService:
                     type="competition_match",
                     title=f"New {comp_type.capitalize()} Match!",
                     message=f"Check out {comp.get('title')}, it aligns with your interests.",
-                    link=f"/competitions"
+                    link="/competitions"
                 )
                 notified_count += 1
 
@@ -193,7 +193,7 @@ class CompetitionService:
                     type="team_join_request",
                     title="New Join Request",
                     message=f"A developer requested to join your team '{team_info.data['name']}'.",
-                    link=f"/competitions/teams"
+                    link="/competitions/teams"
                 )
             return res.data[0]
         return {}

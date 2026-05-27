@@ -1,11 +1,6 @@
-import os
-import json
 from typing import Dict, Any
 from datetime import datetime
 from core.db import get_db
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.prompts import PromptTemplate
-
 
 class MarketIntelligenceService:
     """
@@ -14,14 +9,7 @@ class MarketIntelligenceService:
     """
 
     def __init__(self):
-        self.api_key = os.getenv("GOOGLE_API_KEY")
-        self.llm = (
-            ChatGoogleGenerativeAI(
-                temperature=0.3, google_api_key=self.api_key, model="gemini-1.5-flash"
-            )
-            if self.api_key
-            else None
-        )
+        pass
 
     async def get_market_heatmap_data(self) -> Dict[str, Any]:
         """
@@ -93,36 +81,32 @@ class MarketIntelligenceService:
         self, current_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """
-        Use AI to predict future skill trends based on current platform heatmap.
+        Use local rule-based heuristic to predict future skill trends based on current platform heatmap.
         """
-        if not self.llm:
-            return {
-                "predictions": ["ZK Proofs", "AI Agents", "Rust"],
-                "confidence_radar": {"Web3": 85, "AI": 92, "Frontend": 45},
-                "insight": "AI-driven predictions require a configured Gemini API Key.",
-            }
+        heatmap = current_data.get("heatmap", [])
+        breakout_skills = []
+        saturated = "N/A"
+        
+        # Determine breakout (high demand, low supply)
+        for h in heatmap:
+            if h["saturation"] == "Low":
+                breakout_skills.append(h["skill"].title())
+            if len(breakout_skills) == 3:
+                break
+                
+        # Determine saturated
+        for h in reversed(heatmap):
+            if h["saturation"] == "High":
+                saturated = h["skill"].title()
+                break
+                
+        if not breakout_skills:
+            breakout_skills = ["Python", "React", "Cloud Computing"]
+        if saturated == "N/A":
+            saturated = "General Data Entry"
 
-        prompt = PromptTemplate(
-            template="""Analyze the following market demand/supply data from our hiring platform.
-            
-            Current Data Snapshot:
-            {current_data}
-            
-            OBJECTIVE:
-            Predict the 3 'Breakout Skills' for the next 6 months.
-            Identify 1 'Saturated' domain where supply exceeds demand.
-            Return a JSON object only with these keys:
-            - breakout_skills (list of strings)
-            - saturated_domain (string)
-            - predictions_summary (string: 20-30 words)
-            """,
-            input_variables=["current_data"],
-        )
-
-        try:
-            formatted_data = json.dumps(current_data["heatmap"])
-            response = self.llm.invoke(prompt.format(current_data=formatted_data))
-            content = response.content.replace("```json", "").replace("```", "").strip()
-            return json.loads(content)
-        except Exception as e:
-            return {"error": f"AI Prediction failed: {str(e)}"}
+        return {
+            "breakout_skills": breakout_skills,
+            "saturated_domain": saturated,
+            "predictions_summary": f"Strong demand predicted for {', '.join(breakout_skills)}, while {saturated} remains highly saturated.",
+        }

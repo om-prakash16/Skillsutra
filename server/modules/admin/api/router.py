@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends, Query, Body, WebSocket, WebSocketDisconnect
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
 import asyncio
 import time
 import random
 import logging
 
 from core.response import success_response
-from core.dependencies import get_current_user_id
-from modules.auth.core.guards import require_admin, require_moderator, require_ai_admin
+from modules.auth.core.guards import require_admin, require_moderator
 from modules.admin.core.service import admin_service
 from modules.admin.core.schema_service import schema_service
 

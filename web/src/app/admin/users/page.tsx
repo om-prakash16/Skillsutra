@@ -57,10 +57,10 @@ export default function UserManagement() {
     }
   };
 
-  const handleUpdateUser = async (wallet: string, updates: any) => {
-    setUpdatingWallet(wallet);
+  const handleUpdateUser = async (account: string, updates: any) => {
+    setUpdatingWallet(account);
     try {
-      await api.admin.updateUser(wallet, updates);
+      await api.admin.updateUser(account, updates);
       toast.success("Security profile synchronized.");
       await fetchUsers();
     } catch (err) {
@@ -98,7 +98,7 @@ export default function UserManagement() {
               <CardContent className="p-3 px-6 flex items-center gap-4">
                   <Search className="w-5 h-5 text-white/20" />
                   <Input 
-                    placeholder="Search by wallet signature or alias..." 
+                    placeholder="Search by account signature or alias..." 
                     className="bg-transparent border-none text-lg focus-visible:ring-0 placeholder:text-white/20 h-12"
                     value={searchQuery}
                     onChange={e => setSearchQuery(e.target.value)}

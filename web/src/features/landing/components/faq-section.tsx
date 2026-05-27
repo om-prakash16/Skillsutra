@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { useCMS } from "@/context/cms-context"
 
 const FAQS = [
     {
@@ -24,6 +25,9 @@ const FAQS = [
 ]
 
 export function FAQSection() {
+    const { getJson } = useCMS()
+    const faqsList = getJson("landing", "faqs") || FAQS;
+
     return (
         <section className="py-24 relative">
             <div className="max-w-4xl mx-auto px-4 md:px-8">
@@ -46,7 +50,7 @@ export function FAQSection() {
                     className="glass border-white/5 rounded-3xl p-8 md:p-12 shadow-premium"
                 >
                     <Accordion type="single" collapsible className="w-full">
-                        {FAQS.map((faq, i) => (
+                        {faqsList.map((faq: any, i: number) => (
                             <AccordionItem key={i} value={`item-${i}`} className="border-white/5 last:border-0">
                                 <AccordionTrigger className="text-left font-bold text-base hover:text-primary transition-colors py-6">
                                     {faq.question}

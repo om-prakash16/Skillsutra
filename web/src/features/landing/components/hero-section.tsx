@@ -12,7 +12,7 @@ export function HeroSection() {
   
   const content = {
     title: getVal('hero', 'title', 'Verify Skills. Hire Intelligence.'),
-    subtitle: getVal('hero', 'subtitle', 'SkillSutra uses AI-driven Proof Scores and on-chain credentials to verify professional skills with mathematical precision. Stop screening resumes. Start hiring verified talent.'),
+    subtitle: getVal('hero', 'subtitle', 'SkillSutra uses AI-driven Proof Scores and platform credentials to verify professional skills with mathematical precision. Stop screening resumes. Start hiring verified talent.'),
     badge: getVal('hero', 'badge', 'AI-Powered Talent Verification Platform')
   };
 

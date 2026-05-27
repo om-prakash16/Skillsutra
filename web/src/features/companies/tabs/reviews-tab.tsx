@@ -1,4 +1,4 @@
-import { Company } from "@/lib/mock-api/companies"
+﻿import { Company } from '@/types'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Star, User } from "lucide-react"
 
@@ -31,7 +31,7 @@ export function ReviewsTab({ company }: { company: Company }) {
                                         </div>
                                         <div>
                                             <h4 className="font-semibold text-sm">{review.author}</h4>
-                                            <p className="text-xs text-muted-foreground">{review.role} • {review.date}</p>
+                                            <p className="text-xs text-muted-foreground">{review.role} â€¢ {review.date}</p>
                                         </div>
                                     </div>
                                     <div className="flex text-yellow-500 gap-0.5">

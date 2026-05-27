@@ -1,7 +1,7 @@
 "use client"
 
 import { useQuery } from "@tanstack/react-query"
-import { getCompanyJobs } from "@/lib/mock-api/company-jobs"
+import { fetchWithAuth } from "@/lib/api/api-client"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -19,14 +19,20 @@ import {
 
 export default function CompanyJobsPage() {
     const [searchTerm, setSearchTerm] = useState("")
-    const { data: jobs, isLoading } = useQuery({
+
+    const { data: response, isLoading } = useQuery({
         queryKey: ["companyJobs"],
-        queryFn: getCompanyJobs
+        queryFn: async () => {
+            const res = await fetchWithAuth("/api/v1/jobs/company/my-postings")
+            return res.data || []
+        }
     })
 
-    const filteredJobs = jobs?.filter(job =>
+    const jobs = response || []
+
+    const filteredJobs = jobs?.filter((job: any) =>
         job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        job.location.toLowerCase().includes(searchTerm.toLowerCase())
+        (job.location && job.location.toLowerCase().includes(searchTerm.toLowerCase()))
     )
 
     if (isLoading) {
@@ -87,7 +93,7 @@ export default function CompanyJobsPage() {
                                     </TableCell>
                                 </TableRow>
                             ) : (
-                                filteredJobs?.map((job) => (
+                                filteredJobs?.map((job: any) => (
                                     <TableRow key={job.id}>
                                         <TableCell className="font-medium">
                                             <div className="flex flex-col">
@@ -97,17 +103,17 @@ export default function CompanyJobsPage() {
                                         </TableCell>
                                         <TableCell className="hidden md:table-cell text-muted-foreground">{job.location}</TableCell>
                                         <TableCell>
-                                            <Badge variant="outline" className="font-normal">{job.type}</Badge>
+                                            <Badge variant="outline" className="font-normal">{job.job_type || 'Full-time'}</Badge>
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex items-center gap-2">
-                                                <span className="font-medium">{job.applicantsCount}</span>
+                                                <span className="font-medium">{job.applicantsCount || 0}</span>
                                                 {job.applicantsCount > 0 && <span className="text-xs text-green-600 font-medium">Active</span>}
                                             </div>
                                         </TableCell>
                                         <TableCell>
                                             <Badge variant={job.status === "Open" ? "default" : "secondary"}>
-                                                {job.status}
+                                                {job.status || 'Open'}
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">

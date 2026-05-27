@@ -80,14 +80,14 @@ export const userApi = {
     applications: {
         user: () => fetchWithAuth("/applications/user"),
     },
-    nft: {
-        mintProfile: () => fetchWithAuth("/nft/mint-profile", { method: "POST" }),
+    Verifications: {
+        mintProfile: () => fetchWithAuth("/Verifications/issue-profile", { method: "POST" }),
         updateMetadata: (cid: string) =>
-            fetchWithAuth("/nft/update-metadata", {
+            fetchWithAuth("/Verifications/update-metadata", {
                 method: "POST",
                 body: JSON.stringify({ cid }),
             }),
-        list: () => fetchWithAuth("/nft/user-nfts"),
+        list: () => fetchWithAuth("/Verifications/user-Verifications"),
     },
     notifications: {
         get: () => fetchWithAuth("/notifications/list"),

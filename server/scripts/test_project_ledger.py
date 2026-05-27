@@ -1,5 +1,4 @@
 import asyncio
-import uuid
 from core.db import get_db
 from modules.projects.service import ProjectService
 from modules.skill_graph.service import SkillGraphService

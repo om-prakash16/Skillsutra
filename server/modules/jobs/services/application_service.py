@@ -1,8 +1,7 @@
 import logging
-import uuid
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from core.db import get_db
-from core.exceptions import NotFoundError, ExternalServiceError, ValidationError
+from core.exceptions import NotFoundError, ExternalServiceError
 from modules.notifications.core.service import NotificationService
 
 logger = logging.getLogger(__name__)

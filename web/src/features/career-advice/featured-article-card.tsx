@@ -1,9 +1,9 @@
-import { Badge } from "@/components/ui/badge"
+﻿import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Clock, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import { Article } from "@/lib/mock-api/career-advice"
+import { Article } from '@/types'
 
 interface FeaturedArticleCardProps {
     article: Article
@@ -21,7 +21,7 @@ export function FeaturedArticleCard({ article }: FeaturedArticleCardProps) {
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <Badge variant="outline" className="border-primary/20 text-primary bg-primary/5">
-                            ★ Featured
+                            â˜… Featured
                         </Badge>
                         <Badge variant="secondary">
                             {article.category}

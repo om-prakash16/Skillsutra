@@ -1,4 +1,4 @@
-import { Company } from "@/lib/mock-api/companies"
+﻿import { Company } from '@/types'
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export function AnalyticsTab({ company }: { company: Company }) {

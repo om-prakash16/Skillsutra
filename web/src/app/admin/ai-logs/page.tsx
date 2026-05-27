@@ -42,7 +42,7 @@ const mockAILogs = [
         model: "gpt-4o",
         status: "complete",
         tokens: 2100,
-        result: "Generated 10 unique technical questions for 'Blockchain/Anchor'",
+        result: "Generated 10 unique technical questions for 'infrastructure/Anchor'",
         time: "45 min ago"
     }
 ]

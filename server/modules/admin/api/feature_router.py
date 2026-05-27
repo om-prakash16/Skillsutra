@@ -1,10 +1,8 @@
-from fastapi import APIRouter, Depends, Body
-from typing import Dict, Any, List
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 import uuid
 
 from core.response import success_response
-from core.dependencies import get_current_user_id
 from modules.auth.core.guards import require_admin
 from modules.admin.core.feature_service import FeatureFlagService
 

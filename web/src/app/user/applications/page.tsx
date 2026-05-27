@@ -9,6 +9,7 @@ import { Briefcase, Zap, Loader2, ArrowRight, Table, CheckCircle, Clock, Calenda
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { userApi } from "@/lib/api/user-api";
 
 export default function CandidateApplications() {
   const { user } = useAuth();
@@ -21,11 +22,7 @@ export default function CandidateApplications() {
 
   const fetchApps = async () => {
     try {
-      const token = localStorage.getItem("auth_token");
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/jobs/user?user_id=${user?.id}`, {
-        headers: { "Authorization": `Bearer ${token}` }
-      });
-      const data = await res.json();
+      const data = await userApi.applications.user();
       setApps(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);

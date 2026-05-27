@@ -35,7 +35,7 @@ export default function AdminDashboardOverview() {
   const [wsStatus, setWsStatus] = useState<"connecting" | "connected" | "disconnected">("disconnected");
   const [telemetry, setTelemetry] = useState<any>({
     latency: "14ms",
-    blockchain: { block_height: 18290390, sync_status: "Synced", tps: 1500 },
+    infrastructure: { block_height: 18290390, sync_status: "Synced", tps: 1500 },
     ai: { accuracy: 94.2, throughput: "96.4%", queue_size: 0 }
   });
 
@@ -73,7 +73,7 @@ export default function AdminDashboardOverview() {
             if (data.type === "telemetry_update") {
               setTelemetry({
                 latency: data.latency,
-                blockchain: data.blockchain,
+                infrastructure: data.infrastructure,
                 ai: data.ai
               });
               if (data.totals) {
@@ -405,7 +405,7 @@ export default function AdminDashboardOverview() {
                       { label: "Network Load", href: "/admin/jobs", icon: Briefcase, color: "#10b981", count: stats?.totals?.jobs },
                       { label: "Applications", href: "/admin/applications", icon: ShieldCheck, color: "#f59e0b", count: stats?.totals?.applications },
                       { label: "Audit Stream", href: "/admin/logs", icon: Database, color: "#06b6d4" },
-                      { label: "Digital Identity", href: "/admin/blockchain", icon: Fingerprint, color: "#3b82f6" },
+                      { label: "Digital Identity", href: "/admin/infrastructure", icon: Fingerprint, color: "#3b82f6" },
                       { label: "Moderation Queue", href: "/admin/reports", icon: ShieldAlert, color: "#ef4444" },
                   ].map((link) => (
                       <Link key={link.label} href={link.href}>

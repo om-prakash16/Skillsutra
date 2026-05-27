@@ -4,8 +4,10 @@ import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Sparkles } from "lucide-react"
 import Link from "next/link"
+import { useCMS } from "@/context/cms-context"
 
 export function FinalCTA() {
+    const { getVal } = useCMS();
     return (
         <section className="py-32 relative overflow-hidden">
             {/* Aurora Volumetric lighting - slowly moving atmospheric lights */}
@@ -84,11 +86,11 @@ export function FinalCTA() {
                         </div>
                         
                         <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight max-w-3xl mx-auto">
-                            Ready to <span className="text-primary italic font-black bg-gradient-to-r from-emerald-400 to-indigo-400 bg-clip-text text-transparent">Modernize</span> Your Hiring?
+                            {getVal('cta', 'title_part1', 'Ready to')} <span className="text-primary italic font-black bg-gradient-to-r from-emerald-400 to-indigo-400 bg-clip-text text-transparent">{getVal('cta', 'title_part2', 'Modernize')}</span> {getVal('cta', 'title_part3', 'Your Hiring?')}
                         </h2>
                         
                         <p className="text-muted-foreground text-base md:text-lg font-normal max-w-2xl mx-auto leading-relaxed">
-                            Join the world's most innovative companies and engineers on the first verified identity marketplace. Start building your legacy today.
+                            {getVal('cta', 'subtitle', "Join the world's most innovative companies and engineers on the first verified identity marketplace. Start building your legacy today.")}
                         </p>
 
                         <div className="flex flex-col sm:flex-row items-center justify-center gap-5 pt-6">

@@ -2,7 +2,7 @@ import os
 import json
 import uuid
 import logging
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from datetime import datetime, timedelta
 import google.generativeai as genai
 from core.db import get_db

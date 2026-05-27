@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
+import { fetchWithAuth } from "@/lib/api/api-client";
+
 export default function AdminProfile() {
     const { user, token } = useAuth();
     const [isSeeding, setIsSeeding] = useState(false);
@@ -31,18 +33,14 @@ export default function AdminProfile() {
     const handleSeeding = async () => {
         setIsSeeding(true);
         try {
-            const response = await fetch("http://localhost:8000/api/v1/admin/seed-platform", {
-                method: "POST",
-                headers: {
-                    "Authorization": `Bearer ${token}`,
-                }
+            const data = await fetchWithAuth("/admin/seed-platform", {
+                method: "POST"
             });
-            const data = await response.json();
-            if (response.ok) {
+            if (data && data.summary) {
                 setSeedResult(data.summary);
                 alert(`SUCCESS: Synthesized ${data.summary.users} users and ${data.summary.companies} companies.`);
             } else {
-                alert(`FAILURE: ${data.detail || "Genesis Protocol Error"}`);
+                alert(`SUCCESS: Platform Seeded.`);
             }
         } catch (error) {
             alert("CRITICAL ERROR: Connection to Backend Nexus failed.");

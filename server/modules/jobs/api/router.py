@@ -25,6 +25,17 @@ async def list_jobs(
     
     return success_response(data=data)
 
+@router.get("/recommendations", response_model=List[JobResponse])
+async def get_job_recommendations(
+    limit: int = Query(20, ge=1, le=100),
+    user_id: str = Depends(get_current_user_id)
+):
+    """Get smart job recommendations based on semantic matching using pgvector."""
+    # This will interact with discovery_service to perform vector similarity search
+    # between User Profile embedding and Job embeddings
+    data = await discovery_service.get_vector_recommendations(user_id=user_id, limit=limit)
+    return success_response(data=data, message="Job recommendations generated successfully")
+
 @router.get("/{job_id}", response_model=JobResponse)
 async def get_job(job_id: str):
     """Retrieve detailed information for a specific job."""

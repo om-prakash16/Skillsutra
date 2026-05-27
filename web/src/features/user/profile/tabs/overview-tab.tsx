@@ -46,12 +46,12 @@ export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) 
                         </CardHeader>
                         <CardContent className="px-8 pb-10">
                             <div className="flex flex-wrap gap-2">
-                                {data.skills.filter((s: any) => s.level === "Advanced").slice(0, 8).map((skill: any) => (
+                                {(data.skills || []).filter((s: any) => s.level === "Advanced").slice(0, 8).map((skill: any) => (
                                     <Badge key={skill.name} variant="outline" className="glass py-1.5 px-4 text-[9px] font-black uppercase tracking-widest text-primary border-primary/20 rounded-full">
                                         {skill.name}
                                     </Badge>
                                 ))}
-                                {data.skills.filter((s: any) => s.level === "Advanced").length === 0 && (
+                                {(data.skills || []).filter((s: any) => s.level === "Advanced").length === 0 && (
                                     <p className="text-[10px] text-white/20 italic font-black uppercase tracking-widest">No advanced nodes detected.</p>
                                 )}
                             </div>
@@ -65,10 +65,10 @@ export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) 
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="px-8 pb-10 space-y-6">
-                            {data.experience.slice(0, 2).map((exp: any) => (
+                            {(data.experience || []).slice(0, 2).map((exp: any) => (
                                 <div key={exp.id} className="flex gap-4 items-start group">
                                     <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center shrink-0 font-black text-primary/40 text-[10px] group-hover:scale-110 transition-transform">
-                                        {exp.company.substring(0, 2).toUpperCase()}
+                                        {exp.company?.substring(0, 2).toUpperCase()}
                                     </div>
                                     <div className="min-w-0">
                                         <p className="font-bold text-sm text-white/90 truncate">{exp.role}</p>
@@ -76,7 +76,7 @@ export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) 
                                     </div>
                                 </div>
                             ))}
-                            {data.experience.length === 0 && (
+                            {(data.experience || []).length === 0 && (
                                 <p className="text-[10px] text-white/20 italic font-black uppercase tracking-widest">Awaiting work history synthesis...</p>
                             )}
                             <Button variant="link" className="p-0 h-auto text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors">

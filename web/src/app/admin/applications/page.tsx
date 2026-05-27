@@ -63,7 +63,7 @@ export default function ApplicationModeration() {
       <div className="relative group">
           <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-primary transition-colors" />
           <Input 
-            placeholder="Search by job title or candidate wallet..." 
+            placeholder="Search by job title or candidate account..." 
             className="h-14 bg-white/5 border-white/10 pl-14 text-lg focus-visible:ring-primary/30 rounded-2xl"
             value={search}
             onChange={e => setSearch(e.target.value)}

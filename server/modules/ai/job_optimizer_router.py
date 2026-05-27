@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from typing import List, Dict, Any
+from typing import List
 
 from core.response import success_response
-from core.dependencies import get_db, get_current_user_id
+from core.dependencies import get_current_user_id
 from modules.ai.services.job_optimizer_service import job_optimizer_service
 
 router = APIRouter()

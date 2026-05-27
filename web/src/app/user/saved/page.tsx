@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/select"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
 import { Search, BookmarkX, ArrowRight } from "lucide-react"
-import { SAVED_JOBS, SavedJob } from "@/lib/mock-api/saved-jobs"
+import { SavedJob, SAVED_JOBS } from '@/types'
 import { SavedJobsSkeleton } from "@/features/user/saved-jobs-skeleton"
 import { Pagination } from "@/components/shared/pagination"
 import Link from "next/link"

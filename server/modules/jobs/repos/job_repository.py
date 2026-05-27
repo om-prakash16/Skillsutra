@@ -20,7 +20,7 @@ class JobRepository:
     async def list_jobs(self, limit: int = 20, offset: int = 0) -> List[Dict[str, Any]]:
         """Fetch a paginated list of active jobs."""
         try:
-            res = await self._base_query().order("created_at", desc=True).range(offset, offset + limit).execute()
+            res = await self.db.table(self.table).select("*, companies(*)").eq("is_active", True).order("created_at", desc=True).range(offset, offset + limit).execute()
             return res.data or []
         except Exception as e:
             logger.error(f"Database error in list_jobs: {e}")

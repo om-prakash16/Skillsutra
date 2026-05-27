@@ -19,7 +19,13 @@ async function fetchPublic(endpoint: string, options: RequestInit = {}) {
         throw new Error(error.detail || "API Request Failed");
     }
 
-    return response.json();
+    const json = await response.json();
+    
+    if (json && typeof json === "object" && "status" in json && "data" in json) {
+        return json.data;
+    }
+
+    return json;
 }
 
 export const publicApi = {
@@ -33,13 +39,17 @@ export const publicApi = {
         jobs: (params: string) => fetchPublic(`/search/jobs?${params}`),
         companies: (params: string) => fetchPublic(`/search/companies?${params}`),
     },
+    profile: {
+        getById: (userId: string) => fetchPublic(`/profile/public/${userId}`),
+    },
     analytics: {
         public: () => fetchPublic("/analytics/public"),
     },
     ai: {
-        matchByJd: (jdFile: File) => {
+        matchByJd: (jdFile: File | null, jdText: string = "") => {
             const formData = new FormData();
-            formData.append("jd", jdFile);
+            if (jdFile) formData.append("jd", jdFile);
+            if (jdText) formData.append("jd_text_input", jdText);
             return fetch(`${API_BASE_URL}/ai/match-jd-candidates`, {
                 method: "POST",
                 body: formData,

@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/badge"
+﻿import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { GithubRepo } from "@/lib/mock-api/github-data"
+import { GithubRepo } from '@/types'
 import { Star, GitFork } from "lucide-react"
 import Link from "next/link"
 

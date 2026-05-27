@@ -81,8 +81,12 @@ export default function VerifyPage() {
                 formData.append("file", file)
             }
 
+            const token = localStorage.getItem("auth_token");
             const response = await fetch(endpoint, {
                 method: "POST",
+                headers: {
+                    ...(token ? { "Authorization": `Bearer ${token}` } : {})
+                },
                 body: formData,
             })
 
@@ -95,10 +99,10 @@ export default function VerifyPage() {
             toast.success(isComparison ? "Job match analysis complete!" : "Resume analyzed successfully!")
             
             if (isComparison) {
-                setMatchResult(data.match_result)
+                setMatchResult(data.data)
                 setParsedData(null)
             } else {
-                setParsedData(data.parsed_data)
+                setParsedData(data.data)
                 setMatchResult(null)
             }
         } catch (error: any) {

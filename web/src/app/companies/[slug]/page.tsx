@@ -1,6 +1,6 @@
 "use client"
 
-import { COMPANIES } from "@/lib/mock-api/companies"
+// removed empty import
 import { CompanyHeader } from "@/features/companies/components/company-header"
 import OverviewTab from "@/features/companies/components/tabs/overview-tab"
 import AboutTab from "@/features/companies/components/tabs/about-tab"
@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import { COMPANIES } from "@/types"
 
 export default function CompanyProfilePage({ params }: { params: { slug: string } }) {
     // In a real app we would unwrap params and fetch via react-query

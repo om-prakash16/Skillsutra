@@ -1,6 +1,7 @@
 from typing import Any, Dict, Optional, List
 from datetime import datetime
 from fastapi.responses import JSONResponse
+from fastapi.responses import ORJSONResponse
 from core.config import settings
 
 def success_response(
@@ -9,9 +10,9 @@ def success_response(
     status_code: int = 200,
     request_id: Optional[str] = None,
     message: Optional[str] = None
-) -> Dict[str, Any]:
+) -> ORJSONResponse:
     """
-    Standardized success response envelope.
+    Standardized success response envelope using fast ORJSON serialization.
     Follows Stripe/Airbnb patterns for observability.
     """
     response = {
@@ -31,7 +32,7 @@ def success_response(
     if meta:
         response["meta"] = meta
         
-    return response
+    return ORJSONResponse(content=response, status_code=status_code)
 
 def error_response(
     message: str,
@@ -51,7 +52,7 @@ def error_response(
         },
         "timestamp": datetime.utcnow().isoformat()
     }
-    return JSONResponse(status_code=status_code, content=content)
+    return ORJSONResponse(status_code=status_code, content=content)
 
 def paginated_response(
     data: List[Any],
@@ -59,7 +60,7 @@ def paginated_response(
     page: int,
     size: int,
     request_id: Optional[str] = None
-) -> Dict[str, Any]:
+) -> ORJSONResponse:
     """Standardized paginated response envelope."""
     meta = {
         "pagination": {

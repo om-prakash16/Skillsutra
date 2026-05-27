@@ -1,52 +1,38 @@
-import os
 from typing import Dict, Any
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import PromptTemplate
-
 
 class CareerRecommender:
     def __init__(self):
-        self.api_key = os.getenv("GOOGLE_API_KEY")
-        self.llm = (
-            ChatGoogleGenerativeAI(
-                temperature=0.7, google_api_key=self.api_key, model="gemini-1.5-flash"
-            )
-            if self.api_key
-            else None
-        )
+        pass
 
     async def recommend(self, profile_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Suggests long-term career paths and transition strategies.
+        Suggests long-term career paths and transition strategies based on local deterministic rules.
         """
-        if not self.llm:
-            return {
-                "suggested_paths": ["Backend Developer", "AI Engineer"],
-                "justification": "Candidate has strong Python and SQL skills.",
-            }
+        skills = [s.lower() for s in profile_data.get("skills", [])]
+        
+        suggested_paths = []
+        justification = "Based on standard industry mappings for your skill set."
+        top_priority_skill = "System Design"
 
-        prompt = PromptTemplate(
-            template="""Analyze the candidate's skills and suggest 3 possible long-term career paths.
-            Skills: {skills}
-            Background: {bio}
+        if "python" in skills and "sql" in skills:
+            suggested_paths.append("Backend Developer")
+            suggested_paths.append("Data Engineer")
+            top_priority_skill = "Docker"
+            justification = "Your Python and SQL skills are highly sought after in Data and Backend engineering."
             
-            Return a JSON object with:
-            - suggested_paths (list)
-            - justification (brief string)
-            - top_priority_skill (single string)
-            """,
-            input_variables=["skills", "bio"],
-        )
+        if "react" in skills or "javascript" in skills:
+            suggested_paths.append("Frontend Developer")
+            suggested_paths.append("Full Stack Engineer")
+            top_priority_skill = "TypeScript"
+            justification = "Strong web technologies background maps well to full-stack and frontend roles."
+            
+        if not suggested_paths:
+            suggested_paths = ["Software Engineer", "Technical Consultant"]
+            justification = "A general software engineering path is recommended based on your profile."
+            top_priority_skill = "Cloud Computing"
 
-        try:
-            result = self.llm.invoke(
-                prompt.format(
-                    skills=", ".join(profile_data.get("skills", [])),
-                    bio=profile_data.get("bio", ""),
-                )
-            )
-            import json
-
-            return json.loads(result.content)
-        except Exception as e:
-            return {"error": str(e)}
+        return {
+            "suggested_paths": list(set(suggested_paths))[:3],
+            "justification": justification,
+            "top_priority_skill": top_priority_skill,
+        }

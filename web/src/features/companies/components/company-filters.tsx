@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
-import { INDUSTRIES, SIZES } from '@/lib/mock-api/companies';
+import { INDUSTRIES, SIZES } from '@/types';
 
 interface CompanyFiltersProps {
   searchQuery: string;

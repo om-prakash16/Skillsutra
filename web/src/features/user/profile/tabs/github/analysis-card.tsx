@@ -1,10 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Brain, Briefcase, TrendingUp, Zap, Target, Layers, Loader2 } from "lucide-react"
-import { GithubRepo } from "@/lib/mock-api/github-data"
+import { GithubRepo, MOCK_GITHUB_ANALYSIS } from '@/types'
 import { generateAnalysisReport } from "@/lib/utils/github-analysis-generator"
 import { useMemo } from "react"
-import { MOCK_GITHUB_ANALYSIS } from "@/lib/mock-api/github-analysis"
+// removed empty import
 
 interface GithubAnalysisProps {
     repos?: GithubRepo[]

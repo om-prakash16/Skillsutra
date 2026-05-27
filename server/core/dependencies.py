@@ -1,11 +1,12 @@
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 from fastapi import Depends
 import db.engine as engine
 from core.exceptions import AuthorizationError, ExternalServiceError
 from modules.auth.core.service import get_current_user
+from core.database import get_db_session
 
 async def get_db():
-    """Returns the database client instance."""
+    """Returns the custom database client instance (Legacy)."""
     if not engine.db_client:
         raise ExternalServiceError(
             message="Database connection is unavailable",

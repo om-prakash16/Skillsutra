@@ -2,7 +2,6 @@ import logging
 import datetime
 from typing import List, Dict, Any, Tuple, Optional
 from core.db import get_db
-from core.exceptions import ExternalServiceError
 
 logger = logging.getLogger(__name__)
 

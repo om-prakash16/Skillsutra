@@ -7,30 +7,26 @@ import { Badge } from "@/components/ui/badge"
 import { Briefcase, Users, CheckCircle2, XCircle, Plus, FileText, ArrowRight, Loader2, Sparkles, TrendingUp, Activity as ActivityIcon, Brain, Code } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { useQuery } from "@tanstack/react-query"
+import { useWebSocket } from "@/hooks/use-websocket"
 import { api } from "@/lib/api/api-client"
 
 export default function CompanyDashboardPage() {
-    const [stats, setStats] = useState<any>(null)
-    const [activity, setActivity] = useState<any[]>([])
-    const [isLoading, setIsLoading] = useState(true)
+    // Connect to global notifications WebSocket
+    const { status: wsStatus } = useWebSocket()
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [analyticsData, activityData] = await Promise.all([
-                    api.analytics.company(),
-                    api.activity.company(10)
-                ])
-                setStats(analyticsData)
-                setActivity(Array.isArray(activityData) ? activityData : [])
-            } catch (err) {
-                console.error("Failed to load company stats", err)
-            } finally {
-                setIsLoading(false)
-            }
-        }
-        fetchData()
-    }, [])
+    const { data: stats, isLoading: statsLoading } = useQuery({
+        queryKey: ["companyAnalytics"],
+        queryFn: () => api.analytics.company()
+    })
+
+    const { data: activityResponse, isLoading: activityLoading } = useQuery({
+        queryKey: ["companyActivity"],
+        queryFn: () => api.activity.company(10)
+    })
+
+    const isLoading = statsLoading || activityLoading
+    const activity = Array.isArray(activityResponse) ? activityResponse : []
 
     if (isLoading) {
         return (

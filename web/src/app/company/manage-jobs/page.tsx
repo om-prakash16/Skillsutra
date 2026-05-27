@@ -213,7 +213,7 @@ export default function JobCommandCenter() {
                     </p>
                 </div>
                 <div className="flex gap-8 items-center text-[10px] font-black uppercase tracking-widest text-white/30">
-                    <span className="flex items-center gap-2"><Zap className="w-3 h-3 text-primary" /> Blockchain-Secured</span>
+                    <span className="flex items-center gap-2"><Zap className="w-3 h-3 text-primary" /> infrastructure-Secured</span>
                     <span className="flex items-center gap-2"><BrainCircuit className="w-3 h-3 text-primary" /> Gemini-Driven</span>
                     <span className="flex items-center gap-2"><Sparkles className="w-3 h-3 text-primary" /> Talent Synthesis Live</span>
                 </div>

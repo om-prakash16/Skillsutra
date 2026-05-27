@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/badge"
+﻿import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { GithubPR } from "@/lib/mock-api/github-data"
+import { GithubPR } from '@/types'
 import { GitPullRequest, GitMerge, XCircle, Clock } from "lucide-react"
 import Link from "next/link"
 

@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional
 
 from core.response import success_response
-from core.dependencies import get_db, get_current_user_id
+from core.dependencies import get_current_user_id
 from modules.ai.services.feedback_loop_service import feedback_service
 
 router = APIRouter()

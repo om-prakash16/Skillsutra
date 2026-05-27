@@ -1,16 +1,44 @@
 version: '3.8'
 services:
   hiring-tool-db:
-    image: postgres:15-alpine
+    image: pgvector/pgvector:pg15
     container_name: hiring_tool_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_DB=skillsutra
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hiring_tool_network
+
+  redis:
+    image: redis:7-alpine
+    container_name: hiring_tool_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - hiring_tool_network
+
+  celery-worker:
+    container_name: hiring_tool_celery_worker
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    command: celery -A core.celery_app worker -l INFO -Q ai_tasks,background_tasks,default
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@hiring-tool-db:5432/skillsutra
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+    depends_on:
+      - hiring-tool-db
+      - redis
+    volumes:
+      - ./server:/app
     networks:
       - hiring_tool_network
 
@@ -72,9 +100,13 @@ services:
       - KEYCLOAK_API_CLIENT_ID=skillsutra-api
       - KEYCLOAK_API_CLIENT_SECRET=${KEYCLOAK_API_CLIENT_SECRET:-}
       - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DB=0
     depends_on:
       - hiring-tool-db
       - keycloak
+      - redis
     volumes:
       - ./server:/app
     networks:

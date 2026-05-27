@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, Query
-from typing import List, Optional
 
 from core.response import success_response
 from core.dependencies import get_db, get_validated_wallet
@@ -46,7 +45,6 @@ async def trigger_recalculation(
     """
     Force a real-time recalculation of the Proof Score, bypassing cache.
     """
-    from core.cache import clear_ai_cache
     # Clear cache for this specific request if needed, or just call service directly
     # For now, we'll just call the service which will update the DB.
     score_data = await reputation_service.get_composite_score(wallet)

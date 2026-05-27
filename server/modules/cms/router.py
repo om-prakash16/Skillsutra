@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Body
+from fastapi import APIRouter, Depends
 from typing import Dict, Any, Optional
 from pydantic import BaseModel
 

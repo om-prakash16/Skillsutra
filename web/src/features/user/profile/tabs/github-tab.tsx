@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Github, Play, Loader2 } from "lucide-react"
 import { UserProfile } from "@/types/profile"
 import Link from "next/link"
-import { MOCK_GITHUB_REPOS, GithubRepo, GithubPR, MOCK_GITHUB_PRS } from "@/lib/mock-api/github-data"
+import { GithubRepo, GithubPR, MOCK_GITHUB_REPOS, MOCK_GITHUB_PRS } from '@/types'
 import { RepoCard } from "./github/repo-card"
 import { PRCard } from "./github/pr-card"
 import { GithubAnalysis } from "./github/analysis-card"

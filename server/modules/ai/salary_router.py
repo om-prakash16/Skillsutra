@@ -1,5 +1,4 @@
 from fastapi import APIRouter, Depends, Query
-from typing import Optional
 
 from core.response import success_response
 from core.dependencies import get_db, get_validated_wallet

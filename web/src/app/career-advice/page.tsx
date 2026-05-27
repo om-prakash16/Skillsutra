@@ -13,7 +13,7 @@ import {
     CAREER_STAGES,
     EXPERT_TIPS,
     Article
-} from "@/lib/mock-api/career-advice"
+} from "@/types"
 import { ArticleCard } from "@/features/career-advice/components/article-card"
 import { FeaturedArticleCard } from "@/features/career-advice/components/featured-article-card"
 import { CategoryCard, CareerStageCard } from "@/features/career-advice/components/advice-components"

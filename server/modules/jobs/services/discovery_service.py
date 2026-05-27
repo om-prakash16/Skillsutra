@@ -1,7 +1,7 @@
 import logging
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from core.db import get_db
-from core.exceptions import NotFoundError, ExternalServiceError
+from core.exceptions import NotFoundError
 from core.cache import cache_result
 
 logger = logging.getLogger(__name__)

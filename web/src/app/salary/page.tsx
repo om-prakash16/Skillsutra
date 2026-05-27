@@ -1,9 +1,9 @@
-"use client"
+﻿"use client"
 
 import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
-import { getAggregatedInsights } from "@/lib/mock-api/salary"
+import { getAggregatedInsights } from '@/types'
 import { SalaryFilters } from "@/features/salary/components/salary-filters"
 import { SalaryStatCard } from "@/features/salary/components/salary-stat-card"
 import { SalaryChart } from "@/features/salary/components/salary-chart"
@@ -48,7 +48,7 @@ function SalaryContent() {
             <div className="bg-background border-b pt-12 pb-8 px-4 sm:px-6 sticky top-16 z-20">
                 <div className="container mx-auto max-w-7xl">
                     <div className="flex flex-col gap-2">
-                        <h1 className="text-3xl font-bold font-heading tracking-tight text-foreground">Salary Insights – 2025</h1>
+                        <h1 className="text-3xl font-bold font-heading tracking-tight text-foreground">Salary Insights â€“ 2025</h1>
                         <p className="text-muted-foreground">Explore estimated salaries by role, experience, and location</p>
                         <p className="text-xs text-muted-foreground/70 mt-1 max-w-3xl bg-amber-500/10 text-amber-600 dark:text-amber-500 p-2 rounded border border-amber-500/20">
                             <strong>Disclaimer:</strong> Salary data shown is an estimated 2025 market range based on aggregated publicly available reports. Actual salaries may vary depending on company, location, skills, and individual experience.
@@ -87,26 +87,26 @@ function SalaryContent() {
                             <>
                                 <SalaryStatCard
                                     title="Average Salary"
-                                    value={`₹${insights.stats.avg} LPA`}
+                                    value={`â‚¹${insights.stats.avg} LPA`}
                                     icon={Banknote}
                                     subtext="Based on current filters"
                                     sentiment="neutral"
                                 />
                                 <SalaryStatCard
                                     title="Median Salary"
-                                    value={`₹${insights.stats.median} LPA`}
+                                    value={`â‚¹${insights.stats.median} LPA`}
                                     icon={BarChart3}
                                     subtext="Midpoint of dataset"
                                 />
                                 <SalaryStatCard
                                     title="Minimum"
-                                    value={`₹${insights.stats.min} LPA`}
+                                    value={`â‚¹${insights.stats.min} LPA`}
                                     icon={TrendingDown}
                                     subtext="Lowest reported"
                                 />
                                 <SalaryStatCard
                                     title="Maximum"
-                                    value={`₹${insights.stats.max} LPA`}
+                                    value={`â‚¹${insights.stats.max} LPA`}
                                     icon={TrendingUp}
                                     subtext="Highest reported"
                                     sentiment="positive"
@@ -138,7 +138,7 @@ function SalaryContent() {
                                     data={insights.byExperience.map(i => ({
                                         label: i.range,
                                         avg: i.avg,
-                                        subtext: `Range: ₹${i.min}-${i.max} LPA`
+                                        subtext: `Range: â‚¹${i.min}-${i.max} LPA`
                                     }))}
                                 />
                                 <SalaryTable
@@ -176,7 +176,7 @@ function SalaryContent() {
                                 </p>
                                 <Link href="/jobs">
                                     <Button size="lg" className="px-8">
-                                        Find Jobs Matching ₹{insights.stats.avg} LPA
+                                        Find Jobs Matching â‚¹{insights.stats.avg} LPA
                                     </Button>
                                 </Link>
                             </div>

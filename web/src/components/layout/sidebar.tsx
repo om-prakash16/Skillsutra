@@ -138,12 +138,15 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                             const isActive = isActiveLink(link.href, (link as any).exact)
                             return (
                                 <Link key={link.href} href={link.href} className="block relative group/item">
-                                    <div className={cn(
-                                        "flex items-center gap-3 px-3 h-10 rounded-xl transition-all duration-300 relative overflow-hidden",
-                                        isActive
-                                            ? "bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
-                                            : "text-white/40 hover:text-white/80 hover:bg-white/5"
-                                    )}>
+                                    <motion.div 
+                                        whileTap={{ scale: 0.98 }}
+                                        className={cn(
+                                            "flex items-center gap-3 px-3 h-10 rounded-xl transition-colors duration-300 relative overflow-hidden",
+                                            isActive
+                                                ? "bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
+                                                : "text-white/40 hover:text-white/80 hover:bg-white/5"
+                                        )}
+                                    >
                                         {isActive && (
                                             <motion.div
                                                 layoutId="admin-active-bar"
@@ -151,10 +154,12 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                                                 transition={{ type: "spring", bounce: 0.15, duration: 0.35 }}
                                             />
                                         )}
-                                        <link.icon className={cn("w-4 h-4 shrink-0", isActive ? "text-rose-400" : "group-hover/item:text-white/70")} />
-                                        <span className={cn("text-xs font-bold tracking-tight", isActive ? "text-rose-200" : "")}>{link.label}</span>
-                                        {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto shrink-0 text-rose-500/40" />}
-                                    </div>
+                                        <motion.div whileHover={{ x: 2 }} className="flex items-center gap-3 w-full">
+                                            <link.icon className={cn("w-4 h-4 shrink-0 transition-transform", isActive ? "text-rose-400" : "group-hover/item:text-white/70")} />
+                                            <span className={cn("text-xs font-bold tracking-tight", isActive ? "text-rose-200" : "")}>{link.label}</span>
+                                            {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto shrink-0 text-rose-500/40" />}
+                                        </motion.div>
+                                    </motion.div>
                                 </Link>
                             )
                         })}
@@ -175,12 +180,15 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                     const isActive = isActiveLink(link.href, (link as any).exact)
                     return (
                         <Link key={link.href} href={link.href} className="block relative group/item">
-                            <div className={cn(
-                                "flex items-center gap-3 px-3 h-11 rounded-xl transition-all duration-300 relative overflow-hidden",
-                                isActive
-                                    ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
-                                    : "text-white/40 hover:text-white/80 hover:bg-white/5"
-                            )}>
+                            <motion.div 
+                                whileTap={{ scale: 0.98 }}
+                                className={cn(
+                                    "flex items-center gap-3 px-3 h-11 rounded-xl transition-colors duration-300 relative overflow-hidden",
+                                    isActive
+                                        ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
+                                        : "text-white/40 hover:text-white/80 hover:bg-white/5"
+                                )}
+                            >
                                 {isActive && (
                                     <motion.div
                                         layoutId="user-active-bar"
@@ -188,9 +196,11 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                                         transition={{ type: "spring", bounce: 0.15, duration: 0.35 }}
                                     />
                                 )}
-                                <link.icon className={cn("w-4.5 h-4.5 shrink-0", isActive ? "text-primary" : "")} />
-                                <span className={cn("text-sm font-bold tracking-tight", isActive ? "text-white" : "")}>{link.label}</span>
-                            </div>
+                                <motion.div whileHover={{ x: 2 }} className="flex items-center gap-3 w-full">
+                                    <link.icon className={cn("w-4.5 h-4.5 shrink-0 transition-transform", isActive ? "text-primary" : "")} />
+                                    <span className={cn("text-sm font-bold tracking-tight", isActive ? "text-white" : "")}>{link.label}</span>
+                                </motion.div>
+                            </motion.div>
                         </Link>
                     )
                 })}

@@ -1,6 +1,5 @@
 import jwt
 import httpx
-import logging
 import time
 from datetime import datetime, timedelta
 from typing import List, Optional, Dict, Any
@@ -88,46 +87,44 @@ class AuthService:
         credentials: HTTPAuthorizationCredentials = Security(security),
     ) -> Dict[str, Any]:
         """
-        Validates a Keycloak JWT and returns the verified user payload.
-        
-        The returned dict has the same shape used by all existing guards:
-        {
-            "id": "<keycloak-user-uuid>",
-            "sub": "<keycloak-user-uuid>",
-            "email": "user@example.com",
-            "name": "Full Name",
-            "roles": ["user", "company", ...],
-            "realm_access": {...},
-            ...all other Keycloak claims
-        }
+        Validates a Local JWT and returns the verified user payload.
         """
         token = credentials.credentials
-        payload = AuthService.verify_keycloak_token(token)
+        from core.security import decode_token
+        from core.redis import get_redis_client
         
-        # Extract user ID
+        # 1. Check Redis Blacklist (Revocation)
+        redis_client = get_redis_client()
+        is_blacklisted = await redis_client.get(f"blacklist:{token}")
+        if is_blacklisted:
+            raise AuthorizationError(message="Token has been revoked")
+            
+        payload = decode_token(token)
+        if not payload:
+            raise AuthorizationError(message="Token is invalid or has expired")
+            
         user_id = payload.get("sub")
         if not user_id:
             raise AuthorizationError(message="Token missing subject claim")
+            
+        # Our local auth generates {"role": "..."} inside the token
+        role = payload.get("role", "user")
         
-        # Extract roles from Keycloak's realm_access.roles
-        realm_access = payload.get("realm_access", {})
-        roles = realm_access.get("roles", [])
-        
-        # Filter out Keycloak internal roles
-        internal_roles = {
-            "offline_access", "uma_authorization", "default-roles-skillsutra",
+        return {
+            "id": user_id,
+            "sub": user_id,
+            "roles": [role],
+            "email": payload.get("email", ""),
+            "name": payload.get("name", ""),
+            "jti": token  # Attach token as JTI for future revocation
         }
-        user_roles = [r for r in roles if r not in internal_roles]
-        if not user_roles:
-            user_roles = ["user"]
-        
-        # Normalize payload to match the shape expected by guards.py
-        payload["id"] = user_id
-        payload["roles"] = user_roles
-        payload["email"] = payload.get("email", "")
-        payload["name"] = payload.get("name", payload.get("preferred_username", ""))
-        
-        return payload
+
+    @staticmethod
+    async def blacklist_token(token: str, expires_in: int = 86400):
+        """Adds a token to the Redis blacklist to revoke it immediately."""
+        from core.redis import get_redis_client
+        redis_client = get_redis_client()
+        await redis_client.setex(f"blacklist:{token}", expires_in, "true")
 
     @staticmethod
     async def get_admin_token() -> Optional[str]:
@@ -215,28 +212,22 @@ async def get_user_permissions(user_id: str) -> List[str]:
         for k in keys_to_clear:
             del _PERMISSION_CACHE[k]
 
-    import db.engine as engine
-    if not engine.pool:
-        return []
+    from core.database import AsyncSessionLocal
+    from models.core import User
+    from sqlalchemy.future import select
+    from sqlalchemy.orm import selectinload
 
     try:
-        from core.db import get_db
-        db = get_db()
-        # Optimized query
-        response = await (
-            db.table("user_roles")
-            .select("roles:role_id(role_permissions(permissions(permission_name)))")
-            .eq("user_id", user_id)
-            .execute()
-        )
-
-        permissions = set()
-        for entry in response.data or []:
-            role = entry.get("roles", {})
-            for rp in role.get("role_permissions", []):
-                perm = rp.get("permissions", {}).get("permission_name")
-                if perm:
-                    permissions.add(perm)
+        async with AsyncSessionLocal() as session:
+            stmt = select(User).options(selectinload(User.roles)).where(User.id == user_id)
+            result = await session.execute(stmt)
+            user = result.scalars().first()
+            
+            permissions = set()
+            if user:
+                for role in user.roles:
+                    for perm in role.permissions:
+                        permissions.add(perm)
 
         perm_list = list(permissions)
         # Cache for 10 minutes

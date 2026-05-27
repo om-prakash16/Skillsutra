@@ -1,57 +1,81 @@
-import os
 from typing import Dict, Any
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain.prompts import PromptTemplate
+import os
+import json
+import logging
+import google.generativeai as genai
 
+logger = logging.getLogger(__name__)
 
 class SkillGapAnalyzer:
     def __init__(self):
         self.api_key = os.getenv("GOOGLE_API_KEY")
-        self.llm = (
-            ChatGoogleGenerativeAI(
-                temperature=0, google_api_key=self.api_key, model="gemini-1.5-flash"
-            )
-            if self.api_key
-            else None
-        )
+        if self.api_key:
+            genai.configure(api_key=self.api_key)
+            self.model = genai.GenerativeModel("gemini-1.5-flash-latest")
+        else:
+            self.model = None
 
     async def analyze_gap(
         self, profile_data: Dict[str, Any], target_role: str
     ) -> Dict[str, Any]:
-        if not self.llm:
-            return {
-                "current_skills": profile_data.get("skills", []),
-                "target_role": target_role,
-                "missing_skills": ["TensorFlow", "Statistics"],
-                "recommendations": [
-                    "Learn TensorFlow through Coursera",
-                    "Build a Machine Learning project",
-                    "Study basic statistics for data science",
-                ],
-            }
+        """
+        AI-driven skill gap analysis.
+        """
+        current_skills = profile_data.get("skills", [])
+        
+        if self.model:
+            prompt = f"""You are an expert tech recruiter and career coach.
+The candidate currently has these skills: {', '.join(current_skills) if current_skills else 'None listed'}.
+The candidate's target role is: "{target_role}".
 
-        prompt = PromptTemplate(
-            template="""Compare the candidate's skills against the industry standard for a {target_role}.
-            Candidate Skills: {skills}
-            
-            Identify exactly what is missing and provide a specific learning roadmap.
-            Return a JSON object with:
-            - missing_skills (list)
-            - recommendations (list of strings with resources)
-            """,
-            input_variables=["skills", "target_role"],
-        )
-
-        try:
-            result = self.llm.invoke(
-                prompt.format(
-                    skills=", ".join(profile_data.get("skills", [])),
-                    target_role=target_role,
+Analyze the gap between their current skills and the requirements for the target role.
+Return ONLY a valid JSON object with the following structure:
+{{
+  "current_skills": ["List", "of", "skills", "they", "have"],
+  "missing_skills": ["List", "of", "key", "skills", "they", "need", "to", "learn"],
+  "recommendations": ["Actionable recommendation 1", "Actionable recommendation 2"],
+  "readiness_score": <number between 0 and 100 representing how ready they are>
+}}
+"""
+            try:
+                response = self.model.generate_content(
+                    prompt,
+                    generation_config={"response_mime_type": "application/json"}
                 )
-            )
-            # In a production app, use Pydantic parser here
-            import json
+                content = response.text.strip()
+                result = json.loads(content)
+                result["target_role"] = target_role
+                return result
+            except Exception as e:
+                logger.error(f"AI Gap Analysis failed: {e}")
 
-            return json.loads(result.content)
-        except Exception as e:
-            return {"error": str(e)}
+        # Fallback to simple logic
+        role_lower = target_role.lower()
+        required_skills = []
+        if "data" in role_lower or "machine learning" in role_lower:
+            required_skills = ["Python", "SQL", "Machine Learning", "Data Analysis", "Statistics"]
+        elif "frontend" in role_lower or "ui" in role_lower:
+            required_skills = ["JavaScript", "React", "CSS", "HTML", "TypeScript"]
+        elif "backend" in role_lower:
+            required_skills = ["Python", "Java", "Node.js", "SQL", "Docker", "AWS"]
+        else:
+            required_skills = ["Communication", "Problem Solving", "Project Management"]
+            
+        missing_skills = [s for s in required_skills if s.lower() not in [cs.lower() for cs in current_skills]]
+
+        recommendations = []
+        for ms in missing_skills:
+            recommendations.append(f"Consider learning {ms} to better align with the {target_role} role.")
+
+        if not recommendations:
+            recommendations.append("Your skills align perfectly. Keep building projects to demonstrate your expertise.")
+
+        readiness_score = int(((len(required_skills) - len(missing_skills)) / len(required_skills)) * 100) if required_skills else 100
+
+        return {
+            "current_skills": current_skills,
+            "target_role": target_role,
+            "missing_skills": missing_skills,
+            "recommendations": recommendations,
+            "readiness_score": readiness_score
+        }

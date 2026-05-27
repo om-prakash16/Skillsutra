@@ -50,7 +50,7 @@ async def validate_database_and_identity():
             if user_res.data:
                 print(f"[OK] Identity system validated for {generated_code}")
             else:
-                print(f"[FAIL] Could not find user by generated code")
+                print("[FAIL] Could not find user by generated code")
 
         # Cleanup
         db.table("users").delete().eq("id", user_id).execute()

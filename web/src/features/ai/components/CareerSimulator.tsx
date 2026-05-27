@@ -22,7 +22,7 @@ const mockMilestones: Milestone[] = [
         timeframe: '6-12 Months',
         requirement: 'Master Zero-Knowledge Proofs (ZKP)',
         probability: 92,
-        description: 'Lead high-throughput privacy-preserving blockchain layers.'
+        description: 'Lead high-throughput privacy-preserving infrastructure layers.'
     },
     {
         id: 'ms2',

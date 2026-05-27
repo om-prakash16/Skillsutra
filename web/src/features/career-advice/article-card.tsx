@@ -1,8 +1,8 @@
-import { Badge } from "@/components/ui/badge"
+﻿import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { CalendarDays, Clock, User } from "lucide-react"
 import Link from "next/link"
-import { Article } from "@/lib/mock-api/career-advice"
+import { Article } from '@/types'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface ArticleCardProps {

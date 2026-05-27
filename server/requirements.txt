@@ -15,3 +15,24 @@ PyJWT
 ruff
 mypy
 
+sqlalchemy
+passlib[bcrypt]
+python-jose[cryptography]
+httpx
+pgvector
+langchain-openai
+langchain-postgres
+tiktoken
+pytest
+pytest-asyncio
+locust
+asgiref
+celery
+redis
+
+prometheus-fastapi-instrumentator
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-instrumentation-fastapi
+
+gunicorn

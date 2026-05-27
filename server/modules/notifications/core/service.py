@@ -31,6 +31,17 @@ class NotificationService:
         }
 
         response = db.table("notifications").insert(notification_data).execute()
+        
+        # Broadcast via WebSocket if the user is connected
+        try:
+            from modules.chat.ws_manager import manager
+            import asyncio
+            # Attempt to broadcast the notification payload
+            asyncio.create_task(manager.send_personal_message(notification_data, str(user_id)))
+        except Exception as e:
+            # Silently fail if ws is not connected or there's an import issue
+            print(f"WS Broadcast failed for notification: {e}")
+            
         return response.data[0] if response.data else None
 
     @staticmethod

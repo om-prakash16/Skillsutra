@@ -1,6 +1,6 @@
 import functools
 import logging
-from typing import Any, Callable, Optional, TypeVar, cast
+from typing import Any, Callable, TypeVar
 from cachetools import TTLCache
 
 logger = logging.getLogger(__name__)

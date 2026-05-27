@@ -1,6 +1,6 @@
 import os
-from typing import List, Optional
-from pydantic import BaseModel, Field
+from typing import List
+from pydantic import BaseModel
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -40,10 +40,16 @@ class Settings(BaseModel):
     def KEYCLOAK_ADMIN_URL(self) -> str:
         return f"{self.KEYCLOAK_URL}/admin/realms/{self.KEYCLOAK_REALM}"
     
+    # --- Redis & Queues ---
+    REDIS_HOST: str = os.getenv("REDIS_HOST", "localhost")
+    REDIS_PORT: int = int(os.getenv("REDIS_PORT", "6379"))
+    REDIS_DB: int = int(os.getenv("REDIS_DB", "0"))
+    
     # --- CORS ---
     BACKEND_CORS_ORIGINS: List[str] = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
+        "*",
     ]
 
 # Global instance

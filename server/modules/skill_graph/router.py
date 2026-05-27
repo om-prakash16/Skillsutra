@@ -5,7 +5,7 @@ AI extraction, endorsements, and job skill requirements.
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import Optional, List
+from typing import Optional
 from modules.auth.core.service import get_current_user
 from modules.auth.core.guards import require_admin
 from modules.skill_graph.service import SkillGraphService

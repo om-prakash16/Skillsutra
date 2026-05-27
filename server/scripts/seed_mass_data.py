@@ -45,10 +45,11 @@ def seed():
             "company": comp_name,
             "wallet": wallet,
             "email": f"hr_{i}@{comp_name.lower().replace(' ', '')}.com",
-            "role": "company"
+            "role": "company",
+            "title": "Recruiter"
         }
         accounts_manifest["companies"].append(account)
-        csv_rows.append([account["name"], account["email"], account["wallet"], account["role"], account["company"]])
+        csv_rows.append([account["name"], account["email"], account["wallet"], account["role"], account["company"], account["title"]])
         
         # Immediate DB Attempt (Internal block)
         if db:
@@ -68,22 +69,31 @@ def seed():
     for x in range(1, 101):
         wallet = generate_wallet()
         fname = f"{random.choice(FIRST_NAMES)} {random.choice(LAST_NAMES)} {x}"
+        title = random.choice(TITLES)
         account = {
             "name": fname,
             "wallet": wallet,
             "email": f"candidate_{x}@besthiringtool.test",
             "role": "talent",
-            "company": "N/A"
+            "company": "N/A",
+            "title": title
         }
         accounts_manifest["candidates"].append(account)
-        csv_rows.append([account["name"], account["email"], account["wallet"], account["role"], account["company"]])
+        csv_rows.append([account["name"], account["email"], account["wallet"], account["role"], account["company"], account["title"]])
         
         # Immediate DB Attempt
         if db:
             try:
+                user_id = str(uuid.uuid4())
                 db.table("users").insert({
-                    "id": str(uuid.uuid4()), "wallet_address": wallet, "full_name": fname, 
+                    "id": user_id, "wallet_address": wallet, "full_name": fname, 
                     "email": account["email"], "role": "talent"
+                }).execute()
+                
+                db.table("profiles").insert({
+                    "user_id": user_id,
+                    "full_name": fname,
+                    "headline": title
                 }).execute()
             except: pass
         
@@ -100,10 +110,10 @@ def seed():
     csv_path = os.path.join(base_path, "test_accounts.csv")
     with open(csv_path, "w", newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(["Name", "Email", "Wallet Address", "Role", "Company"])
+        writer.writerow(["Name", "Email", "Wallet Address", "Role", "Company", "Title"])
         writer.writerows(csv_rows)
     
-    print(f"\nManifests generated successfully.")
+    print("\nManifests generated successfully.")
     print(f"JSON: {json_path}")
     print(f"CSV (Excel): {csv_path}")
 

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useAuth } from "@/context/auth-context";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api/api-client";
 import { MetricCard } from "@/components/analytics/MetricCard";
 import { DashboardCharts } from "@/components/analytics/DashboardCharts";
 import { Badge } from "@/components/ui/badge";
@@ -10,24 +11,12 @@ import { Sparkles, TrendingUp, Zap, Target, Loader2, Award, Info } from "lucide-
 
 export default function CandidateInsights() {
   const { user } = useAuth();
-  const [data, setData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    if (user?.id) fetchAnalytics();
-  }, [user?.id]);
-
-  const fetchAnalytics = async () => {
-    try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/analytics/user`);
-      const result = await res.json();
-      setData(result);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const { data, isLoading } = useQuery({
+    queryKey: ["userInsights", user?.id],
+    queryFn: () => api.analytics.user(),
+    enabled: !!user?.id
+  });
 
   if (isLoading) {
     return (
@@ -46,7 +35,7 @@ export default function CandidateInsights() {
              AI CAREER ANALYTICS
            </Badge>
            <h1 className="text-6xl font-black font-heading tracking-tighter italic">Career Insights.</h1>
-           <p className="text-muted-foreground max-w-xl italic">Visualizing your trajectory from verified skills to on-chain reputation. Powered by AI matching.</p>
+           <p className="text-muted-foreground max-w-xl italic">Visualizing your trajectory from verified skills to platform reputation. Powered by AI matching.</p>
         </div>
       </div>
 
@@ -55,7 +44,7 @@ export default function CandidateInsights() {
         <MetricCard 
             title="AI Proof Score" 
             value={88} 
-            description="Verified reputation on Blockchain" 
+            description="Verified reputation on infrastructure" 
             trend={+12} 
             icon="zap" 
         />
@@ -101,7 +90,7 @@ export default function CandidateInsights() {
                     <Sparkles className="w-12 h-12 text-primary" />
                     <div className="space-y-2">
                         <h3 className="text-xl font-bold italic tracking-tight">AI Talent Ranking</h3>
-                        <p className="text-xs text-neutral-500 italic">You are in the top 5% of Blockchain Developers verified on Best Hiring Tool this month.</p>
+                        <p className="text-xs text-neutral-500 italic">You are in the top 5% of infrastructure Developers verified on Best Hiring Tool this month.</p>
                     </div>
                 </Card>
                 <Card className="bg-white/5 border-white/10 p-8 space-y-6">
@@ -125,7 +114,7 @@ export default function CandidateInsights() {
                 </CardHeader>
                 <CardContent className="space-y-4 text-[10px] text-neutral-400 font-medium italic">
                     <p>Metrics are calculated daily using high-frequency platform event data. Trends are updated every 24 hours at 00:00 UTC.</p>
-                    <p>Your Proof Score includes multi-dimensional signals from on-chain transactions, AI quizzes, and project audits.</p>
+                    <p>Your Proof Score includes multi-dimensional signals from platform transactions, AI quizzes, and project audits.</p>
                 </CardContent>
             </Card>
 

@@ -37,7 +37,7 @@ export default function AdminSettingsPage() {
         platform_currency: "SOL",
         ai_cooldown_seconds: "30",
         openai_key_configured: true,
-        blockchain_rpc_url: "https://api.mainnet-beta.blockchain.com"
+        blockchain_rpc_url: "https://api.mainnet-beta.infrastructure.com"
     })
 
     const [isSaving, setIsSaving] = useState(false);
@@ -121,7 +121,7 @@ export default function AdminSettingsPage() {
             icon: Key,
             color: "text-amber-400",
             items: [
-                { id: "blockchain_rpc_url", label: "RPC Node URL", desc: "Connection endpoint for Blockchain blockchain synchronization.", field: "input", type: "text" },
+                { id: "blockchain_rpc_url", label: "RPC Node URL", desc: "Connection endpoint for infrastructure infrastructure synchronization.", field: "input", type: "text" },
                 { id: "openai_key_configured", label: "LLM Provider Status", desc: "OpenAI API integration for semantic matching.", field: "status" },
             ]
         }

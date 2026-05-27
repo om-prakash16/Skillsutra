@@ -3,10 +3,10 @@
  * Central binding for all backend service calls.
  */
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
-    const token = localStorage.getItem("auth_token");
+    const token = localStorage.getItem("accessToken");
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
         ...(options.headers as Record<string, string>),
@@ -81,14 +81,14 @@ export const api = {
         parseJD: (text: string) => fetchWithAuth("/jobs/parse-jd", { method: "POST", body: JSON.stringify({ text }) }),
     },
     applications: {
-        user: () => fetchWithAuth("/applications/user"),
-        company: (id: string, jobId?: string) => fetchWithAuth(`/jobs/company/${id}${jobId ? `?job_id=${jobId}` : ""}`),
-        updateStatus: (id: string, status: string) => fetchWithAuth("/applications/status", { method: "PATCH", body: JSON.stringify({ application_id: id, status }) })
+        user: () => fetchWithAuth("/applications/my-applications"),
+        company: (id: string, jobId?: string) => fetchWithAuth(`/applications/company-applications${jobId ? `?job_id=${jobId}` : ""}`),
+        updateStatus: (id: string, status: string) => fetchWithAuth(`/applications/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) })
     },
-    nft: {
-        mintProfile: () => fetchWithAuth("/nft/mint-profile", { method: "POST" }),
-        updateMetadata: (cid: string) => fetchWithAuth("/nft/update-metadata", { method: "POST", body: JSON.stringify({ cid }) }),
-        list: () => fetchWithAuth("/nft/user-nfts")
+    Verifications: {
+        mintProfile: () => fetchWithAuth("/Verifications/issue-profile", { method: "POST" }),
+        updateMetadata: (cid: string) => fetchWithAuth("/Verifications/update-metadata", { method: "POST", body: JSON.stringify({ cid }) }),
+        list: () => fetchWithAuth("/Verifications/user-Verifications")
     },
     search: {
         candidates: (params: string) => fetchWithAuth(`/search/candidates?${params}`),
@@ -122,7 +122,7 @@ export const api = {
     },
     admin: {
         getUsers: () => fetchWithAuth("/admin/users"),
-        updateUser: (wallet: string, data: any) => fetchWithAuth(`/admin/users/${wallet}`, { method: "PATCH", body: JSON.stringify(data) }),
+        updateUser: (account: string, data: any) => fetchWithAuth(`/admin/users/${account}`, { method: "PATCH", body: JSON.stringify(data) }),
         getSchema: () => fetchWithAuth("/admin/schema"),
         createSchema: (data: any) => fetchWithAuth("/admin/schema", { method: "POST", body: JSON.stringify(data) }),
         updateSchema: (id: string, data: any) => fetchWithAuth(`/admin/schema/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
@@ -131,7 +131,7 @@ export const api = {
         updateFeature: (data: any) => fetchWithAuth("/admin/features/update", { method: "POST", body: JSON.stringify(data) }),
         getSettings: () => fetchWithAuth("/admin/settings"),
         updateSettings: (data: any) => fetchWithAuth("/admin/settings", { method: "POST", body: JSON.stringify(data) }),
-        getBlockchainTransactions: () => fetchWithAuth("/admin/blockchain/transactions"),
+        getBlockchainTransactions: () => fetchWithAuth("/admin/infrastructure/transactions"),
         getCompanies: () => fetchWithAuth("/admin/companies"),
         verifyCompany: (id: string) => fetchWithAuth(`/admin/companies/${id}/verify`, { method: "PATCH" }),
         deleteCompany: (id: string) => fetchWithAuth(`/admin/companies/${id}`, { method: "DELETE" }),
@@ -200,8 +200,9 @@ export const api = {
 // The unified `api` object above is preserved for backward compatibility.
 // ──────────────────────────────────────────────────────────────
 
-export { authApi } from "./auth-api";
+export * as authApi from "./auth-api";
 export { userApi } from "./user-api";
 export { companyApi } from "./company-api";
 export { adminApi } from "./admin-api";
 export { publicApi } from "./public-api";
+export { searchApi } from "./search-api";

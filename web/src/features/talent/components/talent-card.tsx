@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-import { Talent } from '@/lib/mock-api/talent';
+import { Talent } from '@/types';
 import { MapPin, Briefcase, CheckCircle2, Zap, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { SaveTalentButton } from '@/features/talent-pool/components/save-talent-button';
@@ -14,7 +14,8 @@ interface TalentCardProps {
 }
 
 export function TalentCard({ talent }: TalentCardProps) {
-  const getInitials = (name: string) => {
+  const getInitials = (name?: string | null) => {
+    if (!name) return '?';
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 

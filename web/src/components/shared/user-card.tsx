@@ -1,10 +1,10 @@
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+﻿import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { CheckCircle2, MapPin, Briefcase, Github, Linkedin, Code2 } from "lucide-react"
 import Link from "next/link"
-import { User } from "@/lib/mock-api/users"
+import { User } from '@/types'
 
 interface UserCardProps {
     user: User

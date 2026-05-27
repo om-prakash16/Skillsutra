@@ -1,7 +1,6 @@
 import os
 import logging
 from fastapi import APIRouter, Depends
-from typing import Optional
 from core.response import success_response
 from core.dependencies import get_db, get_validated_wallet
 import google.generativeai as genai

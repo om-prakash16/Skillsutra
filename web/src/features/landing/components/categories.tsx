@@ -28,7 +28,7 @@ export function Categories() {
   const categories = getJson("sectors", "list") || [
     { name: 'Software Engineering', count: 1240, icon: 'Code2', color: 'indigo' },
     { name: 'AI & Neural Systems', count: 850, icon: 'Cpu', color: 'purple' },
-    { name: 'Blockchain & Web3', count: 620, icon: 'Bitcoin', color: 'orange' },
+    { name: 'infrastructure & NextGen', count: 620, icon: 'Bitcoin', color: 'orange' },
   ];
 
   const titleParts = title.split(" ");

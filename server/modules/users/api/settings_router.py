@@ -3,7 +3,7 @@ User Settings Router.
 Manages notification preferences, privacy rules, and job preferences.
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Body
+from fastapi import APIRouter, Depends, HTTPException
 from typing import Dict, Any
 from modules.auth.core.service import get_current_user
 from core.db import get_db

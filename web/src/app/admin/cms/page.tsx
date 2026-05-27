@@ -66,7 +66,7 @@ export default function CMSEditor() {
 
   const sections = Array.from(new Set(content.map(c => c.section_key)));
   
-  const landingSections = ['hero', 'stats', 'features', 'sectors'];
+  const landingSections = ['hero', 'stats', 'features', 'sectors', 'landing'];
   const globalSections = ['global', 'seo'];
   const navSections = ['navbar', 'footer'];
 

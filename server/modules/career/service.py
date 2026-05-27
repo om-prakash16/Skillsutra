@@ -74,59 +74,68 @@ class CareerService:
 
         return goals
 
-    async def generate_roadmap(self, user_id: str, target_role: str) -> Dict[str, Any]:
+    async def generate_roadmap(self, user_id: str, target_role: str, user_skills: List[str] = None) -> Dict[str, Any]:
         sb = get_db()
         if not sb:
             raise Exception("DB unavailable")
-
-        # 1. Fallback Roadmap Templates if Gemini fails/not configured
-        templates = {
-            "Backend Developer": [
-                {"milestone": "Master Database Connections & Pools", "tasks": ["Implement PostgreSQL connection pool", "Design database indices", "Build PostgREST API emulator layer"]},
-                {"milestone": "System Caching & Message Queues", "tasks": ["Setup Redis caching on heavy endpoints", "Implement Celery background tasks", "Dockerize backend application"]},
-                {"milestone": "Secure Auth & RBAC", "tasks": ["Configure JWT middleware check", "Write OAuth2 helper decorators", "Implement row-level security"]}
-            ],
-            "AI Engineer": [
-                {"milestone": "LLM Orchestration & Prompt Eng", "tasks": ["Build LangChain RAG pipeline", "Connect vector db storage", "Optimize prompt token consumption"]},
-                {"milestone": "Machine Learning Foundations", "tasks": ["Train linear regression models in scikit-learn", "Compute matrix calculations in numpy", "Design basic convolutional neural network"]},
-                {"milestone": "Model Deployment & Monitoring", "tasks": ["Deploy FastAPI inference wrapper", "Quantize PyTorch model weights", "Track model drift with metrics"]}
-            ],
-            "Frontend Developer": [
-                {"milestone": "Next.js App Router Core", "tasks": ["Implement dynamic routing and search parameters", "Build nested layout shells", "Configure React Server Components"]},
-                {"milestone": "Styling & Motion Animations", "tasks": ["Create Tailwind grid dashboard", "Animate tabs with Framer Motion layoutId", "Apply glassmorphism styles"]},
-                {"milestone": "Hydration & Performance", "tasks": ["Write optimized useQuery custom hooks", "Lazy load heavy visual modules", "Configure page caching headers"]}
-            ]
-        }
-
-        milestones = templates.get(target_role, templates["Backend Developer"])
-
-        # 2. Try Gemini AI generation
-        google_api_key = os.getenv("GOOGLE_API_KEY")
-        if google_api_key:
+            
+        import os
+        import json
+        import logging
+        import google.generativeai as genai
+        
+        logger = logging.getLogger(__name__)
+        api_key = os.getenv("GOOGLE_API_KEY")
+        
+        milestones = []
+        if api_key:
             try:
-                import google.generativeai as genai
-                genai.configure(api_key=google_api_key)
+                genai.configure(api_key=api_key)
                 model = genai.GenerativeModel("gemini-1.5-flash-latest")
-                prompt = f"""
-                You are a senior technical career advisor.
-                Generate a highly tailored career roadmap to become a "{target_role}".
-                The output must be a JSON array of objects representing milestones.
-                Each milestone must have a "milestone" title string and a "tasks" list containing exactly 3 strings representing tasks.
-                Output ONLY raw valid JSON inside brackets: [ {{"milestone": "...", "tasks": ["...", "...", "..."]}} ]
-                """
-                response = model.generate_content(prompt)
-                text = response.text.strip()
-                # Clean markdown blocks if present
-                if "```json" in text:
-                    text = text.split("```json")[1].split("```")[0].strip()
-                elif "```" in text:
-                    text = text.split("```")[1].split("```")[0].strip()
-                milestones = json.loads(text)
-            except Exception as e:
-                # Silently fallback to template
-                pass
+                
+                skills_context = f"The user currently has these skills: {', '.join(user_skills)}." if user_skills else "The user is starting fresh."
+                prompt = f"""You are an expert career coach and technical mentor.
+Create a step-by-step learning roadmap for a user who wants to become a "{target_role}".
+{skills_context}
 
-        # 3. Store roadmap in career_roadmaps table
+Return ONLY a valid JSON array of objects representing milestones. Each object must have exactly these keys:
+- milestone: A short title for the milestone (e.g. "Master Database Connections")
+- tasks: An array of 3-5 specific, actionable strings (e.g. ["Implement PostgreSQL connection pool", "Design database indices"])
+
+Generate exactly 4 milestones that progress from foundational to advanced for this role.
+"""
+                response = model.generate_content(
+                    prompt,
+                    generation_config={"response_mime_type": "application/json"}
+                )
+                
+                content = response.text.strip()
+                milestones = json.loads(content)
+            except Exception as e:
+                logger.error(f"AI Roadmap Generation failed for {target_role}: {e}")
+        
+        if not milestones:
+            # Fallback if Gemini fails or is not configured
+            templates = {
+                "Backend Developer": [
+                    {"milestone": "Master Database Connections & Pools", "tasks": ["Implement PostgreSQL connection pool", "Design database indices", "Build PostgREST API emulator layer"]},
+                    {"milestone": "System Caching & Message Queues", "tasks": ["Setup Redis caching on heavy endpoints", "Implement Celery background tasks", "Dockerize backend application"]},
+                    {"milestone": "Secure Auth & RBAC", "tasks": ["Configure JWT middleware check", "Write OAuth2 helper decorators", "Implement row-level security"]}
+                ],
+                "AI Engineer": [
+                    {"milestone": "LLM Orchestration & Prompt Eng", "tasks": ["Build LangChain RAG pipeline", "Connect vector db storage", "Optimize prompt token consumption"]},
+                    {"milestone": "Machine Learning Foundations", "tasks": ["Train linear regression models in scikit-learn", "Compute matrix calculations in numpy", "Design basic convolutional neural network"]},
+                    {"milestone": "Model Deployment & Monitoring", "tasks": ["Deploy FastAPI inference wrapper", "Quantize PyTorch model weights", "Track model drift with metrics"]}
+                ],
+                "Frontend Developer": [
+                    {"milestone": "Next.js App Router Core", "tasks": ["Implement dynamic routing and search parameters", "Build nested layout shells", "Configure React Server Components"]},
+                    {"milestone": "Styling & Motion Animations", "tasks": ["Create Tailwind grid dashboard", "Animate tabs with Framer Motion layoutId", "Apply glassmorphism styles"]},
+                    {"milestone": "Hydration & Performance", "tasks": ["Write optimized useQuery custom hooks", "Lazy load heavy visual modules", "Configure page caching headers"]}
+                ]
+            }
+            milestones = templates.get(target_role, templates["Backend Developer"])
+
+        # Store roadmap in career_roadmaps table
         # Delete old roadmap if exists
         sb.table("career_roadmaps").delete().eq("user_id", user_id).eq("target_role", target_role).execute()
         

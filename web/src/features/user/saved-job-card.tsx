@@ -1,10 +1,10 @@
-"use client"
+﻿"use client"
 
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { MapPin, DollarSign, Clock, Trash2, Eye, Building2 } from "lucide-react"
-import { SavedJob } from "@/lib/mock-api/saved-jobs"
+import { SavedJob } from '@/types'
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import Link from "next/link"
 
@@ -30,7 +30,7 @@ export function SavedJobCard({ job, onRemove }: SavedJobCardProps) {
                         </h3>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                             <span className="font-medium text-foreground">{job.company}</span>
-                            <span>•</span>
+                            <span>â€¢</span>
                             <span>{job.type}</span>
                         </div>
                     </div>

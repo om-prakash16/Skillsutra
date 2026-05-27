@@ -1,6 +1,6 @@
-"use client"
+﻿"use client"
 
-import { CATEGORIES } from "@/lib/mock-data"
+import { CATEGORIES } from '@/types'
 import { Card, CardContent } from "@/components/ui/card"
 import { Code, Palette, Megaphone, Banknote, Box, Briefcase, Users, Settings } from "lucide-react"
 import Link from "next/link"

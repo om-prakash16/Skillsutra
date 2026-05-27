@@ -1,5 +1,4 @@
-from fastapi import APIRouter, Depends, Query, Body
-from typing import List, Dict, Any
+from fastapi import APIRouter, Depends
 
 from core.response import success_response
 from core.dependencies import get_db, get_current_user_id, get_company_id
@@ -9,6 +8,69 @@ from modules.companies.enterprise_api_service import EnterpriseApiService
 
 router = APIRouter()
 enterprise_api_service = EnterpriseApiService()
+
+@router.get("/profile")
+async def get_company_profile(
+    user_id: str = Depends(get_current_user_id)
+):
+    """Fetch the company profile for the authenticated user's company."""
+    db = await get_db()
+    # Find which company this user belongs to
+    member_res = db.table("company_members").select("company_id, company_role").eq("user_id", user_id).execute()
+    if not member_res.data:
+        return success_response(data=None, message="No company profile found")
+    
+    company_id = member_res.data[0]["company_id"]
+    company_role = member_res.data[0]["company_role"]
+
+    # Fetch company details
+    company_res = db.table("companies").select("*").eq("id", company_id).single().execute()
+    
+    if not company_res.data:
+        return success_response(data=None, message="Company not found")
+
+    company_data = company_res.data
+    company_data["my_role"] = company_role
+    return success_response(data=company_data)
+
+@router.post("/update")
+async def update_company_profile(
+    data: dict,
+    user_id: str = Depends(get_current_user_id)
+):
+    """Update the company profile for the authenticated user's company."""
+    db = await get_db()
+    # Find which company this user belongs to
+    member_res = db.table("company_members").select("company_id, company_role").eq("user_id", user_id).execute()
+    if not member_res.data:
+        from core.exceptions import NotFoundError
+        raise NotFoundError("No company profile found")
+    
+    company_id = member_res.data[0]["company_id"]
+    company_role = member_res.data[0]["company_role"]
+
+    if company_role not in ["OWNER", "ADMIN"]:
+        from core.exceptions import ForbiddenError
+        raise ForbiddenError("You do not have permission to update the company profile")
+
+    # Update company details
+    update_data = {
+        "name": data.get("name"),
+        "website": data.get("website"),
+        "description": data.get("description"),
+        "industry": data.get("industry"),
+        "company_size": data.get("company_size"),
+        "location": data.get("location"),
+        "about_company": data.get("about_company"),
+    }
+    
+    # Remove None values
+    update_data = {k: v for k, v in update_data.items() if v is not None}
+    
+    if update_data:
+        db.table("companies").update(update_data).eq("id", company_id).execute()
+        
+    return success_response(message="Company profile updated")
 
 @router.post("/create")
 async def create_company(

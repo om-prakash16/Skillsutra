@@ -12,37 +12,72 @@ import { EducationTab } from "@/features/user/profile/tabs/education-tab"
 import { ProjectsTab } from "@/features/user/profile/tabs/projects-tab"
 import { GithubTab } from "@/features/user/profile/tabs/github-tab"
 import { LeetcodeTab } from "@/features/user/profile/tabs/leetcode-tab"
-import { USER_PROFILE, UserProfile } from "@/lib/mock-api/user-profile"
-import { TALENT_DATA } from "@/lib/mock-api/talent"
 import { Loader2, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { notFound } from "next/navigation"
+import { publicApi } from "@/lib/api/public-api"
 
-// Mock fetch function that simulates getting a specific user by ID
-const fetchTalentProfileById = async (id: string): Promise<UserProfile | null> => {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 600))
-
-    // Find basic info from the talent list
-    const basicUser = TALENT_DATA.find(u => u.id === id)
-
-    if (!basicUser) return null
-
-    // Merge rich profile data with the specific user's basic info
-    // This allows us to use the detailed structure of USER_PROFILE but customizable basic details
-    return {
-        ...USER_PROFILE,
-        basic: {
-            ...USER_PROFILE.basic,
-            firstName: basicUser.name.split(" ")[0],
-            lastName: basicUser.name.split(" ").slice(1).join(" "),
-            title: basicUser.title, // Use title from Talent
-            location: basicUser.location || "",
-            avatar: basicUser.avatar || "",
-            experienceLevel: basicUser.experienceLevel, // Use experienceLevel
-            completion: basicUser.completion // Use completion
+// Fetch function that gets specific user by ID from real backend
+const fetchTalentProfileById = async (id: string): Promise<any | null> => {
+    try {
+        const response = await publicApi.profile.getById(id)
+        if (!response.data) return null
+        
+        const data = response.data
+        const profile = data.profile || {}
+        
+        return {
+            ...data,
+            basic: {
+                firstName: profile.full_name ? profile.full_name.split(" ")[0] : (profile.username || "Anonymous"),
+                lastName: profile.full_name ? profile.full_name.split(" ").slice(1).join(" ") : "",
+                title: profile.headline || "Professional",
+                location: profile.location || "Remote",
+                avatar: profile.avatar_url || "",
+                experienceLevel: data.experiences?.length > 2 ? "Senior" : "Intermediate",
+                completion: profile.completion_percent || 80,
+                bio: profile.bio || "",
+                email: profile.email || "",
+                phone: profile.phone || "",
+                jobType: profile.job_type || "Full-time",
+                languages: profile.languages || [],
+                joinDate: profile.created_at ? new Date(profile.created_at).toLocaleDateString() : ""
+            },
+            skills: (data.skills || []).map((s: any) => ({
+                name: s.name,
+                level: s.proficiency || "Intermediate",
+                category: s.category,
+                is_verified: s.verified
+            })),
+            experience: (data.experiences || []).map((e: any) => ({
+                id: e.id,
+                role: e.role,
+                company: e.company_name,
+                type: (e.type || "Full-time"),
+                startDate: e.start_date,
+                endDate: e.end_date || "Present",
+                description: e.description
+            })),
+            education: (data.education || []).map((e: any) => ({
+                id: e.id,
+                institution: e.institution,
+                degree: e.degree,
+                year: e.end_date ? new Date(e.end_date).getFullYear().toString() : "",
+                fieldOfStudy: e.field_of_study
+            })),
+            projects: (data.projects || []).map((p: any) => ({
+                id: p.id,
+                title: p.title,
+                description: p.description,
+                stack: p.stack || [],
+                link: p.project_url,
+                github: p.github_url
+            }))
         }
+    } catch (err) {
+        console.error(err)
+        return null
     }
 }
 
@@ -61,7 +96,7 @@ export default function TalentProfilePage({ params }: { params: Promise<{ talent
         )
     }
 
-    if (!userProfile) {
+    if (!userProfile || isError) {
         return notFound()
     }
 

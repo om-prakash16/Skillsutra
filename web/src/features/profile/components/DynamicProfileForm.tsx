@@ -25,7 +25,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 
-const API = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+import { userApi } from '@/lib/api/user-api';
 
 interface DynamicProfileFormProps {
     initialData?: any;
@@ -92,18 +92,34 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
 
   const handleUpdate = async () => {
       try {
-          const token = localStorage.getItem("auth_token");
-          const res = await fetch(`${API}/users/update`, {
-              method: 'POST',
-              headers: { 
-                  'Content-Type': 'application/json',
-                  ...(token ? { Authorization: `Bearer ${token}` } : {})
+          // Map local formData to backend expected schema
+          const payload = {
+              profile: {
+                  full_name: `${formData.firstName} ${formData.lastName}`.trim(),
+                  headline: formData.primaryRole,
+                  bio: formData.bio,
               },
-              body: JSON.stringify(formData)
-          });
-          
-          if (!res.ok) throw new Error("Update failed");
-          
+              skills: formData.skills
+                  ? formData.skills.split(",").map(s => ({ name: s.trim(), proficiency: "Intermediate" })).filter(s => s.name)
+                  : [],
+              experiences: formData.experience.filter((e: any) => e.company).map((e: any) => ({
+                  company_name: e.company,
+                  role: e.role,
+                  employment_type: e.type,
+                  start_date: e.startDate || null,
+                  end_date: e.endDate || null,
+                  description: e.description
+              })),
+              education: formData.education.filter((e: any) => e.institution).map((e: any) => ({
+                  institution: e.institution,
+                  degree: e.degree,
+                  start_date: e.year || null,
+                  grade: e.grade
+              })),
+              projects: []
+          };
+
+          await userApi.profile.update(payload);
           toast.success("Profile fully updated and synchronized!");
       } catch (err) {
           console.error(err);
@@ -360,7 +376,7 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
                     </div>
                     <h3 className="text-2xl font-black tracking-tight font-heading">Ready for Verification</h3>
                     <p className="text-sm text-muted-foreground max-w-xs mx-auto leading-relaxed">
-                        Your profile data is encrypted and indexed for specialized search discovery and blockchain anchoring.
+                        Your profile data is encrypted and indexed for specialized search discovery and infrastructure anchoring.
                     </p>
                 </div>
              </div>

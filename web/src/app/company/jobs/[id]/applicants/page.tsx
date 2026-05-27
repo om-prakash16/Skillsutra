@@ -258,11 +258,11 @@ export default function PersonnelResonanceArchive() {
                 <div className="h-px w-96 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
                 <div className="flex gap-12 items-center text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
                     <span className="flex items-center gap-3"><Zap className="w-4 h-4 text-primary" /> Multi-Tenant Resonance Analysis</span>
-                    <span className="flex items-center gap-3"><ShieldCheck className="w-4 h-4 text-primary" /> Blockchain ID Verification v2.4</span>
+                    <span className="flex items-center gap-3"><ShieldCheck className="w-4 h-4 text-primary" /> infrastructure ID Verification v2.4</span>
                     <span className="flex items-center gap-3"><BrainCircuit className="w-4 h-4 text-primary" /> Weighted Synthesis Logic</span>
                 </div>
                 <p className="text-xs italic max-w-2xl text-center opacity-60">
-                    "The Personnel Resonance Archive provides an uncompromising view of global talent. By weighting live assessments over profile claims, we've reduced hiring fraud by 98% across the Blockchain nexus."
+                    "The Personnel Resonance Archive provides an uncompromising view of global talent. By weighting live assessments over profile claims, we've reduced hiring fraud by 98% across the infrastructure nexus."
                 </p>
             </div>
         </div>

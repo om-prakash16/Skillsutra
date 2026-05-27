@@ -28,7 +28,7 @@ const USER_GROWTH = [
 ];
 
 const SKILL_DEMAND = [
-  { label: 'Blockchain', value: 85 },
+  { label: 'infrastructure', value: 85 },
   { label: 'React', value: 92 },
   { label: 'Python', value: 64 },
   { label: 'Rust', value: 78 },
@@ -58,7 +58,7 @@ export default function AdminAnalyticsPage() {
               Marketplace <span className="text-primary italic">Insights</span>
             </h1>
             <p className="text-xl text-muted-foreground uppercase tracking-widest text-xs font-bold">
-               Macro-level visibility into Web3 talent and AI throughput.
+               Macro-level visibility into NextGen talent and AI throughput.
             </p>
           </div>
           <div className="flex gap-3">
@@ -83,10 +83,10 @@ export default function AdminAnalyticsPage() {
             icon={Users} 
           />
           <MetricCard 
-            title="Sovereign NFTs" 
+            title="Sovereign Verifications" 
             value="8,920" 
             trend={28.5} 
-            description="Total Blockchain-verified skill badges minted."
+            description="Total infrastructure-verified skill badges minted."
             icon={Database} 
           />
           <MetricCard 
@@ -149,7 +149,7 @@ export default function AdminAnalyticsPage() {
                         </div>
                         <div>
                             <p className="text-sm font-bold text-foreground">AI Observation: Save-to-Apply Friction</p>
-                            <p className="text-xs text-muted-foreground">High "Save" volume on Senior Rust roles, but only 12% application rate. Candidates may lack specific Blockchain verification badges.</p>
+                            <p className="text-xs text-muted-foreground">High "Save" volume on Senior Rust roles, but only 12% application rate. Candidates may lack specific infrastructure verification badges.</p>
                         </div>
                     </div>
                 </div>

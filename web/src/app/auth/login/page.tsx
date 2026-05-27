@@ -5,15 +5,17 @@ import { useAuth } from "@/context/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Briefcase, Loader2 } from "lucide-react"
 import { motion } from "framer-motion"
 
 export default function LoginPage() {
-    const { signInWithGoogle, signInWithGitHub, signInWithApple, login, isLoading } = useAuth()
-    const [loading, setLoading] = useState(false)
+    const { signInWithGoogle, signInWithGitHub, loginUser, isLoading } = useAuth()
+    const [loadingProvider, setLoadingProvider] = useState<"google" | "github" | "keycloak" | null>(null)
+    const router = useRouter()
 
-    const handleLogin = async (provider: "google" | "github" | "apple" | "keycloak") => {
-        setLoading(true)
+    const handleLogin = async (provider: "google" | "github" | "keycloak") => {
+        setLoadingProvider(provider)
         try {
             switch (provider) {
                 case "google":
@@ -22,19 +24,17 @@ export default function LoginPage() {
                 case "github":
                     await signInWithGitHub()
                     break
-                case "apple":
-                    await signInWithApple()
-                    break
                 case "keycloak":
-                    await login()
+                    // Redirect to standard email login page or handle it
+                    router.push("/auth/email-login")
                     break
             }
         } catch {
-            setLoading(false)
+            setLoadingProvider(null)
         }
     }
 
-    const isDisabled = isLoading || loading
+    const isDisabled = isLoading || loadingProvider !== null
 
     return (
         <Card className="glass border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden relative">
@@ -61,7 +61,7 @@ export default function LoginPage() {
                             onClick={() => handleLogin("google")}
                             disabled={isDisabled}
                         >
-                            {isDisabled ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                            {loadingProvider === "google" ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                                 <>
                                     <svg className="w-5 h-5" viewBox="0 0 24 24">
                                         <path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
@@ -84,7 +84,7 @@ export default function LoginPage() {
                             onClick={() => handleLogin("github")}
                             disabled={isDisabled}
                         >
-                            {isDisabled ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                            {loadingProvider === "github" ? <Loader2 className="w-5 h-5 animate-spin" /> : (
                                 <>
                                     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                                         <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
@@ -95,25 +95,6 @@ export default function LoginPage() {
                         </Button>
                     </motion.div>
 
-                    {/* Apple */}
-                    <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="w-full h-12 glass border-white/10 hover:border-white/40 text-foreground hover:text-white transition-all font-bold uppercase text-[11px] tracking-widest rounded-xl flex items-center justify-center gap-3"
-                            onClick={() => handleLogin("apple")}
-                            disabled={isDisabled}
-                        >
-                            {isDisabled ? <Loader2 className="w-5 h-5 animate-spin" /> : (
-                                <>
-                                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z" />
-                                    </svg>
-                                    SIGN IN WITH APPLE
-                                </>
-                            )}
-                        </Button>
-                    </motion.div>
 
                     {/* Divider */}
                     <div className="pt-4">
@@ -131,7 +112,7 @@ export default function LoginPage() {
                             onClick={() => handleLogin("keycloak")}
                             disabled={isDisabled}
                         >
-                            {isDisabled ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "SIGN IN WITH EMAIL"}
+                            {loadingProvider === "keycloak" ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "SIGN IN WITH EMAIL"}
                         </Button>
                     </motion.div>
                 </div>

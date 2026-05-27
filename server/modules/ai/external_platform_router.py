@@ -1,6 +1,5 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from typing import List, Dict, Any
 
 from core.response import success_response
 from core.dependencies import get_db, get_current_user_id

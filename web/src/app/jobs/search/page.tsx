@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { MapPin, Briefcase, DollarSign, Calendar } from 'lucide-react';
 
 const MOCK_JOBS = [
-  { id: 1, title: 'Senior Backend Engineer', company: 'Blockchain Labs', location: 'Remote', salary: '$140k - $180k', type: 'Full-time', posted: '2d ago', score: 98 },
+  { id: 1, title: 'Senior Backend Engineer', company: 'infrastructure Labs', location: 'Remote', salary: '$140k - $180k', type: 'Full-time', posted: '2d ago', score: 98 },
   { id: 2, title: 'Rust Developer (FastAPI)', company: 'Magic Eden', location: 'Remote', salary: '$120k - $160k', type: 'Contract', posted: '4d ago', score: 85 },
 ];
 
@@ -51,7 +51,7 @@ export default function JobSearchPage() {
                     </div>
                     <div className="flex gap-2">
                       <Badge variant="outline">Rust</Badge>
-                      <Badge variant="outline">Blockchain</Badge>
+                      <Badge variant="outline">infrastructure</Badge>
                       <Badge variant="outline">FastAPI</Badge>
                     </div>
                   </div>

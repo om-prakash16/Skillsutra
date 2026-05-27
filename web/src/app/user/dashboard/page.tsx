@@ -2,43 +2,36 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Briefcase, Bookmark, FileText, TrendingUp } from "lucide-react"
+import { Briefcase, Bookmark, FileText, TrendingUp, Route, ChevronRight, Compass } from "lucide-react"
 
-import { useState, useEffect } from "react"
 import Link from "next/link"
 import { ProofScoreDisplay } from "@/components/ai/ProofScoreDisplay"
 import { AIInsightsPanel } from "@/components/ai/AIInsightsPanel"
 import { Sparkles } from "lucide-react"
 import { useAuth } from "@/context/auth-context"
+import { useQuery } from "@tanstack/react-query"
+import { api } from "@/lib/api/api-client"
+import { useWebSocket } from "@/hooks/use-websocket"
 
 export default function UserDashboard() {
     const { user } = useAuth()
-    const [aiData, setAiData] = useState<any>(null)
-    const [isLoading, setIsLoading] = useState(true)
+    
+    // Connect to global notifications WebSocket
+    const { status: wsStatus } = useWebSocket()
 
-    useEffect(() => {
-        if (user?.id) {
-            fetchAIData()
-        }
-    }, [user?.id])
+    const { data: aiData, isLoading: aiLoading } = useQuery({
+        queryKey: ["aiScores", user?.id],
+        queryFn: () => api.ai.getScores(user?.id),
+        enabled: !!user?.id
+    })
 
-    const fetchAIData = async () => {
-        try {
-            const token = localStorage.getItem("auth_token")
-            // In a real flow, we'd trigger /analyze if scores are missing or stale
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ai/scores/${user?.id}`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            })
-            if (res.ok) {
-                const data = await res.json()
-                setAiData(data)
-            }
-        } catch (err) {
-            console.error(err)
-        } finally {
-            setIsLoading(false)
-        }
-    }
+    const { data: activeRoadmap, isLoading: roadmapLoading } = useQuery({
+        queryKey: ["roadmap", user?.id],
+        queryFn: () => api.career.getGoals(), // Adjust this endpoint based on actual roadmap API
+        enabled: !!user?.id
+    })
+
+    const isLoading = aiLoading || roadmapLoading
 
     const stats = [
         { label: "Active Nodes", value: 12, icon: Briefcase, href: "/user/applications", sub: "Job Applications" },
@@ -82,6 +75,58 @@ export default function UserDashboard() {
 
             <div className="grid gap-10 lg:grid-cols-7">
                 <div className="lg:col-span-4 space-y-10">
+                    {/* Active Roadmap Progress */}
+                    {activeRoadmap ? (
+                        <Card className="glass border-primary/30 relative overflow-hidden bg-primary/5">
+                            <CardHeader className="pb-4">
+                                <CardTitle className="flex items-center gap-2 text-xl font-black uppercase italic tracking-tight text-white">
+                                    <Route className="w-5 h-5 text-primary" /> Active Learning Path: {activeRoadmap.target_role}
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="space-y-4">
+                                    <div className="flex justify-between text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                                        <span>Progress</span>
+                                        <span className="text-primary">{Math.round(((activeRoadmap.current_milestone_index || 0) / (activeRoadmap.nodes_json?.length || 1)) * 100)}%</span>
+                                    </div>
+                                    <div className="w-full bg-black h-3 rounded-full overflow-hidden border border-white/10">
+                                        <div 
+                                            className="bg-primary h-full transition-all duration-700" 
+                                            style={{ width: `${((activeRoadmap.current_milestone_index || 0) / (activeRoadmap.nodes_json?.length || 1)) * 100}%` }}
+                                        />
+                                    </div>
+                                    <p className="text-xs text-white/50">
+                                        {activeRoadmap.current_milestone_index || 0} of {activeRoadmap.nodes_json?.length || 0} Milestones completed.
+                                    </p>
+                                    <Link href="/roadmap" className="block mt-4">
+                                        <Button variant="default" className="w-full text-xs font-bold tracking-widest uppercase gap-2 h-10">
+                                            Continue Journey <ChevronRight className="w-4 h-4" />
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <Card className="glass border-white/5 relative overflow-hidden">
+                            <CardHeader className="pb-4">
+                                <CardTitle className="flex items-center gap-2 text-xl font-black uppercase italic tracking-tight text-white">
+                                    <Route className="w-5 h-5 text-muted-foreground" /> Learning Path
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="py-6 flex flex-col items-center justify-center text-center space-y-4">
+                                    <Compass className="w-10 h-10 text-white/10" />
+                                    <p className="text-xs text-white/40 font-medium italic">No active AI Roadmap detected.</p>
+                                    <Link href="/roadmap">
+                                        <Button variant="outline" className="text-[10px] font-black uppercase tracking-widest">
+                                            Generate AI Roadmap
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
                     <Card className="glass border-white/5 relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
                         <CardHeader className="pb-8">
@@ -109,7 +154,7 @@ export default function UserDashboard() {
                         isLoading={isLoading} 
                         data={aiData?.analysis || {
                             strengths: ["FastAPI Architecture", "Real-time Synchronization", "Neural Matching"],
-                            missing_skills: ["Blockchain Smart Contracts", "On-chain Identity Proofing"],
+                            missing_skills: ["infrastructure Smart Contracts", "platform Identity Proofing"],
                             recommendations: ["Upgrade to Senior Protocol status", "Contribute to the Proof-of-Work Ledger"]
                         }} 
                     />

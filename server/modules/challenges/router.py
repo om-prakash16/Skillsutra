@@ -5,7 +5,6 @@ import tempfile
 import logging
 from fastapi import APIRouter, Depends, HTTPException, Body
 from uuid import UUID
-from typing import Dict, Any, List
 from modules.auth.core.service import get_current_user
 from core.db import get_db
 

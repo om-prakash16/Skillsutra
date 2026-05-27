@@ -1,62 +1,25 @@
-import os
 from typing import Optional, Dict
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.prompts import PromptTemplate
 
 class PitchEngine:
     """
-    AI Career Pitch Engine
+    Local Career Pitch Engine
     
     Generates a full, structured startup pitch for the AI Career Operating System.
-    Includes methods to generate or refine individual sections and compile a full pitch.
+    Uses static templates instead of generative AI for local offline support.
     """
 
     def __init__(self):
-        self.api_key = os.getenv("GOOGLE_API_KEY")
-        self.llm = (
-            ChatGoogleGenerativeAI(
-                temperature=0.7, google_api_key=self.api_key, model="gemini-1.5-flash"
-            )
-            if self.api_key
-            else None
-        )
         self.context = {
             "product_name": "Best Hiring Tool"
         }
 
     async def _refine_or_generate(self, existing_text: Optional[str], default_content: str, section_name: str) -> str:
         """
-        Uses Gemini to refine the pitch section based on existing user input.
+        Since AI is disabled, this either uses the user's explicit text or the default template.
         """
-        if not self.llm:
-            return default_content
-
-        prompt = PromptTemplate(
-            template="""You are a world-class startup pitch coach. 
-            Refine the following {section_name} section for a hiring platform called 'Best Hiring Tool'.
-            
-            Base Content:
-            {default_content}
-            
-            User's Specific Context/Input:
-            {existing_text}
-            
-            Make it professional, punchy, and high-impact. Return only the refined text.
-            """,
-            input_variables=["section_name", "default_content", "existing_text"],
-        )
-
-        try:
-            formatted_prompt = prompt.format(
-                section_name=section_name,
-                default_content=default_content,
-                existing_text=existing_text or "No specific context provided."
-            )
-            response = self.llm.invoke(formatted_prompt)
-            return response.content.strip()
-        except Exception as e:
-            print(f"Pitch Refinement Error: {e}")
-            return default_content
+        if existing_text and existing_text.strip():
+            return f"--- {section_name.upper()} ---\n{existing_text}"
+        return default_content
 
     async def generate_problem(self, existing_text: Optional[str] = None) -> str:
         content = (
@@ -81,7 +44,7 @@ class PitchEngine:
             "2️⃣ IDEA\n"
             "---------------------------------\n"
             "“We convert resume-based hiring into skill-based verified hiring.”\n\n"
-            "- AI-based skill validation to measure real capability\n"
+            "- Local AI-based skill validation to measure real capability\n"
             "- Replace resumes with verified skill profiles\n"
             "- Skill-first matching instead of keyword heuristics"
         )
@@ -93,13 +56,13 @@ class PitchEngine:
             "---------------------------------\n"
             "“We analyze real work → generate Proof Score → match jobs → verify candidates.”\n\n"
             "🔍 Pipeline:\n"
-            "1. AI project analysis: Analyzes code, repos, and work samples.\n"
+            "1. Project analysis: Analyzes code, repos, and work samples.\n"
             "2. Proof Score: Generates a dynamic trust score based on skill depth.\n"
-            "3. Job matching: Maps candidates to jobs using semantic skill intelligence.\n"
-            "4. AI interview questions: Auto-generates personalized questions based on real work.\n"
+            "3. Job matching: Maps candidates to jobs using TF-IDF matching.\n"
+            "4. Technical Simulations: Delivers static technical tasks based on roles.\n"
             "5. Verification: Anti-cheating layer to ensure authenticity.\n\n"
             "⚡ Formula:\n"
-            "AI → Proof Score → Match → Questions → Hire"
+            "Proof Score → Match → Test → Hire"
         )
         return await self._refine_or_generate(existing_text, content, "Solution")
 
@@ -108,11 +71,11 @@ class PitchEngine:
             "4️⃣ FEATURES\n"
             "---------------------------------\n"
             "🔹 Core (Hiring Engine):\n"
-            "1. AI Skill Analysis\n"
+            "1. Local Skill Analysis\n"
             "2. Proof Score\n"
-            "3. Smart Job Matching\n"
-            "4. AI Interview Questions\n"
-            "5. GitHub Verification\n\n"
+            "3. Offline Job Matching\n"
+            "4. Task Simulations\n"
+            "5. GitHub Evaluation\n\n"
             "🔹 Advanced (Big Vision):\n"
             "1. Career Planning\n"
             "2. Skill Gap Analysis\n"
@@ -129,7 +92,7 @@ class PitchEngine:
             "---------------------------------\n"
             "“From profile to hiring decision in seconds.”\n\n"
             "Steps:\n"
-            "Profile → AI Analysis → Proof Score → Job Match → Questions → Hiring"
+            "Profile → Local Analysis → Proof Score → Job Match → Testing → Hiring"
         )
         return await self._refine_or_generate(existing_text, content, "Flow")
 
@@ -198,29 +161,8 @@ class PitchEngine:
         """
         pitch_data = await self.generate_full_pitch(existing_sections)
         with open(filename, "w", encoding="utf-8") as f:
-            f.write("# AI Career Operating System — Pitch Script\n\n")
+            f.write("# Career Operating System — Pitch Script\n\n")
             f.write(pitch_data["full_pitch"])
         return filename
-
-
-# ==========================================
-# CLI Usage Example
-# ==========================================
-if __name__ == "__main__":
-    import json
-    
-    engine = PitchEngine()
-    
-    # Generate the payload
-    pitch_data = engine.generate_full_pitch()
-    
-    # Save the markdown export
-    output_file = engine.export_as_markdown()
-    print(f"✅ Marked down script exported to: {output_file}")
-    
-    # Print a JSON summary showing it meets the output spec
-    print("\n📦 Structured Output (JSON Example):")
-    print(json.dumps({k: v[:50] + "..." for k, v in pitch_data.items() if k != 'full_pitch'}, indent=2))
-
 
 pitch_engine = PitchEngine()

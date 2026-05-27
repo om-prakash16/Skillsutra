@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Facebook, Twitter, Instagram, Linkedin, Mail, ArrowRight, ShieldCheck, Cpu, Database, Landmark, ShoppingCart, Activity, Zap, Globe, ArrowUp } from "lucide-react"
+import { Facebook, Twitter, Instagram, Linkedin, Mail, ArrowRight, ShieldCheck, Cpu, Database, Landmark, ShoppingCart, Activity, Zap, Globe, ArrowUp, Github } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useCMS } from "@/context/cms-context"
 import { Button } from "@/components/ui/button"
@@ -47,7 +47,7 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
 
     if (isDashboard && !forceVisible) return null
 
-    const siteName = "Verified Identity"
+    const siteName = getVal("global", "site_name", "SkillProof AI")
     const copyright = getVal("global", "copyright", `© ${new Date().getFullYear()} ${siteName}. All rights reserved.`)
 
     const scrollToTop = () => {
@@ -61,7 +61,7 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
         { name: "E-commerce", icon: <ShoppingCart className="w-4 h-4" /> },
         { name: "Healthcare", icon: <Activity className="w-4 h-4" /> },
         { name: "Data Science", icon: <Database className="w-4 h-4" /> },
-        { name: "Web3 & Blockchain", icon: <Zap className="w-4 h-4" /> }
+        { name: "NextGen & infrastructure", icon: <Zap className="w-4 h-4" /> }
     ]
     
     const defaultColumns = [
@@ -102,7 +102,7 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
 
     const columns = getJson("footer", "columns") || defaultColumns
     const socialLinks = getJson("footer", "social_links") || [
-        { platform: "twitter", url: "#" },
+        { platform: "x", url: "#" },
         { platform: "linkedin", url: "#" },
         { platform: "github", url: "#" },
         { platform: "instagram", url: "#" }
@@ -153,8 +153,13 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
                                     rel="noopener noreferrer"
                                     className="w-10 h-10 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-all shadow-sm backdrop-blur-sm"
                                 >
-                                    {social.platform === "twitter" && <Twitter className="w-5 h-5" />}
+                                    {(social.platform === "twitter" || social.platform === "x") && (
+                                        <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">
+                                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 22.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                                        </svg>
+                                    )}
                                     {social.platform === "facebook" && <Facebook className="w-5 h-5" />}
+                                    {social.platform === "github" && <Github className="w-5 h-5" />}
                                     {social.platform === "instagram" && <Instagram className="w-5 h-5" />}
                                     {social.platform === "linkedin" && <Linkedin className="w-5 h-5" />}
                                 </motion.a>

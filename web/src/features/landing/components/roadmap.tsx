@@ -3,13 +3,14 @@
 import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { CheckCircle2, Circle, Rocket, Shield, Zap, Globe } from "lucide-react"
+import { useCMS } from "@/context/cms-context"
 
 const PHASES = [
     {
         title: "Phase 1: Foundation",
         status: "Completed",
         icon: Shield,
-        items: ["Core Verification Engine", "Verified Identity Protocol", "Basic Talent Search", "Secure OAuth Integration"]
+        items: ["Core Verification Engine", "SkillProof AI Protocol", "Basic Talent Search", "Secure OAuth Integration"]
     },
     {
         title: "Phase 2: Intelligence",
@@ -32,6 +33,9 @@ const PHASES = [
 ]
 
 export function Roadmap() {
+    const { getJson } = useCMS()
+    const phasesList = getJson("landing", "roadmap") || PHASES;
+
     return (
         <section className="py-24 bg-muted/5 relative overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -48,8 +52,15 @@ export function Roadmap() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                    {PHASES.map((phase, i) => {
-                        const Icon = phase.icon;
+                    {phasesList.map((phase: any, i: number) => {
+                        // Dynamically map icon names if available, else fallback to predefined array order or a default
+                        let Icon = Shield;
+                        if (phase.icon === "Shield") Icon = Shield;
+                        else if (phase.icon === "Zap") Icon = Zap;
+                        else if (phase.icon === "Rocket") Icon = Rocket;
+                        else if (phase.icon === "Globe") Icon = Globe;
+                        else if (PHASES[i] && PHASES[i].icon) Icon = PHASES[i].icon;
+                        
                         const isInProgress = phase.status === "In Progress";
                         const isCompleted = phase.status === "Completed";
                         

@@ -1,1 +1,1 @@
-# db package
+# Empty init for db package

@@ -5,7 +5,7 @@ AI Skill Extractor — Gemini-powered skill extraction from resumes and GitHub p
 import os
 import json
 import re
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 from core.db import get_db
 
 

@@ -23,7 +23,7 @@ const navigation = [
     { name: "Jobs Moderation", href: "/staff/jobs", icon: Briefcase },
     { name: "Report Center", href: "/staff/reports", icon: ShieldAlert },
     { name: "Support Tickets", href: "/staff/tickets", icon: MessageSquare },
-    { name: "NFT Monitoring", href: "/staff/nft-activity", icon: Activity },
+    { name: "Verifications Monitoring", href: "/staff/Verifications-activity", icon: Activity },
     { name: "AI Metrics", href: "/staff/ai-logs", icon: Terminal },
 ]
 

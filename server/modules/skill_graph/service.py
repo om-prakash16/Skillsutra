@@ -3,7 +3,7 @@ Skill Graph Service — Core business logic for user skill management.
 Bridges taxonomy, graph engine, and user skill nodes.
 """
 
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 from core.db import get_db
 from modules.skill_graph.graph_engine import GraphEngine
 from modules.skill_graph.taxonomy_service import TaxonomyService

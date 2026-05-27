@@ -16,7 +16,7 @@ import Image from "next/image"
 import { Sidebar } from "@/components/layout/sidebar"
 import { NotificationBell } from "@/components/notifications/NotificationBell"
 import { useCMS } from "@/context/cms-context"
-import { CommandSearch } from "@/components/layout/command-search"
+import { GlobalSearchCommand } from "@/components/search/GlobalSearchCommand"
 
 import {
     DropdownMenu,
@@ -47,7 +47,7 @@ export function Navbar() {
         { href: "/talent", label: "Talent" },
     ]
 
-    const siteName = "Verified Identity"
+    const siteName = getVal("global", "site_name", "SkillProof AI")
 
     const isDashboard = pathname?.startsWith("/user") || pathname?.startsWith("/company") || pathname?.startsWith("/admin")
 
@@ -82,43 +82,47 @@ export function Navbar() {
                             key={link.href}
                             href={link.href}
                             className={cn(
-                                "text-micro font-bold transition-colors hover:text-primary relative py-2",
+                                "text-micro font-bold transition-colors hover:text-primary relative py-2 block",
                                 pathname === link.href ? "text-primary" : "text-muted-foreground/60"
                             )}
                         >
-                            {link.label}
-                            {pathname === link.href && (
-                                <motion.div
-                                    layoutId="nav-underline"
-                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
-                                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                                />
-                            )}
+                            <motion.div whileTap={{ scale: 0.95 }}>
+                                {link.label}
+                                {pathname === link.href && (
+                                    <motion.div
+                                        layoutId="nav-underline"
+                                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+                                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                                    />
+                                )}
+                            </motion.div>
                         </Link>
                     ))}
                     {user && (
                         <Link
                             href="/user/profile"
                             className={cn(
-                                "text-micro font-bold transition-colors hover:text-primary relative py-2",
+                                "text-micro font-bold transition-colors hover:text-primary relative py-2 block",
                                 pathname?.startsWith("/user/profile") ? "text-primary" : "text-muted-foreground/60"
                             )}
                         >
-                            PROFILE
-                            {pathname?.startsWith("/user/profile") && (
-                                <motion.div
-                                    layoutId="nav-underline"
-                                    className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
-                                    transition={{ type: "spring", stiffness: 380, damping: 30 }}
-                                />
-                            )}
+                            <motion.div whileTap={{ scale: 0.95 }}>
+                                PROFILE
+                                {pathname?.startsWith("/user/profile") && (
+                                    <motion.div
+                                        layoutId="nav-underline"
+                                        className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
+                                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                                    />
+                                )}
+                            </motion.div>
                         </Link>
                     )}
                 </nav>
 
                 {/* Actions */}
                 <div className="hidden md:flex items-center gap-6">
-                    <CommandSearch />
+                    <GlobalSearchCommand />
                     <div className="flex items-center gap-4">
                         <ThemeToggle />
                         <NotificationBell />

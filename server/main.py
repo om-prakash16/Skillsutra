@@ -1,5 +1,9 @@
 import time
 import uuid
+import warnings
+
+# Suppress the deprecation warning for google.generativeai
+warnings.filterwarnings("ignore", module="google.generativeai")
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.responses import ORJSONResponse
@@ -18,12 +22,24 @@ logger = ProtocolLogger.get_logger("main")
 
 from db.engine import init_db
 
+from core.websocket import manager
+import asyncio
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.PROJECT_NAME} v{settings.PROJECT_VERSION}...")
     await init_db()
+    
+    # Start Redis Pub/Sub WebSocket Backplane listener
+    redis_task = asyncio.create_task(manager.subscribe_to_redis("chat_broadcasts"))
+    # Start WebSocket heartbeat loop to reap ghost connections
+    heartbeat_task = asyncio.create_task(manager.heartbeat_loop())
+    
     yield
+    
     logger.info(f"Shutting down {settings.PROJECT_NAME}...")
+    redis_task.cancel()
+    heartbeat_task.cancel()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -36,7 +52,6 @@ app = FastAPI(
 )
 
 from api.middleware.rate_limit import RateLimitMiddleware
-from starlette.middleware.trustedhost import TrustedHostMiddleware
 from starlette.middleware.gzip import GZipMiddleware
 
 # (Previous imports...)
@@ -63,6 +78,8 @@ async def add_security_and_tracing_headers(request: Request, call_next):
 
 app.add_middleware(GZipMiddleware, minimum_size=1000)
 app.add_middleware(RateLimitMiddleware, limit=100, window=60)
+from core.middleware import IdempotencyMiddleware
+app.add_middleware(IdempotencyMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.BACKEND_CORS_ORIGINS,
@@ -122,6 +139,16 @@ async def general_exception_handler(request: Request, exc: Exception):
 from api.v1.router import v1_router
 
 app.include_router(v1_router, prefix=settings.API_V1_STR)
+
+# --- Instrumentation ---
+try:
+    from prometheus_fastapi_instrumentator import Instrumentator
+    Instrumentator().instrument(app).expose(app)
+    
+    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+    FastAPIInstrumentor.instrument_app(app)
+except ImportError:
+    pass
 
 @app.get("/health")
 async def health():

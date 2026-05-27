@@ -31,7 +31,7 @@ export function useSyncManager() {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/sync/profile`, { method: "POST" });
         const data = await res.json();
         await fetchSyncStatus();
-        toast.success("Metadata pinned to IPFS. Pending blockchain sync.");
+        toast.success("Metadata pinned to IPFS. Pending infrastructure sync.");
         return data;
     } catch (err) {
         toast.error("Failed to pin metadata to IPFS.");
@@ -49,7 +49,7 @@ export function useSyncManager() {
             body: JSON.stringify({ entity_type: type, tx_hash: txHash })
         });
         await fetchSyncStatus();
-        toast.success("Identity synchronized with Blockchain!");
+        toast.success("Identity synchronized with infrastructure!");
     } catch (err) {
         console.error(err);
     }

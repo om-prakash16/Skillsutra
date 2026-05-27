@@ -6,7 +6,7 @@ import { ShieldAlert, AlertTriangle, CheckCircle, Clock, Trash2, Filter } from "
 const mockReports = [
     { id: "REP-901", target: "Job: Lead Rust Engineer", reason: "Potential Scam", reporter: "0x71...3e2", status: "Open", priority: "High" },
     { id: "REP-902", target: "User: CryptoGuru", reason: "Fake Skills", reporter: "0x12...9a1", status: "In Review", priority: "Normal" },
-    { id: "REP-903", target: "Project: NFT Marketplace", reason: "Plagiarized", reporter: "0x88...bc4", status: "Open", priority: "Critical" },
+    { id: "REP-903", target: "Project: Verifications Marketplace", reason: "Plagiarized", reporter: "0x88...bc4", status: "Open", priority: "Critical" },
     { id: "REP-904", target: "User: Bot123", reason: "Spam Activity", reporter: "0x44...ff1", status: "Resolved", priority: "Low" },
 ]
 

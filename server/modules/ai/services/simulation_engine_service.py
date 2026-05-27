@@ -1,29 +1,16 @@
-import os
-import json
 import logging
 import hashlib
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 from datetime import datetime
 
 from core.db import get_db
-from core.exceptions import ExternalServiceError, NotFoundError
-from langchain_google_genai import ChatGoogleGenerativeAI
-from langchain_core.prompts import PromptTemplate
 
 logger = logging.getLogger(__name__)
 
 class SimulationEngineService:
     def __init__(self):
-        self.api_key = os.getenv("GOOGLE_API_KEY")
-        self.llm = (
-            ChatGoogleGenerativeAI(
-                temperature=0.2, google_api_key=self.api_key, model="gemini-1.5-flash"
-            )
-            if self.api_key
-            else None
-        )
+        pass
 
-    # ... (Keep TASK_TEMPLATES and detect_role_from_job as useful defaults)
     TASK_TEMPLATES = {
         "backend": {
             "title": "Build a REST API Endpoint",
@@ -32,15 +19,26 @@ class SimulationEngineService:
             "time_limit_minutes": 60,
             "acceptance_criteria": ["POST /register endpoint accepts JSON body", "Validates email format", "Returns JWT", "Includes middleware"]
         },
-        # ... (Other templates)
+        "frontend": {
+            "title": "Build a React Login Form",
+            "description": "Create a responsive login form with validation, error states, and a mock API call.",
+            "boilerplate": "A starter React project.",
+            "time_limit_minutes": 45,
+            "acceptance_criteria": ["Validates email", "Shows error states", "Mock API integration"]
+        },
+        "data_science": {
+            "title": "Data Cleaning Script",
+            "description": "Write a Python script using pandas to clean a messy CSV file.",
+            "boilerplate": "import pandas as pd",
+            "time_limit_minutes": 30,
+            "acceptance_criteria": ["Handles missing values", "Corrects data types"]
+        }
     }
 
     def detect_role_from_job(self, job_title: str, job_description: str, required_skills: List[str]) -> str:
         combined = f"{job_title} {job_description} {' '.join(required_skills)}".lower()
-        if any(kw in combined for kw in ["blockchain", "anchor", "smart contract"]): return "smart_contract"
         if any(kw in combined for kw in ["data scien", "machine learning"]): return "data_science"
         if any(kw in combined for kw in ["react", "frontend", "ui"]): return "frontend"
-        if any(kw in combined for kw in ["docker", "kubernetes", "devops"]): return "devops"
         return "backend"
 
     async def generate_simulation(self, wallet: str, job_title: str, job_description: str, required_skills: List[str]) -> Dict[str, Any]:
@@ -72,51 +70,12 @@ class SimulationEngineService:
         }
 
     async def evaluate_submission(self, wallet: str, simulation_id: str, submitted_code: str) -> Dict[str, Any]:
-        """Evaluate submission using AI for deep code analysis."""
-        if not self.llm:
-            logger.warning("AI evaluator not configured. Falling back to heuristic scoring.")
-            return self._heuristic_evaluate(simulation_id, submitted_code)
-
-        prompt = PromptTemplate(
-            template="""Evaluate the following technical submission for a {role} simulation.
-            
-            Task Description: {description}
-            Acceptance Criteria: {criteria}
-            
-            Submitted Code:
-            {code}
-            
-            Return ONLY a valid JSON object with:
-            - composite_score: 0-100
-            - dimensions: {{ "code_quality": 0-100, "problem_solving": 0-100, "performance": 0-100, "security": 0-100 }}
-            - feedback: {{ "strengths": [], "improvements": [] }}
-            - passed: boolean (threshold 65)
-            """,
-            input_variables=["role", "description", "criteria", "code"],
-        )
-
+        """Evaluate submission using local heuristics."""
+        eval_data = self._heuristic_evaluate(simulation_id, submitted_code)
+        
         db = get_db()
-        role = "backend"
-        desc = "General Backend Task"
-        crit = "Functionality and Clean Code"
-
         if db:
-            res = db.table("simulation_sessions").select("*").eq("id", simulation_id).single().execute()
-            if res.data:
-                role = res.data.get("role", "backend")
-                template = self.TASK_TEMPLATES.get(role, {})
-                desc = template.get("description", desc)
-                crit = ", ".join(template.get("acceptance_criteria", []))
-
-        try:
-            result = self.llm.invoke(prompt.format(role=role, description=desc, criteria=crit, code=submitted_code[:10000]))
-            content = result.content.strip()
-            if "```json" in content: content = content.split("```json")[1].split("```")[0].strip()
-            
-            eval_data = json.loads(content)
-            
-            # Persist evaluation
-            if db:
+            try:
                 db.table("simulation_sessions").update({
                     "submitted_code": submitted_code,
                     "completed_at": datetime.utcnow().isoformat(),
@@ -124,23 +83,20 @@ class SimulationEngineService:
                     "passed": eval_data["passed"],
                     "evaluation_data": eval_data
                 }).eq("id", simulation_id).execute()
+            except Exception as e:
+                logger.error(f"Failed to save simulation evaluation: {e}")
 
-            return eval_data
-        except Exception as e:
-            logger.error(f"AI Evaluation failed: {e}")
-            return self._heuristic_evaluate(simulation_id, submitted_code)
+        return eval_data
 
     def _heuristic_evaluate(self, simulation_id: str, code: str) -> Dict[str, Any]:
-        # Fallback to the original logic if LLM fails
         lines = code.split("\n")
         score = min(100, 40 + len(lines) // 2 + (10 if "async" in code else 0))
         return {
             "composite_score": score,
             "passed": score >= 65,
             "dimensions": {"code_quality": score, "problem_solving": score},
-            "feedback": {"strengths": ["Code submitted"], "improvements": ["AI evaluator was offline"]},
+            "feedback": {"strengths": ["Code structure identified"], "improvements": ["Consider adding more robust error handling"]},
             "heuristic": True
         }
 
-# Singleton
 simulation_service = SimulationEngineService()

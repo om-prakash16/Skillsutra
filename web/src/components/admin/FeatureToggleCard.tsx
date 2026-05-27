@@ -69,7 +69,7 @@ export function FeatureToggleCard({ feature, onToggle }: FeatureToggleCardProps)
 function getCategoryIcon(category: string) {
     switch (category) {
         case 'ai': return <Zap className="w-5 h-5 text-amber-500" />;
-        case 'web3': return <Shield className="w-5 h-5 text-primary" />;
+        case 'NextGen': return <Shield className="w-5 h-5 text-primary" />;
         case 'marketplace': return <ShoppingCart className="w-5 h-5 text-sky-500" />;
         case 'advanced': return <Star className="w-5 h-5 text-rose-500" />;
         default: return <Star className="w-5 h-5 text-neutral-400" />;

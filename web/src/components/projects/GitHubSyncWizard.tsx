@@ -118,7 +118,7 @@ export const GitHubSyncWizard: React.FC<{ onSuccess: () => void }> = ({ onSucces
                   ) : (
                     <>
                       <Wand2 className="h-4 w-4" />
-                      Mint Proof
+                      issue Proof
                     </>
                   )}
                 </Button>

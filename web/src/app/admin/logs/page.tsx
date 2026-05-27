@@ -55,7 +55,7 @@ export default function ActivityLogs() {
   const getActionColor = (actionType: string) => {
       const type = actionType.toLowerCase();
       if(type.includes("delete") || type.includes("fail") || type.includes("block") || type.includes("terminate")) return "text-rose-500 bg-rose-500/10 border-rose-500/20";
-      if(type.includes("create") || type.includes("success") || type.includes("mint") || type.includes("verify") || type.includes("approve")) return "text-emerald-500 bg-emerald-500/10 border-emerald-500/20";
+      if(type.includes("create") || type.includes("success") || type.includes("issue") || type.includes("verify") || type.includes("approve")) return "text-emerald-500 bg-emerald-500/10 border-emerald-500/20";
       if(type.includes("update") || type.includes("modify") || type.includes("patch") || type.includes("promote")) return "text-indigo-500 bg-indigo-500/10 border-indigo-500/20";
       return "text-white/40 bg-white/5 border-white/10";
   }

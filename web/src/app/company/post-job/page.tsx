@@ -73,7 +73,7 @@ export default function PostJobPage() {
         <div className="max-w-3xl mx-auto space-y-6">
             <div>
                 <h1 className="text-3xl font-bold font-heading">Post a New Job</h1>
-                <p className="text-muted-foreground">Fill out the details below to attract top Web3 talent.</p>
+                <p className="text-muted-foreground">Fill out the details below to attract top NextGen talent.</p>
             </div>
 
             <Card>

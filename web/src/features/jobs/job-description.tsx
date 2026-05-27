@@ -1,6 +1,6 @@
-import { Badge } from "@/components/ui/badge"
+﻿import { Badge } from "@/components/ui/badge"
 import { CheckCircle2, Globe, Linkedin, Twitter, Facebook } from "lucide-react"
-import type { Job } from "@/lib/mock-api/jobs"
+import type { Job } from '@/types'
 import Link from "next/link"
 
 interface JobDescriptionProps {

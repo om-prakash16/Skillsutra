@@ -42,7 +42,7 @@ export default function AdminFeatureControl() {
     }
   };
 
-  const categories = ['ai', 'web3', 'marketplace', 'advanced'];
+  const categories = ['ai', 'NextGen', 'marketplace', 'advanced'];
 
   return (
     <div className="max-w-7xl mx-auto py-24 px-6 space-y-12 h-screen overflow-y-auto">

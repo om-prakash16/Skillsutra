@@ -12,6 +12,11 @@ export const companyApi = {
                 method: "POST",
                 body: JSON.stringify(data),
             }),
+        update: (data: any) =>
+            fetchWithAuth("/company/update", {
+                method: "POST",
+                body: JSON.stringify(data),
+            }),
         get: () => fetchWithAuth("/company/profile"),
     },
     team: {

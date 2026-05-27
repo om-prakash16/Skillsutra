@@ -2,15 +2,28 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-function Card({ className, ...props }: React.ComponentProps<"div">) {
+import { motion, HTMLMotionProps } from "framer-motion"
+import { hoverScale, tapScale } from "@/lib/motion"
+
+export interface CardProps extends HTMLMotionProps<"div"> {
+  interactive?: boolean;
+}
+
+const MotionDiv = motion.div
+
+function Card({ className, interactive = false, ...props }: CardProps) {
   return (
-    <div
+    <MotionDiv
       data-slot="card"
       className={cn(
-        "bg-card text-card-foreground flex flex-col gap-6 rounded-2xl border py-6 shadow-sm transition-all duration-300 hover:shadow-premium hover:border-primary/20",
+        "bg-card text-card-foreground flex flex-col gap-6 rounded-2xl border py-6 shadow-sm transition-colors duration-300",
+        interactive && "cursor-pointer hover:border-primary/30 hover:shadow-[0_0_20px_hsl(var(--primary)/0.1)]",
         className
       )}
-      {...props}
+      whileHover={interactive ? "hover" : undefined}
+      whileTap={interactive ? "tap" : undefined}
+      variants={interactive ? { hover: hoverScale, tap: tapScale } : undefined}
+      {...(props as any)}
     />
   )
 }
