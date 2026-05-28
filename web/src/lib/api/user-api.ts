@@ -8,11 +8,16 @@ import { fetchWithAuth } from "./api-client";
 export const userApi = {
     profile: {
         getSchema: () => fetchWithAuth("/profile/schema"),
-        get: () => fetchWithAuth("/profile"),
+        get: () => fetchWithAuth("/profile/me"),
         update: (data: any) =>
-            fetchWithAuth("/profile/update", {
-                method: "POST",
+            fetchWithAuth("/profile/me", {
+                method: "PATCH",
                 body: JSON.stringify(data),
+            }),
+        claimUsername: (username: string) =>
+            fetchWithAuth("/profiles/claim-username", {
+                method: "POST",
+                body: JSON.stringify({ username }),
             }),
         uploadFile: (formData: FormData) =>
             fetchWithAuth("/profile/upload-file", {

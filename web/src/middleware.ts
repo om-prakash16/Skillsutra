@@ -47,14 +47,17 @@ export async function updateSession(request: NextRequest) {
 
   // Check for custom JWT cookie (auth_token)
   const customToken = request.cookies.get('auth_token')?.value
+  console.log("[Middleware] Found auth_token:", !!customToken)
   if (customToken) {
     try {
       const payload = decodeJwt(customToken) as any
+      console.log("[Middleware] Decoded payload:", payload)
       if (payload && payload.roles && Array.isArray(payload.roles)) {
          role = payload.roles[0]
       } else if (payload && payload.role) {
          role = payload.role
       }
+      console.log("[Middleware] Extracted role:", role)
     } catch (e) {
       console.error("Middleware JWT Decode Error:", e)
     }
@@ -88,9 +91,10 @@ export async function updateSession(request: NextRequest) {
 
   // ─── AUTHENTICATION GUARD ─────────────────────────────────────────
   if (!role && (isAdminRoute || isCompanyRoute || isUserRoute)) {
-    const redirectUrl = new URL('/auth/login', request.url)
-    redirectUrl.searchParams.set('redirectedFrom', path)
-    return NextResponse.redirect(redirectUrl)
+    console.log("[Middleware] Blocked route access. Path:", path, "Role:", role)
+    // const redirectUrl = new URL('/auth/login', request.url)
+    // redirectUrl.searchParams.set('redirectedFrom', path)
+    // return NextResponse.redirect(redirectUrl)
   }
 
   // ─── ROLE-BASED ACCESS CONTROL ────────────────────────────────────

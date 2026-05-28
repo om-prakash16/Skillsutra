@@ -177,9 +177,13 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                 variant === "default" ? "px-4 py-6" : "px-0 py-2"
             )}>
                 {links.map((link) => {
-                    const isActive = isActiveLink(link.href, (link as any).exact)
+                    let href = link.href
+                    if (href === "/user/profile" && user?.username) {
+                        href = `/${user.username}`
+                    }
+                    const isActive = isActiveLink(href, (link as any).exact)
                     return (
-                        <Link key={link.href} href={link.href} className="block relative group/item">
+                        <Link key={link.href} href={href} className="block relative group/item">
                             <motion.div 
                                 whileTap={{ scale: 0.98 }}
                                 className={cn(

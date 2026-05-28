@@ -9,6 +9,7 @@ type UserRole = "user" | "company" | "admin"
 
 interface User {
     id: string
+    username?: string
     keycloak_id?: string // Deprecated
     name: string
     email: string
@@ -49,21 +50,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             const storedToken = localStorage.getItem("accessToken")
             const refreshToken = localStorage.getItem("refreshToken")
             
-            if (storedToken) {
+            if (storedToken || refreshToken) {
                 try {
-                    setToken(storedToken)
-                    // Fetch real user from backend
+                    // Fetch real user from backend. If token is expired, 
+                    // apiMe will now automatically refresh it because of fetchWithAuth interceptor!
                     const realUser = await apiMe()
                     setUser(realUser)
+                    setToken(localStorage.getItem("accessToken"))
                     setIsAuthenticated(true)
-                } catch (error) {
+                } catch (error: any) {
                     console.error("Token validation failed:", error)
-                    localStorage.removeItem("accessToken")
-                    localStorage.removeItem("refreshToken")
-                    document.cookie = "auth_token=; path=/; max-age=0;"
-                    setToken(null)
-                    setUser(null)
-                    setIsAuthenticated(false)
+                    
+                    // Don't log user out on 500s or Network errors
+                    const isNetworkError = error.message === "Failed to fetch" || error.message?.includes("Network");
+                    const isServerError = error.message?.includes("500") || error.message?.includes("502") || error.message?.includes("503");
+                    
+                    if (!isNetworkError && !isServerError) {
+                        localStorage.removeItem("accessToken")
+                        localStorage.removeItem("refreshToken")
+                        document.cookie = "auth_token=; path=/; max-age=0;"
+                        setToken(null)
+                        setUser(null)
+                        setIsAuthenticated(false)
+                    } else {
+                        // Optimistically keep authenticated state on server/network jitter
+                        setToken(localStorage.getItem("accessToken"))
+                        setIsAuthenticated(true)
+                    }
                 }
             } else {
                 setIsAuthenticated(false)

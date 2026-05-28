@@ -22,24 +22,7 @@ class Role(Base):
 
     users = relationship("User", secondary=user_roles, back_populates="roles")
 
-class User(Base):
-    __tablename__ = "users"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    username = Column(String, unique=True, nullable=True)
-    email = Column(String, unique=True, nullable=True)
-    password_hash = Column(String, nullable=True)
-    
-    # Keycloak / OAuth ID
-    user_code = Column(String, unique=True, nullable=True)
-    
-    # Core attributes
-    is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    
-    # Relationships
-    roles = relationship("Role", secondary=user_roles, back_populates="users", lazy="selectin")
-    # Profile relationship is defined in models/profile.py backref
 
 class Company(Base):
     __tablename__ = "companies"

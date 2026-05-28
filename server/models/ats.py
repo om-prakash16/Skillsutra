@@ -5,6 +5,8 @@ from sqlalchemy.dialects.postgresql import UUID, JSONB, ARRAY
 from sqlalchemy.orm import relationship
 from pgvector.sqlalchemy import Vector
 from core.database import Base
+import models.core
+import models.user
 
 class Job(Base):
     __tablename__ = "jobs"

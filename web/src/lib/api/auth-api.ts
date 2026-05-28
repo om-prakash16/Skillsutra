@@ -1,5 +1,7 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
+import { fetchWithAuth } from "./api-client";
+
 export async function login(data: any) {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: "POST",
@@ -9,12 +11,14 @@ export async function login(data: any) {
     body: JSON.stringify(data),
   });
 
+  let json;
+  try { json = await response.json(); } catch(e) {}
+
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.detail || "Login failed");
+    throw new Error(json?.error?.message || json?.detail || json?.message || "Login failed");
   }
 
-  return response.json();
+  return json;
 }
 
 export async function signup(data: any) {
@@ -26,12 +30,14 @@ export async function signup(data: any) {
     body: JSON.stringify(data),
   });
 
+  let json;
+  try { json = await response.json(); } catch(e) {}
+
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.detail || "Signup failed");
+    throw new Error(json?.error?.message || json?.detail || json?.message || "Signup failed");
   }
 
-  return response.json();
+  return json;
 }
 
 export async function refreshSession(refreshToken: string) {
@@ -43,11 +49,14 @@ export async function refreshSession(refreshToken: string) {
     body: JSON.stringify({ refresh_token: refreshToken }),
   });
 
+  let json;
+  try { json = await response.json(); } catch(e) {}
+
   if (!response.ok) {
-    throw new Error("Session expired");
+    throw new Error(json?.error?.message || json?.detail || "Session expired");
   }
 
-  return response.json();
+  return json;
 }
 
 export async function logout(refreshToken: string) {
@@ -61,23 +70,6 @@ export async function logout(refreshToken: string) {
 }
 
 export async function me() {
-  const token = localStorage.getItem("accessToken");
-  if (!token) throw new Error("No token");
-
-  const response = await fetch(`${API_URL}/auth/me`, {
-    method: "GET",
-    headers: {
-      "Authorization": `Bearer ${token}`
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch user");
-  }
-  
-  const json = await response.json();
-  if (json && typeof json === "object" && "status" in json && "data" in json) {
-    return json.data;
-  }
-  return json;
+  // Uses fetchWithAuth to get interceptor behavior (auto-refresh, standard errors)
+  return fetchWithAuth("/auth/me", { method: "GET" });
 }

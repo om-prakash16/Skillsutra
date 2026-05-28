@@ -13,7 +13,7 @@ import { SearchResultCard, SearchResult } from "@/components/search/SearchResult
 import { StaggerList } from "@/components/motion/StaggerList";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default function UniversalSearchPage() {
+function SearchContent() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams?.get("q") || "";
   
@@ -176,5 +176,13 @@ export default function UniversalSearchPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function UniversalSearchPage() {
+  return (
+    <React.Suspense fallback={<div className="min-h-screen pt-24 pb-20 flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>}>
+      <SearchContent />
+    </React.Suspense>
   );
 }

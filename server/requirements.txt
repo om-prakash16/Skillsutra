@@ -2,6 +2,7 @@ fastapi
 uvicorn
 orjson
 pydantic
+email-validator
 langchain
 langchain-google-genai
 google-generativeai
@@ -14,6 +15,7 @@ numpy
 PyJWT
 ruff
 mypy
+cachetools
 
 sqlalchemy
 passlib[bcrypt]

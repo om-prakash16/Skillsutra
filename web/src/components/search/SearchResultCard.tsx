@@ -72,7 +72,7 @@ export function SearchResultCard({ result, index }: SearchResultCardProps) {
 
         {/* AI Match Score Badge */}
         {result.matchScore && (
-          <Badge variant="premium" className="flex items-center gap-1 bg-primary/20 text-primary border-primary/30">
+          <Badge variant="default" className="flex items-center gap-1 bg-primary/20 text-primary border-primary/30">
             <Star className="h-3 w-3 fill-primary" />
             {Math.round(result.matchScore * 100)}% Match
           </Badge>

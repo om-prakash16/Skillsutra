@@ -14,18 +14,33 @@ async function fetchPublic(endpoint: string, options: RequestInit = {}) {
         },
     });
 
-    if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.detail || "API Request Failed");
-    }
+        // Handle No Content
+        if (response.status === 204) return null;
 
-    const json = await response.json();
-    
-    if (json && typeof json === "object" && "status" in json && "data" in json) {
-        return json.data;
-    }
+        let json;
+        try {
+            json = await response.json();
+        } catch (e) {
+            if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+            return null;
+        }
 
-    return json;
+        if (!response.ok) {
+            const errorMsg = json.error?.message || json.detail || json.message || "API Request Failed";
+            throw new Error(errorMsg);
+        }
+
+        // Support the new standardized response envelope {"status": "success", "data": ...}
+        if (json && typeof json === "object" && "status" in json && "data" in json) {
+            return json.data;
+        }
+        
+        // Support enterprise envelope {"object": "item", "data": ...}
+        if (json && typeof json === "object" && "object" in json && "data" in json) {
+            return json.data;
+        }
+
+        return json;
 }
 
 export const publicApi = {
@@ -35,7 +50,7 @@ export const publicApi = {
     },
     search: {
         candidates: (params: string) =>
-            fetchPublic(`/search/candidates?${params}`),
+            fetchPublic(`/search/talent?${params}`),
         jobs: (params: string) => fetchPublic(`/search/jobs?${params}`),
         companies: (params: string) => fetchPublic(`/search/companies?${params}`),
     },

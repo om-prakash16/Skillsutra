@@ -10,28 +10,17 @@ ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
+from passlib.context import CryptContext
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
 async def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a password against a bcrypt hash using bcrypt directly."""
-    def _verify():
-        try:
-            return bcrypt.checkpw(
-                plain_password.encode("utf-8"),
-                hashed_password.encode("utf-8")
-            )
-        except Exception:
-            return False
-    import asyncio
-    return await asyncio.to_thread(_verify)
+    """Verify a password against a bcrypt hash."""
+    return pwd_context.verify(plain_password, hashed_password)
 
 async def get_password_hash(password: str) -> str:
-    """Hash a password using bcrypt directly."""
-    def _hash():
-        return bcrypt.hashpw(
-            password.encode("utf-8"),
-            bcrypt.gensalt()
-        ).decode("utf-8")
-    import asyncio
-    return await asyncio.to_thread(_hash)
+    """Hash a password using bcrypt."""
+    return pwd_context.hash(password)
 
 def create_access_token(subject: Union[str, Any], role: str = "user") -> str:
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)

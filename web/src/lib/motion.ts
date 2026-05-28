@@ -2,7 +2,7 @@ export const springTransition = {
   type: "spring",
   stiffness: 400,
   damping: 25,
-};
+} as const;
 
 export const hoverScale = {
   scale: 1.01,

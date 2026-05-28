@@ -4,8 +4,8 @@ from pydantic import BaseModel, EmailStr, Field, validator
 from uuid import UUID
 
 class UserCreate(BaseModel):
-    first_name: str = Field(..., min_length=2)
-    last_name: str = Field(..., min_length=2)
+    first_name: Optional[str] = None
+    last_name: Optional[str] = None
     username: str = Field(..., min_length=3)
     email: EmailStr
     password: str = Field(..., min_length=8)
@@ -33,12 +33,7 @@ class UserResponse(BaseModel):
     id: UUID
     username: str
     email: EmailStr
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    profile_picture: Optional[str] = None
-    role: str
     is_active: bool
-    is_verified: bool
 
     class Config:
         from_attributes = True

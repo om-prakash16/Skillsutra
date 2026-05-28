@@ -12,15 +12,21 @@ from sqlalchemy import select
 
 async def fix_pwd():
     async with AsyncSessionLocal() as db:
-        result = await db.execute(select(User).where(User.email == "testuser@skillsutra.com"))
-        user = result.scalars().first()
+        # Use raw SQL to avoid ORM schema mismatch errors (e.g. missing columns like wallet_address)
+        from sqlalchemy import text
+        result = await db.execute(text("SELECT id, email FROM users WHERE email = 'testuser@skillsutra.com'"))
+        user = result.fetchone()
+        
         if user:
-            # Hash directly with bcrypt to avoid passlib compatibility issues
-            hashed = bcrypt.hashpw("Password123!".encode("utf-8"), bcrypt.gensalt())
-            user.hashed_password = hashed.decode("utf-8")
+            hashed = bcrypt.hashpw("Password123!".encode("utf-8"), bcrypt.gensalt(4))
+            hashed_str = hashed.decode("utf-8")
+            await db.execute(
+                text("UPDATE users SET hashed_password = :h WHERE email = 'testuser@skillsutra.com'"),
+                {"h": hashed_str}
+            )
             await db.commit()
             print(f"Password updated successfully for {user.email}!")
-            print(f"New hash: {user.hashed_password[:20]}...")
+            print(f"New hash: {hashed_str[:20]}...")
         else:
             print("User not found!")
 

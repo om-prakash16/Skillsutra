@@ -4,6 +4,9 @@ from sqlalchemy import Column, String, DateTime, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from core.database import Base
+import models.ats
+import models.user
+import models.resume
 
 class CoverLetter(Base):
     __tablename__ = "cover_letters"

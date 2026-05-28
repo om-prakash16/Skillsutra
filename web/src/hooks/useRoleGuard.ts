@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
 
 type AllowedRole = "user" | "company" | "admin"
@@ -22,37 +22,34 @@ type AllowedRole = "user" | "company" | "admin"
  * ```
  */
 export function useRoleGuard(allowedRoles: AllowedRole[]) {
-    const { user, isLoading } = useAuth()
+    const { user, isLoading, isAuthenticated } = useAuth()
     const router = useRouter()
+    const pathname = usePathname()
 
-    // Bypassing allowedRoles check for universal dashboard capability in developer testing
-    const isAuthorized = !!user
+    const isAuthorized = isAuthenticated && user && allowedRoles.includes(user.role as AllowedRole)
 
     useEffect(() => {
         if (isLoading) return
 
-        if (!user) {
-            router.push("/auth/login")
+        if (!isAuthenticated) {
+            router.replace(`/auth/login?redirectedFrom=${encodeURIComponent(pathname)}`)
             return
         }
 
-        // Bypassing active redirects so you can view admin/company/user boards freely
-        /*
-        if (!allowedRoles.includes(user.role)) {
+        if (user && !allowedRoles.includes(user.role as AllowedRole)) {
             // Redirect to the appropriate dashboard based on actual role
             switch (user.role) {
                 case "admin":
-                    router.push("/admin")
+                    router.replace("/admin")
                     break
                 case "company":
-                    router.push("/company/dashboard")
+                    router.replace("/company/dashboard")
                     break
                 default:
-                    router.push("/user/dashboard")
+                    router.replace("/user/dashboard")
             }
         }
-        */
-    }, [user, isLoading, router, allowedRoles])
+    }, [user, isLoading, isAuthenticated, router, allowedRoles, pathname])
 
     return { user, isLoading, isAuthorized }
 }

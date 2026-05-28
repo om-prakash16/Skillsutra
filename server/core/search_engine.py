@@ -79,8 +79,7 @@ class SearchEngine:
         # Base query selects users joined with profiles
         base_sql = """
             SELECT 
-                u.id, u.username, u.first_name, u.last_name, u.email,
-                u.reputation_score, u.profile_picture, u.bio,
+                u.id::text as id, u.username, u.email,
                 p.headline, p.about, p.open_to_work, p.visibility_mode,
                 p.github_url, p.linkedin_url, p.portfolio_url,
                 p.embedding
@@ -93,11 +92,10 @@ class SearchEngine:
             conditions.append("p.open_to_work = true")
 
         if min_reputation is not None:
-            conditions.append("u.reputation_score >= :min_rep")
-            params["min_rep"] = min_reputation
+            pass # Reputation score removed from schema
 
         if location:
-            conditions.append("(p.about ILIKE :loc_pattern OR u.bio ILIKE :loc_pattern)")
+            conditions.append("(p.about ILIKE :loc_pattern)")
             params["loc_pattern"] = f"%{location}%"
 
         if skills:
@@ -116,9 +114,6 @@ class SearchEngine:
         if query:
             conditions.append("""
                 (u.username ILIKE :q_pattern 
-                 OR u.first_name ILIKE :q_pattern 
-                 OR u.last_name ILIKE :q_pattern
-                 OR u.bio ILIKE :q_pattern
                  OR p.headline ILIKE :q_pattern
                  OR p.about ILIKE :q_pattern)
             """)
@@ -135,11 +130,11 @@ class SearchEngine:
             where_clause = " AND " + " AND ".join(conditions)
 
         # Sorting
-        order_clause = "ORDER BY u.reputation_score DESC, u.created_at DESC"
+        order_clause = "ORDER BY u.created_at DESC"
         if sort == SortMode.NEWEST:
             order_clause = "ORDER BY u.created_at DESC"
         elif sort == SortMode.REPUTATION:
-            order_clause = "ORDER BY u.reputation_score DESC"
+            order_clause = "ORDER BY u.created_at DESC"
 
         final_sql = f"{base_sql}{where_clause} {order_clause} LIMIT :limit"
 
@@ -184,10 +179,10 @@ class SearchEngine:
 
         base_sql = """
             SELECT 
-                j.id, j.title, j.description_markdown, j.status,
+                j.id::text as id, j.title, j.description_markdown, j.status,
                 j.requirements, j.logistics, j.ai_optimization_score,
                 j.created_at, j.updated_at,
-                c.id as company_id,
+                c.id::text as company_id,
                 j.embedding
             FROM jobs j
             LEFT JOIN companies c ON c.id = j.company_id
@@ -251,7 +246,7 @@ class SearchEngine:
         params: Dict[str, Any] = {"limit": limit}
 
         base_sql = """
-            SELECT id, name, description, industry, is_company_sponsored, created_at
+            SELECT id::text as id, name, description, industry, is_company_sponsored, created_at
             FROM community_groups
         """
 
@@ -291,8 +286,8 @@ class SearchEngine:
         params: Dict[str, Any] = {"limit": limit}
 
         base_sql = """
-            SELECT p.id, p.title, p.description, p.url, p.github_url,
-                   p.skills_used, p.is_portfolio_item, p.profile_id
+            SELECT p.id::text as id, p.title, p.description, p.url, p.github_url,
+                   p.skills_used, p.is_portfolio_item, p.profile_id::text as profile_id
             FROM projects p
         """
 
@@ -329,7 +324,7 @@ class SearchEngine:
         params: Dict[str, Any] = {"limit": limit}
 
         base_sql = """
-            SELECT g.id, g.title, g.description, g.budget_range,
+            SELECT g.id::text as id, g.title, g.description, g.budget_range,
                    g.milestones, g.created_at, g.embedding
             FROM gigs g
         """

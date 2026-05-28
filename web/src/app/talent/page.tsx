@@ -37,10 +37,10 @@ const fetchTalentFromApi = async (params: FetchParams) => {
     const response = await publicApi.search.candidates(searchParams.toString())
     
     // Map backend search results to Talent frontend model
-    const candidates = response.data?.candidates || response.data || []
+    const candidates = response?.items || response?.data?.items || response?.candidates || response?.data?.candidates || (Array.isArray(response) ? response : []);
     const data = (Array.isArray(candidates) ? candidates : []).map((c: any) => ({
-        id: c.user_id,
-        name: c.full_name,
+        id: c.user_id || c.id,
+        name: c.full_name || c.username || "Anonymous Node",
         title: c.headline || "Professional",
         role: c.primary_role || "Developer",
         avatar: "", // Add default or fetch from profile
@@ -120,7 +120,7 @@ function TalentContent() {
         }
     }
 
-    const { data, isLoading, isError } = useQuery({
+    const { data, isLoading, isError, error } = useQuery({
         queryKey: ["talent", searchParams.toString()],
         queryFn: () => fetchTalentFromApi({
             query: searchParams.get("query") || undefined,
@@ -265,7 +265,13 @@ function TalentContent() {
                     ) : isError ? (
                         <div className="text-center py-32 glass rounded-[3rem] border-rose-500/10">
                             <X className="w-12 h-12 text-rose-500/20 mx-auto mb-4" />
-                            <p className="text-[11px] font-black uppercase tracking-widest text-rose-500/50">Core Data Retrieval Fault</p>
+                            <h3 className="text-xl font-black uppercase tracking-tight text-white mb-2">Core Data Retrieval Fault</h3>
+                            <p className="text-[11px] font-black uppercase tracking-widest text-rose-500/50 mb-6">
+                                {error instanceof Error ? error.message : "Network partition detected."}
+                            </p>
+                            <Button onClick={() => window.location.reload()} variant="outline" className="font-black uppercase tracking-widest text-[10px]">
+                                Retry Connection
+                            </Button>
                         </div>
                     ) : (matchedTalent || data?.data) && (matchedTalent?.length || 0) > 0 || (data?.data?.length || 0) > 0 ? (
                         <div className="space-y-12">

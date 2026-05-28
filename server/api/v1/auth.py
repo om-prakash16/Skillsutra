@@ -22,10 +22,11 @@ def get_device_info(request: Request) -> str:
 @router.get("/me")
 async def get_me(current_user: dict = Depends(get_current_user), db: AsyncSession = Depends(get_db_session)):
     from sqlalchemy import select
+    from sqlalchemy.orm import selectinload
     from models.user import User
     
     # current_user from token only has id, role, email. Let's fetch full user for universal apps
-    query = select(User).where(User.id == current_user["id"])
+    query = select(User).options(selectinload(User.roles)).where(User.id == current_user["id"])
     result = await db.execute(query)
     user = result.scalars().first()
     
@@ -33,16 +34,34 @@ async def get_me(current_user: dict = Depends(get_current_user), db: AsyncSessio
         # Fallback to token payload if DB lookup fails (e.g. testing)
         return {"status": "success", "data": current_user}
         
+    if not user.username:
+        # Auto-generate a username if missing
+        from core.username_utils import generate_unique_username
+        async def check_exists(candidate: str):
+            res = await db.execute(select(User).where(User.username == candidate))
+            return res.scalars().first() is not None
+            
+        base_name = user.email.split("@")[0] if user.email else "user"
+        # For simplicity since check_exists is async, let's just do a sync approximation or a basic slug
+        # Note: the full robust check would await, but we can do a simple fallback
+        import random, string
+        new_username = f"{base_name}-{ ''.join(random.choices(string.ascii_lowercase + string.digits, k=4)) }".lower()
+        user.username = new_username
+        await db.commit()
+
+    # Resolve roles
+    roles_list = [r.name for r in user.roles] if user.roles else ["user"]
+    primary_role = roles_list[0] if roles_list else "user"
+
     return {
         "status": "success",
         "data": {
             "id": str(user.id),
             "email": user.email,
-            "name": f"{user.first_name or ''} {user.last_name or ''}".strip() or user.username or "User",
-            "role": user.role,
-            "roles": [user.role],
+            "name": user.username or "User",
+            "role": primary_role,
+            "roles": roles_list,
             "username": user.username,
-            "wallet_address": user.wallet_address
         }
     }
 

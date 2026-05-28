@@ -5,34 +5,126 @@
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
 
-export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
-    const token = localStorage.getItem("accessToken");
+let isRefreshing = false;
+let refreshPromise: Promise<string | null> | null = null;
+
+async function refreshAccessToken(): Promise<string | null> {
+    const refreshToken = localStorage.getItem("refreshToken");
+    if (!refreshToken) return null;
+
+    if (isRefreshing && refreshPromise) {
+        return refreshPromise;
+    }
+
+    isRefreshing = true;
+    refreshPromise = fetch(`${API_BASE_URL}/auth/refresh`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ refresh_token: refreshToken }),
+    })
+    .then(async (res) => {
+        if (!res.ok) throw new Error("Refresh failed");
+        const json = await res.json();
+        const data = json.data || json;
+        if (data.access_token) {
+            localStorage.setItem("accessToken", data.access_token);
+            if (data.refresh_token) {
+                localStorage.setItem("refreshToken", data.refresh_token);
+            }
+            document.cookie = `auth_token=${data.access_token}; path=/; max-age=86400; SameSite=Lax`;
+            return data.access_token as string;
+        }
+        throw new Error("No token returned");
+    })
+    .catch((err) => {
+        console.error("Session refresh failed:", err);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        document.cookie = "auth_token=; path=/; max-age=0;";
+        window.location.href = "/auth/login?expired=true";
+        return null;
+    })
+    .finally(() => {
+        isRefreshing = false;
+        refreshPromise = null;
+    });
+
+    return refreshPromise;
+}
+
+export async function fetchWithAuth(endpoint: string, options: RequestInit & { timeout?: number } = {}) {
+    const { timeout = 10000, ...fetchOptions } = options;
+    let token = localStorage.getItem("accessToken");
+
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), timeout);
+
     const headers: Record<string, string> = {
         "Content-Type": "application/json",
-        ...(options.headers as Record<string, string>),
+        ...(fetchOptions.headers as Record<string, string>),
     };
 
     if (token) {
         headers["Authorization"] = `Bearer ${token}`;
     }
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        headers: headers as HeadersInit,
-    });
+    const makeRequest = async (currentAuth: string | null) => {
+        if (currentAuth) headers["Authorization"] = `Bearer ${currentAuth}`;
+        
+        return fetch(`${API_BASE_URL}${endpoint}`, {
+            ...fetchOptions,
+            headers: headers as HeadersInit,
+            signal: controller.signal,
+        });
+    };
 
-    const json = await response.json();
+    try {
+        let response = await makeRequest(token);
 
-    if (!response.ok) {
-        throw new Error(json.detail || json.message || "API Request Failed");
+        if (response.status === 401 && localStorage.getItem("refreshToken")) {
+            // Token expired, attempt refresh
+            const newToken = await refreshAccessToken();
+            if (newToken) {
+                response = await makeRequest(newToken);
+            }
+        }
+
+        clearTimeout(id);
+        
+        // Handle No Content
+        if (response.status === 204) return null;
+
+        let json;
+        try {
+            json = await response.json();
+        } catch (e) {
+            if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+            return null;
+        }
+
+        if (!response.ok) {
+            const errorMsg = json.error?.message || json.detail || json.message || "API Request Failed";
+            throw new Error(errorMsg);
+        }
+
+        // Support the new standardized response envelope {"status": "success", "data": ...}
+        if (json && typeof json === "object" && "status" in json && "data" in json) {
+            return json.data;
+        }
+        
+        // Support enterprise envelope {"object": "item", "data": ...}
+        if (json && typeof json === "object" && "object" in json && "data" in json) {
+            return json.data;
+        }
+
+        return json;
+    } catch (error: any) {
+        clearTimeout(id);
+        if (error.name === 'AbortError') {
+            throw new Error('Request timed out. Please check your connection.');
+        }
+        throw error;
     }
-
-    // Support the new standardized response envelope {"status": "success", "data": ...}
-    if (json && typeof json === "object" && "status" in json && "data" in json) {
-        return json.data;
-    }
-
-    return json;
 }
 
 // API module bindings
@@ -55,6 +147,11 @@ export const api = {
         get: () => fetchWithAuth("/profile"),
         update: (data: any) => fetchWithAuth("/profile/update", { method: "POST", body: JSON.stringify(data) }),
         uploadFile: (formData: FormData) => fetchWithAuth("/profile/upload-file", { method: "POST", body: formData, headers: { "Content-Type": "multipart/form-data" } })
+    },
+    publicProfile: {
+        getByUsername: (username: string) => fetchWithAuth(`/profiles/public/${username}`),
+        checkUsername: (username: string) => fetchWithAuth(`/profiles/check-username/${username}`),
+        claimUsername: (username: string) => fetchWithAuth("/profiles/claim-username", { method: "POST", body: JSON.stringify({ username }) })
     },
     ai: {
         analyze: (data: any) => fetchWithAuth("/ai/analyze-profile", { method: "POST", body: JSON.stringify({ profile_data: data }) }),

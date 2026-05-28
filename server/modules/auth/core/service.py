@@ -213,7 +213,7 @@ async def get_user_permissions(user_id: str) -> List[str]:
             del _PERMISSION_CACHE[k]
 
     from core.database import AsyncSessionLocal
-    from models.core import User
+    from models.user import User
     from sqlalchemy.future import select
     from sqlalchemy.orm import selectinload
 

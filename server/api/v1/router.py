@@ -43,10 +43,13 @@ v1_router.include_router(resume_router, prefix="", tags=["AI Resume Builder"])
 v1_router.include_router(cover_letter_router, prefix="", tags=["AI Cover Letter Generator"])
 v1_router.include_router(social_router, prefix="", tags=["Social Networking"])
 
+from api.v1.public_profile import router as public_profile_router
+
 v1_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 v1_router.include_router(identity_router, prefix="/identity", tags=["Identity"])
 v1_router.include_router(users_router, prefix="/users", tags=["Users Base"])
 v1_router.include_router(profile_router, prefix="/profile", tags=["Talent Profiles"])
+v1_router.include_router(public_profile_router, prefix="/profiles", tags=["Public Profiles"])
 v1_router.include_router(company_router, prefix="/company", tags=["Company Hub"])
 v1_router.include_router(jobs_router, prefix="/jobs", tags=["Jobs Marketplace"])
 v1_router.include_router(applications_router, prefix="/applications", tags=["Applications"])

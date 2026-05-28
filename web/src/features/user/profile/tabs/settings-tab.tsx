@@ -8,6 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { UserProfile } from "@/types/profile"
 import { useTheme } from "next-themes"
 import { useEffect, useState } from "react"
+import { useAuth } from "@/context/auth-context"
+import { userApi } from "@/lib/api/user-api"
+import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
+import { Input } from "@/components/ui/input"
 
 interface SettingsTabProps {
     data: UserProfile
@@ -16,7 +21,28 @@ interface SettingsTabProps {
 
 export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
     const { theme, setTheme } = useTheme()
+    const { user } = useAuth()
     const [mounted, setMounted] = useState(false)
+    const [usernameInput, setUsernameInput] = useState(user?.username || "")
+    const [isClaiming, setIsClaiming] = useState(false)
+
+    useEffect(() => {
+        if (user?.username) setUsernameInput(user.username)
+    }, [user?.username])
+
+    const handleClaimUsername = async () => {
+        if (!usernameInput || usernameInput === user?.username) return
+        setIsClaiming(true)
+        try {
+            await userApi.profile.claimUsername(usernameInput)
+            toast.success("Username claimed successfully! Please refresh to see changes.")
+            // Ideally we'd call a refetch for AuthContext here, but refreshing works for now
+        } catch (error: any) {
+            toast.error(error.message || "Failed to claim username")
+        } finally {
+            setIsClaiming(false)
+        }
+    }
 
     // Avoid hydration mismatch
     useEffect(() => {
@@ -38,6 +64,30 @@ export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Receive cryptographic alerts about new matches.</p>
                     </div>
                     <Switch defaultChecked={data.settings.notifications} onCheckedChange={(checked) => onUpdateSettings?.('notifications', checked)} className="data-[state=checked]:bg-primary" />
+                </div>
+
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-2 flex-1">
+                        <Label className="text-sm font-black uppercase tracking-[0.1em] text-foreground">Public URL Node</Label>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Your unique identifier on the network.</p>
+                    </div>
+                    <div className="flex w-full md:w-[320px] gap-2 items-center">
+                        <span className="text-white/40 text-xs font-bold shrink-0">skillsutra.com/</span>
+                        <Input 
+                            value={usernameInput} 
+                            onChange={(e) => setUsernameInput(e.target.value.toLowerCase())} 
+                            placeholder="username"
+                            className="h-12 glass border-white/10 rounded-xl focus:ring-primary/20 text-xs font-bold"
+                        />
+                        <Button 
+                            onClick={handleClaimUsername} 
+                            disabled={isClaiming || usernameInput === user?.username || usernameInput.length < 3}
+                            variant="default"
+                            className="h-12 rounded-xl font-black uppercase tracking-widest text-[10px] shrink-0"
+                        >
+                            {isClaiming ? <Loader2 className="w-4 h-4 animate-spin" /> : "Claim"}
+                        </Button>
+                    </div>
                 </div>
 
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">

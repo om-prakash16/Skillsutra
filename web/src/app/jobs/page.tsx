@@ -18,9 +18,16 @@ export default function JobMarketplace() {
   const { data: jobs = [], isLoading } = useQuery({
     queryKey: ['jobs', user?.id],
     queryFn: async () => {
-      // In production, we'd use the search endpoint instead of fetching all
-      const response = await api.jobs.list();
-      return Array.isArray(response) ? response : [];
+      try {
+        const response = await api.search.jobs("");
+        if (response && response.items) {
+            return Array.isArray(response.items) ? response.items : [];
+        }
+        return Array.isArray(response) ? response : [];
+      } catch (error) {
+        console.error("Failed to fetch jobs:", error);
+        return [];
+      }
     }
   });
 
@@ -59,7 +66,11 @@ export default function JobMarketplace() {
                 onChange={e => setSearch(e.target.value)}
              />
            </div>
-           <Button variant="premium" className="h-14 px-8 text-xs font-bold tracking-widest uppercase rounded-2xl transition-all">
+           <Button 
+              variant="premium" 
+              className="h-14 px-8 text-xs font-bold tracking-widest uppercase rounded-2xl transition-all"
+              onClick={() => alert("Advanced Filters Interface will be deployed in the next protocol update.")}
+           >
               <Filter className="w-4 h-4 mr-2" /> Advanced Filters
            </Button>
         </div>

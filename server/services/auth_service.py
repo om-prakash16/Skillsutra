@@ -26,12 +26,9 @@ class AuthService:
 
         hashed_pwd = await get_password_hash(user_in.password)
         new_user = User(
-            first_name=user_in.first_name,
-            last_name=user_in.last_name,
             username=user_in.username,
             email=user_in.email,
-            hashed_password=hashed_pwd,
-            auth_provider="local"
+            password_hash=hashed_pwd,
         )
         self.db.add(new_user)
         await self.db.commit()
@@ -39,22 +36,26 @@ class AuthService:
         return new_user
 
     async def authenticate_user(self, login_data: UserLogin, ip_address: str, device_info: str) -> Tuple[User, str, str]:
+        print("DEBUG: Inside authenticate_user", flush=True)
         query = select(User).where(
             or_(User.email == login_data.email_or_username, User.username == login_data.email_or_username)
         )
+        print("DEBUG: Executing query", flush=True)
         result = await self.db.execute(query)
+        print("DEBUG: Query executed", flush=True)
         user = result.scalars().first()
+        print("DEBUG: User fetched", flush=True)
 
-        if not user or not user.hashed_password:
+        if not user or not user.password_hash:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
             
-        if not await verify_password(login_data.password, user.hashed_password):
+        if not await verify_password(login_data.password, user.password_hash):
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
 
         if not user.is_active:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account disabled")
 
-        access_token = create_access_token(subject=user.id, role=user.role)
+        access_token = create_access_token(subject=user.id, role="user")
         refresh_token = create_refresh_token(subject=user.id)
 
         # Store session in Redis
@@ -94,7 +95,7 @@ class AuthService:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not active")
 
         # Generate new tokens
-        new_access = create_access_token(subject=user.id, role=user.role)
+        new_access = create_access_token(subject=user.id, role="user")
         new_refresh = create_refresh_token(subject=user.id)
 
         from core.security import REFRESH_TOKEN_EXPIRE_DAYS

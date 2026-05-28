@@ -104,7 +104,7 @@ export default function ProfilePage() {
     const { user } = useAuth()
     const [profileData, setProfileData] = useState<UserProfile | null>(null)
     const [isEditing, setIsEditing] = useState(false)
-    const { data: userProfile, isLoading, refetch } = useQuery({
+    const { data: userProfile, isLoading, refetch, isError, error } = useQuery({
         queryKey: ["userProfile", user?.id],
         queryFn: fetchUserProfile,
         enabled: !!user?.id
@@ -373,10 +373,28 @@ export default function ProfilePage() {
         )
     )
 
-    if (isLoading || !userProfile) {
+    if (isLoading) {
         return (
-            <div className="flex h-screen w-full items-center justify-center">
+            <div className="flex h-[60vh] w-full flex-col items-center justify-center space-y-4">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="text-sm text-muted-foreground font-black uppercase tracking-widest animate-pulse">Syncing Identity Matrix...</p>
+            </div>
+        )
+    }
+
+    if (isError || !userProfile) {
+        return (
+            <div className="flex h-[60vh] w-full flex-col items-center justify-center space-y-4">
+                <div className="p-4 rounded-full bg-red-500/10 text-red-500 mb-4">
+                    <X className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-black uppercase tracking-tight text-white">Identity Sync Failed</h3>
+                <p className="text-sm text-muted-foreground font-medium max-w-md text-center">
+                    {error instanceof Error ? error.message : "Unable to establish connection with the neural ledger."}
+                </p>
+                <Button onClick={() => refetch()} variant="outline" className="mt-4 font-black uppercase tracking-widest text-[10px]">
+                    Re-establish Connection
+                </Button>
             </div>
         )
     }

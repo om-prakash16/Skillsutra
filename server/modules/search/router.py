@@ -4,7 +4,7 @@ Provides 7 unified search and discovery endpoints for the platform.
 """
 from fastapi import APIRouter, Depends, Query, HTTPException
 from typing import Optional, List, Dict, Any
-from core.db import get_db
+from core.database import get_db_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.response import success_response
 from modules.search.service import SearchService
@@ -28,7 +28,7 @@ async def search_talent(
     sort: str = Query("relevance", description="relevance, newest, reputation"),
     cursor: Optional[str] = Query(None, description="Pagination cursor"),
     limit: int = Query(20, ge=1, le=50),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db_session)
 ):
     """Multi-filter talent search with hybrid AI ranking."""
     skill_list = skills.split(",") if skills else None
@@ -56,7 +56,7 @@ async def search_jobs(
     sort: str = Query("relevance", description="relevance, newest"),
     cursor: Optional[str] = Query(None, description="Pagination cursor"),
     limit: int = Query(20, ge=1, le=50),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db_session),
     current_user: Optional[Dict[str, Any]] = Depends(get_current_user)
 ):
     """Personalized job discovery with AI ranking."""
@@ -86,7 +86,7 @@ async def search_communities(
     sort: str = Query("relevance", description="relevance, newest"),
     cursor: Optional[str] = Query(None, description="Pagination cursor"),
     limit: int = Query(20, ge=1, le=50),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db_session)
 ):
     """Search communities and forum groups."""
     result = await search_service.search_communities(
@@ -101,7 +101,7 @@ async def search_projects(
     sort: str = Query("relevance", description="relevance, newest"),
     cursor: Optional[str] = Query(None, description="Pagination cursor"),
     limit: int = Query(20, ge=1, le=50),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db_session)
 ):
     """Search portfolios and projects."""
     stack_list = tech_stack.split(",") if tech_stack else None
@@ -118,7 +118,7 @@ async def search_gigs(
     sort: str = Query("relevance", description="relevance, newest"),
     cursor: Optional[str] = Query(None, description="Pagination cursor"),
     limit: int = Query(20, ge=1, le=50),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db_session)
 ):
     """Search freelance gigs and contracts."""
     result = await search_service.search_gigs(
@@ -146,7 +146,7 @@ async def search_autocomplete(
 async def get_trending(
     type: str = Query("posts", description="Entity type to find trending for: posts, jobs, skills"),
     limit: int = Query(10, ge=1, le=50),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db_session)
 ):
     """Find trending items based on engagement velocity and time decay."""
     result = await search_service.get_trending(db=db, entity_type=type, limit=limit)
@@ -156,7 +156,7 @@ async def get_trending(
 async def get_recommendations(
     type: str = Query("jobs", description="jobs, people, gigs, communities"),
     limit: int = Query(10, ge=1, le=50),
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_db_session),
     current_user: Dict[str, Any] = Depends(get_current_user)
 ):
     """Get personalized recommendations using AI embeddings and skill graph."""
