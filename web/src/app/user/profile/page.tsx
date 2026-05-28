@@ -29,20 +29,19 @@ import { toast } from "sonner"
 const fetchUserProfile = async (): Promise<UserProfile> => {
     const response = await userApi.profile.get()
     
-    if (!response || !response.profile) {
+    if (!response || !response.id) {
         throw new Error("Failed to load profile data")
     }
 
-    const data = response
-    const p = data.profile
+    const p = response
     
-    const nameParts = (p.full_name || "New User").split(" ")
+    const nameParts = (p.full_name || p.username || "New User").split(" ")
     const firstName = nameParts[0]
     const lastName = nameParts.slice(1).join(" ") || ""
 
     // Map relational DB structure to frontend Profile structure
     return {
-        id: p.user_id,
+        id: p.user_id || p.id,
         basic: {
             firstName,
             lastName,
@@ -58,13 +57,13 @@ const fetchUserProfile = async (): Promise<UserProfile> => {
             languages: p.languages || [],
             joinDate: p.created_at ? new Date(p.created_at).toLocaleDateString() : ""
         },
-        skills: (data.skills || []).map((s: any) => ({
+        skills: (p.skills || []).map((s: any) => ({
             name: s.name,
             level: s.proficiency || "Intermediate",
             category: s.category,
             is_verified: s.verified
         })),
-        experience: (data.experiences || []).map((e: any) => ({
+        experience: (p.experiences || []).map((e: any) => ({
             id: e.id,
             role: e.role,
             company: e.company_name,
@@ -73,20 +72,20 @@ const fetchUserProfile = async (): Promise<UserProfile> => {
             endDate: e.end_date || "Present",
             description: e.description
         })),
-        education: (data.education || []).map((e: any) => ({
+        education: (p.educations || p.education || []).map((e: any) => ({
             id: e.id,
             institution: e.institution,
             degree: e.degree,
             year: e.end_date ? new Date(e.end_date).getFullYear().toString() : "",
             fieldOfStudy: e.field_of_study
         })),
-        projects: (data.projects || []).map((p: any) => ({
-            id: p.id,
-            title: p.title,
-            description: p.description,
-            stack: p.stack || [],
-            link: p.project_url,
-            github: p.github_url
+        projects: (p.projects || []).map((proj: any) => ({
+            id: proj.id,
+            title: proj.title,
+            description: proj.description,
+            stack: proj.stack || [],
+            link: proj.project_url,
+            github: proj.github_url
         })),
         github: { username: p.github_handle || "", repos: [] },
         leetcode: { username: "", totalSolved: 0, easy: 0, medium: 0, hard: 0, ranking: 0 },
@@ -96,7 +95,7 @@ const fetchUserProfile = async (): Promise<UserProfile> => {
             visibility: p.visibility === "private" ? "Private" : "Public", 
             theme: "system" 
         },
-        ai_scores: data.ai_scores
+        ai_scores: p.ai_scores
     }
 }
 
