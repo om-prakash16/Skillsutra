@@ -95,7 +95,7 @@ export default function CompaniesPage() {
                 <div className="flex flex-col lg:flex-row gap-10 items-start">
                     {/* Sidebar Filters */}
                     <aside className="w-full lg:w-80 shrink-0 sticky top-32">
-                        <div className="glass border-white/5 rounded-3xl p-8 shadow-premium">
+                        <div className="glass border-border/50 rounded-3xl p-8 shadow-premium">
                             <h2 className="text-micro text-muted-foreground font-bold mb-8 flex items-center gap-3">
                                 <div className="p-2 glass rounded-xl bg-primary/10 border-primary/20">
                                     <Search className="w-4 h-4 text-primary" />
@@ -117,7 +117,7 @@ export default function CompaniesPage() {
 
                     {/* Content Area */}
                     <div className="flex-1 w-full min-w-0">
-                        <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4 pb-4 border-b border-black/5 dark:border-white/5">
+                        <div className="flex flex-col md:flex-row justify-between items-end mb-10 gap-4 pb-4 border-b border-black/5 dark:border-border/50">
                             <div className="space-y-1">
                                 <h2 className="text-2xl font-bold tracking-tight">Active Registry</h2>
                                 <p className="text-micro text-muted-foreground/40 font-medium">
@@ -153,7 +153,7 @@ export default function CompaniesPage() {
                                         >
                                             PREVIOUS
                                         </Button>
-                                        <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/40 glass px-6 h-11 rounded-xl border border-black/5 dark:border-white/5">
+                                        <div className="flex items-center gap-2 text-micro font-bold text-muted-foreground/40 glass px-6 h-11 rounded-xl border border-black/5 dark:border-border/50">
                                             PAGE <span className="text-primary mx-1">{currentPage}</span> OF {totalPages}
                                         </div>
                                         <Button
@@ -171,7 +171,7 @@ export default function CompaniesPage() {
                                 )}
                             </>
                         ) : (
-                            <div className="text-center py-32 glass rounded-3xl border border-dashed border-black/5 dark:border-white/5 relative overflow-hidden shadow-premium">
+                            <div className="text-center py-32 glass rounded-3xl border border-dashed border-black/5 dark:border-border/50 relative overflow-hidden shadow-premium">
                                 <div className="absolute inset-0 bg-primary/5 blur-[100px] rounded-full" />
                                 <div className="relative z-10 flex flex-col items-center">
                                     <div className="w-16 h-16 mb-6 rounded-2xl glass bg-primary/10 border border-primary/20 flex items-center justify-center shadow-premium">

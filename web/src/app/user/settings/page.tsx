@@ -71,31 +71,31 @@ export default function UserSettingsPage() {
             
             {/* Header */}
             <div className="space-y-4">
-                <h1 className="text-6xl font-black font-heading tracking-tighter italic uppercase leading-none text-white">Settings</h1>
+                <h1 className="text-6xl font-black font-heading tracking-tighter italic uppercase leading-none text-foreground">Settings</h1>
                 <div className="flex items-center gap-4">
                     <div className="h-px w-24 bg-primary" />
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">Account configuration & security protocols</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Account configuration & security protocols</p>
                 </div>
             </div>
 
             {/* Notifications */}
-            <Card className="glass border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                <CardHeader className="border-b border-white/5 p-10">
+            <Card className="glass border-border/50 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <CardHeader className="border-b border-border/50 p-10">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
                             <Bell className="w-6 h-6 text-primary" />
                         </div>
                         <div>
-                            <CardTitle className="text-xl font-black italic uppercase tracking-tight text-white">Notifications</CardTitle>
-                            <CardDescription className="text-[10px] font-black uppercase tracking-widest text-white/30 mt-1">Manage your alert preferences</CardDescription>
+                            <CardTitle className="text-xl font-black italic uppercase tracking-tight text-foreground">Notifications</CardTitle>
+                            <CardDescription className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Manage your alert preferences</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
                 <CardContent className="p-10 space-y-8">
                     <div className="flex items-center justify-between">
                         <div className="space-y-1.5">
-                            <Label className="text-sm font-black uppercase tracking-wide text-white">Application Updates</Label>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Alerts for view, interview, and feedback status.</p>
+                            <Label className="text-sm font-black uppercase tracking-wide text-foreground">Application Updates</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Alerts for view, interview, and feedback status.</p>
                         </div>
                         <Switch 
                             checked={!!notification_prefs.application_updates} 
@@ -105,8 +105,8 @@ export default function UserSettingsPage() {
                     </div>
                     <div className="flex items-center justify-between">
                         <div className="space-y-1.5">
-                            <Label className="text-sm font-black uppercase tracking-wide text-white">AI Job Recommendations</Label>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Proactive alerts for roles with high skill resonance.</p>
+                            <Label className="text-sm font-black uppercase tracking-wide text-foreground">AI Job Recommendations</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Proactive alerts for roles with high skill resonance.</p>
                         </div>
                         <Switch 
                             checked={!!notification_prefs.ai_recommendations} 
@@ -116,8 +116,8 @@ export default function UserSettingsPage() {
                     </div>
                     <div className="flex items-center justify-between">
                         <div className="space-y-1.5">
-                            <Label className="text-sm font-black uppercase tracking-wide text-white">Skill Verification</Label>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Results from automated GitHub audits and quizzes.</p>
+                            <Label className="text-sm font-black uppercase tracking-wide text-foreground">Skill Verification</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Results from automated GitHub audits and quizzes.</p>
                         </div>
                         <Switch 
                             checked={!!notification_prefs.skill_verification} 
@@ -127,8 +127,8 @@ export default function UserSettingsPage() {
                     </div>
                     <div className="flex items-center justify-between">
                         <div className="space-y-1.5">
-                            <Label className="text-sm font-black uppercase tracking-wide text-white">Interview Requests</Label>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Direct scheduling invites from verified recruiters.</p>
+                            <Label className="text-sm font-black uppercase tracking-wide text-foreground">Interview Requests</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Direct scheduling invites from verified recruiters.</p>
                         </div>
                         <Switch 
                             checked={!!notification_prefs.interview_requests} 
@@ -140,29 +140,29 @@ export default function UserSettingsPage() {
             </Card>
 
             {/* Privacy & Visibility */}
-            <Card className="glass border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                <CardHeader className="border-b border-white/5 p-10">
+            <Card className="glass border-border/50 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <CardHeader className="border-b border-border/50 p-10">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
                             <Eye className="w-6 h-6 text-emerald-400" />
                         </div>
                         <div>
-                            <CardTitle className="text-xl font-black italic uppercase tracking-tight text-white">Privacy & Visibility</CardTitle>
-                            <CardDescription className="text-[10px] font-black uppercase tracking-widest text-white/30 mt-1">Control who sees your profile</CardDescription>
+                            <CardTitle className="text-xl font-black italic uppercase tracking-tight text-foreground">Privacy & Visibility</CardTitle>
+                            <CardDescription className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Control who sees your profile</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
                 <CardContent className="p-10 space-y-8">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="space-y-1.5">
-                            <Label className="text-sm font-black uppercase tracking-wide text-white">Profile Visibility</Label>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Control the exposure of your profile to recruiters</p>
+                            <Label className="text-sm font-black uppercase tracking-wide text-foreground">Profile Visibility</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Control the exposure of your profile to recruiters</p>
                         </div>
                         <Select value={settings?.profile_visibility || 'public'} onValueChange={handleVisibilityChange}>
-                            <SelectTrigger className="w-full md:w-[240px] h-12 glass border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                            <SelectTrigger className="w-full md:w-[240px] h-12 glass border-border rounded-xl text-[10px] font-black uppercase tracking-widest">
                                 <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="glass border-white/10">
+                            <SelectContent className="glass border-border">
                                 <SelectItem value="public" className="text-xs font-bold uppercase tracking-widest">Public — Visible to All</SelectItem>
                                 <SelectItem value="recruiters" className="text-xs font-bold uppercase tracking-widest">Recruiters Only</SelectItem>
                                 <SelectItem value="private" className="text-xs font-bold uppercase tracking-widest">Private — Hidden</SelectItem>
@@ -173,29 +173,29 @@ export default function UserSettingsPage() {
             </Card>
 
             {/* Appearance */}
-            <Card className="glass border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                <CardHeader className="border-b border-white/5 p-10">
+            <Card className="glass border-border/50 rounded-[2.5rem] overflow-hidden shadow-2xl">
+                <CardHeader className="border-b border-border/50 p-10">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center">
                             <Palette className="w-6 h-6 text-indigo-400" />
                         </div>
                         <div>
-                            <CardTitle className="text-xl font-black italic uppercase tracking-tight text-white">Appearance</CardTitle>
-                            <CardDescription className="text-[10px] font-black uppercase tracking-widest text-white/30 mt-1">Customize your interface</CardDescription>
+                            <CardTitle className="text-xl font-black italic uppercase tracking-tight text-foreground">Appearance</CardTitle>
+                            <CardDescription className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Customize your interface</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
                 <CardContent className="p-10">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="space-y-1.5">
-                            <Label className="text-sm font-black uppercase tracking-wide text-white">Interface Theme</Label>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Select your preferred visual environment</p>
+                            <Label className="text-sm font-black uppercase tracking-wide text-foreground">Interface Theme</Label>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Select your preferred visual environment</p>
                         </div>
                         <Select value={mounted ? theme : "system"} onValueChange={setTheme}>
-                            <SelectTrigger className="w-full md:w-[240px] h-12 glass border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest">
+                            <SelectTrigger className="w-full md:w-[240px] h-12 glass border-border rounded-xl text-[10px] font-black uppercase tracking-widest">
                                 <SelectValue />
                             </SelectTrigger>
-                            <SelectContent className="glass border-white/10">
+                            <SelectContent className="glass border-border">
                                 <SelectItem value="light" className="text-xs font-bold uppercase tracking-widest">Light Mode</SelectItem>
                                 <SelectItem value="dark" className="text-xs font-bold uppercase tracking-widest">Dark Mode</SelectItem>
                                 <SelectItem value="system" className="text-xs font-bold uppercase tracking-widest">System Default</SelectItem>
@@ -206,25 +206,28 @@ export default function UserSettingsPage() {
             </Card>
 
             {/* Security */}
-            <Card className="glass border-white/5 rounded-[2.5rem] overflow-hidden shadow-2xl">
-                <CardHeader className="border-b border-white/5 p-10">
+            <Card className="glass border-border/50 rounded-[2.5rem] overflow-hidden shadow-2xl cursor-pointer hover:border-primary/50 transition-colors" onClick={() => window.location.href = '/user/settings/security'}>
+                <CardHeader className="border-b border-border/50 p-10">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center">
                             <Shield className="w-6 h-6 text-rose-400" />
                         </div>
-                        <div>
-                            <CardTitle className="text-xl font-black italic uppercase tracking-tight text-white">Security</CardTitle>
-                            <CardDescription className="text-[10px] font-black uppercase tracking-widest text-white/30 mt-1">Protect your account</CardDescription>
+                        <div className="flex-1">
+                            <CardTitle className="text-xl font-black italic uppercase tracking-tight text-foreground flex items-center justify-between">
+                                Security Center
+                                <span className="text-[10px] bg-primary text-primary-foreground px-3 py-1 rounded-full not-italic">ENTER</span>
+                            </CardTitle>
+                            <CardDescription className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Manage trusted devices, active sessions, and view audit logs</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
                 <CardContent className="p-10 space-y-8">
-                    <div className="flex items-center justify-between p-6 glass rounded-2xl border-white/5">
+                    <div className="flex items-center justify-between p-6 glass rounded-2xl border-border/50">
                         <div className="flex items-center gap-4">
-                            <Lock className="w-5 h-5 text-white/20" />
+                            <Lock className="w-5 h-5 text-muted-foreground/50" />
                             <div className="space-y-1">
-                                <p className="text-sm font-black uppercase tracking-wide text-white">account Connection</p>
-                                <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Authenticated via infrastructure Protocol</p>
+                                <p className="text-sm font-black uppercase tracking-wide text-foreground">Advanced Protection</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Device Fingerprinting & Session Auditing Active</p>
                             </div>
                         </div>
                         <Badge variant="outline" className="border-emerald-500/20 text-emerald-400 bg-emerald-500/5 text-[9px] font-black uppercase tracking-widest">
@@ -243,15 +246,15 @@ export default function UserSettingsPage() {
                         </div>
                         <div>
                             <CardTitle className="text-xl font-black italic uppercase tracking-tight text-rose-400">Danger Zone</CardTitle>
-                            <CardDescription className="text-[10px] font-black uppercase tracking-widest text-white/30 mt-1">Irreversible actions</CardDescription>
+                            <CardDescription className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1">Irreversible actions</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
                 <CardContent className="p-10 space-y-6">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 p-6 glass rounded-2xl border-rose-500/10">
                         <div className="space-y-1.5">
-                            <p className="text-sm font-black uppercase tracking-wide text-white">Sign Out of All Devices</p>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Terminate all active sessions</p>
+                            <p className="text-sm font-black uppercase tracking-wide text-foreground">Sign Out of All Devices</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Terminate all active sessions</p>
                         </div>
                         <Button variant="outline" className="border-rose-500/20 text-rose-400 hover:bg-rose-500/10 text-[10px] font-black uppercase tracking-widest h-12 px-8 rounded-xl" onClick={logout}>
                             Sign Out Everywhere

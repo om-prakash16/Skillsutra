@@ -231,7 +231,7 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
                 
                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10">
                     {formData.experience.map((exp: any) => (
-                        <div key={exp.id} className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-4 relative group">
+                        <div key={exp.id} className="p-4 rounded-xl border border-border/50 bg-muted/30 space-y-4 relative group">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase">Company</Label>
@@ -239,7 +239,7 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
                                         value={exp.company}
                                         onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
                                         placeholder="e.g. DeFi Labs" 
-                                        className="bg-background/50 h-9 border-white/5" 
+                                        className="bg-background/50 h-9 border-border/50" 
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -248,7 +248,7 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
                                         value={exp.role}
                                         onChange={(e) => updateExperience(exp.id, 'role', e.target.value)}
                                         placeholder="e.g. Senior Dev" 
-                                        className="bg-background/50 h-9 border-white/5" 
+                                        className="bg-background/50 h-9 border-border/50" 
                                     />
                                 </div>
                             </div>
@@ -257,26 +257,26 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
                                     value={exp.type}
                                     onChange={(e) => updateExperience(exp.id, 'type', e.target.value)}
                                     placeholder="Type" 
-                                    className="bg-background/50 h-8 text-xs border-white/5" 
+                                    className="bg-background/50 h-8 text-xs border-border/50" 
                                 />
                                 <Input 
                                     value={exp.startDate}
                                     onChange={(e) => updateExperience(exp.id, 'startDate', e.target.value)}
                                     placeholder="Start" 
-                                    className="bg-background/50 h-8 text-xs border-white/5" 
+                                    className="bg-background/50 h-8 text-xs border-border/50" 
                                 />
                                 <Input 
                                     value={exp.endDate}
                                     onChange={(e) => updateExperience(exp.id, 'endDate', e.target.value)}
                                     placeholder="End" 
-                                    className="bg-background/50 h-8 text-xs border-white/5" 
+                                    className="bg-background/50 h-8 text-xs border-border/50" 
                                 />
                             </div>
                             <Textarea 
                                 value={exp.description}
                                 onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
                                 placeholder="Key achievements..." 
-                                className="bg-background/50 text-xs h-20 border-white/5" 
+                                className="bg-background/50 text-xs h-20 border-border/50" 
                             />
                             <Button 
                                 variant="ghost" 
@@ -311,7 +311,7 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
                 
                 <div className="space-y-4">
                     {formData.education.map((edu: any) => (
-                        <div key={edu.id} className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-4 relative group">
+                        <div key={edu.id} className="p-4 rounded-xl border border-border/50 bg-muted/30 space-y-4 relative group">
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
                                     <Label className="text-[10px] uppercase">Institution</Label>
@@ -319,7 +319,7 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
                                         value={edu.institution}
                                         onChange={(e) => updateEducation(edu.id, 'institution', e.target.value)}
                                         placeholder="University of X" 
-                                        className="bg-background/50 h-9 border-white/5" 
+                                        className="bg-background/50 h-9 border-border/50" 
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -328,7 +328,7 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
                                         value={edu.degree}
                                         onChange={(e) => updateEducation(edu.id, 'degree', e.target.value)}
                                         placeholder="BSc Computer Science" 
-                                        className="bg-background/50 h-9 border-white/5" 
+                                        className="bg-background/50 h-9 border-border/50" 
                                     />
                                 </div>
                             </div>
@@ -337,13 +337,13 @@ export function DynamicProfileForm({ initialData }: DynamicProfileFormProps) {
                                     value={edu.year}
                                     onChange={(e) => updateEducation(edu.id, 'year', e.target.value)}
                                     placeholder="Year" 
-                                    className="bg-background/50 h-8 text-xs border-white/5" 
+                                    className="bg-background/50 h-8 text-xs border-border/50" 
                                 />
                                 <Input 
                                     value={edu.grade}
                                     onChange={(e) => updateEducation(edu.id, 'grade', e.target.value)}
                                     placeholder="Grade/GPA" 
-                                    className="bg-background/50 h-8 text-xs border-white/5" 
+                                    className="bg-background/50 h-8 text-xs border-border/50" 
                                 />
                             </div>
                             <Button 

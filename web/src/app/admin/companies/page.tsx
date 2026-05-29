@@ -97,14 +97,14 @@ export default function CompanyModeration() {
     <div className="space-y-12 pb-20 animate-in fade-in duration-700">
       
       {/* Header Array */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border/50 pb-10">
         <div className="space-y-3">
             <div className="flex items-center gap-3">
                 <Badge variant="outline" className="border-indigo-500/30 text-indigo-500 bg-indigo-500/5 px-4 font-black tracking-widest text-[9px] uppercase italic">
                   Partner Network Authority
                 </Badge>
             </div>
-            <h1 className="text-5xl md:text-6xl font-black font-heading tracking-tighter text-white uppercase italic flex items-center gap-6">
+            <h1 className="text-5xl md:text-6xl font-black font-heading tracking-tighter text-foreground uppercase italic flex items-center gap-6">
               Partner <span className="text-indigo-500">Nodes</span> 
               <Building2 className="w-12 h-12 text-indigo-500 animate-pulse" />
             </h1>
@@ -112,29 +112,29 @@ export default function CompanyModeration() {
               Heuristic oversight of corporate entities. Moderate verification tiers, manage data silos, and govern organizational lifecycles on the Best Hiring Tool network.
             </p>
         </div>
-        <Button className="h-16 px-10 bg-white text-black hover:bg-neutral-200 font-black tracking-tighter uppercase transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-white/5">
+        <Button className="h-16 px-10 bg-white text-primary-foreground hover:bg-neutral-200 font-black tracking-tighter uppercase transition-transform hover:scale-105 active:scale-95 shadow-xl shadow-white/5">
             <Plus className="w-5 h-5 mr-3" /> Provision Node
         </Button>
       </div>
 
       {/* Filter Matrix (Section 4) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white/5 border-white/10 backdrop-blur-xl md:col-span-3">
+          <Card className="bg-muted/50 border-border backdrop-blur-xl md:col-span-3">
               <CardContent className="p-3 px-6 flex items-center gap-4">
-                  <Search className="w-5 h-5 text-white/20" />
+                  <Search className="w-5 h-5 text-muted-foreground/50" />
                   <Input 
                     placeholder="Search by company name, sector, or ID..." 
-                    className="bg-transparent border-none text-lg focus-visible:ring-0 placeholder:text-white/20 h-12"
+                    className="bg-transparent border-none text-lg focus-visible:ring-0 placeholder:text-muted-foreground/50 h-12"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                   />
-                  <div className="h-8 w-px bg-white/10 mx-2" />
-                  <Filter className="w-5 h-5 text-white/20" />
+                  <div className="h-8 w-px bg-muted/50 mx-2" />
+                  <Filter className="w-5 h-5 text-muted-foreground/50" />
                   <Select value={tierFilter} onValueChange={setTierFilter}>
-                      <SelectTrigger className="w-48 bg-transparent border-none focus:ring-0 text-white font-black uppercase tracking-widest text-[10px]">
+                      <SelectTrigger className="w-48 bg-transparent border-none focus:ring-0 text-foreground font-black uppercase tracking-widest text-[10px]">
                           <SelectValue placeholder="All Tiers" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-950 border-white/10 text-white">
+                      <SelectContent className="bg-slate-950 border-border text-foreground">
                           <SelectItem value="all">ALL TIERS</SelectItem>
                           <SelectItem value="premium">PREMIUM (LVL 3)</SelectItem>
                           <SelectItem value="advanced">ADVANCED (LVL 2)</SelectItem>
@@ -144,15 +144,15 @@ export default function CompanyModeration() {
                   </Select>
               </CardContent>
           </Card>
-          <div className="flex items-center justify-center bg-white/5 border border-white/10 rounded-2xl md:col-span-1 border-t-indigo-500/20">
-              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/40 italic">Active Nodes:</span>
+          <div className="flex items-center justify-center bg-muted/50 border border-border rounded-2xl md:col-span-1 border-t-indigo-500/20">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground italic">Active Nodes:</span>
               <span className="text-2xl font-black text-indigo-500 ml-4 font-mono">{filteredCompanies.length}</span>
           </div>
       </div>
 
-      <Card className="bg-white/5 border-white/10 backdrop-blur-xl shadow-2xl relative overflow-hidden group border-t-indigo-500/30 border-t-2">
+      <Card className="bg-muted/50 border-border backdrop-blur-xl shadow-2xl relative overflow-hidden group border-t-indigo-500/30 border-t-2">
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/5 blur-[120px] rounded-full pointer-events-none" />
-        <CardHeader className="relative z-10 border-b border-white/10 bg-black/40 py-6">
+        <CardHeader className="relative z-10 border-b border-border bg-background/80 py-6">
             <div className="flex justify-between items-center">
                 <CardTitle className="text-xl flex items-center gap-3 uppercase font-black italic tracking-widest leading-none">
                     <Verified className="w-6 h-6 text-indigo-500" /> Organizational Ledger
@@ -165,8 +165,8 @@ export default function CompanyModeration() {
         </CardHeader>
         <CardContent className="p-0 relative z-10 overflow-hidden bg-black/30">
           <Table>
-            <TableHeader className="bg-white/[0.02] border-b border-white/5">
-              <TableRow className="border-b border-white/5 hover:bg-transparent uppercase font-black text-[10px] tracking-widest">
+            <TableHeader className="bg-muted/30 border-b border-border/50">
+              <TableRow className="border-b border-border/50 hover:bg-transparent uppercase font-black text-[10px] tracking-widest">
                 <TableHead className="px-8 h-12">Entity Identity</TableHead>
                 <TableHead className="h-12">Provincance Tier</TableHead>
                 <TableHead className="h-12">Market Resonance (Jobs)</TableHead>
@@ -179,12 +179,12 @@ export default function CompanyModeration() {
                 <TableRow>
                   <TableCell colSpan={4} className="text-center p-32">
                       <Loader2 className="w-12 h-12 animate-spin mx-auto text-indigo-500 opacity-50" />
-                      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 mt-8 italic">Decrypting Corporate Matrix...</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/50 mt-8 italic">Decrypting Corporate Matrix...</p>
                   </TableCell>
                 </TableRow>
               ) : filteredCompanies.length === 0 ? (
                 <TableRow>
-                    <TableCell colSpan={4} className="text-center p-32 text-white/10 italic font-black uppercase tracking-widest text-xs">
+                    <TableCell colSpan={4} className="text-center p-32 text-muted-foreground/30 italic font-black uppercase tracking-widest text-xs">
                         No partner signals detected in current filter trajectory.
                     </TableCell>
                 </TableRow>
@@ -194,19 +194,19 @@ export default function CompanyModeration() {
                     initial={{ opacity: 0, x: -10 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="border-b border-white/5 hover:bg-white/[0.04] transition-colors group/row"
+                    className="border-b border-border/50 hover:bg-muted/40 transition-colors group/row"
                 >
                   <TableCell className="px-8 py-6">
                       <div className="flex items-center gap-5">
-                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-white/10 shadow-inner group-hover/row:scale-105 transition-transform font-black text-indigo-400">
+                          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 flex items-center justify-center border border-border shadow-inner group-hover/row:scale-105 transition-transform font-black text-indigo-400">
                              {company.name?.[0] || 'E'}
                           </div>
                           <div className="flex flex-col gap-1">
-                              <span className="font-bold text-white tracking-tight">{company.name || 'ANON_ENTITY'}</span>
+                              <span className="font-bold text-foreground tracking-tight">{company.name || 'ANON_ENTITY'}</span>
                               <div className="flex items-center gap-2">
-                                  <span className="text-[9px] font-black uppercase tracking-widest text-white/20 italic">{company.industry || 'PRIVATE_SECTOR'}</span>
+                                  <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 italic">{company.industry || 'PRIVATE_SECTOR'}</span>
                                   {company.website && (
-                                       <a href={company.website} target="_blank" className="p-1 rounded text-white/10 hover:text-indigo-400 transition-colors">
+                                       <a href={company.website} target="_blank" className="p-1 rounded text-muted-foreground/30 hover:text-indigo-400 transition-colors">
                                            <Globe className="w-3 h-3" />
                                        </a>
                                   )}
@@ -218,7 +218,7 @@ export default function CompanyModeration() {
                     <Badge variant="outline" className={`text-[9px] font-black uppercase tracking-widest px-3 py-1.5 border-t-2 ${
                         company.verification_tier === 'premium' ? 'border-amber-500/40 text-amber-500 bg-amber-500/10' :
                         company.verification_tier === 'advanced' ? 'border-indigo-400/40 text-indigo-400 bg-indigo-400/10' :
-                        'border-white/10 text-white/30 bg-white/5'
+                        'border-border text-muted-foreground bg-muted/50'
                     }`}>
                         {company.verification_tier === 'premium' ? <Crown className="w-3 h-3 mr-2" /> : <ShieldCheck className="w-3 h-3 mr-2" />}
                         {company.verification_tier || 'BASIC_TIER'}
@@ -226,24 +226,24 @@ export default function CompanyModeration() {
                   </TableCell>
                   <TableCell>
                      <div className="flex items-center gap-3">
-                         <div className="h-1.5 w-16 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                         <div className="h-1.5 w-16 bg-muted/50 rounded-full overflow-hidden border border-border/50">
                              <div className="h-full bg-indigo-500 shadow-[0_0_10px_rgba(99,102,241,0.5)]" style={{ width: '65%' }} />
                          </div>
-                         <span className="font-mono text-[10px] text-white/40 italic">HIGH_LOAD</span>
+                         <span className="font-mono text-[10px] text-muted-foreground italic">HIGH_LOAD</span>
                      </div>
                   </TableCell>
                   <TableCell className="text-right px-8">
                     <div className="flex items-center justify-end gap-3">
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-10 w-10 text-white/30 hover:text-white hover:bg-white/10 border border-white/5">
+                                <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-muted/50 border border-border/50">
                                     <MoreVertical className="w-5 h-5" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-slate-950 border-white/10 text-white w-64 p-2 rounded-2xl shadow-2xl">
-                                <DropdownMenuLabel className="text-[10px] uppercase font-black text-white/40 tracking-widest p-2">Escalate Provinance</DropdownMenuLabel>
+                            <DropdownMenuContent className="bg-slate-950 border-border text-foreground w-64 p-2 rounded-2xl shadow-2xl">
+                                <DropdownMenuLabel className="text-[10px] uppercase font-black text-muted-foreground tracking-widest p-2">Escalate Provinance</DropdownMenuLabel>
                                 <DropdownMenuItem className="focus:bg-rose-500/20 rounded-xl cursor-pointer py-3" onClick={() => handleUpdateTier(company.id, 'basic')}>
-                                    <ShieldCheck className="w-4 h-4 mr-3 text-white/40" /> Basic Verification (L1)
+                                    <ShieldCheck className="w-4 h-4 mr-3 text-muted-foreground" /> Basic Verification (L1)
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="focus:bg-indigo-500/20 rounded-xl cursor-pointer py-3" onClick={() => handleUpdateTier(company.id, 'advanced')}>
                                     <ShieldCheck className="w-4 h-4 mr-3 text-indigo-400" /> Advanced Status (L2)
@@ -251,10 +251,10 @@ export default function CompanyModeration() {
                                 <DropdownMenuItem className="focus:bg-amber-500/20 rounded-xl cursor-pointer py-3" onClick={() => handleUpdateTier(company.id, 'premium')}>
                                     <Crown className="w-4 h-4 mr-3 text-amber-500" /> Premium Enterprise (L3)
                                 </DropdownMenuItem>
-                                <DropdownMenuSeparator className="bg-white/5" />
+                                <DropdownMenuSeparator className="bg-muted/50" />
                                 <DropdownMenuLabel className="text-[10px] uppercase font-black text-rose-500/60 tracking-widest p-2">Terminiate Authority</DropdownMenuLabel>
                                 <DropdownMenuItem className="focus:bg-rose-500 rounded-xl cursor-pointer py-3 font-bold group" onClick={() => handleDelete(company.id)}>
-                                    <Trash2 className="w-4 h-4 mr-3 group-hover:text-white text-rose-500" /> 
+                                    <Trash2 className="w-4 h-4 mr-3 group-hover:text-foreground text-rose-500" /> 
                                     {isDeleting === company.id ? "Purging Grid..." : "Execute Purge Protocol"}
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
@@ -281,7 +281,7 @@ export default function CompanyModeration() {
               <h3 className="text-2xl font-black italic uppercase text-indigo-400">Restricted Entity Access</h3>
               <p className="text-sm text-indigo-300/60 font-medium italic max-w-2xl">All organization nodes must maintain a positive resonance score. Suspended entities lose immediate access to the hiring mesh and their listings are programmatically hidden from candidates.</p>
           </div>
-          <Button className="bg-indigo-600 hover:bg-indigo-500 text-white font-black tracking-[0.2em] uppercase px-12 h-20 rounded-[2rem] shadow-2xl shadow-indigo-500/20 active:scale-95 transition-all text-xs border-t border-white/20">
+          <Button className="bg-indigo-600 hover:bg-indigo-500 text-foreground font-black tracking-[0.2em] uppercase px-12 h-20 rounded-[2rem] shadow-2xl shadow-indigo-500/20 active:scale-95 transition-all text-xs border-t border-border">
               Generate Partner Report
           </Button>
       </div>

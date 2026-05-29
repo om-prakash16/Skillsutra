@@ -51,7 +51,7 @@ export default function JobDetails() {
   };
 
   if (isLoading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="w-12 h-12 animate-spin text-primary" /></div>;
-  if (!job) return <div className="min-h-screen flex items-center justify-center text-white">Job not found.</div>;
+  if (!job) return <div className="min-h-screen flex items-center justify-center text-foreground">Job not found.</div>;
 
   return (
     <div className="min-h-screen py-24 pb-12 px-6 relative overflow-hidden">
@@ -75,14 +75,14 @@ export default function JobDetails() {
                 </div>
             </div>
 
-            <Card className="glass w-full md:w-96 rounded-[2rem] border-white/10 shadow-2xl overflow-hidden group">
+            <Card className="glass w-full md:w-96 rounded-[2rem] border-border shadow-2xl overflow-hidden group">
                 <CardContent className="p-8 space-y-8">
                     <div className="flex justify-between items-center text-center">
                         <div className="space-y-2">
                            <p className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-[0.3em] leading-none">AI Match</p>
                            <p className="text-4xl font-black text-emerald-500 italic">88%</p>
                         </div>
-                        <div className="h-12 w-[1px] bg-white/10" />
+                        <div className="h-12 w-[1px] bg-muted/50" />
                         <div className="space-y-2">
                            <p className="text-[10px] font-black text-muted-foreground/50 uppercase tracking-[0.3em] leading-none">Reputation</p>
                            <p className="text-4xl font-black text-primary italic">742</p>
@@ -106,7 +106,7 @@ export default function JobDetails() {
             </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 pt-16 items-start border-t border-white/5">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 pt-16 items-start border-t border-border/50">
             <div className="lg:col-span-2 space-y-16">
                 <div className="space-y-6">
                     <h2 className="text-3xl font-black font-heading tracking-tight flex items-center gap-3">
@@ -127,7 +127,7 @@ export default function JobDetails() {
                     </h2>
                     <div className="flex flex-wrap gap-3">
                         {job.skills_required.map((skill: string) => (
-                            <Badge key={skill} className="glass border-white/5 text-muted-foreground py-3 px-6 text-xs font-black uppercase tracking-widest rounded-xl hover:text-white transition-colors">
+                            <Badge key={skill} className="glass border-border/50 text-muted-foreground py-3 px-6 text-xs font-black uppercase tracking-widest rounded-xl hover:text-foreground transition-colors">
                                 {skill}
                             </Badge>
                         ))}
@@ -136,7 +136,7 @@ export default function JobDetails() {
             </div>
 
             <div className="space-y-8">
-                <Card className="glass rounded-3xl border-white/5">
+                <Card className="glass rounded-3xl border-border/50">
                     <CardHeader className="pb-4">
                         <CardTitle className="text-lg font-black uppercase tracking-[0.2em] opacity-40">Verification Logic</CardTitle>
                     </CardHeader>

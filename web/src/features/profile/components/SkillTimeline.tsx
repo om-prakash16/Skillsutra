@@ -97,10 +97,10 @@ export function SkillTimeline({ events = defaultEvents, className }: SkillTimeli
                                 colors[event.type]
                             )}>
                                 <div className="flex items-center justify-between mb-4">
-                                    <div className="text-xs font-black uppercase tracking-[0.3em] text-white/40 font-mono">
+                                    <div className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground font-mono">
                                         {event.year}
                                     </div>
-                                    <div className="bg-white/10 p-2 rounded-lg group-hover:rotate-12 transition-transform">
+                                    <div className="bg-muted/50 p-2 rounded-lg group-hover:rotate-12 transition-transform">
                                         {icons[event.type]}
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@ export function SkillTimeline({ events = defaultEvents, className }: SkillTimeli
                                 {event.tech && (
                                     <div className="flex flex-wrap gap-2">
                                         {event.tech.map(t => (
-                                            <span key={t} className="px-2 py-0.5 text-[10px] rounded bg-white/5 border border-white/10 text-white/60">
+                                            <span key={t} className="px-2 py-0.5 text-[10px] rounded bg-muted/50 border border-border text-foreground/80">
                                                 {t}
                                             </span>
                                         ))}

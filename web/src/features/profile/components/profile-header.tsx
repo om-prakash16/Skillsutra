@@ -7,17 +7,49 @@ import { MapPin, Globe2, Mail, Phone, Calendar } from 'lucide-react';
 
 export function ProfileHeader({ user, isEditing, onUpdateAvatar, action }: any) {
   return (
-    <div className="relative p-10 glass border-white/5 rounded-[3rem] overflow-hidden group">
+    <div className="relative p-10 glass border-border/50 rounded-[3rem] overflow-hidden group">
       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50" />
       
       <div className="flex flex-col md:flex-row gap-12 md:gap-16 items-start md:items-center relative z-10">
-        <div className="relative">
-            <div className="absolute -inset-4 bg-primary/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        <div className="relative group/avatar">
+            <div className="absolute -inset-4 bg-primary/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
             <Avatar className="w-40 h-40 border-8 border-background/50 shadow-2xl relative z-10">
               <AvatarImage src={user.avatar} className="object-cover" />
               <AvatarFallback className="glass bg-primary/10 text-primary font-black text-4xl">{user.firstName[0]}{user.lastName[0]}</AvatarFallback>
             </Avatar>
-            <div className="absolute -bottom-2 -right-2 w-12 h-12 glass rounded-full flex items-center justify-center border-white/10 shadow-xl z-20">
+            {isEditing && (
+                <label className="absolute inset-0 z-30 flex items-center justify-center bg-black/60 rounded-full opacity-0 group-hover/avatar:opacity-100 cursor-pointer transition-opacity backdrop-blur-sm border-8 border-transparent">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground/90">Change</span>
+                    <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={async (e) => {
+                            const file = e.target.files?.[0];
+                            if (!file) return;
+                            const formData = new FormData();
+                            formData.append("file", file);
+                            
+                            // To avoid making this a huge change, we can temporarily set it to a local object URL 
+                            // for instant preview, and theoretically call upload endpoint.
+                            // In a real app, we'd wait for uploadFile to return the URL.
+                            const tempUrl = URL.createObjectURL(file);
+                            onUpdateAvatar?.(tempUrl);
+                            
+                            try {
+                                const { userApi } = await import("@/lib/api/user-api");
+                                const res = await userApi.profile.uploadFile(formData);
+                                if (res && res.url) {
+                                    onUpdateAvatar?.(res.url);
+                                }
+                            } catch (err) {
+                                console.error("Upload failed", err);
+                            }
+                        }} 
+                    />
+                </label>
+            )}
+            <div className="absolute -bottom-2 -right-2 w-12 h-12 glass rounded-full flex items-center justify-center border-border shadow-xl z-20 pointer-events-none">
                 <div className="w-4 h-4 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
             </div>
         </div>
@@ -48,7 +80,7 @@ export function ProfileHeader({ user, isEditing, onUpdateAvatar, action }: any) 
                  <span className="opacity-40">Profile Signal Strength</span>
                  <span className="text-primary">{user.completion}%</span>
               </div>
-              <div className="relative h-2 w-full glass rounded-full border-white/5 overflow-hidden">
+              <div className="relative h-2 w-full glass rounded-full border-border/50 overflow-hidden">
                 <div 
                     className="absolute top-0 left-0 h-full bg-gradient-to-r from-primary/50 to-primary shadow-[0_0_15px_hsl(var(--primary)/0.5)] transition-all duration-1000 ease-out" 
                     style={{ width: `${user.completion}%` }} 

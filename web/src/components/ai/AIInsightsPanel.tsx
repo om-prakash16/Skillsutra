@@ -16,7 +16,7 @@ interface AIInsightsProps {
 export function AIInsightsPanel({ data, isLoading }: AIInsightsProps) {
   if (isLoading) {
     return (
-      <Card className="bg-white/5 border-white/10 backdrop-blur-md animate-pulse">
+      <Card className="bg-muted/50 border-border backdrop-blur-md animate-pulse">
         <CardContent className="h-[300px] flex items-center justify-center">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </CardContent>
@@ -27,7 +27,7 @@ export function AIInsightsPanel({ data, isLoading }: AIInsightsProps) {
   if (!data) return null;
 
   return (
-    <Card className="bg-white/5 border-white/10 backdrop-blur-md overflow-hidden relative group transition-all duration-500 hover:border-primary/30">
+    <Card className="bg-muted/50 border-border backdrop-blur-md overflow-hidden relative group transition-all duration-500 hover:border-primary/30">
       <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
         <Brain className="w-24 h-24 text-primary" />
       </div>
@@ -75,7 +75,7 @@ export function AIInsightsPanel({ data, isLoading }: AIInsightsProps) {
             </h4>
             <ul className="space-y-2">
                 {data.recommendations.map((r, i) => (
-                    <li key={i} className="text-sm text-neutral-400 pl-4 border-l-2 border-white/10 hover:border-amber-500/50 transition-colors">
+                    <li key={i} className="text-sm text-neutral-400 pl-4 border-l-2 border-border hover:border-amber-500/50 transition-colors">
                         {r}
                     </li>
                 ))}

@@ -47,7 +47,7 @@ export function FinalCTA() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, margin: "-100px" }}
                     transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-                    className="glass border border-white/5 rounded-[3rem] p-12 md:p-24 shadow-premium relative overflow-hidden group/cta transition-all duration-700 hover:border-primary/20 hover:-translate-y-1"
+                    className="glass border border-border/50 rounded-[3rem] p-12 md:p-24 shadow-premium relative overflow-hidden group/cta transition-all duration-700 hover:border-primary/20 hover:-translate-y-1"
                 >
                     {/* Hover Glow Ring Background */}
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-secondary/5 to-primary/5 opacity-0 group-hover/cta:opacity-100 transition-opacity duration-700 -z-10" />
@@ -85,7 +85,7 @@ export function FinalCTA() {
                             </div>
                         </div>
                         
-                        <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight max-w-3xl mx-auto">
+                        <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground leading-tight max-w-3xl mx-auto">
                             {getVal('cta', 'title_part1', 'Ready to')} <span className="text-primary italic font-black bg-gradient-to-r from-emerald-400 to-indigo-400 bg-clip-text text-transparent">{getVal('cta', 'title_part2', 'Modernize')}</span> {getVal('cta', 'title_part3', 'Your Hiring?')}
                         </h2>
                         
@@ -100,7 +100,7 @@ export function FinalCTA() {
                                 </Button>
                             </Link>
                             <Link href="/pricing" className="w-full sm:w-auto">
-                                <Button variant="outline" className="w-full sm:w-auto h-14 px-10 text-micro font-bold rounded-2xl border-white/10 hover:border-primary/50 hover:bg-white/5 transition-all active-click">
+                                <Button variant="outline" className="w-full sm:w-auto h-14 px-10 text-micro font-bold rounded-2xl border-border hover:border-primary/50 hover:bg-muted/50 transition-all active-click">
                                     View Pricing
                                 </Button>
                             </Link>

@@ -55,7 +55,7 @@ export function CareerSimulator() {
     };
 
     return (
-        <div className="relative p-8 rounded-3xl bg-black/40 border border-white/10 backdrop-blur-2xl overflow-hidden min-h-[450px] flex flex-col">
+        <div className="relative p-8 rounded-3xl bg-background/80 border border-border backdrop-blur-2xl overflow-hidden min-h-[450px] flex flex-col">
             {/* Background Animation */}
             <div className="absolute inset-0 z-0 opacity-20">
                 <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-primary/20 blur-[100px] rounded-full animate-pulse" />
@@ -68,14 +68,14 @@ export function CareerSimulator() {
                         <div className="flex items-center gap-2 text-primary text-xs font-black uppercase tracking-widest">
                             <Cpu className="w-4 h-4" /> Neural Predictor v4.0
                         </div>
-                        <h2 className="text-2xl font-black text-white">Career Path Simulator</h2>
+                        <h2 className="text-2xl font-black text-foreground">Career Path Simulator</h2>
                     </div>
                     <Button 
                         size="sm" 
                         variant="outline" 
                         onClick={handleRunSimulation}
                         disabled={simulating}
-                        className="bg-white/5 border-white/10 text-xs font-bold uppercase tracking-widest hover:bg-primary hover:text-white transition-all scale-90"
+                        className="bg-muted/50 border-border text-xs font-bold uppercase tracking-widest hover:bg-primary hover:text-foreground transition-all scale-90"
                     >
                         {simulating ? 'Processing Neural Data...' : 'Rerun Simulation'}
                     </Button>
@@ -91,18 +91,18 @@ export function CareerSimulator() {
                                     "p-4 rounded-xl border transition-all duration-500 flex items-center gap-4 cursor-pointer",
                                     activeIndex === idx 
                                         ? "bg-primary/20 border-primary shadow-[0_0_20px_hsl(var(--primary)/0.2)] scale-105" 
-                                        : "bg-white/5 border-white/5 opacity-40 hover:opacity-100"
+                                        : "bg-muted/50 border-border/50 opacity-40 hover:opacity-100"
                                 )}
                                 onClick={() => setActiveIndex(idx)}
                             >
                                 <div className={cn(
                                     "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
-                                    activeIndex === idx ? "bg-primary text-white" : "bg-white/10"
+                                    activeIndex === idx ? "bg-primary text-foreground" : "bg-muted/50"
                                 )}>
                                     {idx === 0 ? <TrendingUp className="w-5 h-5" /> : idx === 1 ? <Target className="w-5 h-5" /> : <Sparkles className="w-5 h-5" />}
                                 </div>
                                 <div className="hidden lg:block">
-                                    <p className="text-[10px] uppercase font-black tracking-widest text-white/40">{ms.timeframe}</p>
+                                    <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">{ms.timeframe}</p>
                                     <p className="text-sm font-bold truncate">{ms.role}</p>
                                 </div>
                             </div>
@@ -117,7 +117,7 @@ export function CareerSimulator() {
                             animate={{ opacity: 1, scale: 1, x: 0 }}
                             exit={{ opacity: 0, scale: 0.95, x: -20 }}
                             transition={{ duration: 0.4 }}
-                            className="bg-white/5 rounded-2xl p-8 border border-white/10 flex flex-col justify-center relative group"
+                            className="bg-muted/50 rounded-2xl p-8 border border-border flex flex-col justify-center relative group"
                         >
                             {simulating ? (
                                 <div className="h-full w-full flex flex-col items-center justify-center gap-6">
@@ -128,7 +128,7 @@ export function CareerSimulator() {
                                         </div>
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-lg font-bold text-white mb-1">Synthesizing Skills...</p>
+                                        <p className="text-lg font-bold text-foreground mb-1">Synthesizing Skills...</p>
                                         <p className="text-xs text-muted-foreground uppercase font-black tracking-tighter">Matching profile against market velocity</p>
                                     </div>
                                 </div>
@@ -139,7 +139,7 @@ export function CareerSimulator() {
                                     <div className="space-y-6">
                                         <div className="space-y-1">
                                             <p className="text-xs font-black uppercase tracking-[0.2em] text-primary">{mockMilestones[activeIndex].timeframe} Horizon</p>
-                                            <h3 className="text-3xl font-black text-white">{mockMilestones[activeIndex].role}</h3>
+                                            <h3 className="text-3xl font-black text-foreground">{mockMilestones[activeIndex].role}</h3>
                                         </div>
 
                                         <p className="text-muted-foreground leading-relaxed">
@@ -148,10 +148,10 @@ export function CareerSimulator() {
 
                                         <div className="flex flex-col gap-3">
                                             <div className="flex items-center justify-between text-xs">
-                                                <span className="font-bold uppercase text-white/40">Probability Score</span>
+                                                <span className="font-bold uppercase text-muted-foreground">Probability Score</span>
                                                 <span className="font-black text-primary">{mockMilestones[activeIndex].probability}%</span>
                                             </div>
-                                            <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                                            <div className="h-2 w-full bg-muted/50 rounded-full overflow-hidden">
                                                 <motion.div 
                                                     initial={{ width: 0 }}
                                                     animate={{ width: `${mockMilestones[activeIndex].probability}%` }}
@@ -162,7 +162,7 @@ export function CareerSimulator() {
 
                                         <div className="p-4 rounded-xl bg-primary/10 border border-primary/20">
                                             <p className="text-[10px] uppercase font-black text-primary/60 mb-1">Critical Requirement</p>
-                                            <p className="text-sm font-bold text-white flex items-center gap-2">
+                                            <p className="text-sm font-bold text-foreground flex items-center gap-2">
                                                 <ArrowRight className="w-4 h-4" /> {mockMilestones[activeIndex].requirement}
                                             </p>
                                         </div>

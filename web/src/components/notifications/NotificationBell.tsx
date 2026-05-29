@@ -41,22 +41,22 @@ export function NotificationBell() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative hover:bg-white/5 rounded-full transition-colors">
+        <Button variant="ghost" size="icon" className="relative hover:bg-muted/50 rounded-full transition-colors">
           {unreadCount > 0 ? (
             <BellDot className="w-5 h-5 text-primary fill-primary/10" />
           ) : (
             <Bell className="w-5 h-5 text-neutral-400" />
           )}
           {unreadCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-primary text-black font-black text-[10px] rounded-full border-2 border-black">
+            <Badge className="absolute -top-1 -right-1 h-5 w-5 p-0 flex items-center justify-center bg-primary text-primary-foreground font-black text-[10px] rounded-full border-2 border-black">
               {unreadCount}
             </Badge>
           )}
         </Button>
       </DropdownMenuTrigger>
       
-      <DropdownMenuContent className="w-80 bg-black/90 border-white/10 backdrop-blur-2xl p-0 overflow-hidden" align="end">
-        <div className="p-4 border-b border-white/10 flex justify-between items-center">
+      <DropdownMenuContent className="w-80 bg-black/90 border-border backdrop-blur-2xl p-0 overflow-hidden" align="end">
+        <div className="p-4 border-b border-border flex justify-between items-center">
             <h3 className="text-xs font-black uppercase tracking-widest italic">Notifications</h3>
             <span className="text-[10px] font-bold text-neutral-500 uppercase">{unreadCount} Unread</span>
         </div>
@@ -70,14 +70,14 @@ export function NotificationBell() {
             notifications.map((notification) => (
               <div 
                 key={notification.id} 
-                className={`p-4 border-b border-white/5 flex gap-4 hover:bg-white/5 transition-colors cursor-pointer group ${notification.status === 'unread' ? 'bg-primary/5' : ''}`}
+                className={`p-4 border-b border-border/50 flex gap-4 hover:bg-muted/50 transition-colors cursor-pointer group ${notification.status === 'unread' ? 'bg-primary/5' : ''}`}
                 onClick={() => markAsRead(notification.id)}
               >
                 <div className={`mt-1 h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${getIconColor(notification.type)}`}>
                     {getNotificationIcon(notification.type)}
                 </div>
                 <div className="space-y-1 overflow-hidden">
-                    <p className={`text-xs font-bold truncate leading-none ${notification.status === 'unread' ? 'text-white' : 'text-neutral-400'}`}>
+                    <p className={`text-xs font-bold truncate leading-none ${notification.status === 'unread' ? 'text-foreground' : 'text-neutral-400'}`}>
                         {notification.title}
                     </p>
                     <p className="text-[10px] text-neutral-500 italic line-clamp-2 leading-relaxed">
@@ -97,8 +97,8 @@ export function NotificationBell() {
           )}
         </div>
         
-        <div className="p-3 bg-white/5 text-center">
-            <Button variant="link" className="text-[10px] font-black text-neutral-400 hover:text-white uppercase tracking-widest no-underline">
+        <div className="p-3 bg-muted/50 text-center">
+            <Button variant="link" className="text-[10px] font-black text-neutral-400 hover:text-foreground uppercase tracking-widest no-underline">
                 View All Notifications
             </Button>
         </div>
@@ -123,6 +123,6 @@ function getIconColor(type: string) {
         case 'nft_mint': return 'bg-primary/10 text-primary';
         case 'job_app': return 'bg-sky-500/10 text-sky-500';
         case 'admin': return 'bg-rose-500/10 text-rose-500';
-        default: return 'bg-white/5 text-neutral-400';
+        default: return 'bg-muted/50 text-neutral-400';
     }
 }

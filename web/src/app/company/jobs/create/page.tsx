@@ -164,7 +164,7 @@ export default function CreateJobPage() {
                                 const raw = window.prompt("Paste your raw Job Description text here. AI will extract title, skills, and details.");
                                 if (raw) handleMagicImport(raw);
                             }}
-                            className="bg-primary text-white hover:bg-primary/90 rounded-xl px-6 h-10 font-black tracking-widest text-[10px] gap-2"
+                            className="bg-primary text-foreground hover:bg-primary/90 rounded-xl px-6 h-10 font-black tracking-widest text-[10px] gap-2"
                         >
                             <Brain className="w-4 h-4" /> START MAGIC IMPORT
                         </Button>
@@ -306,7 +306,7 @@ export default function CreateJobPage() {
                                 )}
                             />
 
-                            <div className="space-y-4 pt-4 border-t border-white/5">
+                            <div className="space-y-4 pt-4 border-t border-border/50">
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-0.5">
                                         <h3 className="text-sm font-bold flex items-center gap-2 tracking-tight">
@@ -320,7 +320,7 @@ export default function CreateJobPage() {
                                         variant="outline"
                                         size="sm"
                                         onClick={() => append({ question_text: "", options: ["", "", "", ""], correct_option_index: 0, points: 10 })}
-                                        className="h-9 px-4 border-white/10 hover:bg-white/5 text-[10px] uppercase font-black tracking-widest gap-2"
+                                        className="h-9 px-4 border-border hover:bg-muted/50 text-[10px] uppercase font-black tracking-widest gap-2"
                                     >
                                         <Plus className="w-3 h-3" /> Add Challenge
                                     </Button>
@@ -329,7 +329,7 @@ export default function CreateJobPage() {
                                 {fields.length > 0 ? (
                                     <Accordion type="single" collapsible className="space-y-3">
                                         {fields.map((field, index) => (
-                                            <AccordionItem key={field.id} value={field.id} className="border border-white/10 rounded-xl px-4 bg-white/[0.02] overflow-hidden">
+                                            <AccordionItem key={field.id} value={field.id} className="border border-border rounded-xl px-4 bg-muted/30 overflow-hidden">
                                                 <div className="flex items-center gap-3 py-1">
                                                     <AccordionTrigger className="flex-1 hover:no-underline py-3">
                                                         <div className="flex items-center gap-3 text-left">
@@ -357,7 +357,7 @@ export default function CreateJobPage() {
                                                             <FormItem>
                                                                 <FormLabel className="text-[10px] uppercase tracking-widest text-muted-foreground font-black">The Question</FormLabel>
                                                                 <FormControl>
-                                                                    <Input placeholder="e.g. Which of the following is a key feature of Rust's ownership system?" {...field} className="bg-white/5" />
+                                                                    <Input placeholder="e.g. Which of the following is a key feature of Rust's ownership system?" {...field} className="bg-muted/50" />
                                                                 </FormControl>
                                                                 <FormMessage />
                                                             </FormItem>
@@ -380,7 +380,7 @@ export default function CreateJobPage() {
                                                                         </FormLabel>
                                                                         <div className="flex items-center gap-2">
                                                                             <FormControl>
-                                                                                <Input {...field} className={cn("bg-white/5", form.watch(`assessment_questions.${index}.correct_option_index`) === optIndex && "border-emerald-500/50 ring-1 ring-emerald-500/20")} />
+                                                                                <Input {...field} className={cn("bg-muted/50", form.watch(`assessment_questions.${index}.correct_option_index`) === optIndex && "border-emerald-500/50 ring-1 ring-emerald-500/20")} />
                                                                             </FormControl>
                                                                             <Button
                                                                                 type="button"
@@ -388,8 +388,8 @@ export default function CreateJobPage() {
                                                                                 size="icon"
                                                                                 onClick={() => form.setValue(`assessment_questions.${index}.correct_option_index`, optIndex)}
                                                                                 className={cn(
-                                                                                    "h-10 w-10 shrink-0 border border-white/5",
-                                                                                    form.watch(`assessment_questions.${index}.correct_option_index`) === optIndex ? "bg-emerald-500 text-white" : "hover:bg-white/5 text-muted-foreground"
+                                                                                    "h-10 w-10 shrink-0 border border-border/50",
+                                                                                    form.watch(`assessment_questions.${index}.correct_option_index`) === optIndex ? "bg-emerald-500 text-foreground" : "hover:bg-muted/50 text-muted-foreground"
                                                                                 )}
                                                                             >
                                                                                 {String.fromCharCode(65 + optIndex)}
@@ -406,8 +406,8 @@ export default function CreateJobPage() {
                                         ))}
                                     </Accordion>
                                 ) : (
-                                    <div className="border border-dashed border-white/10 rounded-2xl p-8 text-center bg-white/[0.01]">
-                                        <HelpCircle className="w-8 h-8 mx-auto mb-3 text-white/10" />
+                                    <div className="border border-dashed border-border rounded-2xl p-8 text-center bg-white/[0.01]">
+                                        <HelpCircle className="w-8 h-8 mx-auto mb-3 text-muted-foreground/30" />
                                         <p className="text-xs text-muted-foreground italic">No custom challenges added. Only AI-generated MCQs will be used.</p>
                                     </div>
                                 )}

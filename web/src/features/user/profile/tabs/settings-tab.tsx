@@ -50,8 +50,8 @@ export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
     }, [])
 
     return (
-        <Card className="glass border-white/5 rounded-[2rem] overflow-hidden shadow-2xl">
-            <CardHeader className="border-b border-white/5 pb-8 pt-8 px-10">
+        <Card className="glass border-border/50 rounded-[2rem] overflow-hidden shadow-2xl">
+            <CardHeader className="border-b border-border/50 pb-8 pt-8 px-10">
                 <CardTitle className="text-3xl font-black tracking-tighter text-gradient">Protocol Settings</CardTitle>
                 <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 pt-2">
                     Manage your platform preferences and visibility.
@@ -72,12 +72,12 @@ export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Your unique identifier on the network.</p>
                     </div>
                     <div className="flex w-full md:w-[320px] gap-2 items-center">
-                        <span className="text-white/40 text-xs font-bold shrink-0">skillsutra.com/</span>
+                        <span className="text-muted-foreground text-xs font-bold shrink-0">skillsutra.com/</span>
                         <Input 
                             value={usernameInput} 
                             onChange={(e) => setUsernameInput(e.target.value.toLowerCase())} 
                             placeholder="username"
-                            className="h-12 glass border-white/10 rounded-xl focus:ring-primary/20 text-xs font-bold"
+                            className="h-12 glass border-border rounded-xl focus:ring-primary/20 text-xs font-bold"
                         />
                         <Button 
                             onClick={handleClaimUsername} 
@@ -96,10 +96,10 @@ export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Control the exposure of your Matrix Profile.</p>
                     </div>
                     <Select defaultValue={data.settings.visibility.toLowerCase()} onValueChange={(val) => onUpdateSettings?.('visibility', val === "public" ? "Public" : "Private")}>
-                        <SelectTrigger className="w-full md:w-[220px] h-12 glass border-white/10 rounded-xl focus:ring-primary/20 text-xs font-black uppercase tracking-widest">
+                        <SelectTrigger className="w-full md:w-[220px] h-12 glass border-border rounded-xl focus:ring-primary/20 text-xs font-black uppercase tracking-widest">
                             <SelectValue placeholder="Select visibility" />
                         </SelectTrigger>
-                        <SelectContent className="glass border-white/10 rounded-xl">
+                        <SelectContent className="glass border-border rounded-xl">
                             <SelectItem value="public" className="text-xs font-bold uppercase tracking-widest focus:bg-primary/20">Public Node</SelectItem>
                             <SelectItem value="private" className="text-xs font-bold uppercase tracking-widest focus:bg-primary/20">Private Enclave</SelectItem>
                         </SelectContent>
@@ -115,10 +115,10 @@ export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
                         value={mounted ? theme : "system"}
                         onValueChange={setTheme}
                     >
-                        <SelectTrigger className="w-full md:w-[220px] h-12 glass border-white/10 rounded-xl focus:ring-primary/20 text-xs font-black uppercase tracking-widest">
+                        <SelectTrigger className="w-full md:w-[220px] h-12 glass border-border rounded-xl focus:ring-primary/20 text-xs font-black uppercase tracking-widest">
                             <SelectValue placeholder="Select theme" />
                         </SelectTrigger>
-                        <SelectContent className="glass border-white/10 rounded-xl">
+                        <SelectContent className="glass border-border rounded-xl">
                             <SelectItem value="light" className="text-xs font-bold uppercase tracking-widest focus:bg-primary/20">Light Energy</SelectItem>
                             <SelectItem value="dark" className="text-xs font-bold uppercase tracking-widest focus:bg-primary/20">Deep Space (Dark)</SelectItem>
                             <SelectItem value="system" className="text-xs font-bold uppercase tracking-widest focus:bg-primary/20">System Default</SelectItem>
@@ -126,9 +126,9 @@ export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
                     </Select>
                 </div>
             </CardContent>
-            <CardFooter className="border-t border-white/5 p-8 flex justify-between bg-white/[0.02]">
+            <CardFooter className="border-t border-border/50 p-8 flex justify-between bg-muted/30">
                 <Button variant="ghost" className="text-rose-500 hover:text-rose-400 hover:bg-rose-500/10 font-black uppercase text-[10px] tracking-widest h-12 px-6 rounded-xl transition-all">Deactivate Identity</Button>
-                <Button variant="outline" className="glass border-white/10 hover:border-white/20 font-black uppercase text-[10px] tracking-widest h-12 px-8 rounded-xl transition-all">Disconnect</Button>
+                <Button variant="outline" className="glass border-border hover:border-border font-black uppercase text-[10px] tracking-widest h-12 px-8 rounded-xl transition-all">Disconnect</Button>
             </CardFooter>
         </Card>
     )

@@ -125,7 +125,7 @@ export function HeroSection() {
   }, [terminalLogs, currentPrompt]);
 
   return (
-    <section className="relative min-h-[92vh] pt-24 pb-16 px-4 overflow-hidden bg-background flex flex-col justify-center border-b border-white/5">
+    <section className="relative min-h-[92vh] pt-24 pb-16 px-4 overflow-hidden bg-background flex flex-col justify-center border-b border-border/50">
       {/* Grid Overlay Mask */}
       <div 
         className="absolute inset-0 z-0 pointer-events-none opacity-[0.03] dark:opacity-[0.07]"
@@ -190,7 +190,7 @@ export function HeroSection() {
               </Button>
             </Link>
             <Link href="/verify" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto h-12.5 px-7 rounded-xl border-black/10 dark:border-white/10 text-micro font-bold uppercase tracking-widest hover:border-primary/50 transition-all active-click">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto h-12.5 px-7 rounded-xl border-black/10 dark:border-border text-micro font-bold uppercase tracking-widest hover:border-primary/50 transition-all active-click">
                 Verify My Skills
               </Button>
             </Link>
@@ -206,7 +206,7 @@ export function HeroSection() {
               <span className="text-foreground text-3xl font-extrabold tracking-tighter">4.9M+</span>
               <span>Identity Nodes</span>
             </div>
-            <div className="w-px h-10 bg-black/10 dark:bg-white/5" />
+            <div className="w-px h-10 bg-black/10 dark:bg-muted/50" />
             <div className="flex flex-col gap-1 items-start">
               <span className="text-foreground text-3xl font-extrabold tracking-tighter">12k+</span>
               <span>Talent Synchronized</span>
@@ -233,7 +233,7 @@ export function HeroSection() {
               rotateY: rotateY, 
               transformStyle: "preserve-3d" 
             }}
-            className="relative h-[440px] w-full rounded-[2rem] bg-[#0c0c14]/90 backdrop-blur-3xl border border-white/10 shadow-floating overflow-hidden flex flex-col transition-all duration-200 ease-out"
+            className="relative h-[440px] w-full rounded-[2rem] bg-[#0c0c14]/90 backdrop-blur-3xl border border-border shadow-floating overflow-hidden flex flex-col transition-all duration-200 ease-out"
           >
             {/* Monitor Screen Glass Glare overlay */}
             <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 pointer-events-none z-20" />
@@ -247,7 +247,7 @@ export function HeroSection() {
             />
 
             {/* Terminal Header */}
-            <div className="bg-white/5 border-b border-white/5 p-4.5 flex items-center justify-between z-10">
+            <div className="bg-muted/50 border-b border-border/50 p-4.5 flex items-center justify-between z-10">
               <div className="flex gap-2">
                 <div className="w-2.5 h-2.5 rounded-full bg-rose-500/60" />
                 <div className="w-2.5 h-2.5 rounded-full bg-amber-500/60" />
@@ -278,19 +278,19 @@ export function HeroSection() {
               ))}
               
               {/* Active command typing simulation */}
-              <div className="text-white flex items-center gap-1.5">
+              <div className="text-foreground flex items-center gap-1.5">
                 <span>{currentPrompt}</span>
                 {isTyping && <span className="w-2 h-4.5 bg-primary animate-pulse inline-block" />}
               </div>
             </div>
 
             {/* Terminal Footer Panel */}
-            <div className="p-4 border-t border-white/5 bg-white/[0.02] backdrop-blur-md flex items-center gap-4.5 z-10">
+            <div className="p-4 border-t border-border/50 bg-muted/30 backdrop-blur-md flex items-center gap-4.5 z-10">
               <div className="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
                 <RefreshCw className="w-4 h-4 text-primary animate-spin" style={{ animationDuration: '4s' }} />
               </div>
               <div>
-                <p className="text-xs font-bold text-white flex items-center gap-2">
+                <p className="text-xs font-bold text-foreground flex items-center gap-2">
                   Telemetry Synced
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 </p>

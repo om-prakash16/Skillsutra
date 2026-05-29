@@ -73,7 +73,7 @@ export default function AdminDashboard() {
                         <div className="p-3 bg-primary/10 rounded-2xl border border-primary/20 backdrop-blur-md shadow-lg shadow-primary/5">
                             <Activity className="w-6 h-6 text-primary" />
                         </div>
-                        <div className="h-10 w-px bg-white/10" />
+                        <div className="h-10 w-px bg-muted/50" />
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/70 mb-1">Nexus Command</p>
                             <h1 className="text-5xl font-black font-heading tracking-tighter text-foreground">
@@ -81,10 +81,10 @@ export default function AdminDashboard() {
                             </h1>
                         </div>
                     </div>
-                    <div className="flex items-center gap-3 text-muted-foreground bg-white/5 px-4 py-2 rounded-2xl border border-white/5 backdrop-blur-sm w-fit group cursor-default hover:border-primary/20 transition-colors">
+                    <div className="flex items-center gap-3 text-muted-foreground bg-muted/50 px-4 py-2 rounded-2xl border border-border/50 backdrop-blur-sm w-fit group cursor-default hover:border-primary/20 transition-colors">
                         <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
                         <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-500/80">System operational</span>
-                        <div className="h-3 w-px bg-white/10 mx-1" />
+                        <div className="h-3 w-px bg-muted/50 mx-1" />
                         <span className="text-[11px] font-bold text-muted-foreground/60">Node: 0xBest Hiring Tool.Alpha</span>
                     </div>
                 </motion.div>
@@ -95,11 +95,11 @@ export default function AdminDashboard() {
                     transition={{ duration: 0.6, delay: 0.2 }}
                     className="flex items-center gap-4"
                 >
-                    <Button variant="outline" className="bg-background/20 backdrop-blur-xl border-white/10 rounded-2xl px-8 h-14 hover:bg-white/5 shadow-xl transition-all duration-300 group">
+                    <Button variant="outline" className="bg-background/20 backdrop-blur-xl border-border rounded-2xl px-8 h-14 hover:bg-muted/50 shadow-xl transition-all duration-300 group">
                         <Globe className="w-5 h-5 mr-3 group-hover:rotate-180 transition-transform duration-1000" />
                         <span className="font-bold tracking-tight">Intelligence Logs</span>
                     </Button>
-                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl px-10 h-14 shadow-[0_15px_30px_-10px_hsl(var(--primary)/0.4)] border-t border-white/20 font-black tracking-tight text-lg group overflow-hidden relative">
+                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl px-10 h-14 shadow-[0_15px_30px_-10px_hsl(var(--primary)/0.4)] border-t border-border font-black tracking-tight text-lg group overflow-hidden relative">
                         <span className="relative z-10">Deploy Asset</span>
                         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/10 to-white/0 -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                     </Button>
@@ -114,7 +114,7 @@ export default function AdminDashboard() {
                 </div>
 
                 <div className="xl:col-span-2">
-                    <Card className="bg-background/20 backdrop-blur-2xl border-white/10 h-full relative group overflow-hidden flex flex-col shadow-2xl">
+                    <Card className="bg-background/20 backdrop-blur-2xl border-border h-full relative group overflow-hidden flex flex-col shadow-2xl">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-[60px] rounded-full pointer-events-none" />
                         
                         <CardHeader className="flex flex-row items-center justify-between pb-8 relative z-10">
@@ -141,7 +141,7 @@ export default function AdminDashboard() {
                                     className="flex gap-5 group/item cursor-default"
                                 >
                                     <div className="relative flex flex-col items-center">
-                                        <div className={`p-2.5 rounded-xl bg-white/5 border border-white/5 transition-all duration-500 group-hover/item:scale-110 shadow-lg group-hover/item:bg-primary/10 group-hover/item:border-primary/20`}>
+                                        <div className={`p-2.5 rounded-xl bg-muted/50 border border-border/50 transition-all duration-500 group-hover/item:scale-110 shadow-lg group-hover/item:bg-primary/10 group-hover/item:border-primary/20`}>
                                             <item.icon className={`w-4 h-4 ${item.color}`} />
                                         </div>
                                         {i < 3 && <div className="w-px h-full bg-gradient-to-b from-white/10 to-transparent mt-2" />}
@@ -166,11 +166,11 @@ export default function AdminDashboard() {
                 </div>
             </div>
 
-            <Card className="bg-background/20 backdrop-blur-3xl border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.4)] overflow-hidden relative group rounded-3xl">
+            <Card className="bg-background/20 backdrop-blur-3xl border-border shadow-[0_20px_50px_rgba(0,0,0,0.4)] overflow-hidden relative group rounded-3xl">
                 {/* Accent line at the top */}
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                 
-                <CardHeader className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0 p-8 border-b border-white/5 bg-white/2">
+                <CardHeader className="flex flex-col md:flex-row md:items-center justify-between space-y-4 md:space-y-0 p-8 border-b border-border/50 bg-white/2">
                     <div>
                         <div className="flex items-center gap-3 mb-1">
                             <Users className="w-5 h-5 text-primary" />
@@ -182,11 +182,11 @@ export default function AdminDashboard() {
                         <div className="relative group/search">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60 transition-colors group-hover/search:text-primary" />
                             <input 
-                                className="bg-white/5 border border-white/5 rounded-2xl py-3 pl-12 pr-6 text-sm w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-muted-foreground/30 shadow-inner" 
+                                className="bg-muted/50 border border-border/50 rounded-2xl py-3 pl-12 pr-6 text-sm w-full md:w-80 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold placeholder:text-muted-foreground/30 shadow-inner" 
                                 placeholder="Locate entity by name or hash..."
                             />
                         </div>
-                        <Button size="icon" variant="ghost" className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 shadow-lg">
+                        <Button size="icon" variant="ghost" className="h-12 w-12 rounded-2xl bg-muted/50 border border-border/50 hover:bg-muted/50 shadow-lg">
                             <MoreHorizontal className="w-5 h-5" />
                         </Button>
                     </div>
@@ -209,13 +209,13 @@ export default function AdminDashboard() {
                                     initial={{ opacity: 0, y: 10 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: 0.6 + (i * 0.08) }}
-                                    className="border-b border-white/5 hover:bg-primary/5 group/row transition-all duration-300"
+                                    className="border-b border-border/50 hover:bg-primary/5 group/row transition-all duration-300"
                                 >
                                     <TableCell className="py-7 pl-8 font-medium">
                                         <div className="flex items-center gap-4">
                                             <div className="relative group/avatar">
                                                 <div className="absolute inset-0 bg-primary/20 blur-md rounded-xl opacity-0 group-hover/avatar:opacity-100 transition-opacity" />
-                                                <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 border border-white/10 flex items-center justify-center font-black text-primary text-xl relative shadow-lg group-hover/row:rotate-3 transition-all duration-500">
+                                                <div className="h-12 w-12 rounded-2xl bg-gradient-to-br from-primary/30 to-primary/5 border border-border flex items-center justify-center font-black text-primary text-xl relative shadow-lg group-hover/row:rotate-3 transition-all duration-500">
                                                     {u.full_name?.charAt(0) || u.email.charAt(0).toUpperCase()}
                                                 </div>
                                             </div>
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
                                     <TableCell className="text-muted-foreground font-bold tracking-tight italic opacity-70 group-hover/row:opacity-100 transition-opacity">{u.email}</TableCell>
                                     <TableCell>
                                         <Badge variant="outline" className={cn(
-                                            "rounded-xl px-4 py-1.5 border border-white/5 shadow-xl transition-all duration-500 font-black text-[10px] uppercase tracking-widest",
+                                            "rounded-xl px-4 py-1.5 border border-border/50 shadow-xl transition-all duration-500 font-black text-[10px] uppercase tracking-widest",
                                             u.role === 'company' 
                                                 ? 'bg-blue-500/10 border-blue-500/20 text-blue-400 group-hover/row:bg-blue-500/20' 
                                                 : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 group-hover/row:bg-emerald-500/20'
@@ -240,7 +240,7 @@ export default function AdminDashboard() {
                                         {new Date(u.created_at).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
                                     </TableCell>
                                     <TableCell className="text-right pr-8">
-                                        <Button variant="ghost" size="sm" className="bg-white/5 border border-white/5 rounded-xl font-black text-xs group/btn hover:bg-primary hover:text-primary-foreground transition-all duration-300 h-11 px-6 shadow-lg">
+                                        <Button variant="ghost" size="sm" className="bg-muted/50 border border-border/50 rounded-xl font-black text-xs group/btn hover:bg-primary hover:text-primary-foreground transition-all duration-300 h-11 px-6 shadow-lg">
                                             MODIFY PROTOCOL
                                             <ArrowUpRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 group-hover/btn:-translate-y-1 transition-transform" />
                                         </Button>

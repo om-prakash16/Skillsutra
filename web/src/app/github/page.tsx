@@ -54,7 +54,7 @@ export default function GithubPage() {
         <div className="min-h-screen pt-28 pb-16 px-4 md:px-8 max-w-7xl mx-auto space-y-10 relative overflow-hidden">
             <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 blur-[180px] -z-10 rounded-full" />
             
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-white/5 pb-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-border/50 pb-8">
                 <div>
                     <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight flex items-center gap-3">
                         CONTRIBUTION HUB <Github className="w-8 h-8 text-primary" />
@@ -68,8 +68,8 @@ export default function GithubPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Profile Scanner */}
                 <div className="space-y-6">
-                    <div className="glass border-white/5 p-8 rounded-[2rem] space-y-6">
-                        <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                    <div className="glass border-border/50 p-8 rounded-[2rem] space-y-6">
+                        <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
                             <GitPullRequest className="w-5 h-5 text-primary" /> Footprint Scan
                         </h2>
                         
@@ -81,7 +81,7 @@ export default function GithubPage() {
                                         placeholder="octocat"
                                         value={handle}
                                         onChange={(e) => setHandle(e.target.value)}
-                                        className="flex-1 bg-black/45 border border-white/5 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                                        className="flex-1 bg-black/45 border border-border/50 rounded-xl px-4 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                                     />
                                     <Button 
                                         onClick={handleScan}
@@ -95,7 +95,7 @@ export default function GithubPage() {
                         </div>
 
                         {activity && (
-                            <div className="space-y-6 border-t border-white/5 pt-6 animate-fade-in">
+                            <div className="space-y-6 border-t border-border/50 pt-6 animate-fade-in">
                                 <div className="space-y-1 bg-primary/5 border border-primary/10 rounded-2xl p-4">
                                     <h4 className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-1.5">
                                         <Sparkles className="w-3.5 h-3.5" /> AI Profile Insight
@@ -104,13 +104,13 @@ export default function GithubPage() {
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
-                                    <div className="bg-white/5 border border-white/5 p-4 rounded-2xl">
+                                    <div className="bg-muted/50 border border-border/50 p-4 rounded-2xl">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50">Repositories</p>
-                                        <p className="text-2xl font-black text-white mt-1">{activity.total_repositories}</p>
+                                        <p className="text-2xl font-black text-foreground mt-1">{activity.total_repositories}</p>
                                     </div>
-                                    <div className="bg-white/5 border border-white/5 p-4 rounded-2xl">
+                                    <div className="bg-muted/50 border border-border/50 p-4 rounded-2xl">
                                         <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50">Stars Earned</p>
-                                        <p className="text-2xl font-black text-white mt-1">{activity.stars_earned}</p>
+                                        <p className="text-2xl font-black text-foreground mt-1">{activity.stars_earned}</p>
                                     </div>
                                 </div>
 
@@ -119,15 +119,15 @@ export default function GithubPage() {
                                     <div className="space-y-2 text-xs font-medium text-muted-foreground">
                                         <div className="flex justify-between">
                                             <span>Architectural Complexity:</span>
-                                            <span className="font-bold text-white">{activity.metrics?.architectural_complexity_handling}/100</span>
+                                            <span className="font-bold text-foreground">{activity.metrics?.architectural_complexity_handling}/100</span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span>Weekly Commit Velocity:</span>
-                                            <span className="font-bold text-white">{activity.metrics?.commit_velocity_weekly} Commits</span>
+                                            <span className="font-bold text-foreground">{activity.metrics?.commit_velocity_weekly} Commits</span>
                                         </div>
                                         <div className="flex justify-between">
                                             <span>Code Quality Index:</span>
-                                            <span className="font-bold text-white">{activity.metrics?.code_quality_index}/100</span>
+                                            <span className="font-bold text-foreground">{activity.metrics?.code_quality_index}/100</span>
                                         </div>
                                     </div>
                                 </div>
@@ -138,9 +138,9 @@ export default function GithubPage() {
 
                 {/* Issue Finder */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="glass border-white/5 p-8 rounded-[2rem] space-y-6">
+                    <div className="glass border-border/50 p-8 rounded-[2rem] space-y-6">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                            <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
                                 <Search className="w-5 h-5 text-primary" /> Open Source Discovery
                             </h2>
                             
@@ -148,7 +148,7 @@ export default function GithubPage() {
                                 <select 
                                     value={selectedLang}
                                     onChange={(e) => setSelectedLang(e.target.value)}
-                                    className="bg-black/45 border border-white/5 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none"
+                                    className="bg-black/45 border border-border/50 rounded-xl px-3 py-1.5 text-xs text-foreground focus:outline-none"
                                 >
                                     {languages.map(lang => (
                                         <option key={lang} value={lang}>{lang.toUpperCase()}</option>
@@ -165,16 +165,16 @@ export default function GithubPage() {
                         </div>
 
                         {issues.length === 0 ? (
-                            <div className="text-center py-24 border border-dashed border-white/5 rounded-[2rem] max-w-md mx-auto">
-                                <AlertCircle className="w-12 h-12 text-white/20 mx-auto mb-4" />
-                                <p className="text-[11px] font-black uppercase tracking-widest text-white/50">Browse OS Issues by Language.</p>
+                            <div className="text-center py-24 border border-dashed border-border/50 rounded-[2rem] max-w-md mx-auto">
+                                <AlertCircle className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
+                                <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">Browse OS Issues by Language.</p>
                             </div>
                         ) : (
                             <div className="space-y-4">
                                 {issues.map((issue, idx) => (
-                                    <div key={idx} className="bg-white/5 border border-white/5 p-5 rounded-2xl hover:border-primary/20 transition-all flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                                    <div key={idx} className="bg-muted/50 border border-border/50 p-5 rounded-2xl hover:border-primary/20 transition-all flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                                         <div className="space-y-1">
-                                            <h4 className="text-md font-bold text-white line-clamp-1">{issue.title}</h4>
+                                            <h4 className="text-md font-bold text-foreground line-clamp-1">{issue.title}</h4>
                                             <div className="flex flex-wrap gap-1.5 pt-1.5">
                                                 {issue.labels?.map((label: any, labelIdx: number) => (
                                                     <span 
@@ -188,7 +188,7 @@ export default function GithubPage() {
                                             </div>
                                         </div>
                                         <a href={issue.html_url} target="_blank" rel="noreferrer">
-                                            <Button variant="ghost" className="h-10 text-[10px] font-bold uppercase tracking-widest gap-1 border border-white/5 hover:bg-white/5">
+                                            <Button variant="ghost" className="h-10 text-[10px] font-bold uppercase tracking-widest gap-1 border border-border/50 hover:bg-muted/50">
                                                 CONTRIBUTE <ExternalLink className="w-3.5 h-3.5" />
                                             </Button>
                                         </a>

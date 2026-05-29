@@ -39,7 +39,7 @@ export function PlatformActivityChart() {
             transition={{ duration: 0.6 }}
             className="h-full"
         >
-            <Card className="h-full bg-background/30 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] group overflow-hidden relative">
+            <Card className="h-full bg-background/30 backdrop-blur-xl border border-border shadow-[0_8px_32px_0_rgba(0,0,0,0.36)] group overflow-hidden relative">
                 {/* Decorative background element */}
                 <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/10 blur-[100px] rounded-full group-hover:bg-primary/20 transition-all duration-700" />
                 
@@ -145,8 +145,8 @@ export function QuickStats({ stats }: { stats: any }) {
                     className="h-full"
                 >
                     <Card className={cn(
-                        "h-full relative overflow-hidden group border-white/5 bg-background/20 backdrop-blur-xl transition-all duration-500",
-                        "hover:border-white/20 hover:bg-background/30",
+                        "h-full relative overflow-hidden group border-border/50 bg-background/20 backdrop-blur-xl transition-all duration-500",
+                        "hover:border-border hover:bg-background/30",
                         card.glow
                     )}>
                         {/* Shimmer effect */}
@@ -155,7 +155,7 @@ export function QuickStats({ stats }: { stats: any }) {
                         <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
                             <CardTitle className="text-xs font-bold text-muted-foreground/70 uppercase tracking-[0.15em]">{card.title}</CardTitle>
                             <div className={cn(
-                                "p-2.5 rounded-xl transition-all duration-300 bg-white/5 border border-white/5 group-hover:border-white/10 group-hover:scale-110",
+                                "p-2.5 rounded-xl transition-all duration-300 bg-muted/50 border border-border/50 group-hover:border-border group-hover:scale-110",
                             )}>
                                 <card.icon className={cn("w-4 h-4", card.color)} />
                             </div>

@@ -148,7 +148,7 @@ export default function VerifyPage() {
             <div className="w-full max-w-7xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 relative z-10 px-4">
                 {/* 01. Resume Upload Card */}
                 <motion.div 
-                    className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] glass border-white/10 flex flex-col gap-6 relative overflow-hidden group shadow-2xl min-h-[400px] md:min-h-[520px]"
+                    className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] glass border-border flex flex-col gap-6 relative overflow-hidden group shadow-2xl min-h-[400px] md:min-h-[520px]"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.1 }}
@@ -163,7 +163,7 @@ export default function VerifyPage() {
 
                         <div className="flex-1 flex flex-col">
                             {!file ? (
-                                <label className="cursor-pointer flex flex-col items-center relative z-20 w-full flex-1 border-2 border-dashed border-white/10 rounded-3xl hover:border-primary/50 transition-all justify-center p-8 bg-white/5 group/dropzone">
+                                <label className="cursor-pointer flex flex-col items-center relative z-20 w-full flex-1 border-2 border-dashed border-border rounded-3xl hover:border-primary/50 transition-all justify-center p-8 bg-muted/50 group/dropzone">
                                     <div className="p-4 rounded-2xl bg-primary/10 group-hover/dropzone:scale-110 transition-transform duration-500">
                                         <UploadCloud className="w-10 h-10 text-primary" />
                                     </div>
@@ -191,7 +191,7 @@ export default function VerifyPage() {
                                         </button>
                                     </div>
                                     
-                                    <div className="p-4 rounded-xl bg-white/5 border border-white/5">
+                                    <div className="p-4 rounded-xl bg-muted/50 border border-border/50">
                                         <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground leading-relaxed">
                                             Our AI will extract your skills, experience, and projects to generate a cryptographic proof of your potential.
                                         </p>
@@ -220,7 +220,7 @@ export default function VerifyPage() {
 
                 {/* 02. JD Comparison Card */}
                 <motion.div 
-                    className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] glass border-white/10 flex flex-col gap-6 relative overflow-hidden group shadow-2xl min-h-[400px] md:min-h-[520px]"
+                    className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] glass border-border flex flex-col gap-6 relative overflow-hidden group shadow-2xl min-h-[400px] md:min-h-[520px]"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.2 }}
@@ -233,7 +233,7 @@ export default function VerifyPage() {
                                 <div className="w-8 h-8 rounded-full bg-secondary/20 flex items-center justify-center text-secondary-foreground bg-secondary font-black text-xs">02</div>
                                 <h3 className="text-sm font-black uppercase tracking-[0.2em] text-foreground">Compare JD</h3>
                             </div>
-                            <div className="flex bg-white/5 p-1 rounded-lg border border-white/10">
+                            <div className="flex bg-muted/50 p-1 rounded-lg border border-border">
                                 <button 
                                     onClick={() => setJdInputMode("file")}
                                     className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-tighter rounded-md transition-all ${jdInputMode === "file" ? "bg-secondary text-secondary-foreground shadow-lg" : "text-muted-foreground hover:text-foreground"}`}
@@ -252,7 +252,7 @@ export default function VerifyPage() {
                         <div className="flex-1 flex flex-col">
                             {jdInputMode === "file" ? (
                                 !jdFile ? (
-                                    <label className="cursor-pointer flex flex-col items-center relative z-20 w-full flex-1 border-2 border-dashed border-white/10 rounded-3xl hover:border-secondary/50 transition-all justify-center p-8 bg-white/5 group/jd">
+                                    <label className="cursor-pointer flex flex-col items-center relative z-20 w-full flex-1 border-2 border-dashed border-border rounded-3xl hover:border-secondary/50 transition-all justify-center p-8 bg-muted/50 group/jd">
                                         <div className="p-4 rounded-2xl bg-secondary/10 group-hover/jd:scale-110 transition-transform duration-500">
                                             <Target className="w-10 h-10 text-secondary" />
                                         </div>
@@ -287,7 +287,7 @@ export default function VerifyPage() {
                             ) : (
                                 <div className="flex-1 flex flex-col">
                                     <textarea 
-                                        className="w-full flex-1 bg-white/5 border border-white/10 rounded-2xl p-5 text-sm font-medium focus:ring-1 focus:ring-secondary/50 outline-none resize-none custom-scrollbar text-foreground placeholder:text-muted-foreground"
+                                        className="w-full flex-1 bg-muted/50 border border-border rounded-2xl p-5 text-sm font-medium focus:ring-1 focus:ring-secondary/50 outline-none resize-none custom-scrollbar text-foreground placeholder:text-muted-foreground"
                                         placeholder="Paste the Job Description text here to compare it against your resume..."
                                         value={jdText}
                                         onChange={(e) => {
@@ -316,7 +316,7 @@ export default function VerifyPage() {
                         )}
                         
                         {!jdFile && !jdText.trim() && (
-                            <div className="mt-8 h-16 flex items-center justify-center border border-dashed border-white/5 rounded-2xl">
+                            <div className="mt-8 h-16 flex items-center justify-center border border-dashed border-border/50 rounded-2xl">
                                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/30">Optional Step</p>
                             </div>
                         )}
@@ -325,14 +325,14 @@ export default function VerifyPage() {
 
                 {/* 03. Results Section */}
                 <motion.div 
-                    className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] glass border-white/10 shadow-2xl min-h-[400px] md:min-h-[520px] relative overflow-hidden md:col-span-2 lg:col-span-1"
+                    className="p-6 md:p-8 rounded-[1.5rem] md:rounded-[2rem] glass border-border shadow-2xl min-h-[400px] md:min-h-[520px] relative overflow-hidden md:col-span-2 lg:col-span-1"
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.3 }}
                 >
                     {!parsedData && !matchResult ? (
                         <div className="h-full flex flex-col items-center justify-center text-muted-foreground/30 py-10">
-                            <div className="p-8 glass rounded-full bg-white/5 border-white/5 mb-8 relative group">
+                            <div className="p-8 glass rounded-full bg-muted/50 border-border/50 mb-8 relative group">
                                 <div className="absolute inset-0 bg-primary/20 blur-2xl rounded-full group-hover:bg-primary/40 transition-all duration-700" />
                                 <Cpu className="w-20 h-20 animate-pulse relative z-10 text-primary/50" />
                             </div>
@@ -340,7 +340,7 @@ export default function VerifyPage() {
                         </div>
                     ) : matchResult ? (
                         <div className="flex flex-col h-full">
-                            <div className="flex items-center justify-between mb-6 pb-6 border-b border-white/5">
+                            <div className="flex items-center justify-between mb-6 pb-6 border-b border-border/50">
                                 <div className="flex items-center gap-4">
                                     <div className="p-2.5 glass rounded-xl bg-primary/10 border-primary/20">
                                         <Cpu className="w-6 h-6 text-primary" />
@@ -350,7 +350,7 @@ export default function VerifyPage() {
                                 <div className="text-right">
                                     <div className="text-[9px] uppercase font-black text-muted-foreground/60 tracking-[0.2em] mb-2">Match Score</div>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-24 h-2 glass rounded-full overflow-hidden border border-white/5">
+                                        <div className="w-24 h-2 glass rounded-full overflow-hidden border border-border/50">
                                             <motion.div 
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${matchResult.match_score}%` }}
@@ -401,7 +401,7 @@ export default function VerifyPage() {
                                         <p className="text-xs text-blue-100/80 font-medium leading-relaxed">{matchResult.experience_match}</p>
                                     </div>
 
-                                    <div className="p-4 glass rounded-2xl bg-white/5 border border-white/10">
+                                    <div className="p-4 glass rounded-2xl bg-muted/50 border border-border">
                                         <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] mb-2 flex items-center gap-2">
                                             <FileSearch className="w-3 h-3" /> Project Alignment
                                         </p>
@@ -418,14 +418,14 @@ export default function VerifyPage() {
                             </div>
 
                             <div className="mt-auto pt-6">
-                                <Button variant="outline" className="w-full h-12 rounded-xl border-white/10 hover:bg-white/5 font-black uppercase tracking-widest text-[10px]" onClick={() => setMatchResult(null)}>
+                                <Button variant="outline" className="w-full h-12 rounded-xl border-border hover:bg-muted/50 font-black uppercase tracking-widest text-[10px]" onClick={() => setMatchResult(null)}>
                                     Reset Analysis
                                 </Button>
                             </div>
                         </div>
                     ) : parsedData ? (
                         <div className="flex flex-col h-full">
-                            <div className="flex items-center justify-between mb-8 pb-8 border-b border-white/5">
+                            <div className="flex items-center justify-between mb-8 pb-8 border-b border-border/50">
                                 <div className="flex items-center gap-4">
                                     <div className="p-2.5 glass rounded-xl bg-emerald-500/10 border-emerald-500/20">
                                         <ShieldCheck className="w-6 h-6 text-emerald-400" />
@@ -435,7 +435,7 @@ export default function VerifyPage() {
                                 <div className="text-right">
                                     <div className="text-[9px] uppercase font-black text-muted-foreground/60 tracking-[0.2em] mb-2">Confidence Level</div>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-24 h-2 glass rounded-full overflow-hidden border border-white/5">
+                                        <div className="w-24 h-2 glass rounded-full overflow-hidden border border-border/50">
                                             <motion.div 
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${parsedData.forensic_confidence}%` }}

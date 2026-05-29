@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db_session
-from schemas.auth import UserCreate, UserLogin, Token, RefreshTokenRequest, UserResponse, OAuthCallback
+from schemas.auth import UserCreate, UserLogin, Token, RefreshTokenRequest, UserResponse, OAuthCallback, GoogleAuthRequest
 from services.auth_service import AuthService
 from services.oauth_service import OAuthService
 from modules.auth.core.service import get_current_user
@@ -42,10 +42,9 @@ async def get_me(current_user: dict = Depends(get_current_user), db: AsyncSessio
             return res.scalars().first() is not None
             
         base_name = user.email.split("@")[0] if user.email else "user"
-        # For simplicity since check_exists is async, let's just do a sync approximation or a basic slug
-        # Note: the full robust check would await, but we can do a simple fallback
-        import random, string
-        new_username = f"{base_name}-{ ''.join(random.choices(string.ascii_lowercase + string.digits, k=4)) }".lower()
+        
+        # Use the robust unique username generator
+        new_username = await generate_unique_username(base_name, check_exists)
         user.username = new_username
         await db.commit()
 
@@ -147,30 +146,82 @@ async def get_ws_ticket(
     
     return {"status": "success", "ticket": ticket}
 
+from schemas.recovery import ForgotPasswordRequest, ResetPasswordRequest
+
+@router.post("/forgot-password")
+async def forgot_password(
+    data: ForgotPasswordRequest,
+    db: AsyncSession = Depends(get_db_session)
+):
+    service = AuthService(db)
+    # Always return success to prevent email enumeration
+    await service.forgot_password(data.email)
+    return {"message": "If an account exists with that email, a password reset link has been sent."}
+
+@router.get("/validate-reset-token")
+async def validate_reset_token(
+    token: str,
+    db: AsyncSession = Depends(get_db_session)
+):
+    service = AuthService(db)
+    is_valid = await service.validate_reset_token(token)
+    if not is_valid:
+        raise HTTPException(status_code=400, detail="Invalid or expired reset token")
+    return {"status": "success", "message": "Token is valid"}
+
+@router.post("/reset-password")
+async def reset_password(
+    data: ResetPasswordRequest,
+    db: AsyncSession = Depends(get_db_session)
+):
+    service = AuthService(db)
+    await service.reset_password(data.token, data.new_password)
+    return {"status": "success", "message": "Password has been successfully reset. Please log in with your new password."}
+
+from schemas.auth import MagicLinkRequest, MagicLinkVerify
+
+@router.post("/magic-link")
+async def magic_link(
+    data: MagicLinkRequest,
+    request: Request,
+    db: AsyncSession = Depends(get_db_session)
+):
+    service = AuthService(db)
+    await service.send_magic_link(data.email, request)
+    return {"message": "If an account exists with that email, a magic link has been sent."}
+
+@router.post("/verify-magic", response_model=Token)
+async def verify_magic(
+    data: MagicLinkVerify,
+    request: Request,
+    db: AsyncSession = Depends(get_db_session)
+):
+    service = AuthService(db)
+    ip = get_client_ip(request)
+    device = get_device_info(request)
+    user, access_token, refresh_token = await service.verify_magic_link(data.token, ip, device)
+    
+    return {
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer"
+    }
+
 # --- OAuth Routes ---
 
-@router.get("/oauth/google/url")
-async def get_google_auth_url():
-    client_id = os.getenv("GOOGLE_CLIENT_ID")
-    redirect_uri = os.getenv("FRONTEND_URL", "http://localhost:3000") + "/api/auth/callback/google"
-    url = (
-        f"https://accounts.google.com/o/oauth2/v2/auth?response_type=code"
-        f"&client_id={client_id}&redirect_uri={redirect_uri}"
-        f"&scope=openid%20email%20profile&access_type=offline"
-    )
-    return {"url": url}
-
-@router.post("/oauth/google/callback", response_model=Token)
-async def google_callback(
-    data: OAuthCallback,
+@router.post("/google", response_model=Token)
+async def google_auth(
+    data: GoogleAuthRequest,
     request: Request,
     db: AsyncSession = Depends(get_db_session)
 ):
     service = OAuthService(db)
-    ip = get_client_ip(request)
-    device = get_device_info(request)
-    
-    user, access, refresh = await service.handle_google_callback(data.code, ip, device)
+    user, access, refresh = await service.handle_google_id_token(
+        id_token=data.id_token,
+        ip_address=request.client.host if request.client else "unknown",
+        device_info=request.headers.get("User-Agent", "unknown"),
+        role=data.role
+    )
     return {
         "access_token": access,
         "refresh_token": refresh,
@@ -179,7 +230,7 @@ async def google_callback(
 
 @router.get("/oauth/github/url")
 async def get_github_auth_url():
-    client_id = os.getenv("GITHUB_CLIENT_ID")
+    client_id = os.getenv("GITHUB_CLIENT_ID", "YOUR_GITHUB_CLIENT_ID")
     redirect_uri = os.getenv("FRONTEND_URL", "http://localhost:3000") + "/api/auth/callback/github"
     url = (
         f"https://github.com/login/oauth/authorize"

@@ -19,12 +19,12 @@ interface ExperienceTabProps {
 
 export function ExperienceTab({ data, isEditing, onAdd, onDelete, onUpdate }: ExperienceTabProps) {
     return (
-        <Card className="glass border-white/5 rounded-[2.5rem] overflow-hidden relative">
+        <Card className="glass border-border/50 rounded-[2.5rem] overflow-hidden relative">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             <CardHeader className="flex flex-row items-center justify-between pt-10 px-10">
                 <div className="space-y-2">
                     <CardTitle className="text-2xl font-black uppercase italic tracking-tight">Proof of Work</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
                         Immutable chronological ledger of professional deployments.
                     </CardDescription>
                 </div>
@@ -39,9 +39,9 @@ export function ExperienceTab({ data, isEditing, onAdd, onDelete, onUpdate }: Ex
                 {data.experience.map((exp: any, index: any) => (
                     <div key={exp.id} className={cn(
                         "relative flex gap-6 group",
-                        index !== data.experience.length - 1 ? "pb-10 border-b border-white/5" : ""
+                        index !== data.experience.length - 1 ? "pb-10 border-b border-border/50" : ""
                     )}>
-                        <div className="w-16 h-16 bg-white/[0.03] border border-white/10 rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform duration-500">
+                        <div className="w-16 h-16 bg-muted/30 border border-border rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform duration-500">
                             {exp.logo ? (
                                 <span className="font-black text-xl text-primary/40">{exp.company[0]}</span>
                             ) : (
@@ -57,31 +57,31 @@ export function ExperienceTab({ data, isEditing, onAdd, onDelete, onUpdate }: Ex
                                             <Input
                                                 defaultValue={exp.role}
                                                 onChange={(e) => onUpdate?.(exp.id, 'role', e.target.value)}
-                                                className="font-bold h-10 glass border-white/10 rounded-lg text-sm"
+                                                className="font-bold h-10 glass border-border rounded-lg text-sm"
                                                 placeholder="Role Title"
                                             />
                                             <div className="flex gap-3">
                                                 <Input
                                                     defaultValue={exp.company}
                                                     onChange={(e) => onUpdate?.(exp.id, 'company', e.target.value)}
-                                                    className="h-9 glass border-white/10 rounded-lg text-xs"
+                                                    className="h-9 glass border-border rounded-lg text-xs"
                                                     placeholder="Company"
                                                 />
                                                 <Input
                                                     defaultValue={exp.type}
                                                     onChange={(e) => onUpdate?.(exp.id, 'type', e.target.value)}
-                                                    className="h-9 glass border-white/10 rounded-lg text-xs w-32"
+                                                    className="h-9 glass border-border rounded-lg text-xs w-32"
                                                     placeholder="Contract Type"
                                                 />
                                             </div>
                                         </div>
                                     ) : (
                                         <>
-                                            <h3 className="font-black text-lg text-white tracking-tight leading-none">{exp.role}</h3>
+                                            <h3 className="font-black text-lg text-foreground tracking-tight leading-none">{exp.role}</h3>
                                             <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest pt-1">
                                                 <span className="text-primary">{exp.company}</span>
-                                                <span className="text-white/10">•</span>
-                                                <span className="text-white/30">{exp.type}</span>
+                                                <span className="text-muted-foreground/30">•</span>
+                                                <span className="text-muted-foreground">{exp.type}</span>
                                             </div>
                                         </>
                                     )}
@@ -92,7 +92,7 @@ export function ExperienceTab({ data, isEditing, onAdd, onDelete, onUpdate }: Ex
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => onDelete?.(exp.id)}
-                                            className="h-10 w-10 text-white/20 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl"
+                                            className="h-10 w-10 text-muted-foreground/50 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </Button>
@@ -103,31 +103,31 @@ export function ExperienceTab({ data, isEditing, onAdd, onDelete, onUpdate }: Ex
                             {isEditing ? (
                                 <div className="flex gap-4">
                                     <div className="space-y-1 flex-1">
-                                         <Label className="text-[9px] font-black uppercase text-white/30 ml-1">Genesis</Label>
-                                         <Input defaultValue={exp.startDate} className="h-9 glass border-white/10 rounded-lg text-xs" placeholder="YYYY" />
+                                         <Label className="text-[9px] font-black uppercase text-muted-foreground ml-1">Genesis</Label>
+                                         <Input defaultValue={exp.startDate} className="h-9 glass border-border rounded-lg text-xs" placeholder="YYYY" />
                                     </div>
                                     <div className="space-y-1 flex-1">
-                                         <Label className="text-[9px] font-black uppercase text-white/30 ml-1">Termination</Label>
-                                         <Input defaultValue={exp.endDate} className="h-9 glass border-white/10 rounded-lg text-xs" placeholder="YYYY / Present" />
+                                         <Label className="text-[9px] font-black uppercase text-muted-foreground ml-1">Termination</Label>
+                                         <Input defaultValue={exp.endDate} className="h-9 glass border-border rounded-lg text-xs" placeholder="YYYY / Present" />
                                     </div>
                                 </div>
                             ) : (
-                                <p className="text-[10px] font-black uppercase tracking-widest text-white/20 flex items-center gap-2">
+                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 flex items-center gap-2">
                                     {exp.startDate} <ArrowRight className="w-2 h-2" /> {exp.endDate}
                                 </p>
                             )}
 
                             {isEditing ? (
                                 <div className="space-y-1">
-                                     <Label className="text-[9px] font-black uppercase text-white/30 ml-1">Deployment Specs</Label>
+                                     <Label className="text-[9px] font-black uppercase text-muted-foreground ml-1">Deployment Specs</Label>
                                      <Textarea 
                                         defaultValue={exp.description} 
-                                        className="min-h-[100px] glass border-white/10 rounded-xl text-sm p-4" 
+                                        className="min-h-[100px] glass border-border rounded-xl text-sm p-4" 
                                         onChange={(e) => onUpdate?.(exp.id, 'description', e.target.value)}
                                     />
                                 </div>
                             ) : (
-                                <p className="text-sm text-white/50 leading-relaxed italic font-medium">
+                                <p className="text-sm text-muted-foreground leading-relaxed italic font-medium">
                                     {exp.description}
                                 </p>
                             )}

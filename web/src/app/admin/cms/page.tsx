@@ -83,25 +83,25 @@ export default function CMSEditor() {
       return (
         <section key={section} className="space-y-6">
             <div className="flex items-center gap-4">
-                <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                    <Layout className="w-4 h-4 text-white/40" />
+                <div className="p-2 rounded-lg bg-muted/50 border border-border">
+                    <Layout className="w-4 h-4 text-muted-foreground" />
                 </div>
                 <h2 className="text-xs font-black uppercase tracking-[0.2em] text-emerald-500/80">{section} Architecture</h2>
-                <div className="flex-1 h-px bg-white/5" />
+                <div className="flex-1 h-px bg-muted/50" />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {sectionItems.map(item => (
-                    <Card key={item.id} className="bg-white/5 border-white/10 backdrop-blur-xl shadow-xl hover:bg-white-[0.07] transition-all group overflow-hidden">
-                        <CardHeader className="pb-4 border-b border-white/5 bg-black/20">
+                    <Card key={item.id} className="bg-muted/50 border-border backdrop-blur-xl shadow-xl hover:bg-white-[0.07] transition-all group overflow-hidden">
+                        <CardHeader className="pb-4 border-b border-border/50 bg-black/20">
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-2">
                                     <PenTool className="w-3 h-3 text-emerald-500/60" />
-                                    <CardTitle className="text-xs font-black uppercase tracking-widest text-white/60">{item.content_key}</CardTitle>
+                                    <CardTitle className="text-xs font-black uppercase tracking-widest text-foreground/80">{item.content_key}</CardTitle>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     {item.metadata?.type?.includes('_list') && <Badge className="bg-blue-500/20 text-blue-400 text-[9px] border-blue-500/30">JSON_CORE</Badge>}
-                                    <Badge variant="outline" className="text-[9px] border-white/10 text-white/30 tracking-tighter uppercase italic">{item.section_key}</Badge>
+                                    <Badge variant="outline" className="text-[9px] border-border text-muted-foreground tracking-tighter uppercase italic">{item.section_key}</Badge>
                                 </div>
                             </div>
                         </CardHeader>
@@ -109,7 +109,7 @@ export default function CMSEditor() {
                             {item.content_value.length > 60 || item.metadata?.type?.includes('_list') ? (
                                 <div className="relative">
                                     <Textarea 
-                                        className={`bg-black/40 border-white/10 text-white min-h-[160px] focus-visible:ring-emerald-500/30 leading-relaxed font-mono text-sm ${item.metadata?.type?.includes('_list') ? 'text-blue-200' : ''}`}
+                                        className={`bg-background/80 border-border text-foreground min-h-[160px] focus-visible:ring-emerald-500/30 leading-relaxed font-mono text-sm ${item.metadata?.type?.includes('_list') ? 'text-blue-200' : ''}`}
                                         value={item.content_value}
                                         onChange={e => setContent(content.map(c => c.id === item.id ? {...c, content_value: e.target.value} : c))}
                                         placeholder={`Enter ${item.metadata?.type || 'content'} mutation...`}
@@ -119,16 +119,16 @@ export default function CMSEditor() {
                             ) : (
                                 <div className="relative">
                                     <Input 
-                                        className="bg-black/40 border-white/10 text-white h-12 font-medium text-sm focus-visible:ring-emerald-500/30"
+                                        className="bg-background/80 border-border text-foreground h-12 font-medium text-sm focus-visible:ring-emerald-500/30"
                                         value={item.content_value}
                                         onChange={e => setContent(content.map(c => c.id === item.id ? {...c, content_value: e.target.value} : c))}
                                     />
-                                    {item.content_key.includes('url') && <LucideImage className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20" />}
+                                    {item.content_key.includes('url') && <LucideImage className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />}
                                 </div>
                             )}
                             
                             <Button 
-                                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black tracking-widest uppercase h-12 shadow-lg shadow-emerald-900/20"
+                                className="w-full bg-emerald-600 hover:bg-emerald-500 text-foreground font-black tracking-widest uppercase h-12 shadow-lg shadow-emerald-900/20"
                                 onClick={() => handleUpdate(item)}
                                 disabled={isSaving === item.id}
                             >
@@ -146,7 +146,7 @@ export default function CMSEditor() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div>
-            <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tight flex items-center gap-4 text-white">
+            <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tight flex items-center gap-4 text-foreground">
               <Globe className="w-10 h-10 text-emerald-500 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]" /> 
               Content Orchestrator
             </h1>
@@ -155,7 +155,7 @@ export default function CMSEditor() {
             </p>
         </div>
         <div className="flex items-center gap-3">
-            <Button onClick={fetchCMS} variant="outline" className="border-white/10 bg-white/5 hover:bg-white/10 font-bold uppercase tracking-widest text-[10px]">
+            <Button onClick={fetchCMS} variant="outline" className="border-border bg-muted/50 hover:bg-muted/50 font-bold uppercase tracking-widest text-[10px]">
                 <RefreshCw className="w-3 h-3 mr-2" /> Sync Registry
             </Button>
             <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
@@ -166,10 +166,10 @@ export default function CMSEditor() {
       </div>
 
       <div className="relative group">
-          <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-white/20 group-focus-within:text-emerald-500 transition-colors" />
+          <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50 group-focus-within:text-emerald-500 transition-colors" />
           <Input 
             placeholder="Search content keys or values..." 
-            className="h-14 bg-white/5 border-white/10 pl-14 text-lg focus-visible:ring-emerald-500/30 rounded-2xl"
+            className="h-14 bg-muted/50 border-border pl-14 text-lg focus-visible:ring-emerald-500/30 rounded-2xl"
             value={search}
             onChange={e => setSearch(e.target.value)}
           />
@@ -179,18 +179,18 @@ export default function CMSEditor() {
           {isLoading ? (
               <div className="py-24 flex flex-col items-center justify-center gap-4">
                   <Loader2 className="w-12 h-12 animate-spin text-emerald-500/40" />
-                  <p className="text-xs font-black uppercase tracking-[0.3em] text-white/20 animate-pulse">Establishing Secure CMS Channel...</p>
+                  <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/50 animate-pulse">Establishing Secure CMS Channel...</p>
               </div>
           ) : (
             <Tabs defaultValue="landing" className="space-y-12">
-                <TabsList className="bg-white/5 border border-white/10 p-1 h-14 rounded-2xl">
-                    <TabsTrigger value="landing" className="h-12 px-8 rounded-xl data-[state=active]:bg-emerald-500 data-[state=active]:text-white font-black uppercase tracking-widest text-[10px] gap-2">
+                <TabsList className="bg-muted/50 border border-border p-1 h-14 rounded-2xl">
+                    <TabsTrigger value="landing" className="h-12 px-8 rounded-xl data-[state=active]:bg-emerald-500 data-[state=active]:text-foreground font-black uppercase tracking-widest text-[10px] gap-2">
                         <LayoutDashboard className="w-3 h-3" /> Landing Matrix
                     </TabsTrigger>
-                    <TabsTrigger value="navigation" className="h-12 px-8 rounded-xl data-[state=active]:bg-emerald-500 data-[state=active]:text-white font-black uppercase tracking-widest text-[10px] gap-2">
+                    <TabsTrigger value="navigation" className="h-12 px-8 rounded-xl data-[state=active]:bg-emerald-500 data-[state=active]:text-foreground font-black uppercase tracking-widest text-[10px] gap-2">
                         <Share2 className="w-3 h-3" /> Global Nav
                     </TabsTrigger>
-                    <TabsTrigger value="global" className="h-12 px-8 rounded-xl data-[state=active]:bg-emerald-500 data-[state=active]:text-white font-black uppercase tracking-widest text-[10px] gap-2">
+                    <TabsTrigger value="global" className="h-12 px-8 rounded-xl data-[state=active]:bg-emerald-500 data-[state=active]:text-foreground font-black uppercase tracking-widest text-[10px] gap-2">
                         <Settings className="w-3 h-3" /> System & SEO
                     </TabsTrigger>
                 </TabsList>
@@ -210,14 +210,14 @@ export default function CMSEditor() {
           )}
       </div>
 
-      <div className="p-8 rounded-[2rem] bg-gradient-to-br from-emerald-500/10 to-blue-500/5 border border-white/10 flex flex-col items-center text-center gap-6 mt-12 relative overflow-hidden">
+      <div className="p-8 rounded-[2rem] bg-gradient-to-br from-emerald-500/10 to-blue-500/5 border border-border flex flex-col items-center text-center gap-6 mt-12 relative overflow-hidden">
           <div className="absolute inset-0 bg-emerald-500/5 blur-[100px] pointer-events-none" />
           <div className="p-4 rounded-full bg-emerald-500/20 border border-emerald-500/30 relative z-10">
               <Smartphone className="w-8 h-8 text-emerald-500" />
           </div>
           <div className="space-y-2 relative z-10">
               <h3 className="text-xl font-black italic uppercase tracking-tighter">Omnichannel Deployment</h3>
-              <p className="text-sm text-white/50 max-w-md">Content updates made here are synchronized across Desktop, Mobile, and AI summary generators in real-time.</p>
+              <p className="text-sm text-muted-foreground max-w-md">Content updates made here are synchronized across Desktop, Mobile, and AI summary generators in real-time.</p>
           </div>
       </div>
     </div>

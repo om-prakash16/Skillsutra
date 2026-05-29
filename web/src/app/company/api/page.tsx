@@ -98,7 +98,7 @@ export default function EnterpriseApiPage() {
         return (
             <div className="flex h-[60vh] w-full flex-col items-center justify-center gap-4">
                 <Loader2 className="h-10 w-10 animate-spin text-primary opacity-50" />
-                <p className="text-[10px] uppercase tracking-[0.3em] font-black text-white/20">Syncing Protocol Keys...</p>
+                <p className="text-[10px] uppercase tracking-[0.3em] font-black text-muted-foreground/50">Syncing Protocol Keys...</p>
             </div>
         )
     }
@@ -106,7 +106,7 @@ export default function EnterpriseApiPage() {
     return (
         <div className="max-w-6xl mx-auto space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header Section */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-white/5">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-border/50">
                 <div className="space-y-2">
                     <div className="flex items-center gap-3 mb-2">
                         <div className="p-2 rounded-xl bg-primary/10 border border-primary/20">
@@ -120,7 +120,7 @@ export default function EnterpriseApiPage() {
                     <p className="text-muted-foreground text-sm max-w-xl italic">Securely integrate Best Hiring Tool's verification engine into your own ATS or custom talent pipelines.</p>
                 </div>
                 <div className="flex gap-4">
-                    <Button variant="outline" className="border-white/10 hover:bg-white/5 font-black uppercase tracking-widest text-[10px] h-12 px-6">
+                    <Button variant="outline" className="border-border hover:bg-muted/50 font-black uppercase tracking-widest text-[10px] h-12 px-6">
                         <ExternalLink className="w-4 h-4 mr-2" />
                         Documentation
                     </Button>
@@ -131,7 +131,7 @@ export default function EnterpriseApiPage() {
                 {/* Left Column: Management */}
                 <div className="lg:col-span-2 space-y-8">
                     {/* Active Keys List */}
-                    <Card className="bg-white/5 border-white/10 backdrop-blur-xl relative overflow-hidden">
+                    <Card className="bg-muted/50 border-border backdrop-blur-xl relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
                         <CardHeader className="pb-4">
                             <div className="flex items-center justify-between">
@@ -143,19 +143,19 @@ export default function EnterpriseApiPage() {
                         <CardContent>
                             <div className="space-y-4">
                                 {keys.length === 0 ? (
-                                    <div className="text-center py-16 border-2 border-dashed border-white/5 rounded-3xl">
-                                        <div className="bg-white/5 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                                            <Key className="w-6 h-6 text-white/10" />
+                                    <div className="text-center py-16 border-2 border-dashed border-border/50 rounded-3xl">
+                                        <div className="bg-muted/50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            <Key className="w-6 h-6 text-muted-foreground/30" />
                                         </div>
-                                        <p className="text-white/20 text-xs italic font-bold">No active API keys found.</p>
-                                        <p className="text-[10px] text-white/10 mt-1 uppercase tracking-widest">Generate a key to begin integration.</p>
+                                        <p className="text-muted-foreground/50 text-xs italic font-bold">No active API keys found.</p>
+                                        <p className="text-[10px] text-muted-foreground/30 mt-1 uppercase tracking-widest">Generate a key to begin integration.</p>
                                     </div>
                                 ) : (
                                     <div className="grid gap-3">
                                         {keys.map((key) => (
                                             <div key={key.id} className={cn(
                                                 "group flex items-center justify-between p-4 rounded-2xl border transition-all duration-300",
-                                                key.is_active ? "bg-white/5 border-white/10 hover:border-primary/30" : "bg-red-500/5 border-red-500/10 opacity-50"
+                                                key.is_active ? "bg-muted/50 border-border hover:border-primary/30" : "bg-red-500/5 border-red-500/10 opacity-50"
                                             )}>
                                                 <div className="flex items-center gap-4">
                                                     <div className={cn(
@@ -166,18 +166,18 @@ export default function EnterpriseApiPage() {
                                                     </div>
                                                     <div>
                                                         <div className="flex items-center gap-2">
-                                                            <h4 className="text-sm font-black text-white/90">{key.label}</h4>
+                                                            <h4 className="text-sm font-black text-foreground/90">{key.label}</h4>
                                                             {!key.is_active && <Badge variant="destructive" className="text-[8px] h-4 uppercase font-black">Revoked</Badge>}
                                                         </div>
-                                                        <p className="text-[10px] text-white/30 font-bold mt-0.5 flex items-center gap-2">
+                                                        <p className="text-[10px] text-muted-foreground font-bold mt-0.5 flex items-center gap-2">
                                                             ID: {key.id.split("-")[0]}... • Created {new Date(key.created_at).toLocaleDateString()}
                                                         </p>
                                                     </div>
                                                 </div>
                                                 <div className="flex items-center gap-6">
                                                     <div className="hidden md:block text-right">
-                                                        <p className="text-[9px] uppercase tracking-widest font-black text-white/20 mb-0.5">Last Signal</p>
-                                                        <p className="text-[10px] font-bold text-white/60">
+                                                        <p className="text-[9px] uppercase tracking-widest font-black text-muted-foreground/50 mb-0.5">Last Signal</p>
+                                                        <p className="text-[10px] font-bold text-foreground/80">
                                                             {key.last_used_at ? new Date(key.last_used_at).toLocaleTimeString() : "Never Used"}
                                                         </p>
                                                     </div>
@@ -185,7 +185,7 @@ export default function EnterpriseApiPage() {
                                                         <Button 
                                                             variant="ghost" 
                                                             size="icon"
-                                                            className="text-white/20 hover:text-red-400 hover:bg-red-500/10 rounded-xl"
+                                                            className="text-muted-foreground/50 hover:text-red-400 hover:bg-red-500/10 rounded-xl"
                                                             onClick={() => handleRevokeKey(key.id)}
                                                         >
                                                             <Trash2 className="w-4 h-4" />
@@ -223,7 +223,7 @@ export default function EnterpriseApiPage() {
                                     <CardContent className="space-y-6 pt-4">
                                         <div className="relative group">
                                             <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-blue-500/50 rounded-2xl blur opacity-30 group-hover:opacity-100 transition duration-1000"></div>
-                                            <div className="relative bg-black rounded-xl p-6 font-mono text-sm break-all border border-white/10 text-primary-foreground/90 selection:bg-primary/30">
+                                            <div className="relative bg-black rounded-xl p-6 font-mono text-sm break-all border border-border text-primary-foreground/90 selection:bg-primary/30">
                                                 {generatedKey}
                                             </div>
                                             <Button 
@@ -235,10 +235,10 @@ export default function EnterpriseApiPage() {
                                             </Button>
                                         </div>
                                     </CardContent>
-                                    <CardFooter className="bg-white/5 border-t border-white/10 flex justify-center py-6">
+                                    <CardFooter className="bg-muted/50 border-t border-border flex justify-center py-6">
                                         <Button 
                                             variant="outline" 
-                                            className="w-full h-12 rounded-xl font-black uppercase tracking-widest text-[10px] border-white/10 hover:bg-white/10"
+                                            className="w-full h-12 rounded-xl font-black uppercase tracking-widest text-[10px] border-border hover:bg-muted/50"
                                             onClick={() => setGeneratedKey(null)}
                                         >
                                             I've safely stored this key
@@ -259,10 +259,10 @@ export default function EnterpriseApiPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
-                                <label className="text-[9px] font-black uppercase tracking-widest text-white/30 ml-1">Identity Label</label>
+                                <label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">Identity Label</label>
                                 <Input 
                                     placeholder="e.g. Greenhouse Integration" 
-                                    className="bg-white/5 border-white/10 h-12 rounded-xl focus:border-primary/50 text-xs font-bold"
+                                    className="bg-muted/50 border-border h-12 rounded-xl focus:border-primary/50 text-xs font-bold"
                                     value={newKeyLabel}
                                     onChange={(e) => setNewKeyLabel(e.target.value)}
                                 />
@@ -280,28 +280,28 @@ export default function EnterpriseApiPage() {
 
                     {/* Quick Specs */}
                     <div className="space-y-4">
-                        <h3 className="text-xs font-black uppercase tracking-[0.3em] px-2 text-white/20 italic">Protocol Specs</h3>
+                        <h3 className="text-xs font-black uppercase tracking-[0.3em] px-2 text-muted-foreground/50 italic">Protocol Specs</h3>
                         <div className="grid gap-3">
-                            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition-all group">
+                            <div className="p-4 rounded-2xl bg-muted/50 border border-border hover:border-border transition-all group">
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className="p-2 rounded-lg bg-blue-500/10 border border-blue-500/20">
                                         <Globe className="w-3 h-3 text-blue-400" />
                                     </div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-white/70">Endpoint</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground/80">Endpoint</span>
                                 </div>
-                                <code className="text-[10px] font-mono text-blue-300/60 block bg-black/40 p-2 rounded-lg truncate group-hover:text-blue-300 transition-colors">
+                                <code className="text-[10px] font-mono text-blue-300/60 block bg-background/80 p-2 rounded-lg truncate group-hover:text-blue-300 transition-colors">
                                     https://api.besthiringtool.com/v1/enterprise
                                 </code>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                            <div className="p-4 rounded-2xl bg-muted/50 border border-border">
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20">
                                         <Activity className="w-3 h-3 text-amber-400" />
                                     </div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-white/70">Rate Limits</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-foreground/80">Rate Limits</span>
                                 </div>
-                                <p className="text-[10px] font-bold text-white/40 leading-relaxed italic">
+                                <p className="text-[10px] font-bold text-muted-foreground leading-relaxed italic">
                                     1,000 requests / minute per access node. Synchronous burst allowed up to 100 req.
                                 </p>
                             </div>
@@ -313,7 +313,7 @@ export default function EnterpriseApiPage() {
                         <h4 className="text-[10px] font-black uppercase tracking-widest text-red-500 mb-2 flex items-center gap-2">
                             <ShieldCheck className="w-3 h-3" /> Security Protocol
                         </h4>
-                        <p className="text-[10px] text-white/50 leading-relaxed italic">
+                        <p className="text-[10px] text-muted-foreground leading-relaxed italic">
                             All API requests must be signed with the <code className="text-red-400 font-mono">X-API-KEY</code> header. Never share your secret keys or commit them to public repositories.
                         </p>
                     </Card>

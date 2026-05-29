@@ -27,7 +27,7 @@ export function Integrations() {
     const titleParts = title.split(" ");
     
     return (
-        <section className="py-24 bg-muted/5 border-y border-white/5 overflow-hidden">
+        <section className="py-24 bg-muted/5 border-y border-border/50 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 md:px-8">
                 <div className="flex flex-col lg:flex-row items-center gap-16">
                     <div className="lg:w-1/2 space-y-6 text-center lg:text-left">
@@ -53,9 +53,9 @@ export function Integrations() {
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.05 }}
                                 whileHover={{ y: -5 }}
-                                className="glass p-6 rounded-2xl border-white/5 flex flex-col items-center justify-center gap-4 shadow-premium group transition-all duration-300 hover:border-primary/20"
+                                className="glass p-6 rounded-2xl border-border/50 flex flex-col items-center justify-center gap-4 shadow-premium group transition-all duration-300 hover:border-primary/20"
                             >
-                                <div className={`p-4 rounded-xl bg-white/5 group-hover:bg-primary/10 transition-colors ${item.color}`}>
+                                <div className={`p-4 rounded-xl bg-muted/50 group-hover:bg-primary/10 transition-colors ${item.color}`}>
                                     <Icon className="w-8 h-8" />
                                 </div>
                                 <span className="text-sm font-bold text-muted-foreground group-hover:text-foreground transition-colors">{item.name}</span>

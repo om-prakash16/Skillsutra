@@ -66,8 +66,8 @@ export function ProfileForm({ fields, initialData, onSubmit, isLoading }: Profil
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {sections.map((section) => (
-          <Card key={section} className="bg-white/5 border-white/10 backdrop-blur-md overflow-hidden">
-            <CardHeader className="bg-white/5 border-b border-white/10 px-6 py-4">
+          <Card key={section} className="bg-muted/50 border-border backdrop-blur-md overflow-hidden">
+            <CardHeader className="bg-muted/50 border-b border-border px-6 py-4">
               <CardTitle className="text-sm font-black uppercase tracking-widest text-muted-foreground flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-primary" />
                 {section}
@@ -90,7 +90,7 @@ export function ProfileForm({ fields, initialData, onSubmit, isLoading }: Profil
                            {field.type === "textarea" ? (
                             <Textarea
                               placeholder={field.placeholder}
-                              className="bg-transparent border-white/10 focus:border-primary transition-all resize-none h-32"
+                              className="bg-transparent border-border focus:border-primary transition-all resize-none h-32"
                               {...formField}
                               value={(formField.value as string) || ""}
                             />
@@ -98,7 +98,7 @@ export function ProfileForm({ fields, initialData, onSubmit, isLoading }: Profil
                             <Input
                               type={field.type === "number" ? "number" : "text"}
                               placeholder={field.placeholder}
-                              className="bg-transparent border-white/10 focus:border-primary transition-all pr-12"
+                              className="bg-transparent border-border focus:border-primary transition-all pr-12"
                               {...formField}
                               value={(formField.value as string) || ""}
                             />

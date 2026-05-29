@@ -9,6 +9,7 @@ google-generativeai
 asyncpg
 python-dotenv
 python-multipart
+google-auth
 PyPDF2
 scikit-learn
 numpy

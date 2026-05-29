@@ -54,10 +54,10 @@ export default function UserDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {stats.map((stat, i) => (
                     <Link key={i} href={stat.href} className="block group">
-                        <Card className="glass h-full border-white/5 hover:border-primary/30 transition-all duration-500 relative overflow-hidden group-hover:translate-y-[-4px]">
+                        <Card className="glass h-full border-border/50 hover:border-primary/30 transition-all duration-500 relative overflow-hidden group-hover:translate-y-[-4px]">
                             <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity" />
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-                                <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">
+                                <CardTitle className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
                                     {stat.label}
                                 </CardTitle>
                                 <div className="p-2.5 rounded-xl bg-primary/10 border border-primary/20 group-hover:scale-110 transition-transform">
@@ -65,8 +65,8 @@ export default function UserDashboard() {
                                 </div>
                             </CardHeader>
                             <CardContent>
-                                <div className="text-4xl font-black tracking-tighter text-white">{stat.value}</div>
-                                <p className="text-[9px] text-white/20 mt-1 font-black uppercase tracking-widest">{stat.sub}</p>
+                                <div className="text-4xl font-black tracking-tighter text-foreground">{stat.value}</div>
+                                <p className="text-[9px] text-muted-foreground/50 mt-1 font-black uppercase tracking-widest">{stat.sub}</p>
                             </CardContent>
                         </Card>
                     </Link>
@@ -79,7 +79,7 @@ export default function UserDashboard() {
                     {activeRoadmap ? (
                         <Card className="glass border-primary/30 relative overflow-hidden bg-primary/5">
                             <CardHeader className="pb-4">
-                                <CardTitle className="flex items-center gap-2 text-xl font-black uppercase italic tracking-tight text-white">
+                                <CardTitle className="flex items-center gap-2 text-xl font-black uppercase italic tracking-tight text-foreground">
                                     <Route className="w-5 h-5 text-primary" /> Active Learning Path: {activeRoadmap.target_role}
                                 </CardTitle>
                             </CardHeader>
@@ -89,13 +89,13 @@ export default function UserDashboard() {
                                         <span>Progress</span>
                                         <span className="text-primary">{Math.round(((activeRoadmap.current_milestone_index || 0) / (activeRoadmap.nodes_json?.length || 1)) * 100)}%</span>
                                     </div>
-                                    <div className="w-full bg-black h-3 rounded-full overflow-hidden border border-white/10">
+                                    <div className="w-full bg-black h-3 rounded-full overflow-hidden border border-border">
                                         <div 
                                             className="bg-primary h-full transition-all duration-700" 
                                             style={{ width: `${((activeRoadmap.current_milestone_index || 0) / (activeRoadmap.nodes_json?.length || 1)) * 100}%` }}
                                         />
                                     </div>
-                                    <p className="text-xs text-white/50">
+                                    <p className="text-xs text-muted-foreground">
                                         {activeRoadmap.current_milestone_index || 0} of {activeRoadmap.nodes_json?.length || 0} Milestones completed.
                                     </p>
                                     <Link href="/roadmap" className="block mt-4">
@@ -107,16 +107,16 @@ export default function UserDashboard() {
                             </CardContent>
                         </Card>
                     ) : (
-                        <Card className="glass border-white/5 relative overflow-hidden">
+                        <Card className="glass border-border/50 relative overflow-hidden">
                             <CardHeader className="pb-4">
-                                <CardTitle className="flex items-center gap-2 text-xl font-black uppercase italic tracking-tight text-white">
+                                <CardTitle className="flex items-center gap-2 text-xl font-black uppercase italic tracking-tight text-foreground">
                                     <Route className="w-5 h-5 text-muted-foreground" /> Learning Path
                                 </CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div className="py-6 flex flex-col items-center justify-center text-center space-y-4">
-                                    <Compass className="w-10 h-10 text-white/10" />
-                                    <p className="text-xs text-white/40 font-medium italic">No active AI Roadmap detected.</p>
+                                    <Compass className="w-10 h-10 text-muted-foreground/30" />
+                                    <p className="text-xs text-muted-foreground font-medium italic">No active AI Roadmap detected.</p>
                                     <Link href="/roadmap">
                                         <Button variant="outline" className="text-[10px] font-black uppercase tracking-widest">
                                             Generate AI Roadmap
@@ -127,18 +127,18 @@ export default function UserDashboard() {
                         </Card>
                     )}
 
-                    <Card className="glass border-white/5 relative overflow-hidden">
+                    <Card className="glass border-border/50 relative overflow-hidden">
                         <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
                         <CardHeader className="pb-8">
                             <CardTitle className="text-xl font-black uppercase italic tracking-tight">Deployment Stream</CardTitle>
                         </CardHeader>
                         <CardContent className="py-16">
                             <div className="flex flex-col items-center justify-center text-center space-y-6">
-                                <div className="p-6 rounded-3xl bg-white/[0.03] border border-white/5 shadow-inner">
-                                    <Briefcase className="w-10 h-10 text-white/10" />
+                                <div className="p-6 rounded-3xl bg-muted/30 border border-border/50 shadow-inner">
+                                    <Briefcase className="w-10 h-10 text-muted-foreground/30" />
                                 </div>
                                 <div className="space-y-2">
-                                    <p className="text-sm text-white/40 font-medium italic">No active deployments detected in the current cycle.</p>
+                                    <p className="text-sm text-muted-foreground font-medium italic">No active deployments detected in the current cycle.</p>
                                     <p className="text-[10px] text-primary/40 font-black uppercase tracking-widest">Awaiting Command...</p>
                                 </div>
                                 <Link href="/jobs">
@@ -171,7 +171,7 @@ export default function UserDashboard() {
                         }} 
                     />
 
-                    <Card className="glass relative overflow-hidden group border-white/5 rounded-[2.5rem]">
+                    <Card className="glass relative overflow-hidden group border-border/50 rounded-[2.5rem]">
                         <div className="absolute top-0 right-0 w-40 h-40 bg-primary/10 blur-[80px] rounded-full -mr-20 -mt-20 group-hover:bg-primary/20 transition-all duration-700" />
                         <CardHeader className="pb-8">
                             <CardTitle className="flex items-center gap-3 text-lg font-black uppercase italic tracking-tight">
@@ -180,9 +180,9 @@ export default function UserDashboard() {
                         </CardHeader>
                         <CardContent className="pb-10">
                             <div className="flex items-center justify-center py-10 relative">
-                                <div className="relative w-48 h-48 rounded-full border-[12px] border-white/5 flex items-center justify-center shadow-2xl">
+                                <div className="relative w-48 h-48 rounded-full border-[12px] border-border/50 flex items-center justify-center shadow-2xl">
                                     <div className="text-center">
-                                        <span className="text-5xl font-black tracking-tighter text-white">80</span>
+                                        <span className="text-5xl font-black tracking-tighter text-foreground">80</span>
                                         <span className="text-lg font-black text-primary">%</span>
                                     </div>
                                     <svg className="absolute top-[-12px] left-[-12px] w-[calc(100%+24px)] h-[calc(100%+24px)] -rotate-90">
@@ -196,11 +196,11 @@ export default function UserDashboard() {
                                     </svg>
                                 </div>
                             </div>
-                            <p className="text-center text-[10px] text-white/30 italic font-black uppercase tracking-[0.2em] mt-6">
+                            <p className="text-center text-[10px] text-muted-foreground italic font-black uppercase tracking-[0.2em] mt-6">
                                 Complete your <span className="text-primary/60">Source Integration</span> to reach 100%
                             </p>
                             <Link href="/user/profile">
-                                <Button className="w-full mt-10 h-14 rounded-2xl glass border-white/10 hover:border-primary/50 text-[10px] font-black uppercase tracking-widest transition-all" variant="outline">
+                                <Button className="w-full mt-10 h-14 rounded-2xl glass border-border hover:border-primary/50 text-[10px] font-black uppercase tracking-widest transition-all" variant="outline">
                                     Synchronize Identity
                                 </Button>
                             </Link>

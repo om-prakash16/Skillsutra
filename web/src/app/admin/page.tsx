@@ -183,7 +183,7 @@ export default function AdminDashboardOverview() {
     <div className="space-y-12 animate-in fade-in duration-1000 pb-24 relative z-10">
       
       {/* Hero Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-10">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border/50 pb-10">
         <div className="space-y-4">
           <div className="flex items-center gap-3 flex-wrap">
               <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.8)]" />
@@ -212,7 +212,7 @@ export default function AdminDashboardOverview() {
                 <span className="font-mono text-[10px] font-black text-muted-foreground/60 tracking-widest">{now} UTC+5:30</span>
               )}
           </div>
-          <h1 className="text-5xl md:text-7xl font-black font-heading tracking-tighter text-white uppercase italic flex items-center gap-6 text-gradient">
+          <h1 className="text-5xl md:text-7xl font-black font-heading tracking-tighter text-foreground uppercase italic flex items-center gap-6 text-gradient">
             Global <span className="text-rose-500">Surveillance</span> 
             <Radar className="w-12 h-12 text-rose-500 animate-pulse" />
           </h1>
@@ -239,7 +239,7 @@ export default function AdminDashboardOverview() {
                 transition={{ delay: idx * 0.1 }}
                 className="group"
               >
-                  <Card className="glass border-white/5 rounded-[2rem] overflow-hidden transition-all duration-500 hover:border-white/20 cursor-default relative h-48 shadow-2xl">
+                  <Card className="glass border-border/50 rounded-[2rem] overflow-hidden transition-all duration-500 hover:border-border cursor-default relative h-48 shadow-2xl">
                       <div className={`absolute top-0 left-0 w-1.5 h-full opacity-40`} style={{ backgroundColor: card.color === 'rose' ? '#f43f5e' : card.color === 'indigo' ? '#6366f1' : card.color === 'emerald' ? '#10b981' : '#f59e0b' }} />
                       <div className={`absolute -right-12 -top-12 w-40 h-40 blur-[80px] rounded-full transition-all duration-700 opacity-20 group-hover:opacity-40`} style={{ backgroundColor: card.color === 'rose' ? '#f43f5e' : card.color === 'indigo' ? '#6366f1' : card.color === 'emerald' ? '#10b981' : '#f59e0b' }} />
                       <CardHeader className="flex flex-row items-center justify-between pb-2 px-8 pt-8">
@@ -247,10 +247,10 @@ export default function AdminDashboardOverview() {
                         <card.icon className="w-5 h-5" style={{ color: card.color === 'rose' ? '#f43f5e' : card.color === 'indigo' ? '#6366f1' : card.color === 'emerald' ? '#10b981' : '#f59e0b' }} />
                       </CardHeader>
                       <CardContent className="px-8 pb-8">
-                        {loading ? <Loader2 className="w-8 h-8 animate-spin text-white/10" /> : (
+                        {loading ? <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/30" /> : (
                             <div className="flex flex-col space-y-1">
                                 <div className="flex items-baseline gap-4">
-                                    <span className="text-5xl font-black text-white tracking-tighter">{card.value}</span>
+                                    <span className="text-5xl font-black text-foreground tracking-tighter">{card.value}</span>
                                     <span className="text-[11px] font-black text-emerald-500 flex items-center">
                                         <TrendingUp className="w-3.5 h-3.5 mr-1" /> {card.trend}
                                     </span>
@@ -269,7 +269,7 @@ export default function AdminDashboardOverview() {
           {/* Neural Resonance Monitor (AI Stats) */}
           <Card className="glass lg:col-span-2 border-t-rose-500/30 border-t-[3px] rounded-[2.5rem] relative overflow-hidden shadow-2xl">
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-rose-500/5 blur-[150px] rounded-full pointer-events-none" />
-                <CardHeader className="border-b border-white/5 pb-8 px-10 pt-10">
+                <CardHeader className="border-b border-border/50 pb-8 px-10 pt-10">
                     <div className="flex justify-between items-start">
                         <div className="space-y-2">
                             <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-4">
@@ -281,7 +281,7 @@ export default function AdminDashboardOverview() {
                             <CardDescription className="text-[10px] uppercase font-black tracking-[0.3em] text-muted-foreground/60">Heuristic Engine Performance Metrics</CardDescription>
                         </div>
                         <Link href="/admin/ai-config">
-                            <Button variant="outline" size="sm" className="glass border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-rose-500 rounded-xl px-6 h-10">Modify Formula</Button>
+                            <Button variant="outline" size="sm" className="glass border-border text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-rose-500 rounded-xl px-6 h-10">Modify Formula</Button>
                         </Link>
                     </div>
                 </CardHeader>
@@ -290,35 +290,35 @@ export default function AdminDashboardOverview() {
                         <div className="space-y-5">
                             <div className="flex justify-between items-end">
                                 <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Matching Accuracy</span>
-                                <span className="text-2xl font-black text-white italic">{telemetry?.ai?.accuracy ?? 94.2}%</span>
+                                <span className="text-2xl font-black text-foreground italic">{telemetry?.ai?.accuracy ?? 94.2}%</span>
                             </div>
-                            <div className="h-3 glass rounded-full overflow-hidden border border-white/5">
+                            <div className="h-3 glass rounded-full overflow-hidden border border-border/50">
                                 <div className="h-full bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)] rounded-full transition-all duration-500" style={{ width: `${telemetry?.ai?.accuracy ?? 94.2}%` }} />
                             </div>
                         </div>
                         <div className="space-y-5">
                             <div className="flex justify-between items-end">
                                 <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Compute Latency</span>
-                                <span className="text-2xl font-black text-white italic">{telemetry?.latency ?? '140ms'}</span>
+                                <span className="text-2xl font-black text-foreground italic">{telemetry?.latency ?? '140ms'}</span>
                             </div>
-                            <div className="h-3 glass rounded-full overflow-hidden border border-white/5">
+                            <div className="h-3 glass rounded-full overflow-hidden border border-border/50">
                                 <div className="h-full bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.6)] rounded-full transition-all duration-500" style={{ width: `${Math.min(100, (parseInt(telemetry?.latency ?? '140ms') || 14) * 3.5)}%` }} />
                             </div>
                         </div>
                         <div className="space-y-5">
                             <div className="flex justify-between items-end">
                                 <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Heuristic Load</span>
-                                <span className="text-2xl font-black text-white italic">
+                                <span className="text-2xl font-black text-foreground italic">
                                     {(telemetry?.ai?.queue_size ?? 0) > 3 ? "High" : (telemetry?.ai?.queue_size ?? 0) > 0 ? "Moderate" : "Optimal"}
                                 </span>
                             </div>
-                            <div className="h-3 glass rounded-full overflow-hidden border border-white/5">
+                            <div className="h-3 glass rounded-full overflow-hidden border border-border/50">
                                 <div className="h-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.6)] rounded-full transition-all duration-500" style={{ width: `${Math.max(10, Math.min(100, (telemetry?.ai?.queue_size ?? 0) * 20))}%` }} />
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-14 p-8 glass bg-black/60 border border-white/5 rounded-[2rem] relative group shadow-inner">
+                    <div className="mt-14 p-8 glass bg-black/60 border border-border/50 rounded-[2rem] relative group shadow-inner">
                         <div className="flex items-center gap-4 mb-6">
                             <Terminal className="w-5 h-5 text-indigo-400" />
                             <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">Real-time Matching Stream</span>
@@ -344,7 +344,7 @@ export default function AdminDashboardOverview() {
           {/* Recharts Analytics Visualization */}
           <Card className="glass lg:col-span-3 mt-10 relative overflow-hidden border-t-indigo-500/30 border-t-[3px] rounded-[2.5rem] shadow-2xl">
               <div className="absolute top-0 left-0 w-full h-full bg-indigo-500/5 pointer-events-none" />
-              <CardHeader className="border-b border-white/5 pb-8 px-10 pt-10">
+              <CardHeader className="border-b border-border/50 pb-8 px-10 pt-10">
                   <div className="space-y-2">
                       <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-4">
                           <div className="p-3 glass rounded-2xl bg-indigo-500/10 border-indigo-500/20">
@@ -404,22 +404,23 @@ export default function AdminDashboardOverview() {
                       { label: "Partner Matrix", href: "/admin/companies", icon: Building2, color: "#6366f1", count: stats?.totals?.companies },
                       { label: "Network Load", href: "/admin/jobs", icon: Briefcase, color: "#10b981", count: stats?.totals?.jobs },
                       { label: "Applications", href: "/admin/applications", icon: ShieldCheck, color: "#f59e0b", count: stats?.totals?.applications },
+                      { label: "Security Center", href: "/admin/security", icon: ShieldAlert, color: "#eab308" },
                       { label: "Audit Stream", href: "/admin/logs", icon: Database, color: "#06b6d4" },
                       { label: "Digital Identity", href: "/admin/infrastructure", icon: Fingerprint, color: "#3b82f6" },
                       { label: "Moderation Queue", href: "/admin/reports", icon: ShieldAlert, color: "#ef4444" },
                   ].map((link) => (
                       <Link key={link.label} href={link.href}>
-                          <Card className="glass border-white/5 hover:border-white/20 transition-all duration-300 cursor-pointer group rounded-2xl shadow-xl hover:-translate-y-1">
+                          <Card className="glass border-border/50 hover:border-border transition-all duration-300 cursor-pointer group rounded-2xl shadow-xl hover:-translate-y-1">
                               <CardContent className="p-5 flex items-center justify-between">
                                   <div className="flex items-center gap-4">
                                       <div className="p-2.5 rounded-xl border transition-all duration-300 group-hover:scale-110 shadow-inner" style={{ backgroundColor: `${link.color}15`, borderColor: `${link.color}30` }}>
                                           <link.icon className="w-5 h-5" style={{ color: link.color }} />
                                       </div>
-                                      <span className="font-black text-white tracking-wide text-xs uppercase">{link.label}</span>
+                                      <span className="font-black text-foreground tracking-wide text-xs uppercase">{link.label}</span>
                                   </div>
                                   {link.count !== undefined ? (
-                                      <Badge variant="outline" className="font-mono font-black text-[10px] glass border-white/10 px-3 py-1 rounded-full">{link.count}</Badge>
-                                  ) : <ArrowUpRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-white transition-colors" />}
+                                      <Badge variant="outline" className="font-mono font-black text-[10px] glass border-border px-3 py-1 rounded-full">{link.count}</Badge>
+                                  ) : <ArrowUpRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />}
                               </CardContent>
                           </Card>
                       </Link>

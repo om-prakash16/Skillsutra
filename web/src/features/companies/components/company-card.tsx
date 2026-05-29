@@ -12,7 +12,7 @@ interface CompanyCardProps {
 
 export function CompanyCard({ company }: CompanyCardProps) {
   return (
-    <Card className="group relative overflow-hidden glass border-black/5 dark:border-white/5 hover:border-primary/40 transition-all duration-500 rounded-3xl shadow-premium">
+    <Card className="group relative overflow-hidden glass border-black/5 dark:border-border/50 hover:border-primary/40 transition-all duration-500 rounded-3xl shadow-premium">
       <div className="p-6 space-y-5">
         {/* Branding Hub */}
         <div className="flex justify-between items-start">
@@ -50,11 +50,11 @@ export function CompanyCard({ company }: CompanyCardProps) {
             </div>
         </div>
 
-        <div className="pt-4 border-t border-black/5 dark:border-white/5">
+        <div className="pt-4 border-t border-black/5 dark:border-border/50">
              <div className="flex flex-wrap gap-2">
                 <Badge variant="secondary" className="bg-primary/5 text-primary text-micro py-0.5 px-2.5 font-bold rounded-md">#{company.industry.split(' ')[0]}</Badge>
                 {company.tags.slice(0, 2).map(tag => (
-                   <Badge key={tag} variant="outline" className="text-micro py-0.5 px-2.5 border-black/5 dark:border-white/10 text-muted-foreground/60 rounded-md">#{tag}</Badge>
+                   <Badge key={tag} variant="outline" className="text-micro py-0.5 px-2.5 border-black/5 dark:border-border text-muted-foreground/60 rounded-md">#{tag}</Badge>
                 ))}
              </div>
         </div>

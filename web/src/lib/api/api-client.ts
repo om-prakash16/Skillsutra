@@ -59,10 +59,15 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit & { t
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
 
+    const isFormData = fetchOptions.body instanceof FormData;
+    
     const headers: Record<string, string> = {
-        "Content-Type": "application/json",
         ...(fetchOptions.headers as Record<string, string>),
     };
+
+    if (!isFormData && !headers["Content-Type"]) {
+        headers["Content-Type"] = "application/json";
+    }
 
     if (token) {
         headers["Authorization"] = `Bearer ${token}`;
@@ -170,9 +175,9 @@ export const api = {
         details: (id: string) => fetchWithAuth(`/jobs/details/${id}`),
         discovery: (jobId: string) => fetchWithAuth(`/jobs/${jobId}/discovery`),
         apply: (jobId: string) => fetchWithAuth("/jobs/apply", { method: "POST", body: JSON.stringify({ job_id: jobId }) }),
-        save: (jobId: string) => fetchWithAuth("/jobs/save", { method: "POST", body: JSON.stringify({ job_id: jobId }) }),
-        unsave: (jobId: string) => fetchWithAuth(`/jobs/unsave/${jobId}`, { method: "DELETE" }),
-        getSaved: () => fetchWithAuth("/jobs/saved"),
+        save: (jobId: string) => fetchWithAuth("/users/saved-items", { method: "POST", body: JSON.stringify({ item_type: "job", item_id: jobId }) }),
+        unsave: (jobId: string) => fetchWithAuth("/users/saved-items", { method: "POST", body: JSON.stringify({ item_type: "job", item_id: jobId }) }),
+        getSaved: () => fetchWithAuth("/users/saved-items?item_type=job"),
         listCompanyJobs: (companyId: string) => fetchWithAuth(`/jobs/company-metrics/${companyId}`),
         submitAssessment: (id: string, data: any) => fetchWithAuth(`/jobs/applications/${id}/submit-assessment`, { method: "PATCH", body: JSON.stringify(data) }),
         parseJD: (text: string) => fetchWithAuth("/jobs/parse-jd", { method: "POST", body: JSON.stringify({ text }) }),

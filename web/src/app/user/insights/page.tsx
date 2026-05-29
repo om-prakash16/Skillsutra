@@ -29,7 +29,7 @@ export default function CandidateInsights() {
   return (
     <div className="max-w-7xl mx-auto py-24 px-6 space-y-12 h-screen overflow-y-auto">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/10 pb-12">
+      <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-border pb-12">
         <div className="space-y-4">
            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20 px-4 py-1 uppercase tracking-tighter font-black italic">
              AI CAREER ANALYTICS
@@ -86,14 +86,14 @@ export default function CandidateInsights() {
             />
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-white/5 border-white/10 p-8 space-y-6">
+                <Card className="bg-muted/50 border-border p-8 space-y-6">
                     <Sparkles className="w-12 h-12 text-primary" />
                     <div className="space-y-2">
                         <h3 className="text-xl font-bold italic tracking-tight">AI Talent Ranking</h3>
                         <p className="text-xs text-neutral-500 italic">You are in the top 5% of infrastructure Developers verified on Best Hiring Tool this month.</p>
                     </div>
                 </Card>
-                <Card className="bg-white/5 border-white/10 p-8 space-y-6">
+                <Card className="bg-muted/50 border-border p-8 space-y-6">
                     <TrendingUp className="w-12 h-12 text-emerald-500" />
                     <div className="space-y-2">
                         <h3 className="text-xl font-bold italic tracking-tight">Earning Potential</h3>
@@ -108,7 +108,7 @@ export default function CandidateInsights() {
             <h2 className="text-xl font-black italic tracking-tighter uppercase flex items-center gap-2">
                 <Info className="w-5 h-5 text-primary" /> Metrics Context
             </h2>
-            <Card className="bg-white/5 border-white/10">
+            <Card className="bg-muted/50 border-border">
                 <CardHeader>
                     <CardTitle className="text-xs font-black uppercase tracking-widest text-neutral-500 italic">Aggregated Data Policy</CardTitle>
                 </CardHeader>
@@ -118,8 +118,8 @@ export default function CandidateInsights() {
                 </CardContent>
             </Card>
 
-            <div className="aspect-[4/3] rounded-3xl bg-gradient-to-br from-primary/20 via-black to-neutral-800 border border-white/10 p-8 flex flex-col justify-end">
-                <Badge className="bg-white text-black font-black italic w-fit mb-4">PREMIUM INSIGHT</Badge>
+            <div className="aspect-[4/3] rounded-3xl bg-gradient-to-br from-primary/20 via-black to-neutral-800 border border-border p-8 flex flex-col justify-end">
+                <Badge className="bg-white text-primary-foreground font-black italic w-fit mb-4">PREMIUM INSIGHT</Badge>
                 <h4 className="text-2xl font-black tracking-tighter italic">"Your Rust proficiency is currently 22% higher than the marketplace average."</h4>
             </div>
         </div>

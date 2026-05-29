@@ -36,7 +36,7 @@ import {
 import { useAuth } from "@/context/auth-context"
 
 interface SidebarProps {
-    role: "user" | "company" | "admin"
+    role: "user" | "company" | "admin" | "recruiter" | string
     className?: string
     variant?: "default" | "mobile"
 }
@@ -102,11 +102,25 @@ const userLinks = [
 ]
 
 const companyLinks = [
-    { href: "/company/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/company/jobs", label: "Manage Jobs", icon: Briefcase },
-    { href: "/company/applicants", label: "Applicants", icon: Users },
-    { href: "/company/api", label: "Developer API", icon: Code },
-    { href: "/company/profile", label: "Company Profile", icon: Building2 },
+    { href: "/company/dashboard", label: "Company Dashboard", icon: LayoutDashboard },
+    { href: "/company/jobs", label: "Job Management", icon: Briefcase },
+    { href: "/company/ats", label: "ATS", icon: Boxes },
+    { href: "/search/talent", label: "Talent Discovery", icon: Globe },
+    { href: "/company/branding", label: "Company Branding", icon: Building2 },
+    { href: "/company/analytics", label: "Analytics", icon: BarChart3 },
+    { href: "/company/sponsorships", label: "Learning Sponsorship", icon: Brain },
+    { href: "/company/pipeline", label: "Talent Pipeline", icon: Users },
+]
+
+const recruiterLinks = [
+    { href: "/recruiter/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/search/talent", label: "Talent Search", icon: Globe },
+    { href: "/recruiter/pipeline", label: "ATS Pipeline", icon: Boxes },
+    { href: "/recruiter/jobs", label: "Job Management", icon: Briefcase },
+    { href: "/recruiter/candidates", label: "Candidate Management", icon: Users },
+    { href: "/recruiter/interviews", label: "Interviews", icon: Activity },
+    { href: "/recruiter/reports", label: "Reports", icon: FileText },
+    { href: "/recruiter/insights", label: "Recruiter Insights", icon: Brain },
 ]
 
 export function Sidebar({ role, className, variant = "default" }: SidebarProps) {
@@ -130,7 +144,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
         )}>
             {adminNavGroups.map((group) => (
                 <div key={group.label} className="mb-6">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 px-3 mb-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/50 px-3 mb-3">
                         {group.label}
                     </p>
                     <div className="space-y-1">
@@ -144,7 +158,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                                             "flex items-center gap-3 px-3 h-10 rounded-xl transition-colors duration-300 relative overflow-hidden",
                                             isActive
                                                 ? "bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
-                                                : "text-white/40 hover:text-white/80 hover:bg-white/5"
+                                                : "text-muted-foreground hover:text-foreground/90 hover:bg-muted/50"
                                         )}
                                     >
                                         {isActive && (
@@ -155,7 +169,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                                             />
                                         )}
                                         <motion.div whileHover={{ x: 2 }} className="flex items-center gap-3 w-full">
-                                            <link.icon className={cn("w-4 h-4 shrink-0 transition-transform", isActive ? "text-rose-400" : "group-hover/item:text-white/70")} />
+                                            <link.icon className={cn("w-4 h-4 shrink-0 transition-transform", isActive ? "text-rose-400" : "group-hover/item:text-foreground/80")} />
                                             <span className={cn("text-xs font-bold tracking-tight", isActive ? "text-rose-200" : "")}>{link.label}</span>
                                             {isActive && <ChevronRight className="w-3.5 h-3.5 ml-auto shrink-0 text-rose-500/40" />}
                                         </motion.div>
@@ -170,7 +184,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
     )
 
     const renderSimpleNav = () => {
-        const links = role === "company" ? companyLinks : userLinks
+        const links = role === "company" ? companyLinks : role === "recruiter" ? recruiterLinks : userLinks
         return (
             <nav className={cn(
                 "flex-1 space-y-1 overflow-y-auto custom-scrollbar",
@@ -190,7 +204,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                                     "flex items-center gap-3 px-3 h-11 rounded-xl transition-colors duration-300 relative overflow-hidden",
                                     isActive
                                         ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
-                                        : "text-white/40 hover:text-white/80 hover:bg-white/5"
+                                        : "text-muted-foreground hover:text-foreground/90 hover:bg-muted/50"
                                 )}
                             >
                                 {isActive && (
@@ -202,7 +216,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                                 )}
                                 <motion.div whileHover={{ x: 2 }} className="flex items-center gap-3 w-full">
                                     <link.icon className={cn("w-4.5 h-4.5 shrink-0 transition-transform", isActive ? "text-primary" : "")} />
-                                    <span className={cn("text-sm font-bold tracking-tight", isActive ? "text-white" : "")}>{link.label}</span>
+                                    <span className={cn("text-sm font-bold tracking-tight", isActive ? "text-foreground" : "")}>{link.label}</span>
                                 </motion.div>
                             </motion.div>
                         </Link>
@@ -215,7 +229,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
     return (
         <aside className={cn(
             variant === "default"
-                ? "w-64 flex flex-col h-screen sticky top-0 shrink-0 z-50 glass border-r border-white/10"
+                ? "w-64 flex flex-col h-screen sticky top-0 shrink-0 z-50 glass border-r border-border"
                 : "w-full flex flex-col h-full bg-transparent border-none",
             className
         )}>
@@ -226,7 +240,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
 
             {/* Logo */}
             {variant === "default" && (
-                <div className="px-6 pt-8 pb-6 border-b border-white/10 shrink-0">
+                <div className="px-6 pt-8 pb-6 border-b border-border shrink-0">
                     <Link href="/" className="flex items-center gap-3 group mb-2">
                         <div className={cn("p-2 rounded-2xl border backdrop-blur-md shadow-lg transition-all duration-300 group-hover:scale-105",
                             role === "admin" ? "bg-rose-500/20 border-rose-500/30" : "bg-primary/20 border-primary/30"
@@ -259,7 +273,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
             {variant === "default" && (
                 <div className="p-3 border-t border-white/[0.06] space-y-1.5 shrink-0">
                     {user && (
-                        <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-white/5 border border-white/5 mb-2">
+                        <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-muted/50 border border-border/50 mb-2">
                             <div className={cn(
                                 "w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black shrink-0",
                                 role === "admin" ? "bg-rose-500/20 text-rose-400" : "bg-primary/20 text-primary"
@@ -267,8 +281,8 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                                 {(user.name || user.name || "?").charAt(0).toUpperCase()}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="text-[11px] font-bold truncate text-white/80">{user.name || user.name || "User"}</p>
-                                <p className="text-[8px] uppercase tracking-widest text-white/30 font-bold">{user.role || role}</p>
+                                <p className="text-[11px] font-bold truncate text-foreground/90">{user.name || user.name || "User"}</p>
+                                <p className="text-[8px] uppercase tracking-widest text-muted-foreground font-bold">{user.role || role}</p>
                             </div>
                         </div>
                     )}

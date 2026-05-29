@@ -92,9 +92,9 @@ export async function updateSession(request: NextRequest) {
   // ─── AUTHENTICATION GUARD ─────────────────────────────────────────
   if (!role && (isAdminRoute || isCompanyRoute || isUserRoute)) {
     console.log("[Middleware] Blocked route access. Path:", path, "Role:", role)
-    // const redirectUrl = new URL('/auth/login', request.url)
-    // redirectUrl.searchParams.set('redirectedFrom', path)
-    // return NextResponse.redirect(redirectUrl)
+    const redirectUrl = new URL('/auth/login', request.url)
+    redirectUrl.searchParams.set('redirectedFrom', path)
+    return NextResponse.redirect(redirectUrl)
   }
 
   // ─── ROLE-BASED ACCESS CONTROL ────────────────────────────────────

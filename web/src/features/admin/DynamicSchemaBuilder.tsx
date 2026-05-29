@@ -65,7 +65,7 @@ export function DynamicSchemaBuilder() {
     }
 
     return (
-        <Card className="border-white/5 bg-background/20 backdrop-blur-xl">
+        <Card className="border-border/50 bg-background/20 backdrop-blur-xl">
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 mb-1">
@@ -73,7 +73,7 @@ export function DynamicSchemaBuilder() {
                         <CardTitle className="text-xl font-black tracking-tight uppercase">DYNAMIC SCHEMA BUILDER</CardTitle>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={addField} className="border-white/10 hover:bg-white/5 font-black tracking-tighter">
+                        <Button variant="outline" size="sm" onClick={addField} className="border-border hover:bg-muted/50 font-black tracking-tighter">
                             <Plus className="w-4 h-4 mr-1" /> ADD FIELD
                         </Button>
                         <Button size="sm" onClick={saveSchema} disabled={isSaving} className="bg-primary hover:bg-primary/90 text-primary-foreground font-black tracking-tighter">
@@ -94,7 +94,7 @@ export function DynamicSchemaBuilder() {
                             value={field}
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-300 group"
+                            className="flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-muted/30 hover:bg-muted/40 transition-all duration-300 group"
                         >
                             <div className="cursor-grab active:cursor-grabbing text-muted-foreground/20 group-hover:text-muted-foreground/40 transition-colors">
                                 <GripVertical className="w-5 h-5" />
@@ -105,7 +105,7 @@ export function DynamicSchemaBuilder() {
                                     <Label className="text-[9px] font-black uppercase text-muted-foreground/60 tracking-widest">FIELD KEY</Label>
                                     <Input 
                                         value={field.field_key} 
-                                        className="h-8 text-[11px] font-mono border-white/5 bg-white/5" 
+                                        className="h-8 text-[11px] font-mono border-border/50 bg-muted/50" 
                                         readOnly 
                                     />
                                 </div>
@@ -113,7 +113,7 @@ export function DynamicSchemaBuilder() {
                                     <Label className="text-[9px] font-black uppercase text-muted-foreground/60 tracking-widest">UI LABEL</Label>
                                     <Input 
                                         value={field.label} 
-                                        className="h-8 text-[11px] font-bold border-white/5 bg-white/5" 
+                                        className="h-8 text-[11px] font-bold border-border/50 bg-muted/50" 
                                         onChange={(e) => {
                                             const updated = fields.map(f => f.id === field.id ? { ...f, label: e.target.value.toUpperCase() } : f)
                                             setFields(updated)
@@ -123,7 +123,7 @@ export function DynamicSchemaBuilder() {
                                 <div className="col-span-3 space-y-1">
                                     <Label className="text-[9px] font-black uppercase text-muted-foreground/60 tracking-widest">DATA TYPE</Label>
                                     <div className="flex gap-1">
-                                        <Badge variant="secondary" className="text-[9px] h-8 w-full border-white/5 bg-white/5 font-black flex items-center justify-center gap-2">
+                                        <Badge variant="secondary" className="text-[9px] h-8 w-full border-border/50 bg-muted/50 font-black flex items-center justify-center gap-2">
                                             <Settings className="w-3 h-3" /> {field.field_type.toUpperCase()}
                                         </Badge>
                                     </div>

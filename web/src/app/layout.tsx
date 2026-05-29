@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/auth-context";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Navbar } from "@/components/layout/navbar";
@@ -48,6 +49,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
             <QueryProvider>
+              <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
                 <AuthProvider>
                   <CMSProvider>
                     <SmoothScroll />
@@ -63,6 +65,7 @@ export default function RootLayout({
                     <MobileNav />
                   </CMSProvider>
                 </AuthProvider>
+              </GoogleOAuthProvider>
             </QueryProvider>
           <Toaster position="top-center" richColors />
         </ThemeProvider>

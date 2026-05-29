@@ -14,8 +14,9 @@ def is_valid_username(username: str) -> bool:
     """Check if a username matches length and character requirements."""
     if not username or len(username) < 3 or len(username) > 30:
         return False
-    # Only allow lowercase letters, numbers, hyphens, and underscores
-    if not re.match(r"^[a-z0-9_-]+$", username):
+    # Strict regex: lowercase letters and numbers, hyphens allowed in between
+    # No leading/trailing hyphens, no underscores, no special characters
+    if not re.match(r"^[a-z0-9]+(?:-[a-z0-9]+)*$", username):
         return False
     return True
 
@@ -23,15 +24,20 @@ def is_reserved_username(username: str) -> bool:
     """Check if a username is in the reserved list."""
     return username.lower() in RESERVED_USERNAMES
 
-def generate_base_slug(full_name: str) -> str:
-    """Generate a clean base slug from a full name."""
-    if not full_name:
+def generate_base_slug(raw_name: str) -> str:
+    """Generate a clean base slug from a full name or email."""
+    if not raw_name:
         return f"user-{generate_random_suffix(6)}"
     
     # Simple regex slugifier: lowercase, replace spaces with hyphens, remove non-alphanumeric
-    slug = full_name.lower()
-    slug = re.sub(r'[^a-z0-9\s-]', '', slug)
-    slug = re.sub(r'[-\s]+', '-', slug).strip('-')
+    slug = raw_name.lower()
+    
+    # Replace anything that isn't a letter or number with a hyphen
+    slug = re.sub(r'[^a-z0-9]+', '-', slug)
+    # Collapse multiple hyphens into a single hyphen
+    slug = re.sub(r'-+', '-', slug)
+    # Strip leading/trailing hyphens
+    slug = slug.strip('-')
     
     if not slug:
         return f"user-{generate_random_suffix(6)}"
@@ -42,32 +48,37 @@ def generate_random_suffix(length: int = 4) -> str:
     """Generate a random alphanumeric suffix."""
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
-def generate_unique_username(full_name: str, existing_usernames_check_func=None) -> str:
+async def generate_unique_username(raw_name: str, existing_usernames_check_func=None) -> str:
     """
-    Generate a unique username.
-    If existing_usernames_check_func is provided, it must be a callable that takes a username string
-    and returns True if it exists in the database, False otherwise.
+    Generate a unique username by slugifying the input and appending -1, -2 incrementally if taken.
+    If existing_usernames_check_func is provided, it must be an ASYNC callable.
     """
-    base_slug = generate_base_slug(full_name)
+    base_slug = generate_base_slug(raw_name)
+    
+    # Trim base slug to allow room for suffixes (max length is 30)
+    # Give a buffer of 5 characters for suffixes e.g., "-9999"
+    if len(base_slug) > 25:
+        base_slug = base_slug[:25].rstrip('-')
     
     # Try the base slug first if it's not reserved and valid length
     if not is_reserved_username(base_slug) and len(base_slug) >= 3:
-        if existing_usernames_check_func is None or not existing_usernames_check_func(base_slug):
+        if existing_usernames_check_func is None:
+            return base_slug
+        is_taken = await existing_usernames_check_func(base_slug)
+        if not is_taken:
             return base_slug
 
-    # Keep adding random suffixes until we find a unique one
-    max_attempts = 10
-    for _ in range(max_attempts):
-        suffix = generate_random_suffix()
+    # Keep adding incremental suffixes until we find a unique one
+    max_attempts = 1000
+    for suffix in range(1, max_attempts + 1):
         candidate = f"{base_slug}-{suffix}"
-        
-        # Ensure we don't exceed max length
-        if len(candidate) > 30:
-            candidate = f"{base_slug[:30-len(suffix)-1]}-{suffix}"
             
         if not is_reserved_username(candidate):
-            if existing_usernames_check_func is None or not existing_usernames_check_func(candidate):
+            if existing_usernames_check_func is None:
+                return candidate
+            is_taken = await existing_usernames_check_func(candidate)
+            if not is_taken:
                 return candidate
                 
-    # Fallback if somehow everything is taken or too long
+    # Fallback if somehow everything is taken
     return f"user-{generate_random_suffix(8)}"

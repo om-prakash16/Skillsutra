@@ -102,7 +102,7 @@ export default function RoadmapPage() {
         <div className="min-h-screen pt-28 pb-16 px-4 md:px-8 max-w-6xl mx-auto space-y-12 relative overflow-hidden">
             <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-primary/5 blur-[150px] -z-10 rounded-full" />
             
-            <div className="border-b border-white/5 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+            <div className="border-b border-border/50 pb-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div>
                     <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight flex items-center gap-3">
                         AI ROADMAPS <Route className="w-8 h-8 text-primary" />
@@ -114,8 +114,8 @@ export default function RoadmapPage() {
             </div>
 
             {/* Generator Panel */}
-            <div className="glass border-white/5 p-8 rounded-[2rem] space-y-6">
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
+            <div className="glass border-border/50 p-8 rounded-[2rem] space-y-6">
+                <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
                     <Compass className="w-5 h-5 text-primary" /> Define Your Target Role
                 </h3>
                 
@@ -125,7 +125,7 @@ export default function RoadmapPage() {
                             value={customRole}
                             onChange={(e) => setCustomRole(e.target.value)}
                             placeholder="e.g. Senior Machine Learning Engineer, Full Stack Web3 Developer..."
-                            className="bg-white/5 border-white/10 text-white h-12 rounded-xl pl-12 font-medium"
+                            className="bg-muted/50 border-border text-foreground h-12 rounded-xl pl-12 font-medium"
                         />
                         <Target className="w-5 h-5 text-muted-foreground absolute left-4 top-3.5" />
                     </div>
@@ -149,8 +149,8 @@ export default function RoadmapPage() {
 
             {gapAnalysis && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div className="glass p-6 rounded-3xl border-white/5 space-y-4 col-span-1 md:col-span-2">
-                        <h4 className="text-lg font-bold flex items-center gap-2 text-white">
+                    <div className="glass p-6 rounded-3xl border-border/50 space-y-4 col-span-1 md:col-span-2">
+                        <h4 className="text-lg font-bold flex items-center gap-2 text-foreground">
                             <TrendingUp className="w-5 h-5 text-primary" /> Skill Gap Analysis
                         </h4>
                         
@@ -178,9 +178,9 @@ export default function RoadmapPage() {
                         </div>
                     </div>
                     
-                    <div className="glass p-6 rounded-3xl border-white/5 space-y-4 col-span-1 flex flex-col justify-center items-center text-center">
+                    <div className="glass p-6 rounded-3xl border-border/50 space-y-4 col-span-1 flex flex-col justify-center items-center text-center">
                         <h4 className="text-xs uppercase font-bold tracking-widest text-muted-foreground">Readiness Score</h4>
-                        <div className="text-6xl font-black text-white relative">
+                        <div className="text-6xl font-black text-foreground relative">
                             {gapAnalysis.readiness_score}%
                         </div>
                         <p className="text-xs text-muted-foreground max-w-[200px]">
@@ -196,8 +196,8 @@ export default function RoadmapPage() {
                     <div className="absolute left-[39px] top-4 bottom-4 w-0.5 bg-gradient-to-b from-primary via-primary/30 to-transparent -z-10" />
 
                     <div className="pl-2">
-                        <h2 className="text-2xl font-bold text-white mb-2">Target Path: {roadmap.target_role}</h2>
-                        <div className="w-full bg-white/5 h-2.5 rounded-full overflow-hidden border border-white/5 mt-4 max-w-md">
+                        <h2 className="text-2xl font-bold text-foreground mb-2">Target Path: {roadmap.target_role}</h2>
+                        <div className="w-full bg-muted/50 h-2.5 rounded-full overflow-hidden border border-border/50 mt-4 max-w-md">
                             <div 
                                 className="bg-primary h-full transition-all duration-700" 
                                 style={{ width: `${(roadmap.current_milestone_index / roadmap.nodes_json.length) * 100}%` }}
@@ -227,7 +227,7 @@ export default function RoadmapPage() {
                                             ? "bg-primary/20 border-primary text-primary" 
                                             : isActive 
                                                 ? "bg-black border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)] animate-pulse" 
-                                                : "bg-white/5 border-white/5 text-muted-foreground"
+                                                : "bg-muted/50 border-border/50 text-muted-foreground"
                                     }`}>
                                         {isCompleted ? (
                                             <CheckCircle2 className="w-8 h-8" />
@@ -238,10 +238,10 @@ export default function RoadmapPage() {
 
                                     {/* Milestone Card */}
                                     <div className={`flex-1 glass p-8 rounded-[2rem] border transition-all ${
-                                        isActive ? "border-primary/30 bg-primary/5" : "border-white/5"
+                                        isActive ? "border-primary/30 bg-primary/5" : "border-border/50"
                                     }`}>
                                         <div className="flex items-center justify-between mb-4">
-                                            <h4 className="text-xl font-bold tracking-tight text-white">{node.milestone}</h4>
+                                            <h4 className="text-xl font-bold tracking-tight text-foreground">{node.milestone}</h4>
                                             {isCompleted && (
                                                 <Badge variant="outline" className="text-emerald-400 border-emerald-500/20 text-micro">COMPLETED</Badge>
                                             )}
@@ -278,9 +278,9 @@ export default function RoadmapPage() {
             ) : null}
             
             {!roadmap && !loading && !gapAnalysis && (
-                <div className="text-center py-24 glass rounded-[3rem] border-white/5 border-dashed max-w-md mx-auto mt-12">
-                    <Compass className="w-12 h-12 text-white/20 mx-auto mb-4" />
-                    <p className="text-[11px] font-black uppercase tracking-widest text-white/50">No active roadmap path selected.</p>
+                <div className="text-center py-24 glass rounded-[3rem] border-border/50 border-dashed max-w-md mx-auto mt-12">
+                    <Compass className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
+                    <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">No active roadmap path selected.</p>
                 </div>
             )}
         </div>

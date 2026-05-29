@@ -28,7 +28,7 @@ export default function SkillEndorsementCard({
   canEndorse?: boolean;
 }) {
   return (
-    <Card className="border-white/5 bg-zinc-950/50 backdrop-blur-sm">
+    <Card className="border-border/50 bg-zinc-950/50 backdrop-blur-sm">
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -47,8 +47,8 @@ export default function SkillEndorsementCard({
         {endorsements.length > 0 && (
           <div className="space-y-2">
             {endorsements.slice(0, 5).map((e) => (
-              <div key={e.id} className="flex items-start gap-2 p-2 rounded-lg bg-zinc-900/30 border border-white/5">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-[10px] font-bold text-white shrink-0">
+              <div key={e.id} className="flex items-start gap-2 p-2 rounded-lg bg-zinc-900/30 border border-border/50">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-cyan-500 to-purple-500 flex items-center justify-center text-[10px] font-bold text-foreground shrink-0">
                   {(e.endorser_name || "?")[0].toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">

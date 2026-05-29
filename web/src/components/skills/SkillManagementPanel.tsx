@@ -118,7 +118,7 @@ export default function SkillManagementPanel({
   };
 
   return (
-    <Card className="border-white/5 bg-zinc-950/50 backdrop-blur-sm">
+    <Card className="border-border/50 bg-zinc-950/50 backdrop-blur-sm">
       <CardHeader className="pb-4">
         <CardTitle className="text-lg font-semibold flex items-center justify-between">
           <span>Skill Manager</span>
@@ -135,17 +135,17 @@ export default function SkillManagementPanel({
               placeholder="Search skills to add..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="bg-zinc-900/50 border-white/10"
+              className="bg-zinc-900/50 border-border"
             />
             {/* Dropdown results */}
             {searchResults.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 z-50 bg-zinc-900 border border-white/10 rounded-lg shadow-2xl max-h-[200px] overflow-y-auto">
+              <div className="absolute top-full left-0 right-0 mt-1 z-50 bg-zinc-900 border border-border rounded-lg shadow-2xl max-h-[200px] overflow-y-auto">
                 {searchResults.map((s) => (
                   <button
                     key={s.id}
                     onClick={() => handleAddSkill(s)}
                     disabled={isAdding || skills.some((sk) => sk.skill_id === s.id)}
-                    className="w-full px-3 py-2 text-left hover:bg-white/5 flex items-center justify-between text-sm disabled:opacity-40"
+                    className="w-full px-3 py-2 text-left hover:bg-muted/50 flex items-center justify-between text-sm disabled:opacity-40"
                   >
                     <span className="font-medium">{s.name}</span>
                     <span className={`text-[10px] px-2 py-0.5 rounded-full border ${categoryColor[s.category] || "bg-zinc-800 text-zinc-400"}`}>
@@ -156,13 +156,13 @@ export default function SkillManagementPanel({
               </div>
             )}
             {isSearching && (
-              <div className="absolute top-full left-0 right-0 mt-1 z-50 bg-zinc-900 border border-white/10 rounded-lg p-3 text-center text-sm text-zinc-500">
+              <div className="absolute top-full left-0 right-0 mt-1 z-50 bg-zinc-900 border border-border rounded-lg p-3 text-center text-sm text-zinc-500">
                 Searching taxonomy...
               </div>
             )}
           </div>
           <Select value={selectedProficiency} onValueChange={setSelectedProficiency}>
-            <SelectTrigger className="w-[140px] bg-zinc-900/50 border-white/10">
+            <SelectTrigger className="w-[140px] bg-zinc-900/50 border-border">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -179,7 +179,7 @@ export default function SkillManagementPanel({
           {skills.map((skill) => (
             <div
               key={skill.id}
-              className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/30 border border-white/5 hover:border-white/10 transition-all group"
+              className="flex items-center gap-3 p-3 rounded-lg bg-zinc-900/30 border border-border/50 hover:border-border transition-all group"
             >
               {/* Star toggle */}
               <button

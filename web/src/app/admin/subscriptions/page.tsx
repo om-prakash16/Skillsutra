@@ -52,7 +52,7 @@ export default function SubscriptionsManager() {
     return (
         <div className="space-y-8 animate-in fade-in duration-700 max-w-6xl pb-20">
             <div className="flex flex-col justify-between items-start gap-4">
-                <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tight flex items-center gap-4 text-white">
+                <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tight flex items-center gap-4 text-foreground">
                     <Layers className="w-10 h-10 text-amber-500 drop-shadow-[0_0_15px_rgba(245,158,11,0.8)]" /> 
                     SaaS Configuration
                 </h1>
@@ -73,44 +73,44 @@ export default function SubscriptionsManager() {
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: idx * 0.1 }}
                             >
-                                <Card className="bg-white/5 border-white/10 backdrop-blur-xl relative overflow-hidden group h-full hover:border-amber-500/30 transition-all flex flex-col">
+                                <Card className="bg-muted/50 border-border backdrop-blur-xl relative overflow-hidden group h-full hover:border-amber-500/30 transition-all flex flex-col">
                                     <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/5 blur-[80px] rounded-full pointer-events-none group-hover:bg-amber-500/10 transition-all" />
                                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500/0 via-amber-500/50 to-amber-500/0 opacity-0 group-hover:opacity-100 transition-opacity" />
                                     
-                                    <CardHeader className="border-b border-white/5 pb-4">
+                                    <CardHeader className="border-b border-border/50 pb-4">
                                         <CardTitle className="text-2xl font-black uppercase tracking-wider text-amber-500 flex items-center justify-between">
                                             {tier.tier_name}
-                                            <span className="text-sm text-white/50">${tier.monthly_price}/mo</span>
+                                            <span className="text-sm text-muted-foreground">${tier.monthly_price}/mo</span>
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent className="p-6 relative z-10 space-y-6 flex-1 flex flex-col">
                                         
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">AI Match Limit / Mo</label>
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">AI Match Limit / Mo</label>
                                             <Input 
                                                 type="number"
                                                 defaultValue={tier.ai_match_limit}
-                                                className="bg-black/40 border-white/10 font-mono text-white text-lg h-12 text-center"
+                                                className="bg-background/80 border-border font-mono text-foreground text-lg h-12 text-center"
                                                 onChange={(e) => { tier.ai_match_limit = parseInt(e.target.value) }}
                                             />
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Active Job Limit</label>
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Active Job Limit</label>
                                             <Input 
                                                 type="number"
                                                 defaultValue={tier.job_post_limit}
-                                                className="bg-black/40 border-white/10 font-mono text-white text-lg h-12 text-center"
+                                                className="bg-background/80 border-border font-mono text-foreground text-lg h-12 text-center"
                                                 onChange={(e) => { tier.job_post_limit = parseInt(e.target.value) }}
                                             />
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-white/40">Recruiter Seats</label>
+                                            <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Recruiter Seats</label>
                                             <Input 
                                                 type="number"
                                                 defaultValue={tier.seat_limit}
-                                                className="bg-black/40 border-white/10 font-mono text-white text-lg h-12 text-center"
+                                                className="bg-background/80 border-border font-mono text-foreground text-lg h-12 text-center"
                                                 onChange={(e) => { tier.seat_limit = parseInt(e.target.value) }}
                                             />
                                         </div>
@@ -134,7 +134,7 @@ export default function SubscriptionsManager() {
                 )}
             </div>
             
-            <Button variant="outline" className="border-dashed border-white/20 text-white/40 hover:text-white hover:bg-white/5 w-full h-16 rounded-2xl">
+            <Button variant="outline" className="border-dashed border-border text-muted-foreground hover:text-foreground hover:bg-muted/50 w-full h-16 rounded-2xl">
                 <Plus className="w-5 h-5 mr-3" /> Create New Enterprise Tier
             </Button>
         </div>

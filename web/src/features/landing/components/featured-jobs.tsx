@@ -53,7 +53,7 @@ export function FeaturedJobs() {
         {isLoading ? (
             <div className="py-20 flex flex-col items-center justify-center gap-4">
                 <Loader2 className="w-8 h-8 animate-spin text-primary/50" />
-                <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Scanning marketplace nodes...</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Scanning marketplace nodes...</p>
             </div>
         ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -61,8 +61,8 @@ export function FeaturedJobs() {
                     <JobCard key={job.id} job={job} />
                 ))}
                 {jobs.length === 0 && (
-                    <div className="col-span-full py-20 text-center glass border-dashed border-white/10 rounded-[2rem]">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Awaiting fresh role deployments...</p>
+                    <div className="col-span-full py-20 text-center glass border-dashed border-border rounded-[2rem]">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Awaiting fresh role deployments...</p>
                     </div>
                 )}
             </div>

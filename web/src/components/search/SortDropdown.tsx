@@ -28,13 +28,13 @@ export function SortDropdown({ onSortChange, type }: SortDropdownProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="h-16 px-8 glass border-white/10 hover:border-primary/50 font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 rounded-2xl transition-all group">
+                <Button variant="outline" className="h-16 px-8 glass border-border hover:border-primary/50 font-black text-[10px] uppercase tracking-[0.2em] flex items-center gap-3 rounded-2xl transition-all group">
                     <span className="text-muted-foreground/60 group-hover:text-primary transition-colors">SORT BY:</span> 
                     <span className="text-foreground">{selected}</span> 
                     <ChevronDown className="w-4 h-4 ml-2 text-primary" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="glass border-white/10 min-w-[240px] p-2 rounded-2xl shadow-2xl">
+            <DropdownMenuContent className="glass border-border min-w-[240px] p-2 rounded-2xl shadow-2xl">
                 {options.map(opt => (
                     <DropdownMenuItem 
                         key={opt.value} 

@@ -158,13 +158,13 @@ export function CommandSearch() {
             <button 
                 onClick={toggle}
                 className={cn(
-                    "hidden md:flex items-center gap-3 px-4 py-2 rounded-xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:bg-black/10 dark:hover:bg-white/10 transition-all text-muted-foreground group",
+                    "hidden md:flex items-center gap-3 px-4 py-2 rounded-xl bg-black/5 dark:bg-muted/50 border border-black/10 dark:border-border hover:bg-black/10 dark:hover:bg-muted/50 transition-all text-muted-foreground group",
                     isAdmin ? "hover:border-rose-500/40" : "hover:border-primary/40"
                 )}
             >
                 <Search className={cn("w-4 h-4 transition-colors", isAdmin ? "group-hover:text-rose-400" : "group-hover:text-primary")} />
                 <span className="text-xs font-black uppercase tracking-widest">Search Command</span>
-                <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-1 rounded border border-black/10 dark:border-white/10 bg-black/5 dark:bg-white/5 px-1.5 font-mono text-[10px] font-medium opacity-100">
+                <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-1 rounded border border-black/10 dark:border-border bg-black/5 dark:bg-muted/50 px-1.5 font-mono text-[10px] font-medium opacity-100">
                     <span className="text-xs">⌘</span>K
                 </kbd>
             </button>
@@ -186,23 +186,23 @@ export function CommandSearch() {
                             exit={{ opacity: 0, scale: 0.95, y: -20 }}
                             className={cn(
                                 "relative w-full max-w-2xl bg-[#0a0a0a] border rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-300",
-                                isAdmin ? "border-rose-500/20 shadow-rose-500/5" : "border-white/10"
+                                isAdmin ? "border-rose-500/20 shadow-rose-500/5" : "border-border"
                             )}
                         >
                             {/* Search Input Area */}
-                            <div className="flex items-center gap-4 p-6 border-b border-white/5">
+                            <div className="flex items-center gap-4 p-6 border-b border-border/50">
                                 <Search className={cn("w-6 h-6 animate-pulse", isAdmin ? "text-rose-500" : "text-primary")} />
                                 <input 
                                     autoFocus
                                     value={query}
                                     onChange={(e) => handleSearch(e.target.value)}
                                     placeholder={isAdmin ? "Initiate admin command overrides, registries, schemas..." : "Search mission parameters, personnel, or systems..."}
-                                    className="bg-transparent border-none focus:ring-0 w-full text-xl font-black italic tracking-tight text-white placeholder:text-white/20 outline-hidden"
+                                    className="bg-transparent border-none focus:ring-0 w-full text-xl font-black italic tracking-tight text-foreground placeholder:text-muted-foreground/50 outline-hidden"
                                 />
                                 {isLoading ? (
                                     <Loader2 className={cn("w-5 h-5 animate-spin", isAdmin ? "text-rose-500/40" : "text-primary/40")} />
                                 ) : (
-                                    <div className="text-[10px] font-black uppercase tracking-widest text-white/20">⌘K</div>
+                                    <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">⌘K</div>
                                 )}
                             </div>
 
@@ -210,26 +210,26 @@ export function CommandSearch() {
                             <div className="max-h-[50vh] overflow-y-auto p-4 custom-scrollbar">
                                 {query.length === 0 && (
                                     <div className="p-2 mb-2">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 mb-4 px-2">Jump To System</p>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/50 mb-4 px-2">Jump To System</p>
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                                             {getAvailableActions().map(action => (
                                                 <button
                                                     key={action.id}
                                                     onClick={() => navigate(action.href)}
                                                     className={cn(
-                                                        "flex items-center gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/[0.08] transition-all text-left group",
+                                                        "flex items-center gap-4 p-4 rounded-2xl bg-muted/50 border border-border/50 hover:bg-white/[0.08] transition-all text-left group",
                                                         isAdmin ? "hover:border-rose-500/30" : "hover:border-primary/30"
                                                     )}
                                                 >
                                                     <div className={cn(
-                                                        "w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform",
+                                                        "w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center group-hover:scale-110 transition-transform",
                                                         isAdmin ? "text-rose-400" : "text-primary"
                                                     )}>
                                                         {action.icon}
                                                     </div>
                                                     <div>
-                                                        <p className="text-xs font-black uppercase tracking-wide text-white">{action.title}</p>
-                                                        <p className="text-[8px] font-black uppercase tracking-widest text-white/20">{action.category}</p>
+                                                        <p className="text-xs font-black uppercase tracking-wide text-foreground">{action.title}</p>
+                                                        <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/50">{action.category}</p>
                                                     </div>
                                                 </button>
                                             ))}
@@ -251,8 +251,8 @@ export function CommandSearch() {
                                                         {action.icon}
                                                     </div>
                                                     <div>
-                                                        <span className="font-bold text-white/80 group-hover:text-white block text-sm">{action.title}</span>
-                                                        <span className="text-[8px] font-black uppercase tracking-widest text-white/20">{action.category}</span>
+                                                        <span className="font-bold text-foreground/90 group-hover:text-foreground block text-sm">{action.title}</span>
+                                                        <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/50">{action.category}</span>
                                                     </div>
                                                 </div>
                                                 <ArrowRight className={cn("w-4 h-4 text-white/0 group-hover:translate-x-1 transition-all", isAdmin ? "group-hover:text-rose-400" : "group-hover:text-primary")} />
@@ -271,8 +271,8 @@ export function CommandSearch() {
                                                 className="w-full flex items-center justify-between p-4 rounded-2xl hover:bg-white/[0.05] group transition-all text-left"
                                             >
                                                 <div className="flex items-center gap-4">
-                                                    <Briefcase className="w-5 h-5 text-white/20 group-hover:text-primary transition-colors" />
-                                                    <span className="font-bold text-white/80 group-hover:text-white text-sm">{job.title}</span>
+                                                    <Briefcase className="w-5 h-5 text-muted-foreground/50 group-hover:text-primary transition-colors" />
+                                                    <span className="font-bold text-foreground/90 group-hover:text-foreground text-sm">{job.title}</span>
                                                 </div>
                                                 <ArrowRight className={cn("w-4 h-4 text-white/0 group-hover:translate-x-1 transition-all", isAdmin ? "group-hover:text-rose-400" : "group-hover:text-primary")} />
                                             </button>
@@ -283,19 +283,19 @@ export function CommandSearch() {
                                 {query.length > 0 && results.jobs.length === 0 && results.actions.length === 0 && !isLoading && (
                                     <div className="py-20 text-center">
                                         <Zap className="w-12 h-12 text-white/5 mx-auto mb-4" />
-                                        <p className="text-white/20 font-black italic uppercase tracking-widest">No matching parameters detected in Nexus.</p>
+                                        <p className="text-muted-foreground/50 font-black italic uppercase tracking-widest">No matching parameters detected in Nexus.</p>
                                     </div>
                                 )}
                             </div>
 
                             {/* Bottom Status Bar */}
-                            <div className="bg-white/[0.02] border-t border-white/5 p-4 flex items-center justify-between">
+                            <div className="bg-muted/30 border-t border-border/50 p-4 flex items-center justify-between">
                                 <div className="flex items-center gap-6">
-                                    <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest text-white/30">
-                                        <kbd className="border border-white/10 px-1 rounded bg-white/5">⏎</kbd> Select
+                                    <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest text-muted-foreground">
+                                        <kbd className="border border-border px-1 rounded bg-muted/50">⏎</kbd> Select
                                     </div>
-                                    <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest text-white/30">
-                                        <kbd className="border border-white/10 px-1 rounded bg-white/5">ESC</kbd> Close
+                                    <div className="flex items-center gap-2 text-[8px] font-black uppercase tracking-widest text-muted-foreground">
+                                        <kbd className="border border-border px-1 rounded bg-muted/50">ESC</kbd> Close
                                     </div>
                                 </div>
                                 <div className={cn("flex items-center gap-2 text-[8px] font-black uppercase tracking-widest italic", isAdmin ? "text-rose-400/60" : "text-primary/40")}>

@@ -8,10 +8,10 @@ import { fetchWithAuth } from "./api-client";
 export const userApi = {
     profile: {
         getSchema: () => fetchWithAuth("/profile/schema"),
-        get: () => fetchWithAuth("/profile/me"),
+        get: () => fetchWithAuth("/users/"),
         update: (data: any) =>
-            fetchWithAuth("/profile/me", {
-                method: "PATCH",
+            fetchWithAuth("/users/update", {
+                method: "POST",
                 body: JSON.stringify(data),
             }),
         claimUsername: (username: string) =>
@@ -23,7 +23,21 @@ export const userApi = {
             fetchWithAuth("/profile/upload-file", {
                 method: "POST",
                 body: formData,
-                headers: { "Content-Type": "multipart/form-data" },
+            }),
+        addExperience: (data: any) =>
+            fetchWithAuth("/profile/me/experience", {
+                method: "POST",
+                body: JSON.stringify(data),
+            }),
+        addEducation: (data: any) =>
+            fetchWithAuth("/profile/me/education", {
+                method: "POST",
+                body: JSON.stringify(data),
+            }),
+        addProject: (data: any) =>
+            fetchWithAuth("/profile/me/project", {
+                method: "POST",
+                body: JSON.stringify(data),
             }),
     },
     settings: {
@@ -83,7 +97,7 @@ export const userApi = {
             }),
     },
     applications: {
-        user: () => fetchWithAuth("/applications/user"),
+        user: () => fetchWithAuth("/applications/my-applications"),
     },
     Verifications: {
         mintProfile: () => fetchWithAuth("/Verifications/issue-profile", { method: "POST" }),

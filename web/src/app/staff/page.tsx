@@ -15,7 +15,7 @@ export default function StaffDashboard() {
                     transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                 >
                     <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary/70 mb-3">Operational Command</p>
-                    <h1 className="text-6xl font-black font-heading tracking-tighter text-white leading-[0.9]">
+                    <h1 className="text-6xl font-black font-heading tracking-tighter text-foreground leading-[0.9]">
                         Staff <span className="text-primary italic">Overview</span>
                     </h1>
                 </motion.div>
@@ -24,10 +24,10 @@ export default function StaffDashboard() {
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: 0.2 }}
-                    className="flex items-center gap-3 px-4 py-2 bg-white/5 border border-white/10 rounded-2xl backdrop-blur-md"
+                    className="flex items-center gap-3 px-4 py-2 bg-muted/50 border border-border rounded-2xl backdrop-blur-md"
                 >
                     <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-xs font-bold text-white/60 tracking-tight">System Status: Optimal</span>
+                    <span className="text-xs font-bold text-foreground/80 tracking-tight">System Status: Optimal</span>
                 </motion.div>
             </header>
 
@@ -72,7 +72,7 @@ export default function StaffDashboard() {
                 <div className="lg:col-span-2">
                     <AdminCharts />
                 </div>
-                <div className="bg-white/5 border border-white/10 rounded-[2rem] p-8 backdrop-blur-md relative overflow-hidden">
+                <div className="bg-muted/50 border border-border rounded-[2rem] p-8 backdrop-blur-md relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-10">
                         <ShieldCheck className="w-24 h-24 text-primary" />
                     </div>
@@ -92,11 +92,11 @@ export default function StaffDashboard() {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.1 * i }}
-                                className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-colors group cursor-pointer"
+                                className="p-4 bg-muted/50 border border-border/50 rounded-2xl hover:bg-muted/50 transition-colors group cursor-pointer"
                             >
                                 <div className="flex justify-between items-start mb-1">
                                     <span className="text-xs font-black uppercase text-primary/80 tracking-widest">{task.type}</span>
-                                    <span className="text-[10px] text-white/30 font-bold">{task.time}</span>
+                                    <span className="text-[10px] text-muted-foreground font-bold">{task.time}</span>
                                 </div>
                                 <p className="text-sm font-bold group-hover:text-primary transition-colors">{task.title}</p>
                             </motion.div>

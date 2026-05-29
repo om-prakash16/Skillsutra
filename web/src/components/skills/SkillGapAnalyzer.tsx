@@ -37,7 +37,7 @@ export default function SkillGapAnalyzer({ jobs }: { jobs: { id: string; title: 
   };
 
   return (
-    <Card className="border-white/5 bg-zinc-950/50 backdrop-blur-sm">
+    <Card className="border-border/50 bg-zinc-950/50 backdrop-blur-sm">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold flex items-center gap-2">
           <span className="text-amber-400">🎯</span> Skill Gap Analyzer
@@ -45,7 +45,7 @@ export default function SkillGapAnalyzer({ jobs }: { jobs: { id: string; title: 
       </CardHeader>
       <CardContent className="space-y-4">
         <Select value={selectedJobId} onValueChange={setSelectedJobId}>
-          <SelectTrigger className="bg-zinc-900/50 border-white/10">
+          <SelectTrigger className="bg-zinc-900/50 border-border">
             <SelectValue placeholder="Select a job to compare..." />
           </SelectTrigger>
           <SelectContent>
@@ -66,7 +66,7 @@ export default function SkillGapAnalyzer({ jobs }: { jobs: { id: string; title: 
         {gapData && !loading && (
           <>
             {/* Score overview */}
-            <div className="flex items-center gap-4 p-4 rounded-xl bg-zinc-900/30 border border-white/5">
+            <div className="flex items-center gap-4 p-4 rounded-xl bg-zinc-900/30 border border-border/50">
               <div className="text-center">
                 <div className={`text-3xl font-bold ${gapData.gap_score <= 20 ? "text-green-400" : gapData.gap_score <= 50 ? "text-amber-400" : "text-red-400"}`}>
                   {(100 - gapData.gap_score).toFixed(0)}%

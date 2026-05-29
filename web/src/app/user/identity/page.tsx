@@ -84,7 +84,7 @@ export default function IdentityNexusPage() {
                 <Badge variant="outline" className="border-primary/20 bg-primary/5 text-primary tracking-widest uppercase font-black text-[10px] px-4 py-1">
                     Security Protocol 09 / Identity
                 </Badge>
-                <h1 className="text-5xl font-black tracking-tighter italic uppercase text-white">
+                <h1 className="text-5xl font-black tracking-tighter italic uppercase text-foreground">
                     Secure your <span className="text-primary">Nexus Identity.</span>
                 </h1>
                 <p className="text-xl text-muted-foreground font-medium leading-relaxed max-w-2xl">
@@ -98,7 +98,7 @@ export default function IdentityNexusPage() {
                 isVerified ? "border-emerald-500/30 bg-emerald-500/5" : 
                 isPending ? "border-amber-500/30 bg-amber-500/5" : 
                 isRejected ? "border-rose-500/30 bg-rose-500/5" :
-                "border-white/10 bg-white/5"
+                "border-border bg-muted/50"
             )}>
                 <div className="absolute top-0 right-0 p-8 opacity-10">
                     {isVerified ? <ShieldCheck className="w-24 h-24 text-emerald-500" /> : <Lock className="w-24 h-24" />}
@@ -113,14 +113,14 @@ export default function IdentityNexusPage() {
                             isRejected ? "bg-rose-500 shadow-rose-500/20" :
                             "bg-primary shadow-primary/20"
                         )}>
-                            {isVerified ? <CheckCircle2 className="w-10 h-10 text-white" /> : 
-                             isPending ? <Clock className="w-10 h-10 text-white animate-pulse" /> :
-                             isRejected ? <ShieldAlert className="w-10 h-10 text-white" /> :
-                             <ShieldCheck className="w-10 h-10 text-white" />}
+                            {isVerified ? <CheckCircle2 className="w-10 h-10 text-foreground" /> : 
+                             isPending ? <Clock className="w-10 h-10 text-foreground animate-pulse" /> :
+                             isRejected ? <ShieldAlert className="w-10 h-10 text-foreground" /> :
+                             <ShieldCheck className="w-10 h-10 text-foreground" />}
                         </div>
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-[0.2em] opacity-40 mb-1">Current State</p>
-                            <h2 className="text-3xl font-black italic tracking-tighter uppercase text-white">
+                            <h2 className="text-3xl font-black italic tracking-tighter uppercase text-foreground">
                                 {isVerified ? "Verification Complete" : 
                                  isPending ? "Review in Progress" : 
                                  isRejected ? "Action Required" :
@@ -148,15 +148,15 @@ export default function IdentityNexusPage() {
                                         key={type.id}
                                         onClick={() => handleSubmit(type.id)}
                                         disabled={submitting}
-                                        className="group p-8 rounded-[2rem] bg-white/5 border border-white/5 hover:border-primary/40 text-left transition-all hover:scale-[1.02]"
+                                        className="group p-8 rounded-[2rem] bg-muted/50 border border-border/50 hover:border-primary/40 text-left transition-all hover:scale-[1.02]"
                                     >
                                         <div className="flex items-center justify-between mb-4">
-                                            <div className="p-3 bg-white/5 rounded-2xl group-hover:bg-primary/10 transition-colors">
+                                            <div className="p-3 bg-muted/50 rounded-2xl group-hover:bg-primary/10 transition-colors">
                                                 {type.icon}
                                             </div>
                                             <Upload className="w-4 h-4 text-white/0 group-hover:text-primary transition-all" />
                                         </div>
-                                        <h3 className="text-xl font-bold italic uppercase tracking-tighter text-white">{type.title}</h3>
+                                        <h3 className="text-xl font-bold italic uppercase tracking-tighter text-foreground">{type.title}</h3>
                                         <p className="text-xs text-muted-foreground mt-1">{type.desc}</p>
                                     </button>
                                 ))}
@@ -165,7 +165,7 @@ export default function IdentityNexusPage() {
                             <div className="p-6 rounded-2xl bg-primary/5 border border-primary/10 flex items-start gap-4">
                                 <AlertCircle className="w-5 h-5 text-primary mt-0.5" />
                                 <div className="space-y-1">
-                                    <p className="text-sm font-bold text-white">Encryption Protocol Alpha</p>
+                                    <p className="text-sm font-bold text-foreground">Encryption Protocol Alpha</p>
                                     <p className="text-xs text-muted-foreground leading-relaxed">
                                         All documents are encrypted at rest and never shared with recruiters. Only the "Verified" status is visible to the public. Artifacts are purged 30 days after verification.
                                     </p>
@@ -184,12 +184,12 @@ export default function IdentityNexusPage() {
                         { title: 'Priority Match', val: 'Unlocked', icon: <ArrowRight className="w-5 h-5"/> },
                         { title: 'Premium Access', val: 'Enabled', icon: <ShieldCheck className="w-5 h-5"/> }
                     ].map(perk => (
-                        <div key={perk.title} className="p-6 text-center space-y-2 border border-white/5 bg-white/[0.02] rounded-3xl italic">
+                        <div key={perk.title} className="p-6 text-center space-y-2 border border-border/50 bg-muted/30 rounded-3xl italic">
                             <div className="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center mx-auto mb-3">
                                 {perk.icon}
                             </div>
                             <p className="text-[10px] font-black uppercase tracking-widest text-primary/60">{perk.title}</p>
-                            <p className="text-2xl font-black text-white">{perk.val}</p>
+                            <p className="text-2xl font-black text-foreground">{perk.val}</p>
                         </div>
                     ))}
                 </div>

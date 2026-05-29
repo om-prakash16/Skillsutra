@@ -28,7 +28,7 @@ export function FeatureFlagDashboard() {
     }
 
     return (
-        <Card className="border-white/5 bg-background/20 backdrop-blur-xl">
+        <Card className="border-border/50 bg-background/20 backdrop-blur-xl">
             <CardHeader>
                 <div className="flex items-center gap-2 mb-1">
                     <ShieldCheck className="w-5 h-5 text-primary" />
@@ -49,7 +49,7 @@ export function FeatureFlagDashboard() {
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: index * 0.05 }}
-                            className="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-300"
+                            className="flex items-center justify-between p-4 rounded-xl border border-border/50 bg-muted/30 hover:bg-muted/40 transition-all duration-300"
                         >
                             <div className="flex items-center gap-4">
                                 <div className={`p-2.5 rounded-xl ${isEnabled ? 'bg-primary/10 text-primary' : 'bg-muted/10 text-muted-foreground'} transition-colors duration-300`}>
@@ -60,7 +60,7 @@ export function FeatureFlagDashboard() {
                                         <Label className="text-[11px] font-black uppercase tracking-[0.2em]">
                                             {flag.label}
                                         </Label>
-                                        <Badge variant="outline" className="text-[8px] h-4 border-white/10 text-muted-foreground/60 uppercase font-black tracking-widest">
+                                        <Badge variant="outline" className="text-[8px] h-4 border-border text-muted-foreground/60 uppercase font-black tracking-widest">
                                             {flag.category}
                                         </Badge>
                                     </div>

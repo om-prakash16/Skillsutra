@@ -132,13 +132,13 @@ export default function AdminSettingsPage() {
              {/* Background Accent Glow */}
              <div className="absolute -top-40 -left-40 w-96 h-96 bg-rose-500/5 blur-[120px] rounded-full pointer-events-none" />
 
-            <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-20 border-b border-white/5 pb-10">
+            <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 relative z-20 border-b border-border/50 pb-10">
                 <div className="flex items-center gap-6">
-                    <div className="p-4 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-md shadow-2xl">
+                    <div className="p-4 bg-muted/50 rounded-3xl border border-border backdrop-blur-md shadow-2xl">
                         <Settings className="w-8 h-8 text-rose-500 drop-shadow-[0_0_10px_rgba(244,63,94,0.5)]" />
                     </div>
                     <div>
-                        <h1 className="text-5xl font-black font-heading tracking-tighter text-white uppercase italic">
+                        <h1 className="text-5xl font-black font-heading tracking-tighter text-foreground uppercase italic">
                             Platform <span className="text-rose-500">Settings</span>
                         </h1>
                         <p className="text-muted-foreground text-lg font-medium mt-1 uppercase tracking-widest text-[10px]">Strategic Configuration Matrix</p>
@@ -148,7 +148,7 @@ export default function AdminSettingsPage() {
                 <Button 
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="bg-white text-black hover:bg-neutral-200 rounded-2xl px-12 h-16 shadow-2xl border-t border-white/20 font-black tracking-tighter text-lg active:scale-95 transition-all"
+                    className="bg-white text-primary-foreground hover:bg-neutral-200 rounded-2xl px-12 h-16 shadow-2xl border-t border-border font-black tracking-tighter text-lg active:scale-95 transition-all"
                 >
                     {isSaving ? <Loader2 className="w-5 h-5 animate-spin mr-3" /> : <Save className="w-5 h-5 mr-3" />}
                     {isSaving ? "SYNCING..." : "SYNC PROTOCOLS"}
@@ -162,11 +162,11 @@ export default function AdminSettingsPage() {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: idx * 0.1 }}
-                        className="bg-white/5 backdrop-blur-3xl border border-white/10 rounded-[2.5rem] p-8 relative overflow-hidden group shadow-2xl border-t-2"
+                        className="bg-muted/50 backdrop-blur-3xl border border-border rounded-[2.5rem] p-8 relative overflow-hidden group shadow-2xl border-t-2"
                         style={{ borderTopColor: section.color === 'text-rose-500' ? '#f43f5e33' : section.color === 'text-indigo-400' ? '#818cf833' : section.color === 'text-emerald-400' ? '#34d39933' : '#fbbf2433' }}
                     >
                         <div className="flex items-center gap-4 mb-8">
-                            <div className={cn("p-2.5 rounded-xl bg-white/5 border border-white/10", section.color)}>
+                            <div className={cn("p-2.5 rounded-xl bg-muted/50 border border-border", section.color)}>
                                 <section.icon className="w-6 h-6" />
                             </div>
                             <h2 className="text-2xl font-black font-heading tracking-tight italic uppercase">
@@ -179,10 +179,10 @@ export default function AdminSettingsPage() {
                                 <div key={i} className="flex flex-col gap-3 group/item">
                                     <div className="flex items-center justify-between">
                                         <div className="space-y-1">
-                                            <Label htmlFor={item.id} className="text-sm font-black text-white/90 uppercase tracking-widest cursor-pointer">
+                                            <Label htmlFor={item.id} className="text-sm font-black text-foreground/90 uppercase tracking-widest cursor-pointer">
                                                 {item.label}
                                             </Label>
-                                            <p className="text-xs font-medium text-white/30 leading-relaxed italic">
+                                            <p className="text-xs font-medium text-muted-foreground leading-relaxed italic">
                                                 {item.desc}
                                             </p>
                                         </div>
@@ -206,15 +206,15 @@ export default function AdminSettingsPage() {
                                                     type={(item as any).type}
                                                     value={localSettings[item.id]}
                                                     onChange={e => setLocalSettings({...localSettings, [item.id]: e.target.value})}
-                                                    className="bg-black/40 border-white/10 h-12 text-white font-mono text-sm rounded-xl focus:border-rose-500/50 transition-all"
+                                                    className="bg-background/80 border-border h-12 text-foreground font-mono text-sm rounded-xl focus:border-rose-500/50 transition-all"
                                                 />
                                             )}
                                             {item.field === "select" && (
                                                 <Select value={localSettings[item.id]} onValueChange={v => setLocalSettings({...localSettings, [item.id]: v})}>
-                                                    <SelectTrigger className="bg-black/40 border-white/10 h-12 text-white font-black uppercase tracking-widest text-[10px] rounded-xl">
+                                                    <SelectTrigger className="bg-background/80 border-border h-12 text-foreground font-black uppercase tracking-widest text-[10px] rounded-xl">
                                                         <SelectValue />
                                                     </SelectTrigger>
-                                                    <SelectContent className="bg-slate-950 border-white/10 text-white">
+                                                    <SelectContent className="bg-slate-950 border-border text-foreground">
                                                         {(item as any).options?.map((opt: string) => (
                                                             <SelectItem key={opt} value={opt} className="focus:bg-rose-500/20">{opt}</SelectItem>
                                                         ))}
@@ -231,11 +231,11 @@ export default function AdminSettingsPage() {
             </div>
 
             <div className="flex justify-center pt-8">
-                <div className="px-10 py-5 bg-white/5 backdrop-blur-xl border border-white/10 rounded-full flex items-center gap-4 group cursor-default shadow-2xl">
+                <div className="px-10 py-5 bg-muted/50 backdrop-blur-xl border border-border rounded-full flex items-center gap-4 group cursor-default shadow-2xl">
                     <div className="h-2 w-2 rounded-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.8)] animate-pulse" />
-                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40">Network Integrity Pattern Match: 100%</span>
-                    <div className="h-4 w-px bg-white/10 mx-4" />
-                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-white/40">Node: BHT_ADMIN_01</span>
+                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground">Network Integrity Pattern Match: 100%</span>
+                    <div className="h-4 w-px bg-muted/50 mx-4" />
+                    <span className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground">Node: BHT_ADMIN_01</span>
                 </div>
             </div>
         </div>

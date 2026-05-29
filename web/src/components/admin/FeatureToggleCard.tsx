@@ -31,10 +31,10 @@ export function FeatureToggleCard({ feature, onToggle }: FeatureToggleCardProps)
   };
 
   return (
-    <Card className="bg-[#050505] border-white/10 hover:border-white/20 transition-all duration-500 overflow-hidden relative group">
+    <Card className="bg-[#050505] border-border hover:border-border transition-all duration-500 overflow-hidden relative group">
       <CardHeader className="pb-4">
         <div className="flex justify-between items-start">
-            <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 border border-white/10 bg-white/5 transition-colors group-hover:bg-white/10`}>
+            <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 border border-border bg-muted/50 transition-colors group-hover:bg-muted/50`}>
                 {getCategoryIcon(feature.category)}
             </div>
             <Switch 
@@ -46,7 +46,7 @@ export function FeatureToggleCard({ feature, onToggle }: FeatureToggleCardProps)
         </div>
         <div className="mt-4 space-y-2">
             <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest text-neutral-500 border-white/5 px-2 py-0">
+                <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest text-neutral-500 border-border/50 px-2 py-0">
                     {feature.category}
                 </Badge>
                 {isEnabled && <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />}
@@ -58,7 +58,7 @@ export function FeatureToggleCard({ feature, onToggle }: FeatureToggleCardProps)
         </div>
       </CardHeader>
       
-      <CardContent className="pt-0 pb-4 flex justify-between items-center text-[9px] font-mono text-neutral-600 uppercase border-t border-white/5 mt-4 pt-4">
+      <CardContent className="pt-0 pb-4 flex justify-between items-center text-[9px] font-mono text-neutral-600 uppercase border-t border-border/50 mt-4 pt-4">
           <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Updated: {new Date(feature.updated_at).toLocaleDateString()}</span>
           <span className="truncate max-w-[100px]">ID: {feature.id.slice(0, 8)}...</span>
       </CardContent>

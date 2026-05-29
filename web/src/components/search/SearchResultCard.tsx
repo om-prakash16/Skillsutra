@@ -102,12 +102,12 @@ export function SearchResultCard({ result, index }: SearchResultCardProps) {
         
         <div className="flex flex-wrap gap-1.5 ml-auto">
           {result.tags?.slice(0, 3).map((tag, i) => (
-            <Badge key={i} variant="secondary" className="text-[10px] uppercase tracking-wider bg-white/5 hover:bg-white/10">
+            <Badge key={i} variant="secondary" className="text-[10px] uppercase tracking-wider bg-muted/50 hover:bg-muted/50">
               {tag}
             </Badge>
           ))}
           {result.tags && result.tags.length > 3 && (
-            <Badge variant="outline" className="text-[10px] border-white/10">
+            <Badge variant="outline" className="text-[10px] border-border">
               +{result.tags.length - 3}
             </Badge>
           )}

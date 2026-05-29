@@ -92,7 +92,7 @@ export function ApiDeveloperPortal() {
     return (
         <div className="space-y-10 animate-in fade-in duration-700">
             {/* Hero Section */}
-            <div className="relative p-10 rounded-[3rem] border border-white/10 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent overflow-hidden">
+            <div className="relative p-10 rounded-[3rem] border border-border bg-gradient-to-br from-primary/10 via-primary/5 to-transparent overflow-hidden">
                 <div className="absolute top-0 right-0 p-8 opacity-10">
                     <Terminal className="w-40 h-40 -rotate-12" />
                 </div>
@@ -112,7 +112,7 @@ export function ApiDeveloperPortal() {
                             <Plus className="w-5 h-5 mr-2" />
                             Create New Key
                         </Button>
-                        <Button variant="outline" className="rounded-2xl h-12 px-8 font-black uppercase tracking-widest border-white/10 bg-white/5 backdrop-blur-md">
+                        <Button variant="outline" className="rounded-2xl h-12 px-8 font-black uppercase tracking-widest border-border bg-muted/50 backdrop-blur-md">
                             <Code2 className="w-5 h-5 mr-2" />
                             API Documentation
                         </Button>
@@ -129,10 +129,10 @@ export function ApiDeveloperPortal() {
                     </h2>
                 </div>
 
-                <div className="rounded-[2.5rem] border border-white/10 bg-white/[0.02] backdrop-blur-xl overflow-hidden">
+                <div className="rounded-[2.5rem] border border-border bg-muted/30 backdrop-blur-xl overflow-hidden">
                     <Table>
-                        <TableHeader className="bg-white/5">
-                            <TableRow className="border-white/10 hover:bg-transparent">
+                        <TableHeader className="bg-muted/50">
+                            <TableRow className="border-border hover:bg-transparent">
                                 <TableHead className="text-[10px] font-black uppercase tracking-widest px-8 h-14">Label</TableHead>
                                 <TableHead className="text-[10px] font-black uppercase tracking-widest h-14">Status</TableHead>
                                 <TableHead className="text-[10px] font-black uppercase tracking-widest h-14">Last Used</TableHead>
@@ -142,7 +142,7 @@ export function ApiDeveloperPortal() {
                         </TableHeader>
                         <TableBody>
                             {keys.map((key) => (
-                                <TableRow key={key.id} className="border-white/5 hover:bg-white/[0.03] transition-all group">
+                                <TableRow key={key.id} className="border-border/50 hover:bg-muted/30 transition-all group">
                                     <TableCell className="px-8 font-bold text-sm h-16">{key.label}</TableCell>
                                     <TableCell>
                                         <Badge variant="outline" className={cn(
@@ -160,7 +160,7 @@ export function ApiDeveloperPortal() {
                                     </TableCell>
                                     <TableCell className="text-right pr-8">
                                         <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
-                                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-white/10">
+                                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-muted/50">
                                                 <Eye className="w-4 h-4" />
                                             </Button>
                                             <Button variant="ghost" size="icon" className="h-9 w-9 rounded-xl hover:bg-rose-500/10 text-rose-500">
@@ -177,7 +177,7 @@ export function ApiDeveloperPortal() {
 
             {/* Quick Start Logic */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <Card className="p-8 rounded-[2.5rem] border-white/10 bg-white/[0.02] space-y-6">
+                <Card className="p-8 rounded-[2.5rem] border-border bg-muted/30 space-y-6">
                     <h3 className="text-lg font-black tracking-tight flex items-center gap-3">
                         <ShieldCheck className="w-6 h-6 text-emerald-500" />
                         API Security Best Practices
@@ -197,7 +197,7 @@ export function ApiDeveloperPortal() {
                     </ul>
                 </Card>
 
-                <Card className="p-8 rounded-[2.5rem] border-white/10 bg-zinc-950 space-y-6 border-emerald-500/20 shadow-2xl shadow-emerald-500/5">
+                <Card className="p-8 rounded-[2.5rem] border-border bg-zinc-950 space-y-6 border-emerald-500/20 shadow-2xl shadow-emerald-500/5">
                     <div className="flex items-center justify-between">
                         <h3 className="text-lg font-black tracking-tight flex items-center gap-3">
                             <Terminal className="w-6 h-6 text-primary" />
@@ -205,7 +205,7 @@ export function ApiDeveloperPortal() {
                         </h3>
                         <Badge variant="outline" className="text-[9px] font-black uppercase text-zinc-500">cURL</Badge>
                     </div>
-                    <div className="bg-black rounded-2xl p-6 font-mono text-xs leading-relaxed border border-white/5 text-zinc-400 group relative">
+                    <div className="bg-black rounded-2xl p-6 font-mono text-xs leading-relaxed border border-border/50 text-zinc-400 group relative">
                         <pre className="whitespace-pre-wrap">
 {`curl -X GET "https://api.besthiringtool.com/v1/enterprise/candidates/user_wallet_address" \\
   -H "X-API-KEY: sk_live_your_secret_key" \\
@@ -214,7 +214,7 @@ export function ApiDeveloperPortal() {
                         <Button 
                             variant="ghost" 
                             size="icon" 
-                            className="absolute top-4 right-4 h-8 w-8 rounded-lg bg-white/5 opacity-0 group-hover:opacity-100 transition-all"
+                            className="absolute top-4 right-4 h-8 w-8 rounded-lg bg-muted/50 opacity-0 group-hover:opacity-100 transition-all"
                             onClick={() => copyToClipboard(`curl -X GET "https://api.besthiringtool.com/v1/enterprise/candidates/user_wallet_address" -H "X-API-KEY: sk_live_your_secret_key" -H "Accept: application/json"`)}
                         >
                             <Copy className="w-3.5 h-3.5" />
@@ -225,7 +225,7 @@ export function ApiDeveloperPortal() {
 
             {/* Create Modal */}
             <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-                <DialogContent className="bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] p-10 max-w-xl">
+                <DialogContent className="bg-[#0a0a0a] border border-border rounded-[2.5rem] p-10 max-w-xl">
                     <DialogHeader className="space-y-4">
                         <DialogTitle className="text-3xl font-black italic tracking-tighter">
                             {generatedKey ? "Save Your Secret Key" : "New API Integration"}
@@ -244,7 +244,7 @@ export function ApiDeveloperPortal() {
                                 <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Key Label</label>
                                 <Input 
                                     placeholder="Enter integration name..." 
-                                    className="h-14 bg-white/5 border-white/10 rounded-2xl px-6 font-bold"
+                                    className="h-14 bg-muted/50 border-border rounded-2xl px-6 font-bold"
                                     value={newKeyLabel}
                                     onChange={(e) => setNewKeyLabel(e.target.value)}
                                 />

@@ -119,7 +119,7 @@ export default function AISkillExtractorWizard({ onComplete }: { onComplete: () 
     c >= 0.8 ? "text-green-400" : c >= 0.5 ? "text-amber-400" : "text-red-400";
 
   return (
-    <Card className="border-white/5 bg-zinc-950/50 backdrop-blur-sm overflow-hidden">
+    <Card className="border-border/50 bg-zinc-950/50 backdrop-blur-sm overflow-hidden">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg font-semibold flex items-center gap-2">
           <span className="text-cyan-400">⚡</span> AI Skill Extractor
@@ -157,14 +157,14 @@ export default function AISkillExtractorWizard({ onComplete }: { onComplete: () 
                 value={resumeText}
                 onChange={(e) => setResumeText(e.target.value)}
                 rows={6}
-                className="bg-zinc-900/50 border-white/10 text-sm font-mono"
+                className="bg-zinc-900/50 border-border text-sm font-mono"
               />
             ) : (
               <Input
                 placeholder="GitHub username (e.g., torvalds)"
                 value={githubUsername}
                 onChange={(e) => setGithubUsername(e.target.value)}
-                className="bg-zinc-900/50 border-white/10"
+                className="bg-zinc-900/50 border-border"
               />
             )}
 
@@ -196,7 +196,7 @@ export default function AISkillExtractorWizard({ onComplete }: { onComplete: () 
         {step === "review" && (
           <>
             <p className="text-sm text-zinc-400">
-              Found <span className="text-white font-semibold">{extractedSkills.length}</span> skills.
+              Found <span className="text-foreground font-semibold">{extractedSkills.length}</span> skills.
               Select which to add to your graph:
             </p>
             <div className="space-y-1.5 max-h-[300px] overflow-y-auto pr-1">
@@ -207,7 +207,7 @@ export default function AISkillExtractorWizard({ onComplete }: { onComplete: () 
                   className={`w-full text-left p-3 rounded-lg border transition-all ${
                     skill.selected
                       ? "border-cyan-500/30 bg-cyan-500/5"
-                      : "border-white/5 bg-zinc-900/30 opacity-60"
+                      : "border-border/50 bg-zinc-900/30 opacity-60"
                   }`}
                 >
                   <div className="flex items-center justify-between">

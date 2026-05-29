@@ -61,7 +61,7 @@ export function Testimonials() {
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.1 }}
                         >
-                            <Card className="glass h-full border-white/5 shadow-premium hover:border-primary/20 transition-all duration-500 rounded-3xl">
+                            <Card className="glass h-full border-border/50 shadow-premium hover:border-primary/20 transition-all duration-500 rounded-3xl">
                                 <CardContent className="p-8 space-y-6">
                                     <div className="flex gap-1">
                                         {[...Array(testimonial.rating)].map((_, i) => (
@@ -74,7 +74,7 @@ export function Testimonials() {
                                             "{testimonial.content}"
                                         </p>
                                     </div>
-                                    <div className="flex items-center gap-4 pt-6 border-t border-black/5 dark:border-white/5">
+                                    <div className="flex items-center gap-4 pt-6 border-t border-black/5 dark:border-border/50">
                                         <div className="relative">
                                             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-primary/20">
                                                 <img src={testimonial.avatar} alt={testimonial.name} className="w-full h-full object-cover" />

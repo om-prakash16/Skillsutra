@@ -111,7 +111,7 @@ export default function SkillsPage() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className="p-4 rounded-xl bg-zinc-950/50 border border-white/5 backdrop-blur-sm"
+            className="p-4 rounded-xl bg-zinc-950/50 border border-border/50 backdrop-blur-sm"
           >
             <div className="text-xs text-zinc-500 flex items-center gap-1.5">
               <span>{stat.icon}</span> {stat.label}
@@ -123,7 +123,7 @@ export default function SkillsPage() {
 
       {/* Main content tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="bg-zinc-900/50 border border-white/5">
+        <TabsList className="bg-zinc-900/50 border border-border/50">
           <TabsTrigger value="graph" className="text-xs">
             🌐 Graph View
           </TabsTrigger>
@@ -142,7 +142,7 @@ export default function SkillsPage() {
         </TabsList>
 
         <TabsContent value="graph" className="mt-0">
-          <div className="rounded-xl border border-white/5 bg-zinc-950/50 backdrop-blur-sm overflow-hidden">
+          <div className="rounded-xl border border-border/50 bg-zinc-950/50 backdrop-blur-sm overflow-hidden">
             {loading ? (
               <div className="h-[500px] flex items-center justify-center text-zinc-500 text-sm animate-pulse">
                 Loading skill graph...

@@ -47,7 +47,7 @@ export default function AdminFeatureControl() {
   return (
     <div className="max-w-7xl mx-auto py-24 px-6 space-y-12 h-screen overflow-y-auto">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/10 pb-12">
+      <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-border pb-12">
         <div className="space-y-4">
            <Badge variant="outline" className="bg-rose-500/10 text-rose-500 border-rose-500/20 px-4 py-1 uppercase tracking-tighter font-black italic">
              ADMIN COMMAND CENTER
@@ -58,10 +58,10 @@ export default function AdminFeatureControl() {
            <p className="text-muted-foreground max-w-xl italic">Dynamic configuration for the Best Hiring Tool ecosystem. Toggle platform capabilities in real-time without redeploying code.</p>
         </div>
         <div className="flex gap-4">
-            <Button onClick={fetchFeatures} size="lg" variant="outline" className="h-16 px-8 border-white/10 font-black tracking-tight italic flex items-center gap-2">
+            <Button onClick={fetchFeatures} size="lg" variant="outline" className="h-16 px-8 border-border font-black tracking-tight italic flex items-center gap-2">
                 <RefreshCcw className="w-5 h-5 mr-1" /> REFRESH STATUS
             </Button>
-            <Button size="lg" className="h-16 px-8 bg-white text-black hover:bg-neutral-200 font-black tracking-tight italic">
+            <Button size="lg" className="h-16 px-8 bg-white text-primary-foreground hover:bg-neutral-200 font-black tracking-tight italic">
                 LOGS & AUDIT
             </Button>
         </div>
@@ -73,12 +73,12 @@ export default function AdminFeatureControl() {
                 <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-neutral-500" />
                 <Input 
                     placeholder="Search flags by name or description..." 
-                    className="h-14 bg-white/5 border-white/10 pl-16 text-xl focus-visible:ring-primary/50 transition-all rounded-2xl"
+                    className="h-14 bg-muted/50 border-border pl-16 text-xl focus-visible:ring-primary/50 transition-all rounded-2xl"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                 />
             </div>
-            <Button variant="outline" className="h-14 px-8 border-white/10 hover:bg-white/5 font-black text-xs uppercase tracking-widest italic flex items-center gap-2">
+            <Button variant="outline" className="h-14 px-8 border-border hover:bg-muted/50 font-black text-xs uppercase tracking-widest italic flex items-center gap-2">
                 <Filter className="w-4 h-4 ml-2" /> CATEGORY
             </Button>
       </div>
@@ -92,7 +92,7 @@ export default function AdminFeatureControl() {
             <div key={category} className="space-y-6">
                 <div className="flex items-center gap-4">
                     <h2 className="text-xs font-black uppercase tracking-[0.2em] text-neutral-500 italic">{category} Systems</h2>
-                    <div className="flex-1 h-px bg-white/5" />
+                    <div className="flex-1 h-px bg-muted/50" />
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {features

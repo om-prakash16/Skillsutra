@@ -86,7 +86,7 @@ export default function PersonnelResonanceArchive() {
         return (
             <div className="flex h-[80vh] w-full flex-col items-center justify-center gap-6">
                 <Loader2 className="h-12 w-12 animate-spin text-primary/40" />
-                <p className="text-[10px] uppercase tracking-[0.4em] font-black text-white/40">Synthesizing Archive Stream...</p>
+                <p className="text-[10px] uppercase tracking-[0.4em] font-black text-muted-foreground">Synthesizing Archive Stream...</p>
             </div>
         )
     }
@@ -94,15 +94,15 @@ export default function PersonnelResonanceArchive() {
     return (
         <div className="max-w-6xl mx-auto space-y-12 pb-24 animate-in fade-in duration-1000">
             {/* Archive Header */}
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-white/5 pb-10">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-border/50 pb-10">
                 <div className="space-y-4">
                     <div className="flex items-center gap-3">
                         <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 px-4 font-black tracking-widest text-[9px] uppercase">
                             Mission Archive: Live
                         </Badge>
-                        <span className="text-white/20 text-[10px] font-black uppercase tracking-widest italic">{job?.title}</span>
+                        <span className="text-muted-foreground/50 text-[10px] font-black uppercase tracking-widest italic">{job?.title}</span>
                     </div>
-                    <h1 className="text-5xl md:text-6xl font-black font-heading tracking-tighter uppercase italic text-white leading-none">
+                    <h1 className="text-5xl md:text-6xl font-black font-heading tracking-tighter uppercase italic text-foreground leading-none">
                         Personnel <span className="text-primary text-opacity-80">Resonance</span>
                     </h1>
                     <p className="text-muted-foreground text-lg max-w-xl font-medium italic">
@@ -110,22 +110,22 @@ export default function PersonnelResonanceArchive() {
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <Button variant="outline" className="h-14 px-8 bg-white/5 border-white/10 hover:bg-white/[0.08] hover:border-primary/40 font-black tracking-widest uppercase text-[10px] rounded-2xl gap-3">
+                    <Button variant="outline" className="h-14 px-8 bg-muted/50 border-border hover:bg-white/[0.08] hover:border-primary/40 font-black tracking-widest uppercase text-[10px] rounded-2xl gap-3">
                         <Search className="w-4 h-4 text-primary" /> Multi-Scan Mode
                     </Button>
                 </div>
             </div>
 
             {/* Application Matrix */}
-            <Card className="bg-[#0a0a0a] border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl relative">
+            <Card className="bg-[#0a0a0a] border-border rounded-[2.5rem] overflow-hidden shadow-2xl relative">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
-                <CardHeader className="p-10 border-b border-white/5">
+                <CardHeader className="p-10 border-b border-border/50">
                     <div className="flex items-center justify-between">
                         <div className="space-y-1">
                             <CardTitle className="text-2xl font-black italic tracking-tight flex items-center gap-3">
                                 <Users className="w-6 h-6 text-primary" /> Active Cohort
                             </CardTitle>
-                            <CardDescription className="text-xs uppercase font-black tracking-widest text-white/30 italic">Targeting strategic position: {job?.title}</CardDescription>
+                            <CardDescription className="text-xs uppercase font-black tracking-widest text-muted-foreground italic">Targeting strategic position: {job?.title}</CardDescription>
                         </div>
                     </div>
                 </CardHeader>
@@ -133,17 +133,17 @@ export default function PersonnelResonanceArchive() {
                     {!applicants || applicants.length === 0 ? (
                         <div className="py-24 text-center">
                             <Users className="w-16 h-16 text-white/5 mx-auto mb-4" />
-                            <p className="text-white/20 font-black italic text-lg tracking-tight uppercase">No personnel detected in the resonance pipeline.</p>
+                            <p className="text-muted-foreground/50 font-black italic text-lg tracking-tight uppercase">No personnel detected in the resonance pipeline.</p>
                         </div>
                     ) : (
                         <Table>
                             <TableHeader className="bg-white/[0.01]">
-                                <TableRow className="border-white/5 h-16">
-                                    <TableHead className="pl-10 font-black uppercase text-[10px] tracking-widest text-white/40">Candidate Detail</TableHead>
-                                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-white/40 text-center">AI Sync</TableHead>
-                                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-white/40 text-center">Live Quiz</TableHead>
-                                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-white/40 text-center">Final Resonance</TableHead>
-                                    <TableHead className="pr-10 font-black uppercase text-[10px] tracking-widest text-white/40 text-right">Synthesis Action</TableHead>
+                                <TableRow className="border-border/50 h-16">
+                                    <TableHead className="pl-10 font-black uppercase text-[10px] tracking-widest text-muted-foreground">Candidate Detail</TableHead>
+                                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-muted-foreground text-center">AI Sync</TableHead>
+                                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-muted-foreground text-center">Live Quiz</TableHead>
+                                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-muted-foreground text-center">Final Resonance</TableHead>
+                                    <TableHead className="pr-10 font-black uppercase text-[10px] tracking-widest text-muted-foreground text-right">Synthesis Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -152,17 +152,17 @@ export default function PersonnelResonanceArchive() {
                                     const isShortlisted = app.status === 'shortlisted'
                                     
                                     return (
-                                        <TableRow key={app.id} className="border-white/5 group hover:bg-white/[0.02] transition-colors h-24">
+                                        <TableRow key={app.id} className="border-border/50 group hover:bg-muted/30 transition-colors h-24">
                                             <TableCell className="pl-10">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-primary/40 font-black group-hover:scale-110 transition-transform">
+                                                    <div className="w-12 h-12 rounded-2xl bg-muted/50 border border-border flex items-center justify-center text-primary/40 font-black group-hover:scale-110 transition-transform">
                                                         <UserCircle className="w-8 h-8" />
                                                     </div>
                                                     <div>
-                                                        <p className="font-black text-lg text-white group-hover:text-primary transition-colors leading-none mb-1">{app.users?.full_name}</p>
+                                                        <p className="font-black text-lg text-foreground group-hover:text-primary transition-colors leading-none mb-1">{app.users?.full_name}</p>
                                                         <div className="flex items-center gap-2">
                                                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                                                            <p className="text-[10px] font-mono font-bold text-white/30 lowercase tracking-tighter">
+                                                            <p className="text-[10px] font-mono font-bold text-muted-foreground lowercase tracking-tighter">
                                                                 {app.users?.wallet_address?.slice(0, 6)}...{app.users?.wallet_address?.slice(-4)}
                                                             </p>
                                                             {app.users?.user_identities?.id_status === 'verified' && (
@@ -177,8 +177,8 @@ export default function PersonnelResonanceArchive() {
                                             </TableCell>
                                             <TableCell className="text-center">
                                                 <div className="inline-flex flex-col items-center">
-                                                    <span className="text-2xl font-black text-white/60 group-hover:text-white transition-colors">{app.ai_match_score || 0}%</span>
-                                                    <span className="text-[8px] font-black uppercase tracking-widest text-white/20 italic">Profile Logic</span>
+                                                    <span className="text-2xl font-black text-foreground/80 group-hover:text-foreground transition-colors">{app.ai_match_score || 0}%</span>
+                                                    <span className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/50 italic">Profile Logic</span>
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-center">
@@ -200,14 +200,14 @@ export default function PersonnelResonanceArchive() {
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-center">
-                                                <div className="inline-flex flex-col items-center bg-white/5 px-6 py-3 rounded-2xl border border-white/5 group-hover:border-primary/20 transition-all">
+                                                <div className="inline-flex flex-col items-center bg-muted/50 px-6 py-3 rounded-2xl border border-border/50 group-hover:border-primary/20 transition-all">
                                                     <span className={cn(
                                                         "text-3xl font-black tracking-tighter leading-none mb-0.5",
-                                                        finalRes >= 80 ? "text-primary" : "text-white"
+                                                        finalRes >= 80 ? "text-primary" : "text-foreground"
                                                     )}>
                                                         {Math.round(finalRes)}%
                                                     </span>
-                                                    <div className="flex items-center gap-1.5 pt-1 uppercase font-black text-[8px] tracking-[0.2em] text-white/30">
+                                                    <div className="flex items-center gap-1.5 pt-1 uppercase font-black text-[8px] tracking-[0.2em] text-muted-foreground">
                                                         <Activity className="w-2.5 h-2.5" /> Total Resonance
                                                     </div>
                                                 </div>
@@ -221,11 +221,11 @@ export default function PersonnelResonanceArchive() {
                                                         size="icon" 
                                                         title="Shortlist / Synthesize"
                                                         className={cn(
-                                                            "h-12 w-12 rounded-2xl bg-white/5 border border-white/10 hover:bg-emerald-500/10 hover:border-emerald-500/30 group/sh",
+                                                            "h-12 w-12 rounded-2xl bg-muted/50 border border-border hover:bg-emerald-500/10 hover:border-emerald-500/30 group/sh",
                                                             isShortlisted ? "bg-emerald-500/20 border-emerald-500 opacity-100" : ""
                                                         )}
                                                     >
-                                                        <CheckCircle2 className={cn("w-5 h-5", isShortlisted ? "text-emerald-500" : "text-white/40 group-hover/sh:text-emerald-500")} />
+                                                        <CheckCircle2 className={cn("w-5 h-5", isShortlisted ? "text-emerald-500" : "text-muted-foreground group-hover/sh:text-emerald-500")} />
                                                     </Button>
                                                     <Button 
                                                         onClick={() => statusMutation.mutate({ appId: app.id, status: 'rejected' })}
@@ -233,9 +233,9 @@ export default function PersonnelResonanceArchive() {
                                                         variant="ghost" 
                                                         size="icon" 
                                                         title="Archive / De-Sync"
-                                                        className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 hover:bg-rose-500/10 hover:border-rose-500/30 group/de"
+                                                        className="h-12 w-12 rounded-2xl bg-muted/50 border border-border hover:bg-rose-500/10 hover:border-rose-500/30 group/de"
                                                     >
-                                                        <XCircle className="w-5 h-5 text-white/40 group-hover/de:text-rose-500" />
+                                                        <XCircle className="w-5 h-5 text-muted-foreground group-hover/de:text-rose-500" />
                                                     </Button>
                                                     <Button variant="ghost" size="icon" asChild className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 hover:bg-primary/20">
                                                         <Link href={`/company/talent`}>
@@ -256,7 +256,7 @@ export default function PersonnelResonanceArchive() {
             {/* Neural Summary Footer */}
             <div className="flex flex-col items-center gap-10 opacity-30 grayscale hover:grayscale-0 hover:opacity-100 transition-all duration-700 py-10">
                 <div className="h-px w-96 bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-                <div className="flex gap-12 items-center text-[10px] font-black uppercase tracking-[0.3em] text-white/40">
+                <div className="flex gap-12 items-center text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground">
                     <span className="flex items-center gap-3"><Zap className="w-4 h-4 text-primary" /> Multi-Tenant Resonance Analysis</span>
                     <span className="flex items-center gap-3"><ShieldCheck className="w-4 h-4 text-primary" /> infrastructure ID Verification v2.4</span>
                     <span className="flex items-center gap-3"><BrainCircuit className="w-4 h-4 text-primary" /> Weighted Synthesis Logic</span>

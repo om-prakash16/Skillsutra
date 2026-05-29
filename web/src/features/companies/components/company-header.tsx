@@ -4,9 +4,9 @@ import { Badge } from "@/components/ui/badge"
 
 export function CompanyHeader({ company }: { company: any }) {
     return (
-        <div className="py-10 border-b border-white/5 space-y-4">
+        <div className="py-10 border-b border-border/50 space-y-4">
             <div className="flex items-center gap-4">
-                <div className="w-20 h-20 bg-white/5 border border-white/10 rounded-2xl flex items-center justify-center font-black text-2xl uppercase italic">
+                <div className="w-20 h-20 bg-muted/50 border border-border rounded-2xl flex items-center justify-center font-black text-2xl uppercase italic">
                     {company?.name?.[0] || "C"}
                 </div>
                 <div className="space-y-1">

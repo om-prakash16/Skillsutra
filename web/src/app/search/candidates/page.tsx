@@ -44,7 +44,7 @@ export default function CandidateDiscovery() {
                 <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-6 h-6 text-muted-foreground group-focus-within:text-primary transition-colors" />
                 <Input 
                     placeholder="Search by skill, name, or professional summary..." 
-                    className="h-16 glass border-white/10 pl-16 text-xl focus:border-primary/50 transition-all rounded-2xl shadow-2xl"
+                    className="h-16 glass border-border pl-16 text-xl focus:border-primary/50 transition-all rounded-2xl shadow-2xl"
                     value={search}
                     onChange={e => setSearch(e.target.value)}
                 />
@@ -54,7 +54,7 @@ export default function CandidateDiscovery() {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-12 items-start">
             {/* Filter Sidebar */}
-            <div className="lg:col-span-1 glass p-8 rounded-3xl border-white/5">
+            <div className="lg:col-span-1 glass p-8 rounded-3xl border-border/50">
                 <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground mb-8">Refine Search</h3>
                 <FilterSidebar type="candidates" onFilterChange={(f) => console.log(f)} />
             </div>
@@ -107,7 +107,7 @@ function CandidateCard({ data }: { data: any }) {
             <CardContent className="space-y-8 relative z-10">
                 <div className="flex flex-wrap gap-2">
                     {data.skills?.slice(0, 3).map((skill: string) => (
-                        <Badge key={skill} variant="secondary" className="glass bg-white/5 text-[9px] text-muted-foreground border-white/5 uppercase font-black tracking-widest py-1 px-3">
+                        <Badge key={skill} variant="secondary" className="glass bg-muted/50 text-[9px] text-muted-foreground border-border/50 uppercase font-black tracking-widest py-1 px-3">
                             {skill}
                         </Badge>
                     ))}
@@ -116,7 +116,7 @@ function CandidateCard({ data }: { data: any }) {
                     )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-6 pt-6 border-t border-white/5">
+                <div className="grid grid-cols-2 gap-6 pt-6 border-t border-border/50">
                     <div className="space-y-2">
                         <p className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.3em]">Experience</p>
                         <p className="text-xs font-black text-foreground">MID-LEVEL</p>

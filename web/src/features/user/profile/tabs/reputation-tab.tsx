@@ -46,7 +46,7 @@ const LEVEL_COLORS: Record<string, { bg: string; border: string; text: string }>
     Expert: { bg: "bg-violet-500/15", border: "border-violet-500/30", text: "text-violet-400" },
     Intermediate: { bg: "bg-cyan-500/15", border: "border-cyan-500/30", text: "text-cyan-400" },
     Junior: { bg: "bg-emerald-500/15", border: "border-emerald-500/30", text: "text-emerald-400" },
-    Beginner: { bg: "bg-white/10", border: "border-white/20", text: "text-white/60" },
+    Beginner: { bg: "bg-muted/50", border: "border-border", text: "text-foreground/80" },
 }
 
 function ScoreGauge({ score, maxScore }: { score: number; maxScore: number }) {
@@ -83,8 +83,8 @@ function ScoreGauge({ score, maxScore }: { score: number; maxScore: number }) {
             </svg>
             {/* Center text */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <p className="text-5xl font-black italic tracking-tighter text-white tabular-nums">{score}</p>
-                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30 mt-1">/ {maxScore}</p>
+                <p className="text-5xl font-black italic tracking-tighter text-foreground tabular-nums">{score}</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground mt-1">/ {maxScore}</p>
             </div>
         </div>
     )
@@ -99,7 +99,7 @@ function BreakdownBar({ item, value }: { item: BreakdownItem; value: number }) {
             <div className="flex items-center justify-between mb-2">
                 <div className="flex items-center gap-2.5">
                     <Icon className={cn("w-4 h-4", item.color)} />
-                    <span className="text-xs font-bold text-white/70 group-hover:text-white/90 transition-colors">
+                    <span className="text-xs font-bold text-foreground/80 group-hover:text-foreground/90 transition-colors">
                         {item.label}
                     </span>
                 </div>
@@ -107,7 +107,7 @@ function BreakdownBar({ item, value }: { item: BreakdownItem; value: number }) {
                     {value.toFixed(0)}
                 </span>
             </div>
-            <div className="h-2 rounded-full bg-white/[0.04] overflow-hidden">
+            <div className="h-2 rounded-full bg-muted/40 overflow-hidden">
                 <div
                     className={cn("h-full rounded-full transition-all duration-[1200ms] ease-out relative", item.glowColor)}
                     style={{ width: `${pct}%`, opacity: 0.7 }}
@@ -150,8 +150,8 @@ export function ReputationTab() {
 
     if (error || !data) {
         return (
-            <div className="glass rounded-[3rem] p-12 border-white/5 text-center">
-                <p className="text-white/40 text-sm font-bold">Unable to load reputation data.</p>
+            <div className="glass rounded-[3rem] p-12 border-border/50 text-center">
+                <p className="text-muted-foreground text-sm font-bold">Unable to load reputation data.</p>
                 <Button variant="outline" size="sm" className="mt-4" onClick={() => queryClient.invalidateQueries({ queryKey: ["reputationScore"] })}>
                     Retry
                 </Button>
@@ -170,7 +170,7 @@ export function ReputationTab() {
         <div className="grid gap-10 lg:grid-cols-3">
             {/* Left — Score Gauge + Level */}
             <div className="space-y-8">
-                <Card className="glass border-white/5 rounded-[2.5rem] overflow-hidden relative">
+                <Card className="glass border-border/50 rounded-[2.5rem] overflow-hidden relative">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
                     <CardHeader className="pt-10 px-8 text-center">
                         <CardTitle className="text-lg font-black uppercase italic tracking-tight flex items-center justify-center gap-2">
@@ -204,7 +204,7 @@ export function ReputationTab() {
 
             {/* Right — Breakdown + Weights */}
             <div className="lg:col-span-2 space-y-8">
-                <Card className="glass border-white/5 rounded-[2.5rem] overflow-hidden relative">
+                <Card className="glass border-border/50 rounded-[2.5rem] overflow-hidden relative">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
                     <CardHeader className="pt-10 px-8 md:px-12">
                         <CardTitle className="text-lg font-black uppercase italic tracking-tight flex items-center gap-2">
@@ -222,9 +222,9 @@ export function ReputationTab() {
                     </CardContent>
                 </Card>
 
-                <Card className="glass border-white/5 rounded-[2.5rem]">
+                <Card className="glass border-border/50 rounded-[2.5rem]">
                     <CardHeader className="pt-8 px-8 md:px-12">
-                        <CardTitle className="text-sm font-black uppercase italic tracking-[0.1em] text-white/50">
+                        <CardTitle className="text-sm font-black uppercase italic tracking-[0.1em] text-muted-foreground">
                             Weight Distribution
                         </CardTitle>
                     </CardHeader>
@@ -233,10 +233,10 @@ export function ReputationTab() {
                             {BREAKDOWN_META.map((item) => {
                                 const w = weights[item.key.replace("_score", "")] ?? 0
                                 return (
-                                    <div key={item.key} className="text-center p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-colors">
+                                    <div key={item.key} className="text-center p-4 rounded-2xl bg-muted/30 border border-border/50 hover:border-border transition-colors">
                                         <item.icon className={cn("w-5 h-5 mx-auto mb-2", item.color)} />
-                                        <p className="text-lg font-black italic tracking-tighter text-white/80">{(w * 100).toFixed(0)}%</p>
-                                        <p className="text-[8px] font-black uppercase tracking-[0.2em] text-white/30 mt-1">{item.label}</p>
+                                        <p className="text-lg font-black italic tracking-tighter text-foreground/90">{(w * 100).toFixed(0)}%</p>
+                                        <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground mt-1">{item.label}</p>
                                     </div>
                                 )
                             })}

@@ -36,10 +36,12 @@ celery_app.conf.update(
     # Dead Letter Queue: tasks that fail 3x get routed here for inspection
     task_reject_on_worker_lost=True,
     task_acks_late=True,
+    imports=['workers.notifications'],
 )
 
 # Autodiscover tasks from all modules
 celery_app.autodiscover_tasks([
+    'workers',
     'modules.ai',
     'modules.profile',
     'modules.notifications',

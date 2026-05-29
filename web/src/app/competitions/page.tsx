@@ -37,10 +37,10 @@ export default function CompetitionsPage() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 mb-12">
                 <div>
                     <h1 className="text-4xl md:text-5xl font-black font-heading italic uppercase tracking-tight mb-2">Active Challenges</h1>
-                    <p className="text-[11px] font-black uppercase tracking-widest text-white/40">Hackathons, Bounties & Grants</p>
+                    <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">Hackathons, Bounties & Grants</p>
                 </div>
                 <Link href="/competitions/preferences">
-                    <Button variant="outline" className="h-12 px-6 rounded-xl border-white/10 text-[10px] font-black uppercase tracking-widest">
+                    <Button variant="outline" className="h-12 px-6 rounded-xl border-border text-[10px] font-black uppercase tracking-widest">
                         Customize Preferences
                     </Button>
                 </Link>
@@ -53,20 +53,20 @@ export default function CompetitionsPage() {
                     ))}
                 </div>
             ) : competitions.length === 0 ? (
-                <div className="text-center py-32 glass rounded-[3rem] border-white/5">
-                    <Trophy className="w-12 h-12 text-white/20 mx-auto mb-4" />
-                    <p className="text-[11px] font-black uppercase tracking-widest text-white/50">No Active Competitions</p>
+                <div className="text-center py-32 glass rounded-[3rem] border-border/50">
+                    <Trophy className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
+                    <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">No Active Competitions</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {competitions.map((comp) => (
-                        <div key={comp.id} className="glass border-white/5 rounded-3xl p-6 flex flex-col hover:border-primary/30 transition-colors group">
+                        <div key={comp.id} className="glass border-border/50 rounded-3xl p-6 flex flex-col hover:border-primary/30 transition-colors group">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
+                                    <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center group-hover:bg-primary/10 transition-colors">
                                         {getIcon(comp.comp_type)}
                                     </div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-white/40 bg-white/5 px-3 py-1 rounded-full">
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground bg-muted/50 px-3 py-1 rounded-full">
                                         {comp.comp_type}
                                     </span>
                                 </div>
@@ -76,7 +76,7 @@ export default function CompetitionsPage() {
                             </div>
                             
                             <h3 className="text-xl font-bold mb-2 line-clamp-1">{comp.title}</h3>
-                            <p className="text-sm text-white/60 mb-6 line-clamp-2 flex-1">{comp.description}</p>
+                            <p className="text-sm text-foreground/80 mb-6 line-clamp-2 flex-1">{comp.description}</p>
                             
                             <div className="flex flex-wrap gap-2 mb-6">
                                 {comp.skills_required?.slice(0, 3).map((skill: string) => (
@@ -86,13 +86,13 @@ export default function CompetitionsPage() {
                                 ))}
                             </div>
 
-                            <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                            <div className="pt-4 border-t border-border/50 flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                                     {comp.deadline ? `Ends ${new Date(comp.deadline).toLocaleDateString()}` : "No deadline"}
                                 </span>
                                 {comp.url && (
                                     <Link href={comp.url} target="_blank">
-                                        <Button variant="ghost" size="sm" className="h-8 gap-2 hover:bg-white/5">
+                                        <Button variant="ghost" size="sm" className="h-8 gap-2 hover:bg-muted/50">
                                             <span className="text-[10px] font-black uppercase tracking-widest">View</span>
                                             <ExternalLink className="w-3 h-3" />
                                         </Button>

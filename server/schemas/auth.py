@@ -44,3 +44,13 @@ class RefreshTokenRequest(BaseModel):
 class OAuthCallback(BaseModel):
     code: str
     state: Optional[str] = None
+
+class GoogleAuthRequest(BaseModel):
+    id_token: str
+    role: Optional[str] = "user"
+
+class MagicLinkRequest(BaseModel):
+    email: EmailStr
+
+class MagicLinkVerify(BaseModel):
+    token: str

@@ -92,7 +92,7 @@ export function SkillGrowthTracker() {
 
     if (loading) {
         return (
-            <div className="w-full h-[400px] rounded-3xl border border-white/10 bg-white/[0.02] flex items-center justify-center">
+            <div className="w-full h-[400px] rounded-3xl border border-border bg-muted/30 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                     <p className="text-sm text-muted-foreground animate-pulse font-bold tracking-widest uppercase">Plotting Growth Trajectory...</p>
@@ -104,7 +104,7 @@ export function SkillGrowthTracker() {
     if (!data) return null
 
     return (
-        <Card className="p-8 border-white/10 bg-white/[0.02] backdrop-blur-2xl rounded-[2.5rem] space-y-8 relative overflow-hidden group">
+        <Card className="p-8 border-border bg-muted/30 backdrop-blur-2xl rounded-[2.5rem] space-y-8 relative overflow-hidden group">
             {/* Background Accents */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 blur-[120px] -z-10 group-hover:bg-primary/10 transition-all duration-1000" />
             
@@ -117,9 +117,9 @@ export function SkillGrowthTracker() {
                     <p className="text-sm text-muted-foreground">Historical trajectory of your verified identity and proof-points.</p>
                 </div>
                 <div className="flex gap-4">
-                    <div className="p-4 rounded-2xl bg-white/5 border border-white/10 text-center min-w-[120px]">
+                    <div className="p-4 rounded-2xl bg-muted/50 border border-border text-center min-w-[120px]">
                         <p className="text-[10px] font-black uppercase text-muted-foreground/60 mb-1">Total Points</p>
-                        <p className="text-2xl font-black italic tracking-tighter text-white">{data.summary.total_reputation_points.toLocaleString()}</p>
+                        <p className="text-2xl font-black italic tracking-tighter text-foreground">{data.summary.total_reputation_points.toLocaleString()}</p>
                     </div>
                     <div className="p-4 rounded-2xl bg-primary/10 border border-primary/20 text-center min-w-[120px]">
                         <p className="text-[10px] font-black uppercase text-primary/60 mb-1">Growth Velocity</p>
@@ -130,7 +130,7 @@ export function SkillGrowthTracker() {
 
             {/* Main Chart Area */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                <div className="lg:col-span-3 h-[300px] w-full bg-white/[0.01] rounded-3xl p-4 border border-white/5">
+                <div className="lg:col-span-3 h-[300px] w-full bg-white/[0.01] rounded-3xl p-4 border border-border/50">
                     <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={data.chart_data}>
                             <defs>
@@ -173,7 +173,7 @@ export function SkillGrowthTracker() {
                         <h4 className="text-xs font-black uppercase tracking-widest text-primary mb-3 mt-1 flex items-center gap-2">
                             AI Growth Insight
                         </h4>
-                        <p className="text-xs leading-relaxed text-white/80 italic font-medium">"{data.insights}"</p>
+                        <p className="text-xs leading-relaxed text-foreground/90 italic font-medium">"{data.insights}"</p>
                     </div>
 
                     <div className="space-y-4">
@@ -184,12 +184,12 @@ export function SkillGrowthTracker() {
                         <div className="space-y-2 max-h-[140px] overflow-y-auto pr-2 custom-scrollbar">
                             {data.milestones.length > 0 ? (
                                 data.milestones.map((milestone, idx) => (
-                                    <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 border border-white/5 hover:border-white/10 transition-all group/m">
+                                    <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-muted/50 border border-border/50 hover:border-border transition-all group/m">
                                         <div className="w-8 h-8 rounded-xl bg-primary/20 border border-primary/20 flex items-center justify-center shrink-0">
                                             <Award className="w-4 h-4 text-primary" />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-[11px] font-bold text-white truncate">{milestone.achievement_type}</p>
+                                            <p className="text-[11px] font-bold text-foreground truncate">{milestone.achievement_type}</p>
                                             <p className="text-[9px] text-muted-foreground truncate">{milestone.achievement_data.description}</p>
                                         </div>
                                     </div>
@@ -205,17 +205,17 @@ export function SkillGrowthTracker() {
                 </div>
             </div>
             
-            <div className="flex flex-col md:flex-row gap-6 items-center border-t border-white/5 pt-8">
+            <div className="flex flex-col md:flex-row gap-6 items-center border-t border-border/50 pt-8">
                 <div className="flex-1 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center shrink-0">
+                    <div className="w-12 h-12 rounded-2xl bg-muted/50 flex items-center justify-center shrink-0">
                         <Calendar className="w-6 h-6 text-muted-foreground" />
                     </div>
                     <div>
-                        <p className="text-sm font-black text-white">Consistent Learning streak</p>
+                        <p className="text-sm font-black text-foreground">Consistent Learning streak</p>
                         <p className="text-xs text-muted-foreground">Keep verifying skills to maintain a Top {data.summary.percentile}% standing.</p>
                     </div>
                 </div>
-                <Button className="w-full md:w-auto rounded-2xl px-8 h-12 bg-white text-black font-black uppercase tracking-widest text-[10px] hover:bg-white/90 shadow-xl shadow-white/5 gap-2">
+                <Button className="w-full md:w-auto rounded-2xl px-8 h-12 bg-white text-primary-foreground font-black uppercase tracking-widest text-[10px] hover:bg-white/90 shadow-xl shadow-white/5 gap-2">
                     Predict Next Milestone <ChevronRight className="w-4 h-4" />
                 </Button>
             </div>
@@ -226,7 +226,7 @@ export function SkillGrowthTracker() {
 function CustomTooltip({ active, payload, label }: any) {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-3 rounded-2xl shadow-2xl">
+            <div className="bg-black/80 backdrop-blur-xl border border-border p-3 rounded-2xl shadow-2xl">
                 <p className="text-[10px] font-black uppercase text-muted-foreground mb-1">{label}</p>
                 <div className="flex items-center gap-2">
                     <span className="text-xl font-black italic text-primary">{payload[0].value}</span>

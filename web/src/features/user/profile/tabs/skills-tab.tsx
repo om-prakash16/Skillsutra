@@ -31,12 +31,12 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
     }
 
     return (
-        <Card className="glass border-white/5 rounded-[2.5rem] overflow-hidden relative">
+        <Card className="glass border-border/50 rounded-[2.5rem] overflow-hidden relative">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             <CardHeader className="flex flex-row items-center justify-between pt-10 px-10">
                 <div className="space-y-2">
                     <CardTitle className="text-2xl font-black uppercase italic tracking-tight">Architecture Matrix</CardTitle>
-                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">
+                    <CardDescription className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
                         Manage your technical nodes and proficiency synthesis.
                     </CardDescription>
                 </div>
@@ -49,40 +49,65 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
             </CardHeader>
             <CardContent className="space-y-12 px-10 pb-12 pt-6">
                 {isAdding && (
-                    <div className="flex items-center gap-4 p-6 glass border-primary/20 rounded-2xl animate-in fade-in slide-in-from-top-2">
-                        <div className="flex-1 space-y-2">
-                             <Label className="text-[9px] font-black uppercase tracking-widest text-primary/60 ml-1">Node Name</Label>
-                             <Input
-                                value={newSkillName}
-                                onChange={(e) => setNewSkillName(e.target.value)}
-                                placeholder="e.g. Rust, Solidity"
-                                className="h-12 glass border-white/10 rounded-xl focus:ring-primary/30 font-bold"
-                                autoFocus
-                            />
-                        </div>
-                        <div className="w-[180px] space-y-2">
-                            <Label className="text-[9px] font-black uppercase tracking-widest text-primary/60 ml-1">Resonance Level</Label>
-                            <Select
-                                value={newSkillLevel}
-                                onValueChange={(val: any) => setNewSkillLevel(val)}
-                            >
-                                <SelectTrigger className="h-12 glass border-white/10 rounded-xl">
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent className="glass border-white/10">
-                                    <SelectItem value="Advanced">Advanced</SelectItem>
-                                    <SelectItem value="Intermediate">Intermediate</SelectItem>
-                                    <SelectItem value="Beginner">Beginner</SelectItem>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div className="pt-6 flex gap-2">
-                            <Button size="sm" onClick={handleSaveSkill} className="h-12 px-6 rounded-xl">
-                                <Check className="w-4 h-4 mr-2" /> SAVE
-                            </Button>
-                            <Button size="icon" variant="ghost" onClick={() => setIsAdding(false)} className="h-12 w-12 rounded-xl hover:bg-white/5">
-                                <X className="w-4 h-4" />
-                            </Button>
+                    <div className="p-6 md:p-8 rounded-[2rem] bg-background/80 border border-border backdrop-blur-xl shadow-2xl relative overflow-hidden animate-in fade-in zoom-in-95 duration-300">
+                        {/* Decorative background glow */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-50" />
+                        <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
+                        
+                        <div className="relative flex flex-col md:flex-row items-end gap-6">
+                            <div className="flex-1 w-full space-y-3">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                                    Skill Node Identification
+                                </Label>
+                                <Input
+                                    value={newSkillName}
+                                    onChange={(e) => setNewSkillName(e.target.value)}
+                                    placeholder="e.g. Rust, Solidity, React..."
+                                    className="h-14 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground rounded-2xl focus:bg-muted/50 focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all text-sm font-medium px-5"
+                                    autoFocus
+                                />
+                            </div>
+                            
+                            <div className="w-full md:w-[220px] space-y-3">
+                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
+                                    Resonance Level
+                                </Label>
+                                <Select
+                                    value={newSkillLevel}
+                                    onValueChange={(val: any) => setNewSkillLevel(val)}
+                                >
+                                    <SelectTrigger className="h-14 bg-muted/50 border-border text-foreground rounded-2xl focus:ring-2 focus:ring-primary/50 transition-all text-sm font-medium px-5">
+                                        <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-zinc-950/95 border-border backdrop-blur-xl rounded-xl shadow-2xl overflow-hidden">
+                                        {levels.map(l => (
+                                            <SelectItem key={l} value={l} className="focus:bg-muted/50 focus:text-foreground text-foreground/90 transition-colors cursor-pointer rounded-lg mx-1 my-1">
+                                                {l}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                            
+                            <div className="flex gap-3 w-full md:w-auto pt-4 md:pt-0">
+                                <Button 
+                                    onClick={handleSaveSkill} 
+                                    disabled={!newSkillName.trim()}
+                                    className="h-14 px-8 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-all shadow-[0_0_30px_-5px_rgba(var(--primary),0.4)] disabled:opacity-50 disabled:hover:scale-100 font-bold tracking-wide"
+                                >
+                                    <Check className="w-5 h-5 mr-2" /> 
+                                    Commit
+                                </Button>
+                                <Button 
+                                    variant="outline" 
+                                    onClick={() => setIsAdding(false)} 
+                                    className="h-14 px-6 rounded-2xl border-border bg-muted/50 hover:bg-muted/50 hover:text-foreground transition-all text-foreground/80 hover:border-rose-500/50 hover:bg-rose-500/10 group"
+                                >
+                                    <X className="w-5 h-5 group-hover:text-rose-400 transition-colors" />
+                                </Button>
+                            </div>
                         </div>
                     </div>
                 )}
@@ -101,8 +126,8 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                     return (
                         <div key={level} className="space-y-6">
                             <div className="flex items-center gap-4">
-                                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 whitespace-nowrap">{level} SYNCHRONIZATION</h3>
-                                <div className="h-px w-full bg-white/5" />
+                                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/50 whitespace-nowrap">{level} SYNCHRONIZATION</h3>
+                                <div className="h-px w-full bg-muted/50" />
                             </div>
                             <div className="flex flex-wrap gap-4">
                                 {skillsInLevel.map((skill: any) => (
@@ -117,7 +142,7 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                                         {isEditing && onDeleteSkill && (
                                             <button
                                                 onClick={() => onDeleteSkill(skill.name)}
-                                                className="text-white/20 hover:text-rose-500 transition-colors ml-1"
+                                                className="text-muted-foreground/50 hover:text-rose-500 transition-colors ml-1"
                                             >
                                                 <X className="w-3.5 h-3.5" />
                                             </button>
@@ -125,7 +150,7 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                                     </div>
                                 ))}
                                 {skillsInLevel.length === 0 && (
-                                    <p className="text-[10px] text-white/10 italic font-black uppercase tracking-widest px-1">No data points.</p>
+                                    <p className="text-[10px] text-muted-foreground/30 italic font-black uppercase tracking-widest px-1">No data points.</p>
                                 )}
                             </div>
                         </div>

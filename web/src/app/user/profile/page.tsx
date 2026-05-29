@@ -29,11 +29,11 @@ import { toast } from "sonner"
 const fetchUserProfile = async (): Promise<UserProfile> => {
     const response = await userApi.profile.get()
     
-    if (!response || !response.id) {
+    if (!response || !response.profile) {
         throw new Error("Failed to load profile data")
     }
 
-    const p = response
+    const p = response.profile
     
     const nameParts = (p.full_name || p.username || "New User").split(" ")
     const firstName = nameParts[0]
@@ -57,14 +57,14 @@ const fetchUserProfile = async (): Promise<UserProfile> => {
             languages: p.languages || [],
             joinDate: p.created_at ? new Date(p.created_at).toLocaleDateString() : ""
         },
-        skills: (p.skills || []).map((s: any) => ({
+        skills: (response.skills || []).map((s: any) => ({
             name: s.name,
             level: s.proficiency || "Intermediate",
             category: s.category,
-            is_verified: s.verified
+            is_verified: s.verified || s.is_verified
         })),
-        experience: (p.experiences || []).map((e: any) => ({
-            id: e.id,
+        experience: (response.experiences || []).map((e: any) => ({
+            id: e.id || Math.random().toString(),
             role: e.role,
             company: e.company_name,
             type: (e.type || "Full-time") as "Full-time" | "Part-time" | "Contract" | "Freelance",
@@ -72,15 +72,22 @@ const fetchUserProfile = async (): Promise<UserProfile> => {
             endDate: e.end_date || "Present",
             description: e.description
         })),
-        education: (p.educations || p.education || []).map((e: any) => ({
-            id: e.id,
-            institution: e.institution,
-            degree: e.degree,
-            year: e.end_date ? new Date(e.end_date).getFullYear().toString() : "",
-            fieldOfStudy: e.field_of_study
-        })),
-        projects: (p.projects || []).map((proj: any) => ({
-            id: proj.id,
+        education: (response.education || []).map((e: any) => {
+            const startYear = e.start_date ? new Date(e.start_date).getFullYear().toString() : "";
+            const endYear = e.end_date ? new Date(e.end_date).getFullYear().toString() : "";
+            return {
+                id: e.id || Math.random().toString(),
+                institution: e.institution,
+                degree: e.degree,
+                startYear: startYear,
+                endYear: endYear,
+                current: !e.end_date && !!e.start_date, 
+                fieldOfStudy: e.field_of_study,
+                grade: e.grade || ""
+            };
+        }),
+        projects: (response.projects || []).map((proj: any) => ({
+            id: proj.id || Math.random().toString(),
             title: proj.title,
             description: proj.description,
             stack: proj.stack || [],
@@ -95,7 +102,7 @@ const fetchUserProfile = async (): Promise<UserProfile> => {
             visibility: p.visibility === "private" ? "Private" : "Public", 
             theme: "system" 
         },
-        ai_scores: p.ai_scores
+        ai_scores: response.ai_scores
     }
 }
 
@@ -129,7 +136,8 @@ export default function ProfilePage() {
                     experience_level: profileData.basic.experienceLevel,
                     job_type: profileData.basic.jobType,
                     languages: profileData.basic.languages,
-                    visibility: profileData.settings.visibility.toLowerCase()
+                    visibility: profileData.settings.visibility.toLowerCase(),
+                    avatar_url: profileData.basic.avatar
                 },
                 skills: profileData.skills.map(s => ({
                     name: s.name,
@@ -154,7 +162,9 @@ export default function ProfilePage() {
                     institution: e.institution,
                     degree: e.degree,
                     field_of_study: e.fieldOfStudy,
-                    end_date: e.year // Approximation
+                    start_date: e.startYear ? `${e.startYear}-01-01` : null,
+                    end_date: (e.current || !e.endYear) ? null : `${e.endYear}-12-31`,
+                    grade: e.grade || null
                 }))
             }
 
@@ -164,7 +174,7 @@ export default function ProfilePage() {
             
             toast.success("Profile synchronized with network!")
             setIsEditing(false)
-            refetch() 
+            refetch()
         } catch (error: any) {
             toast.error(`Sync failed: ${error.message}`)
         } finally {
@@ -248,10 +258,12 @@ export default function ProfilePage() {
         if (!profileData) return
         const newEdu = {
             id: Math.random().toString(),
-            institution: "New Institution",
-            degree: "New Degree",
-            year: "2024",
-            grade: "A"
+            institution: "University Name",
+            degree: "Bachelor of Technology",
+            startYear: "2020",
+            endYear: "2024",
+            current: false,
+            grade: ""
         }
         setProfileData({
             ...profileData,
@@ -387,7 +399,7 @@ export default function ProfilePage() {
                 <div className="p-4 rounded-full bg-red-500/10 text-red-500 mb-4">
                     <X className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-black uppercase tracking-tight text-white">Identity Sync Failed</h3>
+                <h3 className="text-xl font-black uppercase tracking-tight text-foreground">Identity Sync Failed</h3>
                 <p className="text-sm text-muted-foreground font-medium max-w-md text-center">
                     {error instanceof Error ? error.message : "Unable to establish connection with the neural ledger."}
                 </p>
@@ -418,8 +430,8 @@ export default function ProfilePage() {
             </div>
 
             <Tabs defaultValue="overview" className="space-y-10">
-                <div className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] glass p-2 rounded-[2rem] border-white/5">
-                    <TabsList className="w-full justify-start h-auto p-1 bg-transparent border-none gap-2">
+                <div className="overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] glass p-2 rounded-[2rem] border-border/50 w-full">
+                    <TabsList className="w-max min-w-full justify-start flex-nowrap h-auto p-1 bg-transparent border-none gap-2">
                         {[
                             { value: "overview", label: "Overview" },
                             { value: "basic", label: "Identity" },
@@ -501,7 +513,7 @@ export default function ProfilePage() {
                         <ReputationTab />
                     </TabsContent>
                     <TabsContent value="matrix" className="animate-in fade-in-50 duration-500">
-                        <div className="glass rounded-[3rem] p-8 md:p-16 border-white/5 shadow-2xl">
+                        <div className="glass rounded-[3rem] p-8 md:p-16 border-border/50 shadow-2xl">
                              <DynamicProfileForm 
                                 initialData={{
                                     firstName: activeData.basic.firstName,

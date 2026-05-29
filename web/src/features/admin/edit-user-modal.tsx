@@ -78,7 +78,7 @@ export function EditUserModal({ user, isOpen, onClose, onSuccess }: EditUserModa
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="bg-background/80 backdrop-blur-3xl border-white/10 rounded-[2.5rem] max-w-lg shadow-2xl overflow-hidden">
+            <DialogContent className="bg-background/80 backdrop-blur-3xl border-border rounded-[2.5rem] max-w-lg shadow-2xl overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-50" />
                 
                 <DialogHeader className="pt-6 px-8">
@@ -97,7 +97,7 @@ export function EditUserModal({ user, isOpen, onClose, onSuccess }: EditUserModa
                     </div>
                 </DialogHeader>
 
-                <div className="space-y-8 py-8 px-8 border-y border-white/5 bg-white/[0.01]">
+                <div className="space-y-8 py-8 px-8 border-y border-border/50 bg-white/[0.01]">
                     <div className="grid gap-6">
                         <div className="space-y-3">
                             <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Protocol Name</Label>
@@ -106,7 +106,7 @@ export function EditUserModal({ user, isOpen, onClose, onSuccess }: EditUserModa
                                 <Input 
                                     value={formData.full_name}
                                     onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                                    className="bg-background/40 border-white/5 rounded-2xl pl-12 h-14 font-bold focus:ring-primary/20 transition-all"
+                                    className="bg-background/40 border-border/50 rounded-2xl pl-12 h-14 font-bold focus:ring-primary/20 transition-all"
                                     placeholder="Enter entity name..."
                                 />
                             </div>
@@ -119,7 +119,7 @@ export function EditUserModal({ user, isOpen, onClose, onSuccess }: EditUserModa
                                 <Input 
                                     value={formData.email}
                                     disabled
-                                    className="bg-white/5 border-white/5 rounded-2xl pl-12 h-14 font-bold cursor-not-allowed italic"
+                                    className="bg-muted/50 border-border/50 rounded-2xl pl-12 h-14 font-bold cursor-not-allowed italic"
                                 />
                             </div>
                         </div>
@@ -131,10 +131,10 @@ export function EditUserModal({ user, isOpen, onClose, onSuccess }: EditUserModa
                                     value={formData.role} 
                                     onValueChange={(val) => setFormData({ ...formData, role: val })}
                                 >
-                                    <SelectTrigger className="bg-background/40 border-white/5 rounded-2xl h-14 font-bold focus:ring-primary/20">
+                                    <SelectTrigger className="bg-background/40 border-border/50 rounded-2xl h-14 font-bold focus:ring-primary/20">
                                         <SelectValue placeholder="Select Role" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-white/10 rounded-2xl">
+                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-border rounded-2xl">
                                         <SelectItem value="talent" className="font-bold">Talent</SelectItem>
                                         <SelectItem value="company" className="font-bold">Company</SelectItem>
                                         <SelectItem value="admin" className="font-bold">Admin</SelectItem>
@@ -147,10 +147,10 @@ export function EditUserModal({ user, isOpen, onClose, onSuccess }: EditUserModa
                                     value={formData.status} 
                                     onValueChange={(val) => setFormData({ ...formData, status: val })}
                                 >
-                                    <SelectTrigger className="bg-background/40 border-white/5 rounded-2xl h-14 font-bold focus:ring-primary/20">
+                                    <SelectTrigger className="bg-background/40 border-border/50 rounded-2xl h-14 font-bold focus:ring-primary/20">
                                         <SelectValue placeholder="Select Status" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-white/10 rounded-2xl">
+                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-border rounded-2xl">
                                         <SelectItem value="active" className="font-bold text-emerald-400">Active</SelectItem>
                                         <SelectItem value="suspended" className="font-bold text-rose-400">Suspended</SelectItem>
                                         <SelectItem value="pending" className="font-bold text-amber-400">Pending</SelectItem>
@@ -165,14 +165,14 @@ export function EditUserModal({ user, isOpen, onClose, onSuccess }: EditUserModa
                     <Button 
                         variant="ghost" 
                         onClick={onClose}
-                        className="rounded-2xl h-14 px-8 font-black uppercase tracking-widest text-[10px] hover:bg-white/5"
+                        className="rounded-2xl h-14 px-8 font-black uppercase tracking-widest text-[10px] hover:bg-muted/50"
                     >
                         Abort
                     </Button>
                     <Button 
                         onClick={handleSave}
                         disabled={isLoading}
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl h-14 px-10 border-t border-white/20 shadow-2xl font-black uppercase tracking-widest text-[10px] group overflow-hidden relative"
+                        className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl h-14 px-10 border-t border-border shadow-2xl font-black uppercase tracking-widest text-[10px] group overflow-hidden relative"
                     >
                         {isLoading ? (
                             <Loader2 className="w-4 h-4 animate-spin mr-2" />

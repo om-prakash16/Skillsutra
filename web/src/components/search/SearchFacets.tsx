@@ -33,8 +33,8 @@ export function SearchFacets({ filters, setFilters }: SearchFacetsProps) {
   };
 
   return (
-    <div className="flex flex-col gap-8 rounded-xl border border-white/5 bg-black/40 p-6 backdrop-blur-xl">
-      <div className="flex items-center gap-2 border-b border-white/5 pb-4">
+    <div className="flex flex-col gap-8 rounded-xl border border-border/50 bg-background/80 p-6 backdrop-blur-xl">
+      <div className="flex items-center gap-2 border-b border-border/50 pb-4">
         <Filter className="h-5 w-5 text-primary" />
         <h3 className="text-lg font-bold tracking-tight">Filters</h3>
       </div>
@@ -46,7 +46,7 @@ export function SearchFacets({ filters, setFilters }: SearchFacetsProps) {
           Sort & Rank
         </Label>
         <Select value={filters.sort_by || "hybrid"} onValueChange={handleSortChange}>
-          <SelectTrigger className="w-full bg-black/50 border-white/10 h-10">
+          <SelectTrigger className="w-full bg-background/80 border-border h-10">
             <SelectValue placeholder="Sort by" />
           </SelectTrigger>
           <SelectContent>
@@ -59,7 +59,7 @@ export function SearchFacets({ filters, setFilters }: SearchFacetsProps) {
       </div>
 
       {/* Work Preferences */}
-      <div className="flex flex-col gap-4 pt-4 border-t border-white/5">
+      <div className="flex flex-col gap-4 pt-4 border-t border-border/50">
         <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">
           Work Preferences
         </Label>
@@ -68,7 +68,7 @@ export function SearchFacets({ filters, setFilters }: SearchFacetsProps) {
             id="remote" 
             checked={filters.remote_only || false}
             onCheckedChange={handleRemoteChange}
-            className="border-white/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+            className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
           />
           <Label htmlFor="remote" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
             Remote Only
@@ -77,7 +77,7 @@ export function SearchFacets({ filters, setFilters }: SearchFacetsProps) {
       </div>
 
       {/* Salary Expectation */}
-      <div className="flex flex-col gap-4 pt-4 border-t border-white/5">
+      <div className="flex flex-col gap-4 pt-4 border-t border-border/50">
         <div className="flex items-center justify-between">
           <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">
             Minimum Salary
@@ -101,7 +101,7 @@ export function SearchFacets({ filters, setFilters }: SearchFacetsProps) {
       </div>
 
       {/* Skills (Simplified for now) */}
-      <div className="flex flex-col gap-4 pt-4 border-t border-white/5">
+      <div className="flex flex-col gap-4 pt-4 border-t border-border/50">
         <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground">
           Quick Skills
         </Label>
@@ -123,7 +123,7 @@ export function SearchFacets({ filters, setFilters }: SearchFacetsProps) {
                 className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                   isSelected 
                     ? "bg-primary text-primary-foreground shadow-[0_0_10px_hsl(var(--primary)/0.3)]" 
-                    : "bg-white/5 hover:bg-white/10 text-muted-foreground"
+                    : "bg-muted/50 hover:bg-muted/50 text-muted-foreground"
                 }`}
               >
                 {skill}

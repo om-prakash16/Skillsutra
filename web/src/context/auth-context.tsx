@@ -3,9 +3,9 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { login as apiLogin, signup as apiSignup, refreshSession as apiRefreshSession, logout as apiLogout, me as apiMe } from "@/lib/api/auth-api"
+import { login as apiLogin, signup as apiSignup, refreshSession as apiRefreshSession, logout as apiLogout, me as apiMe, verifyMagicLink } from "@/lib/api/auth-api"
 
-type UserRole = "user" | "company" | "admin"
+type UserRole = "user" | "company" | "admin" | "recruiter" | string
 
 interface User {
     id: string
@@ -30,8 +30,10 @@ interface AuthContextType {
     signInWithGoogle: (role?: string) => Promise<void>
     signInWithGitHub: (role?: string) => Promise<void>
     loginUser: (data: any) => Promise<void>
+    loginWithMagicLink: (token: string) => Promise<void>
     signupUser: (data: any) => Promise<void>
     logout: () => void
+    setAuthSession: (user: User, accessToken: string, refreshToken: string) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -94,7 +96,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const signInWithGoogle = async (role = "user") => {
         setIsLoading(true)
         localStorage.setItem("requested_role", role)
-        window.location.href = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/auth/oauth/google/url`
+        // Redirect to the login page where the proper GoogleLogin button is rendered
+        router.push('/auth/login?role=' + role)
+        setIsLoading(false)
     }
 
     const signInWithGitHub = async (role = "user") => {
@@ -134,6 +138,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const loginWithMagicLink = async (magicToken: string) => {
+        setIsLoading(true)
+        try {
+            const result = await verifyMagicLink(magicToken)
+            localStorage.setItem("accessToken", result.access_token)
+            localStorage.setItem("refreshToken", result.refresh_token)
+            document.cookie = `auth_token=${result.access_token}; path=/; max-age=86400; SameSite=Lax`
+            setToken(result.access_token)
+            
+            const realUser = await apiMe()
+            setUser(realUser)
+            setIsAuthenticated(true)
+            
+            toast.success("Logged in successfully")
+            
+            if (realUser?.role === "admin") {
+                router.push("/admin")
+            } else if (realUser?.role === "company") {
+                router.push("/company/dashboard")
+            } else {
+                router.push("/user/dashboard")
+            }
+        } catch (err: any) {
+            toast.error(err.message || "Magic link verification failed")
+            throw err
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     const signupUser = async (data: any) => {
         setIsLoading(true)
         try {
@@ -164,6 +198,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         router.push("/auth/login")
     }
 
+    const setAuthSession = (userPayload: User, accessToken: string, refreshToken: string) => {
+        localStorage.setItem("accessToken", accessToken)
+        localStorage.setItem("refreshToken", refreshToken)
+        document.cookie = `auth_token=${accessToken}; path=/; max-age=86400; SameSite=Lax`
+        setToken(accessToken)
+        setUser(userPayload)
+        setIsAuthenticated(true)
+    }
+
     return (
         <AuthContext.Provider
             value={{
@@ -174,8 +217,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 signInWithGoogle,
                 signInWithGitHub,
                 loginUser,
+                loginWithMagicLink,
                 signupUser,
                 logout,
+                setAuthSession,
             }}
         >
             {children}

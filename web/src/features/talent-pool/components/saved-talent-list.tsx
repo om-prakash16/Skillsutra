@@ -50,10 +50,10 @@ export function SavedTalentList({ companyId }: { companyId: string }) {
 
     if (savedTalents.length === 0) {
         return (
-            <div className="text-center py-20 glass rounded-[3rem] border-white/5">
-                <Bookmark className="w-12 h-12 text-white/20 mx-auto mb-4" />
+            <div className="text-center py-20 glass rounded-[3rem] border-border/50">
+                <Bookmark className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
                 <h3 className="text-xl font-bold mb-2">No Saved Talent</h3>
-                <p className="text-[10px] font-black uppercase tracking-widest text-white/40">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
                     Bookmark interesting profiles from the discovery page to build your pool.
                 </p>
             </div>

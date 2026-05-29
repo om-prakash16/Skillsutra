@@ -29,8 +29,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
+import { Skeleton } from "@/components/ui/skeleton"
+
 export function Navbar() {
-    const { user, logout } = useAuth()
+    const { user, logout, isLoading } = useAuth()
     const { getVal, getJson } = useCMS()
     const scrolled = useScrolled()
     const pathname = usePathname()
@@ -56,16 +58,16 @@ export function Navbar() {
             className={cn(
                 "fixed top-0 right-0 z-50 transition-all duration-500",
                 scrolled
-                    ? "glass shadow-premium border-b border-black/5 dark:border-white/5"
+                    ? "glass shadow-premium border-b border-black/5 dark:border-border/50"
                     : "bg-transparent",
                 isDashboard ? "left-0 lg:left-64" : "left-0"
             )}
         >
             <div className="container mx-auto flex items-center justify-between h-20 px-4 md:px-8 gap-4">
 
-                {/* Logo - Hide on Dashboard as Sidebar has logo */}
+                {/* Logo - Centered everywhere */}
                 {!isDashboard && (
-                    <Link href="/" className="flex items-center gap-3 group shrink-0">
+                    <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 group shrink-0">
                         <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-all shadow-[0_0_20px_hsl(var(--primary)/0.15)] backdrop-blur-md border border-primary/20 shrink-0">
                             <ShieldCheck className="w-6 h-6 text-primary fill-primary/10" />
                         </div>
@@ -127,7 +129,12 @@ export function Navbar() {
                         <ThemeToggle />
                         <NotificationBell />
                     </div>
-                    {!user ? (
+                    {isLoading ? (
+                        <div className="flex items-center gap-4">
+                             <Skeleton className="h-10 w-24 rounded-xl" />
+                             <Skeleton className="h-10 w-24 rounded-xl" />
+                        </div>
+                    ) : !user ? (
                         <>
                             <div className="flex items-center gap-3">
                                 <Link href="/auth/login">
@@ -141,7 +148,7 @@ export function Navbar() {
                                     </Button>
                                 </Link>
                             </div>
-                            <div className="w-px h-6 bg-black/5 dark:bg-white/5 mx-1" />
+                            <div className="w-px h-6 bg-black/5 dark:bg-muted/50 mx-1" />
                             <Link href="/post-job">
                                 <Button variant="outline" size="sm" className="hidden lg:flex text-micro font-bold h-10 px-6 rounded-xl border-primary/20 hover:bg-primary/5 transition-all">
                                     Post a Job
@@ -150,9 +157,6 @@ export function Navbar() {
                         </>
                     ) : (
                         <div className="flex items-center gap-4">
-                            <Link href={user.role === 'admin' ? "/admin" : user.role === 'company' ? "/company/dashboard" : "/user/dashboard"} className="hidden lg:block">
-                                <Button variant="ghost" size="sm" className="text-micro font-bold">DASHBOARD</Button>
-                            </Link>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-primary/20 p-0 overflow-hidden shadow-premium">
@@ -162,35 +166,57 @@ export function Navbar() {
                                         </Avatar>
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-56" align="end" forceMount>
-                                    <DropdownMenuLabel className="font-normal">
+                                <DropdownMenuContent className="w-64" align="end" forceMount>
+                                    <DropdownMenuLabel className="font-normal py-3">
                                         <div className="flex flex-col space-y-1">
-                                            <p className="text-sm font-medium leading-none">{user.name}</p>
-                                            <p className="text-xs leading-none text-muted-foreground">
-                                                {user.email}
+                                            <p className="text-sm font-bold leading-none">{user.name}</p>
+                                            <p className="text-xs leading-none text-muted-foreground pt-1">
+                                                @{user.username || user.user_code || user.id.slice(0,8)}
                                             </p>
+                                            <div className="mt-2 inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold uppercase tracking-widest bg-primary/10 text-primary border-primary/20 w-fit">
+                                                {user.role}
+                                            </div>
                                         </div>
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
                                         <DropdownMenuItem asChild>
-                                            <Link href={user.role === 'admin' ? "/admin" : user.role === 'company' ? "/company/dashboard" : "/user/dashboard"}>
-                                                Dashboard
-                                            </Link>
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem asChild>
-                                            <Link href={user.role === 'admin' ? "/admin/profile" : user.role === 'company' ? "/company/profile" : "/user/profile"}>
+                                            <Link href={user.username ? `/${user.username}` : (user.role === 'admin' ? "/admin/profile" : user.role === 'company' ? "/company/profile" : "/user/profile")} className="cursor-pointer">
                                                 Profile
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href={user.role === 'admin' ? "/admin/settings" : user.role === 'company' ? "/company/dashboard" : "/user/settings"}>
+                                            <Link href={user.role === 'admin' ? "/admin" : user.role === 'company' ? "/company/dashboard" : "/user/dashboard"} className="cursor-pointer">
+                                                Dashboard
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/user/applications" className="cursor-pointer">
+                                                Applications
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/user/saved-jobs" className="cursor-pointer">
+                                                Saved Jobs
+                                            </Link>
+                                        </DropdownMenuItem>
+                                    </DropdownMenuGroup>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/messages" className="cursor-pointer">Messages</Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/notifications" className="cursor-pointer">Notifications</Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <Link href={user.role === 'admin' ? "/admin/settings" : user.role === 'company' ? "/company/settings" : "/user/settings"} className="cursor-pointer">
                                                 Settings
                                             </Link>
                                         </DropdownMenuItem>
                                     </DropdownMenuGroup>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive cursor-pointer font-medium">
+                                    <DropdownMenuItem onClick={logout} className="text-red-500 focus:text-red-500 focus:bg-red-500/10 cursor-pointer font-bold">
                                         Log out
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -210,12 +236,12 @@ export function Navbar() {
                         <SheetContent side="right" className="w-[300px] sm:w-[350px] px-6">
                             <div className="flex flex-col gap-8 mt-10">
                                 {/* Mobile Quick Actions */}
-                                <div className="flex items-center gap-4 p-4 glass rounded-2xl border-white/5">
+                                <div className="flex items-center gap-4 p-4 glass rounded-2xl border-border/50">
                                     <div className="flex-1 flex flex-col gap-1">
                                         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Appearance</p>
                                         <ThemeToggle />
                                     </div>
-                                    <div className="w-px h-10 bg-white/5" />
+                                    <div className="w-px h-10 bg-muted/50" />
                                     <div className="flex-1 flex flex-col gap-1">
                                         <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Alerts</p>
                                         <NotificationBell />

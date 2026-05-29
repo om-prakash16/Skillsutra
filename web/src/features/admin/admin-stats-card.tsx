@@ -35,8 +35,8 @@ export function AdminStatsCard({
             className="h-full"
         >
             <Card className={cn(
-                "h-full relative overflow-hidden group border-white/5 bg-background/20 backdrop-blur-xl transition-all duration-500",
-                "hover:border-white/20 hover:bg-background/30 shadow-2xl"
+                "h-full relative overflow-hidden group border-border/50 bg-background/20 backdrop-blur-xl transition-all duration-500",
+                "hover:border-border hover:bg-background/30 shadow-2xl"
             )}>
                 {/* Shimmer effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/[0.03] to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
@@ -44,7 +44,7 @@ export function AdminStatsCard({
                 <CardHeader className="flex flex-row items-center justify-between pb-3 relative z-10">
                     <CardTitle className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">{title}</CardTitle>
                     <div className={cn(
-                        "p-2.5 rounded-xl transition-all duration-300 bg-white/5 border border-white/5 group-hover:border-white/10 group-hover:scale-110",
+                        "p-2.5 rounded-xl transition-all duration-300 bg-muted/50 border border-border/50 group-hover:border-border group-hover:scale-110",
                     )}>
                         <Icon className={cn("w-4 h-4", color)} />
                     </div>

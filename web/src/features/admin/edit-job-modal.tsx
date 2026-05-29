@@ -101,7 +101,7 @@ export function EditJobModal({ job, isOpen, onClose, onSuccess }: EditJobModalPr
                     </div>
                 </DialogHeader>
 
-                <div className="space-y-8 py-8 px-8 border-y border-white/5 bg-white/[0.01]">
+                <div className="space-y-8 py-8 px-8 border-y border-border/50 bg-white/[0.01]">
                     <div className="grid gap-6">
                         <div className="space-y-3">
                             <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Protocol Title</Label>
@@ -110,7 +110,7 @@ export function EditJobModal({ job, isOpen, onClose, onSuccess }: EditJobModalPr
                                 <Input 
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                    className="bg-background/40 border-white/5 rounded-2xl pl-12 h-14 font-bold focus:ring-emerald-500/20 transition-all"
+                                    className="bg-background/40 border-border/50 rounded-2xl pl-12 h-14 font-bold focus:ring-emerald-500/20 transition-all"
                                     placeholder="Enter bounty title..."
                                 />
                             </div>
@@ -122,7 +122,7 @@ export function EditJobModal({ job, isOpen, onClose, onSuccess }: EditJobModalPr
                                 <Input 
                                     value={formData.company_name}
                                     onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                                    className="bg-background/40 border-white/5 rounded-2xl h-14 font-bold focus:ring-emerald-500/20"
+                                    className="bg-background/40 border-border/50 rounded-2xl h-14 font-bold focus:ring-emerald-500/20"
                                 />
                             </div>
                             <div className="space-y-3">
@@ -132,7 +132,7 @@ export function EditJobModal({ job, isOpen, onClose, onSuccess }: EditJobModalPr
                                     <Input 
                                         value={formData.location}
                                         onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                                        className="bg-background/40 border-white/5 rounded-2xl pl-10 h-14 font-bold focus:ring-emerald-500/20"
+                                        className="bg-background/40 border-border/50 rounded-2xl pl-10 h-14 font-bold focus:ring-emerald-500/20"
                                     />
                                 </div>
                             </div>
@@ -145,10 +145,10 @@ export function EditJobModal({ job, isOpen, onClose, onSuccess }: EditJobModalPr
                                     value={formData.job_type} 
                                     onValueChange={(val) => setFormData({ ...formData, job_type: val })}
                                 >
-                                    <SelectTrigger className="bg-background/40 border-white/5 rounded-2xl h-14 font-bold focus:ring-emerald-500/20 transition-all">
+                                    <SelectTrigger className="bg-background/40 border-border/50 rounded-2xl h-14 font-bold focus:ring-emerald-500/20 transition-all">
                                         <SelectValue placeholder="Select Protocol" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-white/10 rounded-2xl">
+                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-border rounded-2xl">
                                         <SelectItem value="Full-time" className="font-bold">Full-time</SelectItem>
                                         <SelectItem value="Contract" className="font-bold">Contract</SelectItem>
                                         <SelectItem value="Freelance" className="font-bold">Freelance</SelectItem>
@@ -162,10 +162,10 @@ export function EditJobModal({ job, isOpen, onClose, onSuccess }: EditJobModalPr
                                     value={formData.status} 
                                     onValueChange={(val) => setFormData({ ...formData, status: val })}
                                 >
-                                    <SelectTrigger className="bg-background/40 border-white/5 rounded-2xl h-14 font-bold focus:ring-emerald-500/20 transition-all">
+                                    <SelectTrigger className="bg-background/40 border-border/50 rounded-2xl h-14 font-bold focus:ring-emerald-500/20 transition-all">
                                         <SelectValue placeholder="Select State" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-white/10 rounded-2xl">
+                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-border rounded-2xl">
                                         <SelectItem value="active" className="font-bold text-emerald-400">Broadcast (Active)</SelectItem>
                                         <SelectItem value="closed" className="font-bold text-rose-400">Terminated (Closed)</SelectItem>
                                         <SelectItem value="flagged" className="font-bold text-amber-400">Restricted (Flagged)</SelectItem>
@@ -181,14 +181,14 @@ export function EditJobModal({ job, isOpen, onClose, onSuccess }: EditJobModalPr
                     <Button 
                         variant="ghost" 
                         onClick={onClose}
-                        className="rounded-2xl h-14 px-8 font-black uppercase tracking-widest text-[10px] hover:bg-white/5"
+                        className="rounded-2xl h-14 px-8 font-black uppercase tracking-widest text-[10px] hover:bg-muted/50"
                     >
                         Abort
                     </Button>
                     <Button 
                         onClick={handleSave}
                         disabled={isLoading}
-                        className="bg-emerald-600 hover:bg-emerald-500 text-white rounded-2xl h-14 px-10 border-t border-white/20 shadow-2xl font-black uppercase tracking-widest text-[10px] group overflow-hidden relative"
+                        className="bg-emerald-600 hover:bg-emerald-500 text-foreground rounded-2xl h-14 px-10 border-t border-border shadow-2xl font-black uppercase tracking-widest text-[10px] group overflow-hidden relative"
                     >
                         {isLoading ? (
                             <Loader2 className="w-4 h-4 animate-spin mr-2" />

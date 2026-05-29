@@ -38,7 +38,7 @@ export default function StaffDashboardPage() {
         <div className="space-y-8">
             {/* Header */}
             <div>
-                <h1 className="text-3xl font-bold tracking-tight text-white">Operations Dashboard</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">Operations Dashboard</h1>
                 <p className="text-slate-400 mt-1">Your daily moderation overview — Best Hiring Tool Staff Panel</p>
             </div>
 
@@ -50,7 +50,7 @@ export default function StaffDashboardPage() {
                         <div className={`w-8 h-8 rounded-lg ${stat.bg} flex items-center justify-center mb-3`}>
                             <stat.icon className={`w-4 h-4 ${stat.color}`} />
                         </div>
-                        <p className="text-2xl font-bold text-white group-hover:text-violet-300 transition-colors">{stat.value}</p>
+                        <p className="text-2xl font-bold text-foreground group-hover:text-violet-300 transition-colors">{stat.value}</p>
                         <p className="text-xs text-slate-500 mt-0.5">{stat.label}</p>
                     </Link>
                 ))}
@@ -61,14 +61,14 @@ export default function StaffDashboardPage() {
                 <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
                     <div className="flex items-center gap-2 mb-4">
                         <AlertTriangle className="w-4 h-4 text-yellow-400" />
-                        <h2 className="font-semibold text-white">Priority Queue</h2>
+                        <h2 className="font-semibold text-foreground">Priority Queue</h2>
                     </div>
                     <div className="space-y-3">
                         {priorityQueue.map((item) => (
                             <div key={item.id}
                                 className={`flex items-start justify-between p-3 rounded-lg border ${priorityColors[item.priority]}`}>
                                 <div>
-                                    <p className="text-sm font-medium text-white">{item.subject}</p>
+                                    <p className="text-sm font-medium text-foreground">{item.subject}</p>
                                     <p className="text-xs text-slate-500 mt-0.5">{item.type} · {item.age} ago</p>
                                 </div>
                                 <span className={`text-xs px-2 py-0.5 rounded-full border font-medium capitalize ${priorityColors[item.priority]}`}>
@@ -83,7 +83,7 @@ export default function StaffDashboardPage() {
                 <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
                     <div className="flex items-center gap-2 mb-4">
                         <TrendingUp className="w-4 h-4 text-green-400" />
-                        <h2 className="font-semibold text-white">Recent Activity</h2>
+                        <h2 className="font-semibold text-foreground">Recent Activity</h2>
                     </div>
                     <div className="space-y-3">
                         {mockActivity.map((item) => (

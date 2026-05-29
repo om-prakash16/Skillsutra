@@ -170,13 +170,29 @@ class UserService:
         # 1. Update Core Profile & User Metadata
         if "profile" in data:
             p = data["profile"]
-            await db.table("profiles").upsert({
+            
+            # Fetch existing profile first
+            existing = await db.table("profiles").select("id").eq("user_id", user_id).execute()
+            
+            profile_payload = {
                 "user_id": user_id,
                 "full_name": p.get("full_name", "Anonymous"),
                 "headline": p.get("headline"),
                 "bio": p.get("bio"),
-                "location": p.get("location")
-            }).execute()
+                "location": p.get("location"),
+                "experience_level": p.get("experience_level"),
+                "job_type": p.get("job_type"),
+                "languages": p.get("languages"),
+                "avatar_url": p.get("avatar_url"),
+                "banner_url": p.get("banner_url")
+            }
+            # Clean None values so we don't accidentally wipe existing DB fields
+            profile_payload = {k: v for k, v in profile_payload.items() if v is not None}
+            
+            if existing.data:
+                await db.table("profiles").update(profile_payload).eq("id", existing.data[0]["id"]).execute()
+            else:
+                await db.table("profiles").insert(profile_payload).execute()
             
             u_meta = {}
             if "visibility" in p: u_meta["visibility"] = p["visibility"]

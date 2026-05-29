@@ -102,7 +102,7 @@ function SearchContent() {
           
           <div className="w-full max-w-3xl relative group">
             <div className="absolute inset-0 bg-primary/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative flex items-center bg-black/50 border border-white/10 p-2 rounded-full backdrop-blur-xl focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary shadow-2xl transition-all">
+            <div className="relative flex items-center bg-background/80 border border-border p-2 rounded-full backdrop-blur-xl focus-within:border-primary/50 focus-within:ring-1 focus-within:ring-primary shadow-2xl transition-all">
               <Search className="h-6 w-6 text-muted-foreground ml-4" />
               <Input 
                 value={query}
@@ -131,9 +131,9 @@ function SearchContent() {
           <div className="lg:col-span-3 flex flex-col gap-6">
             
             {/* Tabs & Stats */}
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-white/10 pb-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-border pb-4">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
-                <TabsList className="bg-black/40 border border-white/5">
+                <TabsList className="bg-background/80 border border-border/50">
                   <TabsTrigger value="all">All Results</TabsTrigger>
                   <TabsTrigger value="jobs">Jobs</TabsTrigger>
                   <TabsTrigger value="talent">Talent</TabsTrigger>
@@ -153,8 +153,8 @@ function SearchContent() {
             {/* Results Grid */}
             <StaggerList className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {!isLoading && results.length === 0 && (
-                <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-black/20 rounded-2xl border border-white/5 border-dashed">
-                  <div className="bg-white/5 p-4 rounded-full mb-4">
+                <div className="col-span-full py-20 flex flex-col items-center justify-center text-center bg-black/20 rounded-2xl border border-border/50 border-dashed">
+                  <div className="bg-muted/50 p-4 rounded-full mb-4">
                     <Search className="h-8 w-8 text-muted-foreground" />
                   </div>
                   <h3 className="text-xl font-bold mb-2">No results found</h3>

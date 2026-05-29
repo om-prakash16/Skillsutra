@@ -20,7 +20,7 @@ class ExperienceResponse(ExperienceBase):
     profile_id: UUID
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class EducationBase(BaseModel):
     school: str
@@ -37,7 +37,7 @@ class EducationResponse(EducationBase):
     profile_id: UUID
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ProjectBase(BaseModel):
     title: str
@@ -54,7 +54,7 @@ class ProjectResponse(ProjectBase):
     profile_id: UUID
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 class ProfileBase(BaseModel):
     headline: Optional[str] = None
@@ -81,4 +81,4 @@ class ProfileResponse(ProfileBase):
     projects: List[ProjectResponse] = []
 
     class Config:
-        orm_mode = True
+        from_attributes = True

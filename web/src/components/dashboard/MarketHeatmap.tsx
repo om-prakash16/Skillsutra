@@ -73,7 +73,7 @@ export function MarketHeatmap() {
 
     if (loading) {
         return (
-            <div className="w-full h-[500px] border border-white/10 bg-white/[0.02] rounded-3xl flex items-center justify-center">
+            <div className="w-full h-[500px] border border-border bg-muted/30 rounded-3xl flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                     <p className="text-sm text-muted-foreground animate-pulse font-bold tracking-widest uppercase">Scanning Global Talent Shifts...</p>
@@ -88,7 +88,7 @@ export function MarketHeatmap() {
         <div className="space-y-8 animate-in fade-in duration-700">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Heatmap Grid */}
-                <Card className="lg:col-span-2 p-8 border-white/10 bg-white/[0.02] backdrop-blur-xl rounded-3xl space-y-6 relative overflow-hidden">
+                <Card className="lg:col-span-2 p-8 border-border bg-muted/30 backdrop-blur-xl rounded-3xl space-y-6 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-transparent" />
                     
                     <div className="flex items-center justify-between">
@@ -119,18 +119,18 @@ export function MarketHeatmap() {
                                                 whileHover={{ scale: 1.05, y: -2 }}
                                                 onClick={() => setSelectedSkill(point)}
                                                 className={cn(
-                                                    "h-20 rounded-xl flex flex-col items-center justify-center p-2 transition-all border border-white/5",
+                                                    "h-20 rounded-xl flex flex-col items-center justify-center p-2 transition-all border border-border/50",
                                                     selectedSkill?.skill === point.skill ? "ring-2 ring-primary ring-offset-2 ring-offset-black" : ""
                                                 )}
                                                 style={{ 
                                                     backgroundColor: `rgba(249, 115, 22, ${0.1 + intensity * 0.8})` 
                                                 }}
                                             >
-                                                <span className="text-[10px] font-black uppercase text-white drop-shadow-md truncate w-full text-center">{point.skill}</span>
-                                                <span className="text-[14px] font-black text-white/90">{point.opportunity_index}x</span>
+                                                <span className="text-[10px] font-black uppercase text-foreground drop-shadow-md truncate w-full text-center">{point.skill}</span>
+                                                <span className="text-[14px] font-black text-foreground/90">{point.opportunity_index}x</span>
                                             </motion.button>
                                         </TooltipTrigger>
-                                        <TooltipContent className="bg-black border-white/10 p-3 rounded-xl shadow-2xl">
+                                        <TooltipContent className="bg-black border-border p-3 rounded-xl shadow-2xl">
                                             <div className="space-y-2">
                                                 <p className="text-xs font-black uppercase tracking-wider">{point.skill}</p>
                                                 <div className="grid grid-cols-2 gap-4">
@@ -151,7 +151,7 @@ export function MarketHeatmap() {
                         </TooltipProvider>
                     </div>
 
-                    <div className="flex items-center gap-6 pt-4 border-t border-white/5">
+                    <div className="flex items-center gap-6 pt-4 border-t border-border/50">
                         <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase">
                             <span>Saturated</span>
                             <div className="flex gap-1">
@@ -175,7 +175,7 @@ export function MarketHeatmap() {
                                 animate={{ opacity: 1, x: 0 }}
                                 exit={{ opacity: 0, x: -20 }}
                             >
-                                <Card className="p-6 border-white/10 bg-white/[0.05] rounded-3xl space-y-4">
+                                <Card className="p-6 border-border bg-white/[0.05] rounded-3xl space-y-4">
                                     <div className="flex items-center justify-between">
                                         <Badge className="bg-orange-500/20 text-orange-500 border-orange-500/20 uppercase text-[10px]">{selectedSkill.saturation} Saturation</Badge>
                                         <Button variant="ghost" size="icon" className="h-6 w-6 rounded-full" onClick={() => setSelectedSkill(null)}>
@@ -188,7 +188,7 @@ export function MarketHeatmap() {
                                         <div className="space-y-2">
                                             <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                                                 <span>Opportunity Ratio</span>
-                                                <span className="text-white">{selectedSkill.opportunity_index}x</span>
+                                                <span className="text-foreground">{selectedSkill.opportunity_index}x</span>
                                             </div>
                                             <Progress value={selectedSkill.opportunity_index * 20} className="h-1" />
                                         </div>
@@ -202,7 +202,7 @@ export function MarketHeatmap() {
                                 </Card>
                             </motion.div>
                         ) : (
-                            <Card className="p-8 border-white/10 bg-white/[0.02] border-dashed rounded-3xl flex flex-col items-center justify-center text-center space-y-4 h-[220px]">
+                            <Card className="p-8 border-border bg-muted/30 border-dashed rounded-3xl flex flex-col items-center justify-center text-center space-y-4 h-[220px]">
                                 <Target className="w-10 h-10 text-muted-foreground/20" />
                                 <p className="text-sm font-bold text-muted-foreground/60">Select a heatmap zone to view deep analytics</p>
                             </Card>
@@ -210,7 +210,7 @@ export function MarketHeatmap() {
                     </AnimatePresence>
 
                     {/* Predictions */}
-                    <Card className="p-6 border-white/10 bg-gradient-to-br from-primary/10 to-transparent rounded-3xl space-y-5 relative overflow-hidden">
+                    <Card className="p-6 border-border bg-gradient-to-br from-primary/10 to-transparent rounded-3xl space-y-5 relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-4">
                             <Radar className="w-12 h-12 text-primary/10" />
                         </div>
@@ -223,7 +223,7 @@ export function MarketHeatmap() {
                         </div>
 
                         <div className="space-y-3">
-                            <p className="text-[11px] font-bold text-white/80 leading-relaxed uppercase tracking-tighter">Breakout Skills (Next 6mo)</p>
+                            <p className="text-[11px] font-bold text-foreground/90 leading-relaxed uppercase tracking-tighter">Breakout Skills (Next 6mo)</p>
                             <div className="flex flex-wrap gap-2">
                                 {data.predictions.breakout_skills.map(s => (
                                     <Badge key={s} className="bg-primary/20 text-primary border-primary/20 text-[10px] font-black uppercase px-2">{s}</Badge>
@@ -231,12 +231,12 @@ export function MarketHeatmap() {
                             </div>
                         </div>
 
-                        <div className="pt-4 border-t border-white/5 space-y-2">
+                        <div className="pt-4 border-t border-border/50 space-y-2">
                             <p className="text-[10px] font-black text-rose-500 uppercase">Saturated Domain</p>
                             <p className="text-xs font-bold">{data.predictions.saturated_domain}</p>
                         </div>
 
-                        <div className="p-3 bg-black/40 rounded-xl border border-white/5">
+                        <div className="p-3 bg-background/80 rounded-xl border border-border/50">
                              <p className="text-[10px] leading-relaxed text-muted-foreground italic">"{data.predictions.predictions_summary}"</p>
                         </div>
                     </Card>

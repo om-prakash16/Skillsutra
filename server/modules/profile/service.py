@@ -34,7 +34,7 @@ class ProfileService:
         
         if profile:
             # Convert SQLAlchemy model to Pydantic dict and cache it
-            profile_dict = json.loads(ProfileResponse.from_orm(profile).json())
+            profile_dict = json.loads(ProfileResponse.model_validate(profile).model_dump_json())
             await redis_set(cache_key, profile_dict, ttl_seconds=3600)
             
         return profile

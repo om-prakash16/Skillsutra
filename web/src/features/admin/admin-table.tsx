@@ -31,19 +31,19 @@ export function AdminTable({
     isAllSelected 
 }: AdminTableProps) {
     return (
-        <div className={cn("relative overflow-hidden rounded-[2rem] border border-white/5 bg-background/20 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-white/10", className)}>
+        <div className={cn("relative overflow-hidden rounded-[2rem] border border-border/50 bg-background/20 backdrop-blur-3xl shadow-2xl transition-all duration-500 hover:border-border", className)}>
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-50" />
             
             <div className="overflow-x-auto custom-scrollbar">
                 <Table>
-                    <TableHeader className="bg-white/[0.02] border-b border-white/5">
+                    <TableHeader className="bg-muted/30 border-b border-border/50">
                         <TableRow className="border-b-white/5 hover:bg-transparent transition-none">
                             {showCheckbox && (
                                 <TableHead className="w-12 px-8">
                                     <Checkbox 
                                         checked={isAllSelected} 
                                         onCheckedChange={(checked) => onSelectAll?.(!!checked)}
-                                        className="border-white/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary"
+                                        className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary"
                                     />
                                 </TableHead>
                             )}
@@ -63,7 +63,7 @@ export function AdminTable({
                                 <TableRow>
                                     <TableCell colSpan={headers.length + (showCheckbox ? 1 : 0)} className="h-64 text-center">
                                         <div className="flex flex-col items-center gap-4 opacity-20">
-                                            <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                                            <div className="p-4 rounded-2xl bg-muted/50 border border-border">
                                                 <div className="w-8 h-8 rounded-full border-2 border-dashed border-white/30 animate-spin" />
                                             </div>
                                             <p className="text-xs font-black uppercase tracking-[0.3em]">No Data Nodes Found</p>
@@ -106,7 +106,7 @@ export function AdminTableRow({
             transition={{ delay: Math.min(index * 0.03, 0.3), duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             onClick={onClick}
             className={cn(
-                "border-b border-white/5 hover:bg-white/[0.02] transition-all duration-300 group/row cursor-pointer relative",
+                "border-b border-border/50 hover:bg-muted/30 transition-all duration-300 group/row cursor-pointer relative",
                 isSelected && "bg-primary/[0.03] border-primary/20",
                 className
             )}
@@ -116,7 +116,7 @@ export function AdminTableRow({
                     <Checkbox 
                         checked={isSelected} 
                         onCheckedChange={(checked) => onSelect?.(!!checked)}
-                        className="border-white/20 data-[state=checked]:bg-primary data-[state=checked]:border-primary transition-transform active:scale-90"
+                        className="border-border data-[state=checked]:bg-primary data-[state=checked]:border-primary transition-transform active:scale-90"
                     />
                 </TableCell>
             )}

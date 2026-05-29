@@ -40,7 +40,7 @@ export function AIConfigPanel() {
     const isError = Math.abs(totalWeight - 1.0) > 0.01
 
     return (
-        <Card className="border-white/5 bg-background/20 backdrop-blur-xl">
+        <Card className="border-border/50 bg-background/20 backdrop-blur-xl">
             <CardHeader>
                 <div className="flex items-center justify-between">
                     <div className="space-y-1">

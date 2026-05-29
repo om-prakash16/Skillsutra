@@ -290,10 +290,10 @@ export default function SkillGraphVisualization({
       {/* Tooltip */}
       {hoveredNode && (
         <div
-          className="absolute pointer-events-none z-50 px-4 py-3 rounded-xl border border-white/10 bg-black/80 backdrop-blur-xl shadow-2xl text-sm max-w-[260px]"
+          className="absolute pointer-events-none z-50 px-4 py-3 rounded-xl border border-border bg-black/80 backdrop-blur-xl shadow-2xl text-sm max-w-[260px]"
           style={{ left: hoveredNode.x + 20, top: hoveredNode.y - 20 }}
         >
-          <div className="font-semibold text-white flex items-center gap-2">
+          <div className="font-semibold text-foreground flex items-center gap-2">
             {hoveredNode.skill_name}
             {hoveredNode.is_verified && <span className="text-green-400 text-xs">✓ Verified</span>}
           </div>

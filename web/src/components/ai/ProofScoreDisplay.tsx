@@ -66,7 +66,7 @@ export function ProofScoreDisplay({ scores, isLoading }: ProofScoreProps) {
         </div>
 
         <div className="pt-6 text-center">
-            <Badge variant="outline" className="glass py-2 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground transition-all hover:bg-white/5 hover:border-primary/50 hover:text-primary cursor-default rounded-full">
+            <Badge variant="outline" className="glass py-2 px-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground transition-all hover:bg-muted/50 hover:border-primary/50 hover:text-primary cursor-default rounded-full">
                 AI RE-EVALUATION IN PROGRESS
             </Badge>
         </div>
@@ -84,7 +84,7 @@ function ScoreMetric({ label, value, weight, color, icon: Icon }: any) {
                 </span>
                 <span className={color}>{value}% <span className="text-neutral-600 font-normal">({weight}%)</span></span>
             </div>
-            <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-muted/50 rounded-full overflow-hidden">
                 <div 
                     className={`h-full rounded-full transition-all duration-1000 ${color.replace('text-', 'bg-')}`} 
                     style={{ width: `${value}%` }}

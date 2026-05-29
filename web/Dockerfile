@@ -3,11 +3,12 @@ FROM node:20-alpine
 WORKDIR /app
 
 # Install dependencies
-COPY package.json package-lock.json* ./
+COPY web/package.json web/package-lock.json* ./
 RUN npm ci || npm install
 
 # Copy application code
-COPY . .
+COPY web/ .
+COPY .env .
 
 # Build application
 RUN npm run build

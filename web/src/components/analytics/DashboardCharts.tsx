@@ -14,8 +14,8 @@ interface ChartProps {
 
 export function DashboardCharts({ data, title, type, dataKey, nameKey, height = 300 }: ChartProps) {
   return (
-    <Card className="bg-[#050505] border-white/10 overflow-hidden relative group hover:border-white/20 transition-all p-6">
-      <CardHeader className="p-0 pb-6 border-b border-white/10 mb-6">
+    <Card className="bg-[#050505] border-border overflow-hidden relative group hover:border-border transition-all p-6">
+      <CardHeader className="p-0 pb-6 border-b border-border mb-6">
         <h3 className="text-[10px] font-black uppercase tracking-widest text-neutral-500">{title}</h3>
       </CardHeader>
       

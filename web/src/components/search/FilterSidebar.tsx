@@ -18,14 +18,14 @@ export function FilterSidebar({ onFilterChange, type }: FilterSidebarProps) {
   return (
     <div className="w-full space-y-10">
       <Accordion type="multiple" className="w-full space-y-4">
-        <AccordionItem value="skills" className="border-white/5">
+        <AccordionItem value="skills" className="border-border/50">
           <AccordionTrigger className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 hover:text-primary hover:no-underline transition-all py-6">
             TECHNICAL STACK
           </AccordionTrigger>
           <AccordionContent className="space-y-5 pt-2">
             {['FastAPI', 'React', 'infrastructure', 'Rust', 'Next.js'].map(skill => (
               <div key={skill} className="flex items-center space-x-4 group">
-                <Checkbox id={skill} className="border-white/10 w-5 h-5 rounded-md data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
+                <Checkbox id={skill} className="border-border w-5 h-5 rounded-md data-[state=checked]:bg-primary data-[state=checked]:border-primary" />
                 <Label htmlFor={skill} className="text-sm font-black text-muted-foreground group-hover:text-foreground cursor-pointer transition-colors uppercase tracking-tight">
                   {skill}
                 </Label>
@@ -35,7 +35,7 @@ export function FilterSidebar({ onFilterChange, type }: FilterSidebarProps) {
         </AccordionItem>
 
         {type === 'candidates' && (
-          <AccordionItem value="scores" className="border-white/5">
+          <AccordionItem value="scores" className="border-border/50">
             <AccordionTrigger className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 hover:text-primary hover:no-underline transition-all py-6">
               MIN PROOF SCORE
             </AccordionTrigger>
@@ -56,14 +56,14 @@ export function FilterSidebar({ onFilterChange, type }: FilterSidebarProps) {
           </AccordionItem>
         )}
 
-        <AccordionItem value="location" className="border-white/5">
+        <AccordionItem value="location" className="border-border/50">
           <AccordionTrigger className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 hover:text-primary hover:no-underline transition-all py-6">
             <MapPin className="w-3.5 h-3.5 mr-2" /> LOCATION
           </AccordionTrigger>
           <AccordionContent className="space-y-5 pt-2">
             {['Remote', 'Dubai', 'Singapore', 'London', 'New York'].map(loc => (
               <div key={loc} className="flex items-center space-x-4 group">
-                <Checkbox id={loc} className="border-white/10 w-5 h-5 rounded-md" />
+                <Checkbox id={loc} className="border-border w-5 h-5 rounded-md" />
                 <Label htmlFor={loc} className="text-sm font-black text-muted-foreground group-hover:text-foreground cursor-pointer uppercase tracking-tight">
                   {loc}
                 </Label>

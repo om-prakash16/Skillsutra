@@ -125,11 +125,11 @@ export default function PricingPage() {
                         <p className="text-muted-foreground text-sm font-medium">A detailed breakdown of all platform capabilities.</p>
                     </div>
 
-                    <div className="bg-background/50 backdrop-blur-xl rounded-2xl border border-white/5 overflow-hidden shadow-premium">
+                    <div className="bg-background/50 backdrop-blur-xl rounded-2xl border border-border/50 overflow-hidden shadow-premium">
                         <TooltipProvider>
                             <Table>
                                 <TableHeader>
-                                    <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-white/5">
+                                    <TableRow className="bg-muted/30 hover:bg-muted/30 border-b border-border/50">
                                         <TableHead className="w-[30%] pl-8 text-micro text-muted-foreground">Feature</TableHead>
                                         <TableHead className="w-[23%] text-center text-micro text-muted-foreground">Starter</TableHead>
                                         <TableHead className="w-[23%] text-center text-micro text-primary font-bold">Professional</TableHead>
@@ -138,14 +138,14 @@ export default function PricingPage() {
                                 </TableHeader>
                                 <TableBody>
                                     {COMPARISON_FEATURES.map((feat, i) => (
-                                        <TableRow key={i} className="hover:bg-muted/5 border-b border-white/5 last:border-0">
+                                        <TableRow key={i} className="hover:bg-muted/5 border-b border-border/50 last:border-0">
                                             <TableCell className="font-medium pl-8 py-4 flex items-center gap-2 text-sm">
                                                 {feat.name}
                                                 <Tooltip>
                                                     <TooltipTrigger>
                                                         <HelpCircle className="w-3.5 h-3.5 text-muted-foreground/30" />
                                                     </TooltipTrigger>
-                                                    <TooltipContent className="bg-background border-white/10 text-xs rounded-lg px-3 py-2 shadow-premium">
+                                                    <TooltipContent className="bg-background border-border text-xs rounded-lg px-3 py-2 shadow-premium">
                                                         <p>{feat.category} feature detail</p>
                                                     </TooltipContent>
                                                 </Tooltip>

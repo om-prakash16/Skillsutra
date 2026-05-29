@@ -23,10 +23,10 @@ export default function StaffReportCenter() {
                         <div className="p-3 bg-orange-500/10 rounded-2xl border border-orange-500/20 backdrop-blur-md shadow-lg shadow-orange-500/5">
                             <ShieldAlert className="w-6 h-6 text-orange-400" />
                         </div>
-                        <div className="h-10 w-px bg-white/10" />
+                        <div className="h-10 w-px bg-muted/50" />
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-orange-400/70 mb-1">Resolution Center</p>
-                            <h1 className="text-5xl font-black font-heading tracking-tighter text-white">
+                            <h1 className="text-5xl font-black font-heading tracking-tighter text-foreground">
                                 Report Management
                             </h1>
                         </div>
@@ -34,17 +34,17 @@ export default function StaffReportCenter() {
                 </motion.div>
 
                 <div className="flex items-center gap-4">
-                    <div className="flex bg-white/5 p-1 rounded-2xl border border-white/10 backdrop-blur-md">
+                    <div className="flex bg-muted/50 p-1 rounded-2xl border border-border backdrop-blur-md">
                         {["All", "User", "Job"].map((tab) => (
                             <button 
                                 key={tab}
-                                className={`px-6 py-2 text-xs font-bold rounded-xl transition-all ${tab === "All" ? "bg-primary text-black shadow-lg shadow-primary/20" : "text-white/40 hover:text-white/70"}`}
+                                className={`px-6 py-2 text-xs font-bold rounded-xl transition-all ${tab === "All" ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20" : "text-muted-foreground hover:text-foreground/80"}`}
                             >
                                 {tab}
                             </button>
                         ))}
                     </div>
-                    <button className="p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors">
+                    <button className="p-3 bg-muted/50 border border-border rounded-2xl hover:bg-muted/50 transition-colors">
                         <Filter className="w-5 h-5" />
                     </button>
                 </div>
@@ -57,7 +57,7 @@ export default function StaffReportCenter() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        className="group bg-white/5 border border-white/5 hover:border-white/10 p-6 rounded-[2rem] backdrop-blur-md transition-all flex flex-col md:flex-row items-center justify-between gap-6"
+                        className="group bg-muted/50 border border-border/50 hover:border-border p-6 rounded-[2rem] backdrop-blur-md transition-all flex flex-col md:flex-row items-center justify-between gap-6"
                     >
                         <div className="flex items-center gap-6 w-full md:w-auto">
                             <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg ${
@@ -69,7 +69,7 @@ export default function StaffReportCenter() {
                             </div>
                             <div>
                                 <div className="flex items-center gap-3 mb-1">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-white/30">{report.id}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">{report.id}</span>
                                     <span className={`px-3 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-tighter ${
                                         report.status === "Open" ? "bg-red-500/10 text-red-400 border border-red-500/20" :
                                         report.status === "In Review" ? "bg-orange-500/10 text-orange-400 border border-orange-500/20" :
@@ -78,13 +78,13 @@ export default function StaffReportCenter() {
                                         {report.status}
                                     </span>
                                 </div>
-                                <h4 className="text-lg font-bold text-white group-hover:text-primary transition-colors">{report.target}</h4>
-                                <p className="text-sm text-white/40 font-medium">Reason: {report.reason} • Reporter: {report.reporter}</p>
+                                <h4 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">{report.target}</h4>
+                                <p className="text-sm text-muted-foreground font-medium">Reason: {report.reason} • Reporter: {report.reporter}</p>
                             </div>
                         </div>
 
                         <div className="flex items-center gap-3 w-full md:w-auto shrink-0">
-                            <button className="flex-1 md:flex-none px-6 py-3 rounded-2xl bg-primary text-black font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/10">
+                            <button className="flex-1 md:flex-none px-6 py-3 rounded-2xl bg-primary text-primary-foreground font-black text-xs uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/10">
                                 Review Details
                             </button>
                             <button className="p-3 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-400 hover:bg-red-500/20 transition-all">

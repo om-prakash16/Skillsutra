@@ -80,7 +80,7 @@ export default function QuizPage() {
     if (result) {
         return (
             <div className="min-h-screen pt-28 pb-20 px-6 max-w-4xl mx-auto flex flex-col items-center">
-                <Card className="glass border-white/10 w-full rounded-[2rem] shadow-2xl text-center relative overflow-hidden">
+                <Card className="glass border-border w-full rounded-[2rem] shadow-2xl text-center relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
                     <CardHeader className="pt-16 pb-8">
                         {result.passed ? (
@@ -105,13 +105,13 @@ export default function QuizPage() {
                             </div>
                             <div className="space-y-2">
                                 <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/60">Proof Level</p>
-                                <Badge variant="outline" className={`px-4 py-2 text-sm border-white/10 ${result.passed ? 'text-primary' : 'text-muted-foreground'}`}>
+                                <Badge variant="outline" className={`px-4 py-2 text-sm border-border ${result.passed ? 'text-primary' : 'text-muted-foreground'}`}>
                                     {result.level}
                                 </Badge>
                             </div>
                         </div>
                         <div className="pt-8 flex items-center justify-center gap-4">
-                            <Button variant="outline" className="h-12 px-8 rounded-xl font-bold tracking-widest uppercase text-xs border-white/10" onClick={() => { setResult(null); setQuizSession(null); setSkill(""); setAnswers({}); }}>
+                            <Button variant="outline" className="h-12 px-8 rounded-xl font-bold tracking-widest uppercase text-xs border-border" onClick={() => { setResult(null); setQuizSession(null); setSkill(""); setAnswers({}); }}>
                                 Start New Assessment
                             </Button>
                             <Link href="/user/dashboard">
@@ -129,13 +129,13 @@ export default function QuizPage() {
     if (quizSession) {
         return (
             <div className="min-h-screen pt-28 pb-20 px-6 max-w-4xl mx-auto space-y-10">
-                <div className="flex items-center justify-between border-b border-white/5 pb-8">
+                <div className="flex items-center justify-between border-b border-border/50 pb-8">
                     <div>
                         <h1 className="text-3xl font-black uppercase tracking-tight flex items-center gap-3">
                             <BrainCircuit className="w-8 h-8 text-primary" /> Neural Assessment
                         </h1>
                         <p className="text-sm text-muted-foreground font-medium uppercase tracking-widest mt-2">
-                            Skill: <span className="text-white">{quizSession.skill}</span> | Difficulty: <span className="text-white">{quizSession.difficulty}</span>
+                            Skill: <span className="text-foreground">{quizSession.skill}</span> | Difficulty: <span className="text-foreground">{quizSession.difficulty}</span>
                         </p>
                     </div>
                     <Badge variant="outline" className="border-primary/20 text-primary text-xs uppercase tracking-widest px-4 py-2 bg-primary/10">
@@ -145,7 +145,7 @@ export default function QuizPage() {
 
                 <div className="space-y-8">
                     {quizSession.questions.map((q: any, i: number) => (
-                        <Card key={q.id} className="glass border-white/5 bg-white/[0.02] rounded-2xl shadow-xl">
+                        <Card key={q.id} className="glass border-border/50 bg-muted/30 rounded-2xl shadow-xl">
                             <CardHeader>
                                 <CardTitle className="text-lg font-bold leading-relaxed flex gap-4">
                                     <span className="text-primary/60 font-black">{i + 1}.</span> {q.text}
@@ -160,10 +160,10 @@ export default function QuizPage() {
                                             key={j}
                                             onClick={() => handleAnswer(q.id, opt)}
                                             className={`w-full text-left p-4 rounded-xl border transition-all text-sm font-medium flex items-center gap-3
-                                                ${isSelected ? 'bg-primary/20 border-primary text-white shadow-[0_0_15px_hsl(var(--primary)/0.2)]' : 'bg-black/40 border-white/5 text-muted-foreground hover:bg-white/5 hover:text-white'}
+                                                ${isSelected ? 'bg-primary/20 border-primary text-foreground shadow-[0_0_15px_hsl(var(--primary)/0.2)]' : 'bg-background/80 border-border/50 text-muted-foreground hover:bg-muted/50 hover:text-foreground'}
                                             `}
                                         >
-                                            <div className={`w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-black border ${isSelected ? 'bg-primary text-white border-primary' : 'bg-white/5 border-white/10'}`}>
+                                            <div className={`w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-black border ${isSelected ? 'bg-primary text-foreground border-primary' : 'bg-muted/50 border-border'}`}>
                                                 {letter}
                                             </div>
                                             {opt.substring(3)}
@@ -206,7 +206,7 @@ export default function QuizPage() {
                 </p>
             </div>
 
-            <Card className="w-full max-w-xl glass border-white/10 rounded-[2rem] shadow-2xl relative z-10 p-8 md:p-12 text-center flex flex-col items-center">
+            <Card className="w-full max-w-xl glass border-border rounded-[2rem] shadow-2xl relative z-10 p-8 md:p-12 text-center flex flex-col items-center">
                 <Target className="w-16 h-16 text-primary/50 mb-8" />
                 <h3 className="text-2xl font-black uppercase tracking-tight mb-2">Initiate Assessment</h3>
                 <p className="text-sm text-muted-foreground mb-8">Enter the exact skill you wish to verify.</p>
@@ -218,19 +218,19 @@ export default function QuizPage() {
                             value={skill}
                             onChange={(e) => setSkill(e.target.value)}
                             placeholder="e.g., React, Python, System Design"
-                            className="h-14 bg-black/50 border-white/10 text-center text-lg font-bold rounded-2xl focus-visible:ring-1 focus-visible:ring-primary/50"
+                            className="h-14 bg-background/80 border-border text-center text-lg font-bold rounded-2xl focus-visible:ring-1 focus-visible:ring-primary/50"
                         />
                     </div>
 
                     <div className="space-y-2 text-left">
                         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Difficulty Curve</label>
-                        <div className="flex gap-2 p-1 bg-black/50 border border-white/5 rounded-2xl">
+                        <div className="flex gap-2 p-1 bg-background/80 border border-border/50 rounded-2xl">
                             {["beginner", "intermediate", "advanced"].map(lvl => (
                                 <button
                                     key={lvl}
                                     onClick={() => setDifficulty(lvl)}
                                     className={`flex-1 py-3 text-xs font-black uppercase tracking-widest rounded-xl transition-all ${
-                                        difficulty === lvl ? 'bg-primary/20 text-primary border border-primary/30 shadow-inner' : 'text-muted-foreground hover:bg-white/5 hover:text-white'
+                                        difficulty === lvl ? 'bg-primary/20 text-primary border border-primary/30 shadow-inner' : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
                                     }`}
                                 >
                                     {lvl}

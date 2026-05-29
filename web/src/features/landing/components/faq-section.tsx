@@ -47,11 +47,11 @@ export function FAQSection() {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="glass border-white/5 rounded-3xl p-8 md:p-12 shadow-premium"
+                    className="glass border-border/50 rounded-3xl p-8 md:p-12 shadow-premium"
                 >
                     <Accordion type="single" collapsible className="w-full">
                         {faqsList.map((faq: any, i: number) => (
-                            <AccordionItem key={i} value={`item-${i}`} className="border-white/5 last:border-0">
+                            <AccordionItem key={i} value={`item-${i}`} className="border-border/50 last:border-0">
                                 <AccordionTrigger className="text-left font-bold text-base hover:text-primary transition-colors py-6">
                                     {faq.question}
                                 </AccordionTrigger>

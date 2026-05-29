@@ -68,7 +68,7 @@ export function CareerRiskPredictor() {
 
     if (loading) {
         return (
-            <div className="w-full h-[400px] rounded-2xl border border-white/10 bg-white/[0.02] flex items-center justify-center">
+            <div className="w-full h-[400px] rounded-2xl border border-border bg-muted/30 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
                     <p className="text-sm text-muted-foreground animate-pulse">Analyzing career signals...</p>
@@ -110,7 +110,7 @@ export function CareerRiskPredictor() {
     ]
 
     return (
-        <Card className="p-6 border-white/10 bg-white/[0.02] backdrop-blur-xl rounded-2xl space-y-6 overflow-hidden relative">
+        <Card className="p-6 border-border bg-muted/30 backdrop-blur-xl rounded-2xl space-y-6 overflow-hidden relative">
             {/* Background Glow */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 blur-[100px] -z-10" />
             
@@ -139,7 +139,7 @@ export function CareerRiskPredictor() {
                             layout
                             className={cn(
                                 "flex flex-col gap-4 p-5 rounded-2xl border transition-all duration-300",
-                                isExpanded ? "bg-white/[0.05] border-white/20 shadow-2xl" : "bg-white/[0.02] border-white/5 hover:border-white/10"
+                                isExpanded ? "bg-white/[0.05] border-border shadow-2xl" : "bg-muted/30 border-border/50 hover:border-border"
                             )}
                         >
                             <div className="flex items-start justify-between">
@@ -159,13 +159,13 @@ export function CareerRiskPredictor() {
                                     <span>{metric.label}</span>
                                     <span>Risk Level</span>
                                 </div>
-                                <Progress value={metric.data.score} className="h-1.5 bg-white/5" indicatorClassName={metric.bg.replace('/10', '/100')} />
+                                <Progress value={metric.data.score} className="h-1.5 bg-muted/50" indicatorClassName={metric.bg.replace('/10', '/100')} />
                             </div>
 
                             <Button 
                                 variant="ghost" 
                                 size="sm" 
-                                className="w-full mt-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-white hover:bg-white/5 gap-2"
+                                className="w-full mt-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground hover:bg-muted/50 gap-2"
                                 onClick={() => setExpandedMetric(isExpanded ? null : metric.key)}
                             >
                                 {isExpanded ? (
@@ -184,12 +184,12 @@ export function CareerRiskPredictor() {
                                         transition={{ duration: 0.3 }}
                                         className="overflow-hidden"
                                     >
-                                        <div className="pt-4 space-y-4 border-t border-white/10 mt-2">
+                                        <div className="pt-4 space-y-4 border-t border-border mt-2">
                                             {metric.data.features.map((feature, idx) => (
                                                 <div key={idx} className="space-y-1">
                                                     <div className="flex items-center justify-between">
-                                                        <span className="text-xs font-bold text-white/90">{feature.name}</span>
-                                                        <Badge className="text-[9px] h-4 bg-white/5 text-muted-foreground border-white/5">{feature.impact} Impact</Badge>
+                                                        <span className="text-xs font-bold text-foreground/90">{feature.name}</span>
+                                                        <Badge className="text-[9px] h-4 bg-muted/50 text-muted-foreground border-border/50">{feature.impact} Impact</Badge>
                                                     </div>
                                                     <p className="text-[10px] leading-relaxed text-muted-foreground">{feature.description}</p>
                                                 </div>
@@ -214,7 +214,7 @@ export function CareerRiskPredictor() {
                     <ShieldCheck className="w-4 h-4 text-primary" />
                 </div>
                 <div className="space-y-1">
-                    <p className="text-xs font-bold text-white">AI Executive Summary</p>
+                    <p className="text-xs font-bold text-foreground">AI Executive Summary</p>
                     <p className="text-[11px] leading-relaxed text-muted-foreground">{data.summary}</p>
                 </div>
                 <Button size="sm" className="ml-auto rounded-lg text-xs gap-2 shrink-0">

@@ -39,10 +39,10 @@ export function ProjectsTab({ data, isEditing, onAdd, onDelete, onUpdate }: Proj
         <Card className="border-none shadow-none bg-transparent pt-4">
             <div className="flex justify-between items-center mb-10 px-2">
                 <div className="space-y-1">
-                    <h2 className="text-2xl font-black tracking-tighter text-white uppercase italic flex items-center gap-3">
+                    <h2 className="text-2xl font-black tracking-tighter text-foreground uppercase italic flex items-center gap-3">
                         Project Nexus <div className="w-2 h-2 rounded-full bg-primary animate-pulse shadow-[0_0_10px_rgba(var(--primary),0.5)]" />
                     </h2>
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Verified proof-of-work repositories and technical deployments.</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Verified proof-of-work repositories and technical deployments.</p>
                 </div>
                 {isEditing && (
                     <Button size="sm" onClick={onAdd} variant="premium" className="h-10 px-5 rounded-xl shadow-xl shadow-primary/20">
@@ -58,7 +58,7 @@ export function ProjectsTab({ data, isEditing, onAdd, onDelete, onUpdate }: Proj
                     const isCurrentlyAuditing = auditingId === project.id;
 
                     return (
-                        <Card key={project.id} className="flex flex-col h-full glass border-white/5 hover:border-primary/40 transition-all duration-500 group overflow-hidden relative rounded-[2rem]">
+                        <Card key={project.id} className="flex flex-col h-full glass border-border/50 hover:border-primary/40 transition-all duration-500 group overflow-hidden relative rounded-[2rem]">
                             <AnimatePresence>
                                 {isAudited && (
                                     <motion.div 
@@ -88,39 +88,39 @@ export function ProjectsTab({ data, isEditing, onAdd, onDelete, onUpdate }: Proj
                                                     <Input
                                                         defaultValue={project.title}
                                                         onChange={(e) => onUpdate?.(project.id, 'title', e.target.value)}
-                                                        className="font-black h-10 glass border-white/10 rounded-lg text-sm"
+                                                        className="font-black h-10 glass border-border rounded-lg text-sm"
                                                         placeholder="Project Title"
                                                     />
                                                     <div className="grid grid-cols-2 gap-3">
                                                         <Input
                                                             defaultValue={project.github}
                                                             onChange={(e) => onUpdate?.(project.id, 'github', e.target.value)}
-                                                            className="text-[10px] font-bold h-8 glass border-white/10 rounded-lg"
+                                                            className="text-[10px] font-bold h-8 glass border-border rounded-lg"
                                                             placeholder="Source URL"
                                                         />
                                                         <Input
                                                             defaultValue={project.link}
                                                             onChange={(e) => onUpdate?.(project.id, 'link', e.target.value)}
-                                                            className="text-[10px] font-bold h-8 glass border-white/10 rounded-lg"
+                                                            className="text-[10px] font-bold h-8 glass border-border rounded-lg"
                                                             placeholder="Live Node"
                                                         />
                                                     </div>
                                                 </div>
                                             ) : (
                                                 <>
-                                                    <CardTitle className="text-xl font-black text-white tracking-tight">{project.title}</CardTitle>
+                                                    <CardTitle className="text-xl font-black text-foreground tracking-tight">{project.title}</CardTitle>
                                                 </>
                                             )}
 
                                             {!isEditing && (
                                                 <div className="flex items-center gap-5 mt-2 opacity-40 group-hover:opacity-100 transition-all duration-500">
                                                     {project.github && (
-                                                        <Link href={project.github} className="text-white hover:text-primary transition-colors">
+                                                        <Link href={project.github} className="text-foreground hover:text-primary transition-colors">
                                                             <Github className="w-5 h-5" />
                                                         </Link>
                                                     )}
                                                     {project.link && (
-                                                        <Link href={project.link} className="text-white hover:text-primary transition-colors">
+                                                        <Link href={project.link} className="text-foreground hover:text-primary transition-colors">
                                                             <ExternalLink className="w-5 h-5" />
                                                         </Link>
                                                     )}
@@ -133,7 +133,7 @@ export function ProjectsTab({ data, isEditing, onAdd, onDelete, onUpdate }: Proj
                                             variant="ghost"
                                             size="icon"
                                             onClick={() => onDelete?.(project.id)}
-                                            className="h-10 w-10 text-white/20 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl"
+                                            className="h-10 w-10 text-muted-foreground/50 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl"
                                         >
                                             <Trash2 className="w-4 h-4" />
                                         </Button>
@@ -143,15 +143,15 @@ export function ProjectsTab({ data, isEditing, onAdd, onDelete, onUpdate }: Proj
                             <CardContent className="flex-1 pb-6 px-8">
                                 {isEditing ? (
                                     <div className="space-y-1">
-                                         <Label className="text-[9px] font-black uppercase text-white/30 ml-1">Project Documentation</Label>
+                                         <Label className="text-[9px] font-black uppercase text-muted-foreground ml-1">Project Documentation</Label>
                                          <Textarea
                                             defaultValue={project.description}
                                             onChange={(e) => onUpdate?.(project.id, 'description', e.target.value)}
-                                            className="text-sm min-h-[120px] glass border-white/10 rounded-xl p-4 leading-relaxed"
+                                            className="text-sm min-h-[120px] glass border-border rounded-xl p-4 leading-relaxed"
                                         />
                                     </div>
                                 ) : (
-                                    <p className="text-sm text-white/50 leading-relaxed font-medium italic">
+                                    <p className="text-sm text-muted-foreground leading-relaxed font-medium italic">
                                         {project.description}
                                     </p>
                                 )}
@@ -159,7 +159,7 @@ export function ProjectsTab({ data, isEditing, onAdd, onDelete, onUpdate }: Proj
                             <CardFooter className="flex flex-col gap-6 px-8 pb-8">
                                 <div className="flex flex-wrap gap-2.5 w-full">
                                     {project.stack.map((tech: any) => (
-                                        <Badge key={tech} variant="outline" className="glass py-1 px-3 text-[9px] font-black uppercase tracking-widest text-white/40 border-white/10 rounded-lg group-hover:border-primary/20 group-hover:text-primary/60 transition-colors">
+                                        <Badge key={tech} variant="outline" className="glass py-1 px-3 text-[9px] font-black uppercase tracking-widest text-muted-foreground border-border rounded-lg group-hover:border-primary/20 group-hover:text-primary/60 transition-colors">
                                             {tech}
                                         </Badge>
                                     ))}
@@ -185,8 +185,8 @@ export function ProjectsTab({ data, isEditing, onAdd, onDelete, onUpdate }: Proj
                     );
                 })}
                 {data.projects.length === 0 && (
-                    <div className="col-span-2 text-center py-24 bg-white/[0.02] border border-dashed border-white/10 rounded-[3rem]">
-                         <p className="text-[11px] font-black uppercase tracking-widest text-white/20">Awaiting Deployment Ledger Sync...</p>
+                    <div className="col-span-2 text-center py-24 bg-muted/30 border border-dashed border-border rounded-[3rem]">
+                         <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/50">Awaiting Deployment Ledger Sync...</p>
                     </div>
                 )}
             </div>

@@ -6,30 +6,44 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
 import { RoleSelector } from "@/components/auth/role-selector"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Briefcase, Loader2, ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
+import GoogleLoginButton from "@/components/auth/GoogleLoginButton"
 
 export default function RegisterPage() {
-    const { signInWithGoogle } = useAuth()
-    const [isLoading, setIsLoading] = useState(false)
+    const { signInWithGoogle, signInWithGitHub, isLoading } = useAuth()
+    const [loadingProvider, setLoadingProvider] = useState<"google" | "github" | "keycloak" | null>(null)
     const [selectedRole, setSelectedRole] = useState("user")
+    const router = useRouter()
 
-    async function handleRegister() {
-        setIsLoading(true)
+    const handleRegister = async (provider: "google" | "github" | "keycloak") => {
+        setLoadingProvider(provider)
         try {
-            await signInWithGoogle(selectedRole)
+            switch (provider) {
+                case "google":
+                    await signInWithGoogle(selectedRole)
+                    break
+                case "github":
+                    await signInWithGitHub(selectedRole)
+                    break
+                case "keycloak":
+                    router.push("/auth/email-register")
+                    break
+            }
         } catch {
-            // Error managed by context
-            setIsLoading(false)
+            setLoadingProvider(null)
         }
     }
 
+    const isDisabled = isLoading || loadingProvider !== null
+
     return (
-        <Card className="glass border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden relative group">
+        <Card className="glass border-border/50 shadow-2xl rounded-[2.5rem] overflow-hidden relative group">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
             <div className="absolute top-0 right-0 w-48 h-48 bg-primary/10 blur-[100px] rounded-full mix-blend-screen pointer-events-none" />
             
-            <CardHeader className="space-y-4 items-center text-center pt-10 pb-8 border-b border-white/5">
+            <CardHeader className="space-y-4 items-center text-center pt-10 pb-8 border-b border-border/50">
                 <div className="glass bg-primary/10 p-3 rounded-xl mb-2 border border-primary/20 shadow-premium">
                     <Briefcase className="w-6 h-6 text-primary" />
                 </div>
@@ -47,30 +61,64 @@ export default function RegisterPage() {
                     <RoleSelector value={selectedRole} onChange={setSelectedRole} />
                 </div>
 
-                <div className="space-y-6">
-                    <Button 
-                        variant="premium"
-                        className="w-full h-12 text-sm font-bold tracking-widest rounded-xl gap-2 shadow-premium group" 
-                        onClick={handleRegister} 
-                        disabled={isLoading}
-                    >
-                        {isLoading ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                            <>
-                                CONTINUE WITH GOOGLE
-                                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </>
-                        )}
-                    </Button>
+                <div className="space-y-4">
+                    {/* Google */}
+                    <div className="w-full">
+                        <GoogleLoginButton role={selectedRole} />
+                    </div>
+
+                    {/* GitHub */}
+                    <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full h-12 glass border-border hover:border-white/40 text-foreground hover:text-foreground transition-all font-bold uppercase text-[11px] tracking-widest rounded-xl flex items-center justify-center gap-3"
+                            onClick={() => handleRegister("github")}
+                            disabled={isDisabled}
+                        >
+                            {loadingProvider === "github" ? <Loader2 className="w-5 h-5 animate-spin" /> : (
+                                <>
+                                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                                    </svg>
+                                    SIGN UP WITH GITHUB
+                                </>
+                            )}
+                        </Button>
+                    </motion.div>
+
+                    {/* Divider */}
+                    <div className="pt-4">
+                        <div className="relative">
+                            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-border" /></div>
+                            <div className="relative flex justify-center text-[9px] uppercase font-black tracking-[0.3em]"><span className="bg-background/95 px-4 text-muted-foreground/40 glass rounded-full">Or</span></div>
+                        </div>
+                    </div>
+
+                    {/* Email/Password */}
+                    <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+                        <Button
+                            variant="premium"
+                            className="w-full h-12 rounded-xl text-sm mt-2 shadow-premium font-bold tracking-widest gap-2 group"
+                            onClick={() => handleRegister("keycloak")}
+                            disabled={isDisabled}
+                        >
+                            {loadingProvider === "keycloak" ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : (
+                                <>
+                                    SIGN UP WITH EMAIL
+                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </>
+                            )}
+                        </Button>
+                    </motion.div>
                     
-                    <p className="text-[9px] text-center text-muted-foreground/40 px-4 font-bold uppercase tracking-widest leading-relaxed">
+                    <p className="text-[9px] text-center text-muted-foreground/40 px-4 font-bold uppercase tracking-widest leading-relaxed mt-4">
                         By registering, you agree to our Terms and Privacy Policy.
                     </p>
                 </div>
             </CardContent>
 
-            <CardFooter className="justify-center text-micro text-muted-foreground/60 border-t border-white/5 bg-white/5 py-8">
+            <CardFooter className="justify-center text-micro text-muted-foreground/60 border-t border-border/50 bg-muted/50 py-8">
                 Already have an identity? <Link href="/auth/login" className="text-primary font-bold hover:text-primary/80 transition-colors ml-2">Log in</Link>
             </CardFooter>
         </Card>

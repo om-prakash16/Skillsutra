@@ -17,7 +17,7 @@ export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) 
         <div className="grid gap-10 lg:grid-cols-3">
             {/* Summary Section */}
             <div className="lg:col-span-2 space-y-10">
-                <Card className="glass border-white/5 rounded-[2.5rem] overflow-hidden relative">
+                <Card className="glass border-border/50 rounded-[2.5rem] overflow-hidden relative">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
                     <CardHeader className="pt-10 px-10">
                         <CardTitle className="text-xl font-black uppercase italic tracking-tight">Neural Synthesis</CardTitle>
@@ -27,10 +27,10 @@ export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) 
                             <Textarea
                                 defaultValue={data.basic.bio}
                                 onChange={(e) => onUpdateBio?.(e.target.value)}
-                                className="min-h-[160px] glass border-white/10 rounded-[2rem] focus:ring-primary/30 p-8 text-sm leading-relaxed"
+                                className="min-h-[160px] glass border-border rounded-[2rem] focus:ring-primary/30 p-8 text-sm leading-relaxed"
                             />
                         ) : (
-                            <p className="text-white/60 leading-[1.8] text-sm font-medium italic">
+                            <p className="text-foreground/80 leading-[1.8] text-sm font-medium italic">
                                 {data.basic.bio}
                             </p>
                         )}
@@ -38,7 +38,7 @@ export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) 
                 </Card>
 
                 <div className="grid md:grid-cols-2 gap-10">
-                    <Card className="glass border-white/5 rounded-[2.5rem]">
+                    <Card className="glass border-border/50 rounded-[2.5rem]">
                         <CardHeader className="pt-8 px-8">
                             <CardTitle className="text-lg font-black uppercase italic tracking-tight flex items-center gap-2">
                                 <Star className="w-4 h-4 text-primary" /> Core Architecture
@@ -52,13 +52,13 @@ export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) 
                                     </Badge>
                                 ))}
                                 {(data.skills || []).filter((s: any) => s.level === "Advanced").length === 0 && (
-                                    <p className="text-[10px] text-white/20 italic font-black uppercase tracking-widest">No advanced nodes detected.</p>
+                                    <p className="text-[10px] text-muted-foreground/50 italic font-black uppercase tracking-widest">No advanced nodes detected.</p>
                                 )}
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="glass border-white/5 rounded-[2.5rem]">
+                    <Card className="glass border-border/50 rounded-[2.5rem]">
                         <CardHeader className="pt-8 px-8">
                             <CardTitle className="text-lg font-black uppercase italic tracking-tight flex items-center gap-2">
                                 <ArrowRight className="w-4 h-4 text-primary" /> Active Proofs
@@ -67,17 +67,17 @@ export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) 
                         <CardContent className="px-8 pb-10 space-y-6">
                             {(data.experience || []).slice(0, 2).map((exp: any) => (
                                 <div key={exp.id} className="flex gap-4 items-start group">
-                                    <div className="w-12 h-12 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-center shrink-0 font-black text-primary/40 text-[10px] group-hover:scale-110 transition-transform">
+                                    <div className="w-12 h-12 rounded-2xl bg-muted/30 border border-border/50 flex items-center justify-center shrink-0 font-black text-primary/40 text-[10px] group-hover:scale-110 transition-transform">
                                         {exp.company?.substring(0, 2).toUpperCase()}
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="font-bold text-sm text-white/90 truncate">{exp.role}</p>
-                                        <p className="text-[10px] text-white/30 uppercase font-black tracking-widest truncate">{exp.company}</p>
+                                        <p className="font-bold text-sm text-foreground/90 truncate">{exp.role}</p>
+                                        <p className="text-[10px] text-muted-foreground uppercase font-black tracking-widest truncate">{exp.company}</p>
                                     </div>
                                 </div>
                             ))}
                             {(data.experience || []).length === 0 && (
-                                <p className="text-[10px] text-white/20 italic font-black uppercase tracking-widest">Awaiting work history synthesis...</p>
+                                <p className="text-[10px] text-muted-foreground/50 italic font-black uppercase tracking-widest">Awaiting work history synthesis...</p>
                             )}
                             <Button variant="link" className="p-0 h-auto text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/80 transition-colors">
                                 Access Full Ledger <ArrowRight className="w-3 h-3 ml-2" />
@@ -89,7 +89,7 @@ export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) 
 
             {/* Sidebar Activity */}
             <div className="space-y-10">
-                <Card className="glass border-white/5 rounded-[2.5rem]">
+                <Card className="glass border-border/50 rounded-[2.5rem]">
                     <CardHeader className="pt-8 px-8">
                         <CardTitle className="text-sm font-black uppercase italic tracking-[0.1em] flex items-center gap-3">
                             <Clock className="w-4 h-4 text-primary" />
@@ -98,21 +98,21 @@ export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) 
                     </CardHeader>
                     <CardContent className="px-8 pb-10 space-y-6">
                         <div className="space-y-1">
-                            <p className="text-xs font-bold text-white/80">Applied to Senior Frontend Engineer</p>
-                            <p className="text-[9px] text-white/20 uppercase font-black tracking-widest">Acme Corp • 2 days ago</p>
+                            <p className="text-xs font-bold text-foreground/90">Applied to Senior Frontend Engineer</p>
+                            <p className="text-[9px] text-muted-foreground/50 uppercase font-black tracking-widest">Acme Corp • 2 days ago</p>
                         </div>
-                        <div className="space-y-1 pt-4 border-t border-white/5">
-                            <p className="text-xs font-bold text-white/80">Updated Architecture Section</p>
-                            <p className="text-[9px] text-white/20 uppercase font-black tracking-widest">Added Docker • 5 days ago</p>
+                        <div className="space-y-1 pt-4 border-t border-border/50">
+                            <p className="text-xs font-bold text-foreground/90">Updated Architecture Section</p>
+                            <p className="text-[9px] text-muted-foreground/50 uppercase font-black tracking-widest">Added Docker • 5 days ago</p>
                         </div>
-                        <div className="space-y-1 pt-4 border-t border-white/5">
-                            <p className="text-xs font-bold text-white/80">Entity Intercepted Profile</p>
-                            <p className="text-[9px] text-white/20 uppercase font-black tracking-widest">Linear • 1 week ago</p>
+                        <div className="space-y-1 pt-4 border-t border-border/50">
+                            <p className="text-xs font-bold text-foreground/90">Entity Intercepted Profile</p>
+                            <p className="text-[9px] text-muted-foreground/50 uppercase font-black tracking-widest">Linear • 1 week ago</p>
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className="glass border-white/5 rounded-[2.5rem]">
+                <Card className="glass border-border/50 rounded-[2.5rem]">
                     <CardHeader className="pt-8 px-8">
                         <CardTitle className="text-sm font-black uppercase italic tracking-[0.1em]">
                             Protocol Metadata
@@ -120,28 +120,28 @@ export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) 
                     </CardHeader>
                     <CardContent className="px-8 pb-10 space-y-8">
                         <div className="space-y-3">
-                            <p className="text-[9px] text-white/30 uppercase font-black tracking-widest">Lingual Nodes</p>
+                            <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Lingual Nodes</p>
                             <div className="flex flex-wrap gap-2">
                                 {data.basic.languages?.map((lang: any) => (
-                                    <Badge key={lang} variant="outline" className="glass py-1 px-3 text-[9px] font-black uppercase text-white/60 border-white/10 rounded-lg">{lang}</Badge>
-                                )) || <Badge variant="outline" className="glass py-1 px-3 text-[9px] font-black uppercase text-white/60 border-white/10 rounded-lg">English</Badge>}
+                                    <Badge key={lang} variant="outline" className="glass py-1 px-3 text-[9px] font-black uppercase text-foreground/80 border-border rounded-lg">{lang}</Badge>
+                                )) || <Badge variant="outline" className="glass py-1 px-3 text-[9px] font-black uppercase text-foreground/80 border-border rounded-lg">English</Badge>}
                             </div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-6">
                             <div className="space-y-2">
-                                <p className="text-[9px] text-white/30 uppercase font-black tracking-widest">Genesis Date</p>
-                                <p className="text-xs font-bold text-white/80">{data.basic.joinDate || "N/A"}</p>
+                                <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Genesis Date</p>
+                                <p className="text-xs font-bold text-foreground/90">{data.basic.joinDate || "N/A"}</p>
                             </div>
                             <div className="space-y-2">
-                                <p className="text-[9px] text-white/30 uppercase font-black tracking-widest">Link Mode</p>
-                                <p className="text-xs font-bold text-white/80">{data.basic.jobType}</p>
+                                <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Link Mode</p>
+                                <p className="text-xs font-bold text-foreground/90">{data.basic.jobType}</p>
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <p className="text-[9px] text-white/30 uppercase font-black tracking-widest">Encrypted Comms</p>
-                            <p className="text-xs font-bold text-white/80 break-all">{data.basic.email}</p>
+                            <p className="text-[9px] text-muted-foreground uppercase font-black tracking-widest">Encrypted Comms</p>
+                            <p className="text-xs font-bold text-foreground/90 break-all">{data.basic.email}</p>
                         </div>
                     </CardContent>
                 </Card>

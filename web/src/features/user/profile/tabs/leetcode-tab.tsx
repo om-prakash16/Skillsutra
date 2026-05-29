@@ -13,7 +13,7 @@ export function LeetcodeTab({ data }: LeetcodeTabProps) {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center gap-4 border-b bg-muted/20">
-                <div className="w-12 h-12 bg-orange-500 text-white rounded-full flex items-center justify-center">
+                <div className="w-12 h-12 bg-orange-500 text-foreground rounded-full flex items-center justify-center">
                     <Trophy className="w-6 h-6" />
                 </div>
                 <div>

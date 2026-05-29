@@ -87,17 +87,17 @@ export default function PreferencesPage() {
         <div className="min-h-screen flex flex-col pt-24 pb-12 px-4 sm:px-8 container mx-auto max-w-3xl">
             <div className="mb-8 flex items-center gap-4">
                 <Link href="/competitions">
-                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-white/5">
+                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-muted/50">
                         <ArrowLeft className="w-5 h-5" />
                     </Button>
                 </Link>
                 <div>
                     <h1 className="text-3xl font-black font-heading italic uppercase tracking-tight">Notification Preferences</h1>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Tune your neural matching filters</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Tune your neural matching filters</p>
                 </div>
             </div>
 
-            <div className="glass rounded-[2rem] p-8 border-white/5 space-y-10">
+            <div className="glass rounded-[2rem] p-8 border-border/50 space-y-10">
                 <div className="space-y-4">
                     <h3 className="text-sm font-bold uppercase tracking-widest">Competition Types</h3>
                     <div className="flex flex-wrap gap-4">
@@ -106,7 +106,7 @@ export default function PreferencesPage() {
                                 key={type}
                                 variant={preferences.interested_types.includes(type) ? "default" : "outline"}
                                 className={`rounded-xl px-6 h-12 text-[10px] font-black uppercase tracking-widest ${
-                                    preferences.interested_types.includes(type) ? "bg-primary text-primary-foreground" : "border-white/10 glass"
+                                    preferences.interested_types.includes(type) ? "bg-primary text-primary-foreground" : "border-border glass"
                                 }`}
                                 onClick={() => toggleType(type)}
                             >
@@ -118,19 +118,19 @@ export default function PreferencesPage() {
 
                 <div className="space-y-4">
                     <h3 className="text-sm font-bold uppercase tracking-widest">Preferred Skill Stack</h3>
-                    <p className="text-[10px] text-white/40 uppercase tracking-widest">Press Enter to add skills to your radar</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Press Enter to add skills to your radar</p>
                     <Input 
                         value={skillInput}
                         onChange={e => setSkillInput(e.target.value)}
                         onKeyDown={addSkill}
                         placeholder="e.g. react, rust, solidity..."
-                        className="h-12 glass border-white/10 rounded-xl"
+                        className="h-12 glass border-border rounded-xl"
                     />
                     <div className="flex flex-wrap gap-2 mt-4">
                         {preferences.preferred_skills.map(skill => (
-                            <div key={skill} className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10 group">
+                            <div key={skill} className="flex items-center gap-2 bg-muted/50 px-3 py-1.5 rounded-lg border border-border group">
                                 <span className="text-[10px] font-black uppercase tracking-widest">{skill}</span>
-                                <button onClick={() => removeSkill(skill)} className="text-white/20 hover:text-rose-500 transition-colors">
+                                <button onClick={() => removeSkill(skill)} className="text-muted-foreground/50 hover:text-rose-500 transition-colors">
                                     ×
                                 </button>
                             </div>
@@ -138,10 +138,10 @@ export default function PreferencesPage() {
                     </div>
                 </div>
 
-                <div className="flex items-center justify-between pt-6 border-t border-white/5">
+                <div className="flex items-center justify-between pt-6 border-t border-border/50">
                     <div className="space-y-1">
                         <h3 className="text-sm font-bold uppercase tracking-widest">Enable Notifications</h3>
-                        <p className="text-[10px] text-white/40 uppercase tracking-widest">Receive alerts when matches are found</p>
+                        <p className="text-[10px] text-muted-foreground uppercase tracking-widest">Receive alerts when matches are found</p>
                     </div>
                     <Button 
                         variant={preferences.receive_notifications ? "default" : "outline"}

@@ -55,7 +55,7 @@ export const publicApi = {
         companies: (params: string) => fetchPublic(`/search/companies?${params}`),
     },
     profile: {
-        getById: (userId: string) => fetchPublic(`/profile/public/${userId}`),
+        getById: (userId: string) => fetchPublic(`/users/public/${userId}`),
     },
     analytics: {
         public: () => fetchPublic("/analytics/public"),

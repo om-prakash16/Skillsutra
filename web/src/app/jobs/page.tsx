@@ -56,7 +56,7 @@ export default function JobMarketplace() {
            </p>
         </div>
 
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-4 glass p-2 rounded-3xl border-white/5 shadow-premium">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-4 glass p-2 rounded-3xl border-border/50 shadow-premium">
            <div className="flex-1 relative group">
              <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
              <Input 
@@ -86,7 +86,7 @@ export default function JobMarketplace() {
               <JobCard key={job.id} job={job} user={user} />
             ))}
             {filteredJobs.length === 0 && (
-                <div className="col-span-full py-32 text-center glass border-dashed border-white/10 rounded-3xl">
+                <div className="col-span-full py-32 text-center glass border-dashed border-border rounded-3xl">
                     <p className="text-micro text-muted-foreground/40">Awaiting role deployments matching your parameters...</p>
                 </div>
             )}
@@ -99,7 +99,7 @@ export default function JobMarketplace() {
 
 function JobCard({ job, user }: { job: any, user: any }) {
     return (
-        <Card className="group relative overflow-hidden glass border-black/5 dark:border-white/5 hover:border-primary/40 transition-all duration-500 rounded-3xl shadow-premium flex flex-col">
+        <Card className="group relative overflow-hidden glass border-black/5 dark:border-border/50 hover:border-primary/40 transition-all duration-500 rounded-3xl shadow-premium flex flex-col">
             <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl -z-10 rounded-full group-hover:bg-primary/10 transition-colors" />
             
             <CardHeader className="relative overflow-hidden pt-10 px-8">
@@ -120,7 +120,7 @@ function JobCard({ job, user }: { job: any, user: any }) {
                 </div>
                 <div className="flex flex-wrap gap-2 pt-1">
                     {job.skills_required.slice(0, 3).map((skill: string) => (
-                        <Badge key={skill} variant="outline" className="glass border-black/5 dark:border-white/10 text-micro text-muted-foreground/60 py-1 px-3 rounded-lg group-hover:border-primary/20 group-hover:text-primary/80 transition-colors">
+                        <Badge key={skill} variant="outline" className="glass border-black/5 dark:border-border text-micro text-muted-foreground/60 py-1 px-3 rounded-lg group-hover:border-primary/20 group-hover:text-primary/80 transition-colors">
                             {skill}
                         </Badge>
                     ))}
@@ -129,7 +129,7 @@ function JobCard({ job, user }: { job: any, user: any }) {
                     )}
                 </div>
             </CardContent>
-            <CardFooter className="p-8 pt-6 border-t border-black/5 dark:border-white/5 mt-auto relative z-10">
+            <CardFooter className="p-8 pt-6 border-t border-black/5 dark:border-border/50 mt-auto relative z-10">
                 {user ? (
                    <div className="w-full flex items-center justify-between gap-4">
                       <div className="flex flex-col gap-2 max-w-[60%]">

@@ -44,7 +44,7 @@ export function ApplySuccessModal({ isOpen, onClose, matchScore, jobTitle, jobId
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        className="relative w-full max-w-xl bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/20"
+                        className="relative w-full max-w-xl bg-[#0a0a0a] border border-border rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/20"
                     >
                         {/* Decorative Background */}
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-gradient-to-b from-primary/20 to-transparent blur-3xl opacity-50" />
@@ -69,20 +69,20 @@ export function ApplySuccessModal({ isOpen, onClose, matchScore, jobTitle, jobId
 
                             <div className="space-y-2">
                                 <h2 className="text-4xl font-black italic uppercase tracking-tighter">Mission Executed</h2>
-                                <p className="text-muted-foreground text-sm max-w-sm mx-auto font-medium">Your application for <span className="text-white font-bold">{jobTitle}</span> has been secured and match-scored.</p>
+                                <p className="text-muted-foreground text-sm max-w-sm mx-auto font-medium">Your application for <span className="text-foreground font-bold">{jobTitle}</span> has been secured and match-scored.</p>
                             </div>
 
                             {/* Analysis Card */}
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-white/5 border border-white/5 rounded-3xl p-6 text-center">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-1">Pulse Score</p>
+                                <div className="bg-muted/50 border border-border/50 rounded-3xl p-6 text-center">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Pulse Score</p>
                                     <div className="flex items-center justify-center gap-2">
                                         <Zap className="w-4 h-4 text-emerald-500 fill-emerald-500" />
                                         <span className="text-3xl font-black tracking-tighter">{matchScore}%</span>
                                     </div>
                                 </div>
-                                <div className="bg-white/5 border border-white/5 rounded-3xl p-6 text-center">
-                                    <p className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-1">Proof Status</p>
+                                <div className="bg-muted/50 border border-border/50 rounded-3xl p-6 text-center">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-1">Proof Status</p>
                                     <div className="flex items-center justify-center gap-2">
                                         <ShieldCheck className="w-4 h-4 text-primary fill-primary/20" />
                                         <span className="text-[10px] font-black tracking-widest uppercase">Minted</span>
@@ -99,7 +99,7 @@ export function ApplySuccessModal({ isOpen, onClose, matchScore, jobTitle, jobId
                                 <p className="text-xs text-muted-foreground">Verify your expertise now to jump to the top of the recruiter's proof ranking.</p>
                                 <Button 
                                     onClick={() => router.push(`/dashboard/assessments/${jobId}`)}
-                                    className="w-full h-14 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-[0.2em] rounded-2xl gap-2 shadow-xl shadow-primary/20"
+                                    className="w-full h-14 bg-primary hover:bg-primary/90 text-foreground font-black uppercase tracking-[0.2em] rounded-2xl gap-2 shadow-xl shadow-primary/20"
                                 >
                                     Start Skill Quiz <ArrowRight className="w-4 h-4" />
                                 </Button>
@@ -109,7 +109,7 @@ export function ApplySuccessModal({ isOpen, onClose, matchScore, jobTitle, jobId
                                 <Button 
                                     variant="ghost" 
                                     onClick={onClose}
-                                    className="text-[10px] font-black uppercase tracking-widest text-white/30 hover:text-white"
+                                    className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-foreground"
                                 >
                                     <LayoutDashboard className="w-4 h-4 mr-2" /> Dashboard
                                 </Button>
@@ -119,9 +119,9 @@ export function ApplySuccessModal({ isOpen, onClose, matchScore, jobTitle, jobId
                         {/* Top Right Close */}
                         <button 
                             onClick={onClose}
-                            className="absolute top-6 right-6 w-10 h-10 rounded-full border border-white/5 flex items-center justify-center hover:bg-white/5 transition-colors"
+                            className="absolute top-6 right-6 w-10 h-10 rounded-full border border-border/50 flex items-center justify-center hover:bg-muted/50 transition-colors"
                         >
-                            <X className="w-4 h-4 text-white/40" />
+                            <X className="w-4 h-4 text-muted-foreground" />
                         </button>
                     </motion.div>
                 </div>

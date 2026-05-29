@@ -63,14 +63,14 @@ export default function ModerationCenter() {
 
     return (
         <div className="space-y-12 pb-20 animate-in fade-in duration-700">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-white/5 pb-10">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border/50 pb-10">
                 <div className="space-y-3">
                     <div className="flex items-center gap-3">
                         <Badge variant="outline" className="border-rose-500/30 text-rose-500 bg-rose-500/5 px-4 font-black tracking-widest text-[9px] uppercase italic">
                             Platform Integrity Node
                         </Badge>
                     </div>
-                    <h1 className="text-5xl md:text-6xl font-black font-heading tracking-tighter text-white uppercase italic flex items-center gap-6">
+                    <h1 className="text-5xl md:text-6xl font-black font-heading tracking-tighter text-foreground uppercase italic flex items-center gap-6">
                         Moderation <span className="text-rose-500">Center</span>
                         <ShieldAlert className="w-12 h-12 text-rose-500 animate-pulse" />
                     </h1>
@@ -78,13 +78,13 @@ export default function ModerationCenter() {
                         Heuristic monitoring of community reports, behavioral flags, and potential protocol violations. Govern with absolute authority to ensure ecosystem stability.
                     </p>
                 </div>
-                <div className="flex gap-4 bg-white/5 p-2 rounded-2xl border border-white/10 backdrop-blur-xl">
+                <div className="flex gap-4 bg-muted/50 p-2 rounded-2xl border border-border backdrop-blur-xl">
                     {["pending", "resolved", "all"].map((f) => (
                         <Button 
                             key={f} 
                             onClick={() => setFilter(f)}
                             variant="ghost" 
-                            className={`h-12 px-6 font-black uppercase tracking-widest text-[10px] rounded-xl transition-all ${filter === f ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' : 'text-white/40 hover:text-white'}`}
+                            className={`h-12 px-6 font-black uppercase tracking-widest text-[10px] rounded-xl transition-all ${filter === f ? 'bg-rose-500 text-foreground shadow-lg shadow-rose-500/20' : 'text-muted-foreground hover:text-foreground'}`}
                         >
                             {f} Queue
                         </Button>
@@ -92,9 +92,9 @@ export default function ModerationCenter() {
                 </div>
             </div>
 
-            <Card className="bg-white/5 border-white/10 backdrop-blur-xl border-t-rose-500/30 border-t-2 shadow-2xl relative overflow-hidden">
+            <Card className="bg-muted/50 border-border backdrop-blur-xl border-t-rose-500/30 border-t-2 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/5 blur-[120px] rounded-full pointer-events-none" />
-                <CardHeader className="bg-black/40 border-b border-white/10 relative z-10">
+                <CardHeader className="bg-background/80 border-b border-border relative z-10">
                     <div className="flex justify-between items-center">
                         <CardTitle className="text-xl flex items-center gap-3 italic font-black uppercase tracking-widest">
                             <Flag className="w-6 h-6 text-rose-500" /> Active Disruption Flags
@@ -107,7 +107,7 @@ export default function ModerationCenter() {
                 <CardContent className="p-0 relative z-10">
                     <Table>
                         <TableHeader>
-                            <TableRow className="border-b border-white/10 hover:bg-transparent uppercase font-black text-[10px] tracking-widest">
+                            <TableRow className="border-b border-border hover:bg-transparent uppercase font-black text-[10px] tracking-widest">
                                 <TableHead className="px-8 h-14">Incident ID</TableHead>
                                 <TableHead className="h-14">Violation Vector</TableHead>
                                 <TableHead className="h-14">Target Entity</TableHead>
@@ -119,14 +119,14 @@ export default function ModerationCenter() {
                             <AnimatePresence>
                                 {isLoading ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="py-32 text-center text-white/20">
+                                        <TableCell colSpan={5} className="py-32 text-center text-muted-foreground/50">
                                             <Loader2 className="w-10 h-10 animate-spin mx-auto mb-4" />
                                             <span className="font-black italic uppercase tracking-widest text-xs">Scanning Platform Mesh...</span>
                                         </TableCell>
                                     </TableRow>
                                 ) : filteredReports.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={5} className="py-32 text-center text-white/10 italic font-black tracking-widest uppercase text-xs">
+                                        <TableCell colSpan={5} className="py-32 text-center text-muted-foreground/30 italic font-black tracking-widest uppercase text-xs">
                                             No disruptive signals detected in current scope.
                                         </TableCell>
                                     </TableRow>
@@ -136,19 +136,19 @@ export default function ModerationCenter() {
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         transition={{ delay: idx * 0.05 }}
-                                        className="border-b border-white/5 hover:bg-white/[0.03] transition-colors"
+                                        className="border-b border-border/50 hover:bg-muted/30 transition-colors"
                                     >
-                                        <TableCell className="px-8 font-mono text-xs text-white/40">{report.id}</TableCell>
+                                        <TableCell className="px-8 font-mono text-xs text-muted-foreground">{report.id}</TableCell>
                                         <TableCell>
                                             <div className="flex items-center gap-2">
                                                 <AlertTriangle className={`w-4 h-4 ${report.severity === 'high' ? 'text-rose-500' : 'text-amber-500'}`} />
-                                                <span className="font-black italic uppercase text-xs text-white/80">{report.type}</span>
+                                                <span className="font-black italic uppercase text-xs text-foreground/90">{report.type}</span>
                                             </div>
                                         </TableCell>
                                         <TableCell>
                                             <div className="flex flex-col">
-                                                <span className="text-xs font-bold text-white tracking-tight">{report.target}</span>
-                                                <span className="text-[10px] text-white/20 italic">Reporter: {report.reporter}</span>
+                                                <span className="text-xs font-bold text-foreground tracking-tight">{report.target}</span>
+                                                <span className="text-[10px] text-muted-foreground/50 italic">Reporter: {report.reporter}</span>
                                             </div>
                                         </TableCell>
                                         <TableCell>
@@ -164,7 +164,7 @@ export default function ModerationCenter() {
                                                 <Button variant="ghost" size="icon" className="h-10 w-10 text-rose-500/50 hover:text-rose-500 hover:bg-rose-500/10 border border-rose-500/10" onClick={() => handleAction(report.id, 'RESOLVED', true)}>
                                                     <XCircle className="w-5 h-5" />
                                                 </Button>
-                                                <Button variant="ghost" size="icon" className="h-10 w-10 text-white/20 hover:text-white hover:bg-white/10 border border-white/10">
+                                                <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground/50 hover:text-foreground hover:bg-muted/50 border border-border">
                                                     <Eye className="w-5 h-5" />
                                                 </Button>
                                             </div>
@@ -187,7 +187,7 @@ export default function ModerationCenter() {
                      <h3 className="text-xl font-black italic uppercase italic text-indigo-400">Heuristic Spam Protocol Active</h3>
                      <p className="text-xs text-indigo-300/60 font-medium italic">Spam and fraud vectors are automatically neutralized by the AI layer. Manual review is only triggered for high-entropy violations or user appeals. Currently monitoring 1,240 active nodes.</p>
                  </div>
-                 <Button className="bg-indigo-500 hover:bg-indigo-400 text-white font-black tracking-widest uppercase px-10 h-14 rounded-2xl shadow-xl shadow-indigo-500/20">
+                 <Button className="bg-indigo-500 hover:bg-indigo-400 text-foreground font-black tracking-widest uppercase px-10 h-14 rounded-2xl shadow-xl shadow-indigo-500/20">
                      View AI Metrics
                  </Button>
             </div>

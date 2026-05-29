@@ -114,8 +114,8 @@ export default function AssessmentRunnerPage() {
             <div className="flex h-[80vh] w-full flex-col items-center justify-center gap-6">
                 <Loader2 className="h-12 w-12 animate-spin text-primary/40" />
                 <div className="text-center space-y-2">
-                    <p className="text-[10px] uppercase tracking-[0.4em] font-black text-white/40">Loading Strategic Challenge...</p>
-                    <p className="text-xs italic text-white/20">Synthesizing environment from job parameters.</p>
+                    <p className="text-[10px] uppercase tracking-[0.4em] font-black text-muted-foreground">Loading Strategic Challenge...</p>
+                    <p className="text-xs italic text-muted-foreground/50">Synthesizing environment from job parameters.</p>
                 </div>
             </div>
         )
@@ -124,7 +124,7 @@ export default function AssessmentRunnerPage() {
     if (!isStarted && !isFinished) {
         return (
             <div className="max-w-4xl mx-auto py-20 px-4 animate-in fade-in zoom-in duration-700">
-                <Card className="bg-[#0a0a0a] border-white/10 overflow-hidden relative shadow-2xl shadow-primary/10">
+                <Card className="bg-[#0a0a0a] border-border overflow-hidden relative shadow-2xl shadow-primary/10">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
                     <CardHeader className="p-12 text-center space-y-6">
                         <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto border border-primary/20 rotate-3 group-hover:rotate-6 transition-transform">
@@ -133,24 +133,24 @@ export default function AssessmentRunnerPage() {
                         <div className="space-y-3">
                             <h1 className="text-5xl font-black italic uppercase tracking-tighter text-gradient leading-none">Skill Proof <span className="text-primary">Engagement</span></h1>
                             <p className="text-muted-foreground text-lg max-w-xl mx-auto">
-                                You are about to enter a high-resonance assessment for <span className="text-white font-bold">{job?.title}</span>.
+                                You are about to enter a high-resonance assessment for <span className="text-foreground font-bold">{job?.title}</span>.
                             </p>
                         </div>
                         
                         <div className="grid grid-cols-3 gap-4 py-8">
-                            <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                            <div className="p-4 rounded-2xl bg-muted/50 border border-border/50">
                                 <Timer className="w-5 h-5 text-primary mx-auto mb-2" />
-                                <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Duration</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Duration</p>
                                 <p className="text-lg font-bold">10:00</p>
                             </div>
-                            <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                            <div className="p-4 rounded-2xl bg-muted/50 border border-border/50">
                                 <Target className="w-5 h-5 text-primary mx-auto mb-2" />
-                                <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Questions</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Questions</p>
                                 <p className="text-lg font-bold">{questions?.length || 0}</p>
                             </div>
-                            <div className="p-4 rounded-2xl bg-white/5 border border-white/5">
+                            <div className="p-4 rounded-2xl bg-muted/50 border border-border/50">
                                 <ShieldCheck className="w-5 h-5 text-primary mx-auto mb-2" />
-                                <p className="text-[10px] font-black uppercase tracking-widest text-white/40">Integrity</p>
+                                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Integrity</p>
                                 <p className="text-lg font-bold uppercase tracking-tighter">Verified</p>
                             </div>
                         </div>
@@ -158,12 +158,12 @@ export default function AssessmentRunnerPage() {
                         <Button 
                             onClick={() => setIsStarted(true)}
                             size="lg"
-                            className="h-16 px-12 bg-white text-black hover:bg-neutral-200 font-black uppercase tracking-widest rounded-2xl gap-3 shadow-xl"
+                            className="h-16 px-12 bg-white text-primary-foreground hover:bg-neutral-200 font-black uppercase tracking-widest rounded-2xl gap-3 shadow-xl"
                         >
                             Initialize Sync <ArrowRight className="w-5 h-5" />
                         </Button>
                         
-                        <p className="text-[10px] text-white/20 uppercase font-bold tracking-[0.2em] pt-4 italic">
+                        <p className="text-[10px] text-muted-foreground/50 uppercase font-bold tracking-[0.2em] pt-4 italic">
                             System Monitoring Enabled. Proof will be minted to your professional identity.
                         </p>
                     </CardHeader>
@@ -176,7 +176,7 @@ export default function AssessmentRunnerPage() {
         const score = Math.round((answers.filter((a, i) => a === questions[i].correct_answer).length / questions.length) * 100)
         return (
             <div className="max-w-4xl mx-auto py-20 px-4 animate-in fade-in zoom-in duration-1000">
-                <Card className="bg-[#0a0a0a] border-white/10 overflow-hidden relative shadow-2xl">
+                <Card className="bg-[#0a0a0a] border-border overflow-hidden relative shadow-2xl">
                     <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-primary/20 to-transparent blur-3xl opacity-50" />
                     <CardHeader className="p-12 text-center space-y-8 relative">
                         <div className="relative inline-block">
@@ -195,12 +195,12 @@ export default function AssessmentRunnerPage() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-6 max-w-md mx-auto py-8">
-                            <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 text-center">
-                                <div className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Proof Score</div>
-                                <div className="text-5xl font-black tracking-tighter text-white">{score}%</div>
+                            <div className="p-8 rounded-[2rem] bg-muted/50 border border-border text-center">
+                                <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Proof Score</div>
+                                <div className="text-5xl font-black tracking-tighter text-foreground">{score}%</div>
                             </div>
-                            <div className="p-8 rounded-[2rem] bg-white/5 border border-white/10 text-center">
-                                <div className="text-[10px] font-black uppercase tracking-widest text-white/30 mb-2">Rank Delta</div>
+                            <div className="p-8 rounded-[2rem] bg-muted/50 border border-border text-center">
+                                <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-2">Rank Delta</div>
                                 <div className="text-5xl font-black tracking-tighter text-emerald-500">+{score > 80 ? "14" : "4"}%</div>
                             </div>
                         </div>
@@ -209,14 +209,14 @@ export default function AssessmentRunnerPage() {
                             <Button 
                                 onClick={() => router.push("/user/applications")}
                                 size="lg" 
-                                className="h-16 px-12 bg-primary hover:bg-primary/90 text-white font-black uppercase tracking-widest rounded-2xl gap-3"
+                                className="h-16 px-12 bg-primary hover:bg-primary/90 text-foreground font-black uppercase tracking-widest rounded-2xl gap-3"
                             >
                                 <Zap className="w-5 h-5" /> View Career Proof
                             </Button>
                             <Button 
                                 onClick={() => router.push("/user/dashboard")}
                                 variant="ghost" 
-                                className="text-[10px] font-black uppercase tracking-widest text-white/30"
+                                className="text-[10px] font-black uppercase tracking-widest text-muted-foreground"
                             >
                                 <LayoutDashboard className="w-4 h-4 mr-2" /> Back to Nexus
                             </Button>
@@ -233,7 +233,7 @@ export default function AssessmentRunnerPage() {
     return (
         <div className="max-w-4xl mx-auto py-12 px-4 space-y-8 min-h-[85vh] flex flex-col justify-center">
             {/* HUD Status Bar */}
-            <div className="flex items-center justify-between border-b border-white/5 pb-8 mb-4">
+            <div className="flex items-center justify-between border-b border-border/50 pb-8 mb-4">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2 text-primary">
                         <Cpu className="w-4 h-4" />
@@ -243,17 +243,17 @@ export default function AssessmentRunnerPage() {
                 </div>
                 <div className="flex items-center gap-6">
                     <div className="text-right">
-                        <div className="flex items-center gap-2 text-white/40 mb-1">
+                        <div className="flex items-center gap-2 text-muted-foreground mb-1">
                             <Timer className={cn("w-4 h-4", timeLeft < 60 ? "text-rose-500 animate-pulse" : "text-primary")} />
-                            <span className={cn("text-xs font-mono font-bold uppercase", timeLeft < 60 ? "text-rose-500" : "text-white")}>{formatTime(timeLeft)}</span>
+                            <span className={cn("text-xs font-mono font-bold uppercase", timeLeft < 60 ? "text-rose-500" : "text-foreground")}>{formatTime(timeLeft)}</span>
                         </div>
-                        <Progress value={progress} className="w-32 h-1 bg-white/5" />
+                        <Progress value={progress} className="w-32 h-1 bg-muted/50" />
                     </div>
                 </div>
             </div>
 
             {/* Main Engagement Card */}
-            <Card className="bg-[#0a0a0a] border-white/10 overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,1)] group">
+            <Card className="bg-[#0a0a0a] border-border overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,1)] group">
                 <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-30" />
                 <CardHeader className="p-12 pb-8">
                     <div className="flex items-center gap-3 mb-6">
@@ -261,7 +261,7 @@ export default function AssessmentRunnerPage() {
                             {currentQ.difficulty || 'Advanced'} Intelligence
                         </Badge>
                     </div>
-                    <CardTitle className="text-3xl font-black italic tracking-tight leading-tight text-white group-hover:text-primary transition-colors duration-500">
+                    <CardTitle className="text-3xl font-black italic tracking-tight leading-tight text-foreground group-hover:text-primary transition-colors duration-500">
                         {currentQ.question}
                     </CardTitle>
                 </CardHeader>
@@ -271,12 +271,12 @@ export default function AssessmentRunnerPage() {
                             <button
                                 key={i}
                                 onClick={() => handleAnswer(option)}
-                                className="group text-left p-6 rounded-3xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-primary/40 transition-all duration-300 flex items-center gap-6 relative overflow-hidden"
+                                className="group text-left p-6 rounded-3xl border border-border/50 bg-muted/30 hover:bg-white/[0.05] hover:border-primary/40 transition-all duration-300 flex items-center gap-6 relative overflow-hidden"
                             >
-                                <div className="h-12 w-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-sm font-black text-white/40 group-hover:bg-primary group-hover:text-white group-hover:border-primary transition-all">
+                                <div className="h-12 w-12 rounded-2xl bg-muted/50 border border-border flex items-center justify-center text-sm font-black text-muted-foreground group-hover:bg-primary group-hover:text-foreground group-hover:border-primary transition-all">
                                     {String.fromCharCode(65 + i)}
                                 </div>
-                                <span className="text-lg font-bold text-white/80 group-hover:text-white transition-colors flex-1">{option}</span>
+                                <span className="text-lg font-bold text-foreground/90 group-hover:text-foreground transition-colors flex-1">{option}</span>
                                 <div className="opacity-0 group-hover:opacity-100 transition-opacity translate-x-4 group-hover:translate-x-0 transition-all">
                                     <ArrowRight className="w-5 h-5 text-primary" />
                                 </div>

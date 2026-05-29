@@ -33,12 +33,12 @@ export default function CandidateApplications() {
 
   const getStatusColor = (status: string) => {
     switch(status.toLowerCase()) {
-        case 'applied': return 'bg-white/5 text-white/50 border-white/10';
+        case 'applied': return 'bg-muted/50 text-muted-foreground border-border';
         case 'shortlisted': return 'bg-primary/10 text-primary border-primary/20 shadow-[0_0_10px_hsl(var(--primary)/0.2)]';
         case 'interview': return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
         case 'hired': return 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20';
         case 'rejected': return 'bg-rose-500/10 text-rose-500 border-rose-500/20';
-        default: return 'bg-white/5 text-white border-white/10';
+        default: return 'bg-muted/50 text-foreground border-border';
     }
   };
 
@@ -50,25 +50,25 @@ export default function CandidateApplications() {
         <h1 className="text-6xl font-black font-heading tracking-tighter italic uppercase leading-none">Nexus Deployment Tracking</h1>
         <div className="flex items-center gap-4">
             <div className="h-px w-24 bg-primary" />
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/30">Monitoring career resonance and pipeline synchronization</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Monitoring career resonance and pipeline synchronization</p>
         </div>
       </div>
 
       {isLoading ? (
         <div className="py-32 flex flex-col items-center justify-center gap-6">
             <Loader2 className="w-10 h-10 animate-spin text-primary/50" />
-            <p className="text-[10px] font-black uppercase tracking-widest text-white/20">Synthesizing Application Data...</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">Synthesizing Application Data...</p>
         </div>
       ) : (
         <div className="space-y-8">
             {apps.length === 0 ? (
-                <Card className="glass border-white/5 p-20 text-center space-y-8 rounded-[3rem]">
-                    <div className="mx-auto w-24 h-24 rounded-[2rem] bg-white/[0.03] border border-white/10 flex items-center justify-center shadow-inner">
-                        <Briefcase className="w-10 h-10 text-white/10" />
+                <Card className="glass border-border/50 p-20 text-center space-y-8 rounded-[3rem]">
+                    <div className="mx-auto w-24 h-24 rounded-[2rem] bg-muted/30 border border-border flex items-center justify-center shadow-inner">
+                        <Briefcase className="w-10 h-10 text-muted-foreground/30" />
                     </div>
                     <div className="space-y-3">
                         <h3 className="text-2xl font-black italic uppercase tracking-tight">No Active Deployments</h3>
-                        <p className="text-[11px] font-black uppercase tracking-widest text-white/20 max-w-sm mx-auto leading-relaxed">
+                        <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/50 max-w-sm mx-auto leading-relaxed">
                             Your professional matrix has not yet interfaced with the marketplace. 
                         </p>
                     </div>
@@ -87,34 +87,34 @@ export default function CandidateApplications() {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: i * 0.05 }}
                         >
-                            <Card className="glass border-white/5 group hover:border-primary/30 transition-all duration-500 rounded-[2.5rem] overflow-hidden relative">
+                            <Card className="glass border-border/50 group hover:border-primary/30 transition-all duration-500 rounded-[2.5rem] overflow-hidden relative">
                                 <div className="absolute top-0 left-0 w-[2px] h-full bg-primary/20 group-hover:bg-primary transition-colors" />
                                 <CardContent className="p-8 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-10">
                                     <div className="flex items-center gap-6">
-                                        <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/10 flex items-center justify-center font-black italic text-2xl text-primary/50 group-hover:scale-110 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500 shadow-inner">
+                                        <div className="w-16 h-16 rounded-2xl bg-muted/30 border border-border flex items-center justify-center font-black italic text-2xl text-primary/50 group-hover:scale-110 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500 shadow-inner">
                                             {app.jobs?.companies?.company_name?.[0] || 'C'}
                                         </div>
                                         <div className="space-y-1">
-                                            <p className="text-[9px] font-black text-white/30 uppercase tracking-[0.3em]">{app.jobs?.companies?.company_name}</p>
-                                            <h3 className="text-2xl font-black italic tracking-tight text-white group-hover:text-primary transition-colors">{app.jobs?.title}</h3>
+                                            <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.3em]">{app.jobs?.companies?.company_name}</p>
+                                            <h3 className="text-2xl font-black italic tracking-tight text-foreground group-hover:text-primary transition-colors">{app.jobs?.title}</h3>
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-2 sm:flex sm:items-center gap-10 w-full lg:w-auto">
                                         <div className="space-y-2">
-                                            <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.2em] flex items-center gap-2">
+                                            <p className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em] flex items-center gap-2">
                                                 <Zap className="w-3 h-3 text-emerald-500" /> RESONANCE
                                             </p>
-                                            <p className="text-2xl font-black italic text-white flex items-baseline gap-1">
-                                                {app.ai_match_score}<span className="text-[10px] text-white/30">%</span>
+                                            <p className="text-2xl font-black italic text-foreground flex items-baseline gap-1">
+                                                {app.ai_match_score}<span className="text-[10px] text-muted-foreground">%</span>
                                             </p>
                                         </div>
 
                                         <div className="space-y-2">
-                                            <p className="text-[9px] font-black text-white/20 uppercase tracking-[0.2em] flex items-center gap-2">
+                                            <p className="text-[9px] font-black text-muted-foreground/50 uppercase tracking-[0.2em] flex items-center gap-2">
                                                 <Calendar className="w-3 h-3" /> GENESIS
                                             </p>
-                                            <p className="text-xs font-black text-white/60 uppercase tracking-widest">{new Date(app.created_at).toLocaleDateString()}</p>
+                                            <p className="text-xs font-black text-foreground/80 uppercase tracking-widest">{new Date(app.created_at).toLocaleDateString()}</p>
                                         </div>
 
                                         <div className="flex items-center">
@@ -135,7 +135,7 @@ export default function CandidateApplications() {
                                                 </Link>
                                             )}
                                             <Link href={`/jobs/${app.job_id}`}>
-                                                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl bg-white/5 border border-white/5 text-white/30 hover:text-primary hover:bg-primary/10 hover:border-primary/20 transition-all">
+                                                <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl bg-muted/50 border border-border/50 text-muted-foreground hover:text-primary hover:bg-primary/10 hover:border-primary/20 transition-all">
                                                     <ArrowRight className="w-5 h-5" />
                                                 </Button>
                                             </Link>
@@ -156,11 +156,11 @@ export default function CandidateApplications() {
               <h4 className="text-2xl font-black italic tracking-tight flex items-center justify-center md:justify-start gap-3">
                   <CheckCircle className="w-6 h-6 text-primary" /> Verified Pipeline Active
               </h4>
-              <p className="text-[10px] font-black uppercase tracking-widest text-white/30">Your Intelligence Profile is automatically synchronized with all active nodes.</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Your Intelligence Profile is automatically synchronized with all active nodes.</p>
           </div>
           <div className="relative z-10">
               <Link href="/user/profile">
-                  <Button variant="outline" className="h-12 px-8 border-white/10 hover:bg-white/5 font-black text-[10px] uppercase tracking-widest rounded-2xl">
+                  <Button variant="outline" className="h-12 px-8 border-border hover:bg-muted/50 font-black text-[10px] uppercase tracking-widest rounded-2xl">
                       UPDATE IDENTITY MATRIX
                   </Button>
               </Link>

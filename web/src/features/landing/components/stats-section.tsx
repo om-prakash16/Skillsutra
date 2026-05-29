@@ -45,7 +45,7 @@ export function StatsSection() {
   }, []);
 
   return (
-    <section className="bg-background py-24 relative overflow-hidden border-b border-white/5">
+    <section className="bg-background py-24 relative overflow-hidden border-b border-border/50">
       {/* Visual background atmospheric orb */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
       
@@ -61,7 +61,7 @@ export function StatsSection() {
               Ecosystem <span className="text-primary italic font-black">Sync Statistics</span>
             </h2>
           </div>
-          <div className="flex items-center gap-3.5 px-4.5 py-2 glass rounded-2xl border-white/5 bg-[#12121a]/30">
+          <div className="flex items-center gap-3.5 px-4.5 py-2 glass rounded-2xl border-border/50 bg-[#12121a]/30">
             <span className="flex h-2 w-2 relative">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -81,7 +81,7 @@ export function StatsSection() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ delay: i * 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                className="glass border-white/5 bg-[#12121a]/30 p-8 rounded-3xl relative overflow-hidden group shadow-premium hover:shadow-premium-hover transition-all duration-300 hover:border-primary/20"
+                className="glass border-border/50 bg-[#12121a]/30 p-8 rounded-3xl relative overflow-hidden group shadow-premium hover:shadow-premium-hover transition-all duration-300 hover:border-primary/20"
               >
                 {/* Subtle top light overlay glow */}
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -109,7 +109,7 @@ export function StatsSection() {
                     </span>
                   </div>
 
-                  <div className="h-px bg-white/5 w-full" />
+                  <div className="h-px bg-muted/50 w-full" />
 
                   {/* Telemetry line details */}
                   <div className="space-y-1">

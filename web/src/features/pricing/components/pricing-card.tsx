@@ -45,7 +45,7 @@ export function PricingCard({ plan, isYearly }: PricingCardProps) {
       <Card className={`h-full flex flex-col backdrop-blur-3xl bg-background/60 relative overflow-hidden transition-all duration-300 ${
         plan.isPopular 
           ? "border-primary/50 shadow-[0_0_40px_hsl(var(--primary)/0.1)] ring-1 ring-primary/20" 
-          : "border-border/50 hover:border-white/20"
+          : "border-border/50 hover:border-border"
       }`}>
         {/* Subtle background glow for popular plan */}
         {plan.isPopular && (

@@ -76,7 +76,7 @@ export function Roadmap() {
                                 <div className={`glass p-8 rounded-3xl h-full space-y-6 transition-all duration-500 relative group ${
                                     isInProgress 
                                         ? "border-primary/30 shadow-floating bg-primary/[0.02]" 
-                                        : "border-white/5 shadow-premium hover:border-primary/20"
+                                        : "border-border/50 shadow-premium hover:border-primary/20"
                                 }`}>
                                     {/* Accent Top Border for active phase */}
                                     {isInProgress && (
@@ -94,12 +94,12 @@ export function Roadmap() {
                                         <Badge variant="outline" className={`text-micro px-3 py-1 rounded-lg font-mono ${
                                             isCompleted ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" :
                                             isInProgress ? "bg-primary/15 text-primary border-primary/30 animate-pulse-glow" :
-                                            "bg-muted/10 text-muted-foreground border-white/5"
+                                            "bg-muted/10 text-muted-foreground border-border/50"
                                         }`}>
                                             {phase.status.toUpperCase()}
                                         </Badge>
                                     </div>
-                                    <h3 className="text-lg font-bold text-white font-heading">{phase.title}</h3>
+                                    <h3 className="text-lg font-bold text-foreground font-heading">{phase.title}</h3>
                                     <ul className="space-y-3">
                                         {phase.items.map((item, j) => (
                                             <li key={j} className="flex items-center gap-3 text-xs text-muted-foreground">

@@ -37,11 +37,13 @@ from modules.workspaces.router import router as workspaces_router
 from api.routers.resume import router as resume_router
 from api.routers.cover_letter import router as cover_letter_router
 from api.routers.social import router as social_router
+from api.routers.security import router as security_router
 
 v1_router = APIRouter()
 v1_router.include_router(resume_router, prefix="", tags=["AI Resume Builder"])
 v1_router.include_router(cover_letter_router, prefix="", tags=["AI Cover Letter Generator"])
 v1_router.include_router(social_router, prefix="", tags=["Social Networking"])
+v1_router.include_router(security_router, prefix="", tags=["Security Center"])
 
 from api.v1.public_profile import router as public_profile_router
 

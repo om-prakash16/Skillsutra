@@ -82,12 +82,22 @@ async def save_item(
     user_id: str = Depends(get_current_user_id)
 ):
     """Save a job, course, or post for later."""
+    db = await get_db()
     item = {
         "user_id": user_id,
-        "item_type": payload.get("item_type"),
+        "item_type": payload.get("item_type", "job"),
         "item_id": payload.get("item_id")
     }
-    return success_response(data=item, message="Item saved successfully")
+    
+    # Check if already saved
+    existing = await db.table("saved_items").select("*").eq("user_id", user_id).eq("item_type", item["item_type"]).eq("item_id", item["item_id"]).execute()
+    if existing.data:
+        # Toggle: remove if it exists (Unsave)
+        await db.table("saved_items").delete().eq("id", existing.data[0]["id"]).execute()
+        return success_response(message="Item unsaved successfully")
+        
+    res = await db.table("saved_items").insert(item).execute()
+    return success_response(data=res.data[0] if res.data else item, message="Item saved successfully")
 
 @router.get("/saved-items")
 async def get_saved_items(
@@ -95,4 +105,14 @@ async def get_saved_items(
     user_id: str = Depends(get_current_user_id)
 ):
     """Retrieve saved items."""
-    return success_response(data=[])
+    db = await get_db()
+    
+    if item_type == "job":
+        query = db.table("saved_items").select("*, jobs(title, location, job_type, companies(company_name))").eq("user_id", user_id).eq("item_type", "job")
+    else:
+        query = db.table("saved_items").select("*").eq("user_id", user_id)
+        if item_type:
+            query = query.eq("item_type", item_type)
+        
+    res = await query.order("created_at", desc=True).execute()
+    return success_response(data=res.data)

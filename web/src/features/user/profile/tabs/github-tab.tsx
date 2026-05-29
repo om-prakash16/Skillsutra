@@ -146,7 +146,7 @@ export function GithubTab({ data, isEditing, onUpdate }: GithubTabProps) {
             {/* Connection Header */}
             <div className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/50">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-[#24292e] text-white rounded-full flex items-center justify-center shrink-0 shadow-sm">
+                    <div className="w-10 h-10 bg-[#24292e] text-foreground rounded-full flex items-center justify-center shrink-0 shadow-sm">
                         <Github className="w-5 h-5" />
                     </div>
                     <div>

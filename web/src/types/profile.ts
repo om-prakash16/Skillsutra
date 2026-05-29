@@ -24,7 +24,9 @@ export interface Education {
   id: string;
   institution: string;
   degree: string;
-  year: string;
+  startYear?: string;
+  endYear?: string;
+  current?: boolean;
   grade?: string;
   fieldOfStudy?: string;
 }

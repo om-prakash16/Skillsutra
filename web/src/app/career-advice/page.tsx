@@ -172,7 +172,7 @@ function CareerAdviceContent() {
 
                 {/* CTA */}
                 <section className="text-center pb-8">
-                    <Card className="bg-gradient-to-r from-slate-900 to-slate-800 text-white border-none py-12 px-6">
+                    <Card className="bg-gradient-to-r from-slate-900 to-slate-800 text-foreground border-none py-12 px-6">
                         <div className="max-w-2xl mx-auto space-y-6">
                             <h2 className="text-3xl font-bold">Ready to apply these insights?</h2>
                             <p className="text-slate-300 text-lg">
@@ -186,7 +186,7 @@ function CareerAdviceContent() {
                                     </Button>
                                 </Link>
                                 <Link href="/salary">
-                                    <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/20 text-white hover:bg-white/10 hover:text-white">
+                                    <Button size="lg" variant="outline" className="w-full sm:w-auto border-border text-foreground hover:bg-muted/50 hover:text-foreground">
                                         Check Salary Trends
                                     </Button>
                                 </Link>

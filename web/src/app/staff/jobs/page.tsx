@@ -23,10 +23,10 @@ export default function StaffJobsModeration() {
                         <div className="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 backdrop-blur-md shadow-lg shadow-emerald-500/5">
                             <Briefcase className="w-6 h-6 text-emerald-400" />
                         </div>
-                        <div className="h-10 w-px bg-white/10" />
+                        <div className="h-10 w-px bg-muted/50" />
                         <div>
                             <p className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-400/70 mb-1">Marketplace Integrity</p>
-                            <h1 className="text-5xl font-black font-heading tracking-tighter text-white">
+                            <h1 className="text-5xl font-black font-heading tracking-tighter text-foreground">
                                 Jobs Moderation
                             </h1>
                         </div>
@@ -35,14 +35,14 @@ export default function StaffJobsModeration() {
 
                 <div className="flex items-center gap-4">
                     <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                         <input 
                             type="text" 
                             placeholder="Search jobs..." 
-                            className="bg-white/5 border border-white/10 rounded-2xl py-3 pl-12 pr-6 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-[240px]"
+                            className="bg-muted/50 border border-border rounded-2xl py-3 pl-12 pr-6 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 w-[240px]"
                         />
                     </div>
-                    <button className="p-3 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors">
+                    <button className="p-3 bg-muted/50 border border-border rounded-2xl hover:bg-muted/50 transition-colors">
                         <Filter className="w-5 h-5" />
                     </button>
                 </div>
@@ -55,12 +55,12 @@ export default function StaffJobsModeration() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.1 }}
-                        className="group bg-white/5 border border-white/5 hover:border-white/10 p-8 rounded-[2.5rem] backdrop-blur-md transition-all relative overflow-hidden"
+                        className="group bg-muted/50 border border-border/50 hover:border-border p-8 rounded-[2.5rem] backdrop-blur-md transition-all relative overflow-hidden"
                     >
                         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
                             <div className="space-y-4 flex-1">
                                 <div className="flex items-center gap-3">
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-white/20">{job.id}</span>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">{job.id}</span>
                                     <div className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-tighter ${
                                         job.status === 'Active' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
                                         job.status === 'Flagged' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
@@ -68,27 +68,27 @@ export default function StaffJobsModeration() {
                                     }`}>
                                         {job.status}
                                     </div>
-                                    <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest flex items-center gap-1.5">
+                                    <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5">
                                         <Clock className="w-3 h-3" />
                                         {job.posted}
                                     </span>
                                 </div>
 
                                 <div>
-                                    <h3 className="text-2xl font-black font-heading tracking-tight text-white group-hover:text-primary transition-colors flex items-center gap-3">
+                                    <h3 className="text-2xl font-black font-heading tracking-tight text-foreground group-hover:text-primary transition-colors flex items-center gap-3">
                                         {job.title}
-                                        <ExternalLink className="w-4 h-4 text-white/20 group-hover:text-primary/50" />
+                                        <ExternalLink className="w-4 h-4 text-muted-foreground/50 group-hover:text-primary/50" />
                                     </h3>
                                     <div className="flex flex-wrap items-center gap-6 mt-2">
-                                        <div className="flex items-center gap-2 text-white/60 font-medium">
+                                        <div className="flex items-center gap-2 text-foreground/80 font-medium">
                                             <Building2 className="w-4 h-4 text-primary/50" />
                                             <span className="text-sm">{job.company}</span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-white/60 font-medium">
+                                        <div className="flex items-center gap-2 text-foreground/80 font-medium">
                                             <MapPin className="w-4 h-4 text-primary/50" />
                                             <span className="text-sm">{job.location}</span>
                                         </div>
-                                        <div className="px-3 py-1 bg-white/5 rounded-lg border border-white/5 text-[10px] font-bold uppercase text-white/40 letter-spacing-1">
+                                        <div className="px-3 py-1 bg-muted/50 rounded-lg border border-border/50 text-[10px] font-bold uppercase text-muted-foreground letter-spacing-1">
                                             {job.type}
                                         </div>
                                     </div>
@@ -108,8 +108,8 @@ export default function StaffJobsModeration() {
                                         Flag
                                     </button>
                                 )}
-                                <button className="p-4 bg-white/5 border border-white/5 hover:border-white/10 rounded-2xl transition-all">
-                                    <XCircle className="w-5 h-5 text-white/40 hover:text-red-400" />
+                                <button className="p-4 bg-muted/50 border border-border/50 hover:border-border rounded-2xl transition-all">
+                                    <XCircle className="w-5 h-5 text-muted-foreground hover:text-red-400" />
                                 </button>
                             </div>
                         </div>

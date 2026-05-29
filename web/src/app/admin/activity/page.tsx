@@ -86,12 +86,12 @@ export default function AdminActivityPage() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: i * 0.05 }}
-                        className="group relative p-5 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-md hover:bg-white/[0.04] transition-all duration-300 hover:border-white/20"
+                        className="group relative p-5 rounded-2xl border border-border bg-muted/30 backdrop-blur-md hover:bg-muted/40 transition-all duration-300 hover:border-border"
                     >
                         <div className={cn("absolute inset-0 rounded-2xl transition-shadow duration-300", s.glow)} />
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 mb-3">
-                                <div className={cn("p-1.5 rounded-lg bg-white/5", s.color)}>
+                                <div className={cn("p-1.5 rounded-lg bg-muted/50", s.color)}>
                                     <s.icon className="w-4 h-4" />
                                 </div>
                                 <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/70">
@@ -116,7 +116,7 @@ export default function AdminActivityPage() {
                 </div>
 
                 {events.length === 0 ? (
-                    <div className="text-center py-20 rounded-3xl border border-dashed border-white/5 bg-white/[0.01]">
+                    <div className="text-center py-20 rounded-3xl border border-dashed border-border/50 bg-white/[0.01]">
                         <p className="text-muted-foreground text-sm font-medium italic">
                             Waiting for platform activity...
                         </p>
@@ -129,9 +129,9 @@ export default function AdminActivityPage() {
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: i * 0.02 }}
-                                className="group relative flex items-start gap-5 p-4 rounded-2xl border border-transparent hover:border-white/5 hover:bg-white/[0.02] transition-all duration-200"
+                                className="group relative flex items-start gap-5 p-4 rounded-2xl border border-transparent hover:border-border/50 hover:bg-muted/30 transition-all duration-200"
                             >
-                                <div className="relative z-10 p-2.5 rounded-xl bg-background border border-white/10 group-hover:border-primary/50 transition-colors shrink-0 shadow-xl">
+                                <div className="relative z-10 p-2.5 rounded-xl bg-background border border-border group-hover:border-primary/50 transition-colors shrink-0 shadow-xl">
                                     <Shield className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
                                 </div>
                                 <div className="flex-1 min-w-0 pt-1">
@@ -143,12 +143,12 @@ export default function AdminActivityPage() {
                                             variant="outline"
                                             className={cn(
                                                 "text-[9px] h-4 font-black uppercase tracking-widest",
-                                                ROLE_COLORS[event.actor_role] || "bg-white/5 text-muted-foreground border-white/10"
+                                                ROLE_COLORS[event.actor_role] || "bg-muted/50 text-muted-foreground border-border"
                                             )}
                                         >
                                             {event.actor_role}
                                         </Badge>
-                                        <Badge variant="outline" className="text-[9px] font-black uppercase tracking-wider h-4 bg-white/5 border-white/10 text-muted-foreground/70 group-hover:text-primary group-hover:border-primary/30 transition-all">
+                                        <Badge variant="outline" className="text-[9px] font-black uppercase tracking-wider h-4 bg-muted/50 border-border text-muted-foreground/70 group-hover:text-primary group-hover:border-primary/30 transition-all">
                                             {event.event_type?.replace(/_/g, " ")}
                                         </Badge>
                                     </div>

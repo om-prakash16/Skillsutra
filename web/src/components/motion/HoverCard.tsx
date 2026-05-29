@@ -28,7 +28,7 @@ export function HoverCard({ children, className, glowColor = "rgba(59, 130, 246,
     <motion.div
       ref={cardRef}
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-white/10 bg-black/40 backdrop-blur-xl transition-colors duration-300",
+        "relative overflow-hidden rounded-2xl border border-border bg-background/80 backdrop-blur-xl transition-colors duration-300",
         className
       )}
       onMouseMove={handleMouseMove}

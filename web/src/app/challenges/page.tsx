@@ -78,7 +78,7 @@ export default function ChallengesPage() {
         <div className="min-h-screen pt-28 pb-16 px-4 md:px-8 max-w-7xl mx-auto space-y-10 relative overflow-hidden">
             <div className="absolute top-0 left-1/4 w-[600px] h-[600px] bg-primary/5 blur-[180px] -z-10 rounded-full" />
             
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-white/5 pb-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b border-border/50 pb-8">
                 <div>
                     <h1 className="text-4xl md:text-5xl font-black tracking-tight leading-tight flex items-center gap-3">
                         CHALLENGE ARENA <Code2 className="w-8 h-8 text-primary" />
@@ -87,7 +87,7 @@ export default function ChallengesPage() {
                         Settle claims, build reputation, and verify raw coding velocity.
                     </p>
                 </div>
-                <div className="flex items-center gap-2 bg-white/5 border border-white/5 px-4 py-2.5 rounded-2xl shadow-inner">
+                <div className="flex items-center gap-2 bg-muted/50 border border-border/50 px-4 py-2.5 rounded-2xl shadow-inner">
                     <Trophy className="w-5 h-5 text-amber-500" />
                     <span className="text-xs font-bold tracking-wider text-muted-foreground">MULTIPLIER ACTIVE: 1.5x</span>
                 </div>
@@ -104,7 +104,7 @@ export default function ChallengesPage() {
                             className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer ${
                                 selectedChall?.id === chall.id 
                                     ? "bg-primary/10 border-primary/40 shadow-[0_0_20px_hsl(var(--primary)/0.1)]"
-                                    : "bg-white/5 border-white/5 hover:border-white/20"
+                                    : "bg-muted/50 border-border/50 hover:border-border"
                             }`}
                         >
                             <div className="flex items-center justify-between mb-3">
@@ -115,7 +115,7 @@ export default function ChallengesPage() {
                                 </Badge>
                                 <span className="text-[10px] font-black text-primary">+{chall.points} PTS</span>
                             </div>
-                            <h4 className="text-lg font-bold tracking-tight text-white">{chall.title}</h4>
+                            <h4 className="text-lg font-bold tracking-tight text-foreground">{chall.title}</h4>
                         </div>
                     ))}
                 </div>
@@ -123,9 +123,9 @@ export default function ChallengesPage() {
                 {/* Code Workspace */}
                 <div className="lg:col-span-2 space-y-6">
                     {selectedChall && (
-                        <div className="glass border-white/5 p-8 rounded-[2rem] space-y-6">
+                        <div className="glass border-border/50 p-8 rounded-[2rem] space-y-6">
                             <div>
-                                <h2 className="text-2xl font-bold tracking-tight text-white mb-2">{selectedChall.title}</h2>
+                                <h2 className="text-2xl font-bold tracking-tight text-foreground mb-2">{selectedChall.title}</h2>
                                 <p className="text-sm text-muted-foreground leading-relaxed">{selectedChall.description}</p>
                             </div>
 
@@ -137,7 +137,7 @@ export default function ChallengesPage() {
                                     value={code}
                                     onChange={(e) => setCode(e.target.value)}
                                     rows={12}
-                                    className="w-full bg-black/45 border border-white/5 rounded-2xl p-6 font-mono text-sm text-emerald-400 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-inner"
+                                    className="w-full bg-black/45 border border-border/50 rounded-2xl p-6 font-mono text-sm text-emerald-400 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all shadow-inner"
                                 />
                             </div>
 
@@ -161,7 +161,7 @@ export default function ChallengesPage() {
 
                             {/* Run Results Output */}
                             {results && (
-                                <div className="border border-white/5 bg-black/25 rounded-2xl p-6 space-y-4 shadow-inner">
+                                <div className="border border-border/50 bg-black/25 rounded-2xl p-6 space-y-4 shadow-inner">
                                     <div className="flex items-center gap-3">
                                         {results.passed ? (
                                             <>

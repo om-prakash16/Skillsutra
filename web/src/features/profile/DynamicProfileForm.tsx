@@ -109,7 +109,7 @@ export function DynamicProfileForm() {
 
     if (!schema || schema.length === 0) {
         return (
-            <div className="p-8 bg-white/5 border border-white/5 rounded-3xl text-center space-y-4 opacity-60">
+            <div className="p-8 bg-muted/50 border border-border/50 rounded-3xl text-center space-y-4 opacity-60">
                 <Globe className="w-8 h-8 mx-auto text-primary" />
                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">No dynamic protocols assigned by network admin</p>
             </div>
@@ -166,10 +166,10 @@ export function DynamicProfileForm() {
                                         defaultValue={user?.dynamic_profile_data?.[field.field_name]} 
                                         onValueChange={(val) => setValue(field.field_name, val, { shouldValidate: true })}
                                     >
-                                        <SelectTrigger className="bg-white/5 border-white/5 rounded-2xl h-14 font-bold focus:ring-primary/20 backdrop-blur-md">
+                                        <SelectTrigger className="bg-muted/50 border-border/50 rounded-2xl h-14 font-bold focus:ring-primary/20 backdrop-blur-md">
                                             <SelectValue placeholder={field.placeholder || "Select option"} />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-white/10 rounded-2xl">
+                                        <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-border rounded-2xl">
                                             {field.validation_rules?.options?.map((opt: any) => (
                                                 <SelectItem key={opt} value={opt} className="font-bold">{opt}</SelectItem>
                                             ))}
@@ -178,14 +178,14 @@ export function DynamicProfileForm() {
                                 ) : field.field_type === 'textarea' ? (
                                     <Textarea 
                                         placeholder={field.placeholder}
-                                        className="bg-white/5 border-white/5 rounded-2xl min-h-[120px] font-bold focus:ring-primary/20 backdrop-blur-md"
+                                        className="bg-muted/50 border-border/50 rounded-2xl min-h-[120px] font-bold focus:ring-primary/20 backdrop-blur-md"
                                         {...register(field.field_name)}
                                     />
                                 ) : (
                                     <Input 
                                         type={field.field_type === 'number' ? 'number' : 'text'}
                                         placeholder={field.placeholder}
-                                        className="bg-white/5 border-white/5 rounded-2xl h-14 font-bold focus:ring-primary/20 backdrop-blur-md transition-all group-hover/field:border-white/10"
+                                        className="bg-muted/50 border-border/50 rounded-2xl h-14 font-bold focus:ring-primary/20 backdrop-blur-md transition-all group-hover/field:border-border"
                                         {...register(field.field_name)}
                                     />
                                 )}
@@ -202,11 +202,11 @@ export function DynamicProfileForm() {
                 </motion.div>
             ))}
 
-            <div className="pt-8 border-t border-white/5">
+            <div className="pt-8 border-t border-border/50">
                 <Button 
                     type="submit" 
                     disabled={mutation.isPending}
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl h-16 shadow-2xl border-t border-white/20 font-black tracking-tighter text-xl group overflow-hidden relative"
+                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-2xl h-16 shadow-2xl border-t border-border font-black tracking-tighter text-xl group overflow-hidden relative"
                 >
                     {mutation.isPending ? <Loader2 className="w-6 h-6 animate-spin mr-3" /> : <Save className="w-6 h-6 mr-3" />}
                     <span className="relative z-10">{mutation.isPending ? "Synchronizing Mesh..." : "Update Identity Node"}</span>

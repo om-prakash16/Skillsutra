@@ -398,12 +398,19 @@ class SearchEngine:
             # Vector score: cosine similarity with stored embedding
             vector_score = 0.0
             emb = item.get(embedding_col)
-            if emb and isinstance(emb, (list, tuple)) and len(emb) == 768:
-                item_vec = np.array(emb)
-                i_norm = np.linalg.norm(item_vec)
-                if i_norm > 0:
-                    vector_score = float(np.dot(query_vec, item_vec) / (q_norm * i_norm))
-                    vector_score = max(0.0, vector_score)
+            if emb is not None:
+                try:
+                    # pgvector might return a list, a string representation, or an ndarray
+                    if isinstance(emb, str):
+                        import json
+                        emb = json.loads(emb)
+                    item_vec = np.array(emb)
+                    i_norm = np.linalg.norm(item_vec)
+                    if i_norm > 0:
+                        vector_score = float(np.dot(query_vec, item_vec) / (q_norm * i_norm))
+                        vector_score = max(0.0, vector_score)
+                except Exception as e:
+                    logger.warning(f"Error computing hybrid vector score: {e}")
 
             item["_hybrid_score"] = alpha * keyword_score + beta * vector_score
 
