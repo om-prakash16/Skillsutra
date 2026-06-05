@@ -59,7 +59,7 @@ export function ContactSupportForm() {
             <div className="grid md:grid-cols-5">
 
                 {/* Contact Info Sidebar */}
-                <div className="bg-slate-900 text-foreground p-8 md:col-span-2 flex flex-col justify-between">
+                <div className="bg-background text-foreground p-8 md:col-span-2 flex flex-col justify-between">
                     <div className="space-y-6">
                         <h3 className="text-2xl font-bold">Get in touch</h3>
                         <p className="text-slate-300">

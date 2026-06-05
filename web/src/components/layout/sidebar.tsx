@@ -43,45 +43,66 @@ interface SidebarProps {
 
 const adminNavGroups = [
     {
-        label: "Overview",
+        label: "Dashboard & Reports",
         links: [
-            { href: "/admin", label: "Global Surveillance", icon: LayoutDashboard, exact: true },
-            { href: "/admin/logs", label: "Audit Stream", icon: History },
-            { href: "/admin/analytics", label: "Deep Analytics", icon: BarChart3 },
+            { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
+            { href: "/admin/reports", label: "Global Reports", icon: BarChart3 },
         ]
     },
     {
-        label: "Entity Governance",
+        label: "Users & Identity",
         links: [
-            { href: "/admin/users", label: "Entity Registry", icon: Users },
-            { href: "/admin/companies", label: "Partner Matrix", icon: Building2 },
-            { href: "/admin/reports", label: "Moderation Queue", icon: Flag },
+            { href: "/admin/users", label: "Candidates", icon: User },
+            { href: "/admin/users?role=recruiter", label: "Recruiters", icon: Briefcase },
+            { href: "/admin/users/verification", label: "Verification", icon: ShieldCheck },
+            { href: "/admin/activity", label: "Activity Log", icon: Activity },
         ]
     },
     {
-        label: "Content & Schema",
+        label: "Companies",
         links: [
-            { href: "/admin/cms", label: "Content Orchestrator", icon: Globe },
-            { href: "/admin/schema", label: "Meta-Schema Engine", icon: Code },
-            { href: "/admin/taxonomy", label: "Taxonomy Manager", icon: Tags },
+            { href: "/admin/companies", label: "Companies", icon: Building2 },
+            { href: "/admin/companies/verification", label: "Verification", icon: ShieldAlert },
         ]
     },
     {
-        label: "Intelligence",
+        label: "Jobs & ATS",
         links: [
-            { href: "/admin/ai-config", label: "Resonance Tuning", icon: Brain },
-            { href: "/admin/ai-logs", label: "AI Evaluation Logs", icon: Activity },
-            { href: "/admin/jobs", label: "Job Oversight", icon: Briefcase },
+            { href: "/admin/jobs", label: "Jobs", icon: Briefcase },
             { href: "/admin/applications", label: "Applications", icon: FileText },
+            { href: "/admin/ats-analytics", label: "ATS Analytics", icon: BarChart3 },
         ]
     },
     {
-        label: "Infrastructure",
+        label: "AI Center",
         links: [
-            { href: "/admin/profile", label: "Operational Nexus", icon: Fingerprint },
-            { href: "/admin/features", label: "Feature Flags", icon: Zap },
-            { href: "/admin/subscriptions", label: "SaaS Plans", icon: CreditCard },
-            { href: "/admin/settings", label: "System Protocols", icon: Settings },
+            { href: "/admin/ai-config", label: "Models & Config", icon: Brain },
+            { href: "/admin/ai-logs", label: "AI Logs & Usage", icon: History },
+        ]
+    },
+    {
+        label: "Content (CMS)",
+        links: [
+            { href: "/admin/cms/pages", label: "Pages & Blocks", icon: LayoutDashboard },
+            { href: "/admin/cms/blog", label: "Blog", icon: FileText },
+            { href: "/admin/cms/banners", label: "Banners", icon: Flag },
+        ]
+    },
+    {
+        label: "Taxonomy",
+        links: [
+            { href: "/admin/taxonomy/skills", label: "Skills", icon: Code },
+            { href: "/admin/taxonomy/industries", label: "Industries", icon: Building2 },
+            { href: "/admin/taxonomy/categories", label: "Categories", icon: Tags },
+        ]
+    },
+    {
+        label: "Security & Subscriptions",
+        links: [
+            { href: "/admin/security", label: "Security Center", icon: ShieldAlert },
+            { href: "/admin/audit", label: "Audit Logs", icon: Fingerprint },
+            { href: "/admin/subscriptions", label: "Subscriptions", icon: CreditCard },
+            { href: "/admin/settings", label: "Settings", icon: Settings },
         ]
     },
 ]
@@ -184,17 +205,23 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
     )
 
     const renderSimpleNav = () => {
-        const links = role === "company" ? companyLinks : role === "recruiter" ? recruiterLinks : userLinks
+        let links = role === "company" ? companyLinks : role === "recruiter" ? recruiterLinks : userLinks;
+        
+        // Dynamically point to the user's unique profile URL
+        links = links.map(link => {
+            if (link.href === "/user/profile" && user?.id) {
+                return { ...link, href: `/in/${user.username || user.id}` }
+            }
+            return link;
+        });
+        
         return (
             <nav className={cn(
                 "flex-1 space-y-1 overflow-y-auto custom-scrollbar",
                 variant === "default" ? "px-4 py-6" : "px-0 py-2"
             )}>
                 {links.map((link) => {
-                    let href = link.href
-                    if (href === "/user/profile" && user?.username) {
-                        href = `/${user.username}`
-                    }
+                    const href = link.href
                     const isActive = isActiveLink(href, (link as any).exact)
                     return (
                         <Link key={link.href} href={href} className="block relative group/item">

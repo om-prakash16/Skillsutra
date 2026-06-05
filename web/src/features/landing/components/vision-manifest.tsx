@@ -23,10 +23,10 @@ export function VisionManifest() {
   };
 
   return (
-    <section className="py-24 bg-[#020202] relative overflow-hidden">
+    <section className="py-24 bg-background relative overflow-hidden">
       {/* Decorative Grid Bias */}
       <div className="absolute inset-0 z-0 opacity-10 pointer-events-none" 
-           style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, #333 1px, transparent 0)', backgroundSize: '40px 40px' }} 
+           style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 0)', backgroundSize: '40px 40px' }} 
       />
       
       <div className="container mx-auto max-w-7xl px-4 relative z-10">
@@ -52,7 +52,7 @@ export function VisionManifest() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
             <motion.div 
               variants={itemVariants} 
-              className="p-8 rounded-3xl bg-white/[0.01] border border-border/50 space-y-6 group hover:border-rose-500/20 hover:bg-rose-500/[0.01] transition-all duration-500 shadow-premium"
+              className="p-8 rounded-3xl bg-muted/20 border border-border/50 space-y-6 group hover:border-rose-500/20 hover:bg-rose-500/[0.05] transition-all duration-500 shadow-premium"
             >
               <ShieldAlert className="w-10 h-10 text-rose-500 mb-2 group-hover:scale-105 transition-transform duration-300" />
               <h4 className="text-2xl font-extrabold italic uppercase tracking-tight text-foreground font-heading">The Legacy Path</h4>
@@ -111,15 +111,15 @@ export function VisionManifest() {
             </p>
             
             <div className="pt-10 flex justify-end gap-4 md:gap-6 flex-wrap">
-                <div className="glass border border-border/50 bg-[#0a0a0f]/40 p-6 rounded-2xl flex flex-col items-end min-w-[150px] shadow-premium hover:border-primary/20 transition-all duration-300">
+                <div className="glass border border-border/50 bg-muted/40 p-6 rounded-2xl flex flex-col items-end min-w-[150px] shadow-premium hover:border-primary/20 transition-all duration-300">
                     <span className="text-2xl md:text-3xl font-extrabold text-foreground tracking-tighter font-mono">0.4s</span>
                     <span className="text-[10px] text-muted-foreground uppercase font-mono font-bold tracking-widest mt-1.5">Resume Analysis</span>
                 </div>
-                <div className="glass border border-border/50 bg-[#0a0a0f]/40 p-6 rounded-2xl flex flex-col items-end min-w-[150px] shadow-premium hover:border-primary/20 transition-all duration-300">
-                    <span className="text-2xl md:text-3xl font-extrabold text-emerald-400 tracking-tighter font-mono">98.4%</span>
+                <div className="glass border border-border/50 bg-muted/40 p-6 rounded-2xl flex flex-col items-end min-w-[150px] shadow-premium hover:border-primary/20 transition-all duration-300">
+                    <span className="text-2xl md:text-3xl font-extrabold text-emerald-500 tracking-tighter font-mono">98.4%</span>
                     <span className="text-[10px] text-muted-foreground uppercase font-mono font-bold tracking-widest mt-1.5">Match Accuracy</span>
                 </div>
-                <div className="glass border border-border/50 bg-[#0a0a0f]/40 p-6 rounded-2xl flex flex-col items-end min-w-[150px] shadow-premium hover:border-primary/20 transition-all duration-300">
+                <div className="glass border border-border/50 bg-muted/40 p-6 rounded-2xl flex flex-col items-end min-w-[150px] shadow-premium hover:border-primary/20 transition-all duration-300">
                     <span className="text-2xl md:text-3xl font-extrabold text-primary tracking-tighter font-mono">60%</span>
                     <span className="text-[10px] text-muted-foreground uppercase font-mono font-bold tracking-widest mt-1.5">Faster Hiring</span>
                 </div>

@@ -124,7 +124,7 @@ export default function AssessmentRunnerPage() {
     if (!isStarted && !isFinished) {
         return (
             <div className="max-w-4xl mx-auto py-20 px-4 animate-in fade-in zoom-in duration-700">
-                <Card className="bg-[#0a0a0a] border-border overflow-hidden relative shadow-2xl shadow-primary/10">
+                <Card className="bg-background border-border overflow-hidden relative shadow-2xl shadow-primary/10">
                     <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
                     <CardHeader className="p-12 text-center space-y-6">
                         <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mx-auto border border-primary/20 rotate-3 group-hover:rotate-6 transition-transform">
@@ -176,7 +176,7 @@ export default function AssessmentRunnerPage() {
         const score = Math.round((answers.filter((a, i) => a === questions[i].correct_answer).length / questions.length) * 100)
         return (
             <div className="max-w-4xl mx-auto py-20 px-4 animate-in fade-in zoom-in duration-1000">
-                <Card className="bg-[#0a0a0a] border-border overflow-hidden relative shadow-2xl">
+                <Card className="bg-background border-border overflow-hidden relative shadow-2xl">
                     <div className="absolute top-0 left-0 w-full h-[300px] bg-gradient-to-b from-primary/20 to-transparent blur-3xl opacity-50" />
                     <CardHeader className="p-12 text-center space-y-8 relative">
                         <div className="relative inline-block">
@@ -253,7 +253,7 @@ export default function AssessmentRunnerPage() {
             </div>
 
             {/* Main Engagement Card */}
-            <Card className="bg-[#0a0a0a] border-border overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,1)] group">
+            <Card className="bg-background border-border overflow-hidden relative shadow-[0_0_50px_rgba(0,0,0,1)] group">
                 <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-30" />
                 <CardHeader className="p-12 pb-8">
                     <div className="flex items-center gap-3 mb-6">

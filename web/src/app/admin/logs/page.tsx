@@ -111,7 +111,7 @@ export default function ActivityLogs() {
                       <SelectTrigger className="w-48 bg-transparent border-none focus:ring-0 text-foreground font-black uppercase tracking-widest text-[10px]">
                           <SelectValue placeholder="All Categories" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-950 border-border text-foreground">
+                      <SelectContent className="bg-background border-border text-foreground">
                           <SelectItem value="all">ALL CATEGORIES</SelectItem>
                           <SelectItem value="user">USER ENTITIES</SelectItem>
                           <SelectItem value="company">CORPORATE NODES</SelectItem>
@@ -145,7 +145,7 @@ export default function ActivityLogs() {
         </CardHeader>
         <CardContent className="p-0 relative z-10 min-h-[500px] overflow-y-auto custom-scrollbar bg-background/80">
           <Table>
-            <TableHeader className="sticky top-0 bg-[#030712]/95 backdrop-blur-xl z-20 border-b border-border">
+            <TableHeader className="sticky top-0 bg-background/95 backdrop-blur-xl z-20 border-b border-border">
               <TableRow className="border-b border-border hover:bg-transparent uppercase font-black text-[10px] tracking-widest">
                 <TableHead className="px-8 h-12 w-48">Event Signature</TableHead>
                 <TableHead className="h-12 w-56">Action Protocol</TableHead>

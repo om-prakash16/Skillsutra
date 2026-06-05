@@ -17,6 +17,7 @@ PyJWT
 ruff
 mypy
 cachetools
+nest-asyncio
 
 sqlalchemy
 passlib[bcrypt]

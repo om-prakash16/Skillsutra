@@ -82,7 +82,7 @@ export function EditJobModal({ job, isOpen, onClose, onSuccess }: EditJobModalPr
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="bg-[#050505]/90 backdrop-blur-3xl border-emerald-500/10 rounded-[2.5rem] max-w-lg shadow-[0_0_50px_-12px_rgba(16,185,129,0.15)] overflow-hidden">
+            <DialogContent className="bg-background/90 backdrop-blur-3xl border-emerald-500/10 rounded-[2.5rem] max-w-lg shadow-[0_0_50px_-12px_rgba(16,185,129,0.15)] overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-emerald-500/30 to-transparent opacity-50" />
                 
                 <DialogHeader className="pt-6 px-8 text-left">
@@ -148,7 +148,7 @@ export function EditJobModal({ job, isOpen, onClose, onSuccess }: EditJobModalPr
                                     <SelectTrigger className="bg-background/40 border-border/50 rounded-2xl h-14 font-bold focus:ring-emerald-500/20 transition-all">
                                         <SelectValue placeholder="Select Protocol" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-border rounded-2xl">
+                                    <SelectContent className="bg-background/95 backdrop-blur-xl border-border rounded-2xl">
                                         <SelectItem value="Full-time" className="font-bold">Full-time</SelectItem>
                                         <SelectItem value="Contract" className="font-bold">Contract</SelectItem>
                                         <SelectItem value="Freelance" className="font-bold">Freelance</SelectItem>
@@ -165,7 +165,7 @@ export function EditJobModal({ job, isOpen, onClose, onSuccess }: EditJobModalPr
                                     <SelectTrigger className="bg-background/40 border-border/50 rounded-2xl h-14 font-bold focus:ring-emerald-500/20 transition-all">
                                         <SelectValue placeholder="Select State" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-border rounded-2xl">
+                                    <SelectContent className="bg-background/95 backdrop-blur-xl border-border rounded-2xl">
                                         <SelectItem value="active" className="font-bold text-emerald-400">Broadcast (Active)</SelectItem>
                                         <SelectItem value="closed" className="font-bold text-rose-400">Terminated (Closed)</SelectItem>
                                         <SelectItem value="flagged" className="font-bold text-amber-400">Restricted (Flagged)</SelectItem>

@@ -115,7 +115,7 @@ export function TalentCard({ talent }: TalentCardProps) {
         </div>
       </div>
 
-      <Link href={`/talent/${talent.id}`} className="absolute inset-0 z-10" aria-label={`View ${talent.name}'s profile`} />
+      <Link href={talent.username ? `/in/${talent.username}` : `/u/${talent.id}`} className="absolute inset-0 z-10" aria-label={`View ${talent.name}'s profile`} />
     </Card>
   );
 }

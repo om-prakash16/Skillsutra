@@ -41,6 +41,15 @@ def create_refresh_token(subject: Union[str, Any]) -> str:
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+def create_setup_token(email: str) -> str:
+    expire = datetime.utcnow() + timedelta(minutes=15)
+    to_encode = {
+        "exp": expire,
+        "sub": email,
+        "type": "setup"
+    }
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+
 def decode_token(token: str) -> Optional[dict]:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])

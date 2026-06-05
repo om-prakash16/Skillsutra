@@ -5,17 +5,71 @@ import { UserProfile } from "@/types/profile"
 import { Label } from "@/components/ui/label"
 import { cn } from "@/lib/utils"
 
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
+import { Edit, Save, Loader2 } from "lucide-react"
 
 interface EducationTabProps {
     data: UserProfile
+    onSave?: (payload: any) => Promise<void>
     isEditing?: boolean
     onAdd?: () => void
     onDelete?: (id: string) => void
-    onUpdate?: (id: string, field: string, value: any) => void
+    onUpdate?: (id: string, field: string, value: string) => void
 }
 
-export function EducationTab({ data, isEditing, onAdd, onDelete, onUpdate }: EducationTabProps) {
+export function EducationTab({ data, onSave }: EducationTabProps) {
+    const [isEditing, setIsEditing] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
+    const [localEducation, setLocalEducation] = useState(data.education || [])
+
+    useEffect(() => {
+        setLocalEducation(data.education || [])
+    }, [data.education])
+
+    const handleAdd = () => {
+        const newEdu = {
+            id: Math.random().toString(),
+            institution: "New Institution",
+            degree: "Degree",
+            startYear: "2024",
+            endYear: "2028",
+            current: false,
+            grade: ""
+        }
+        setLocalEducation([newEdu, ...localEducation])
+    }
+
+    const handleDelete = (id: string) => {
+        setLocalEducation(localEducation.filter((e: any) => e.id !== id))
+    }
+
+    const handleUpdate = (id: string, field: string, value: any) => {
+        setLocalEducation(localEducation.map((e: any) => e.id === id ? { ...e, [field]: value } : e))
+    }
+
+    const handleCommitChanges = async () => {
+        setIsSaving(true)
+        if (onSave) {
+            await onSave({
+                education: localEducation.map((e: any) => ({
+                    institution: e.institution,
+                    degree: e.degree,
+                    field_of_study: e.fieldOfStudy,
+                    start_date: e.startYear ? `${e.startYear}-01-01` : null,
+                    end_date: (e.current || !e.endYear) ? null : `${e.endYear}-12-31`,
+                    grade: e.grade || null
+                }))
+            })
+        }
+        setIsSaving(false)
+        setIsEditing(false)
+    }
+
+    const handleCancel = () => {
+        setLocalEducation(data.education || [])
+        setIsEditing(false)
+    }
     return (
         <Card className="glass border-border/50 rounded-[2.5rem] overflow-hidden relative">
             <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
@@ -26,18 +80,33 @@ export function EducationTab({ data, isEditing, onAdd, onDelete, onUpdate }: Edu
                         Verified academic history and formal certification nodes.
                     </CardDescription>
                 </div>
-                {isEditing && (
-                    <Button size="sm" onClick={onAdd} variant="premium" className="h-10 px-5 rounded-xl shadow-xl shadow-primary/20">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Log Credential
+                {onSave && !isEditing && (
+                    <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit
                     </Button>
+                )}
+                {isEditing && (
+                    <div className="flex items-center gap-2">
+                        <Button size="sm" onClick={handleAdd} variant="premium" className="h-10 px-5 rounded-xl shadow-xl shadow-primary/20">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Log Credential
+                        </Button>
+                        <Button size="sm" onClick={handleCommitChanges} disabled={isSaving}>
+                            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                            Save
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={handleCancel} disabled={isSaving}>
+                            Cancel
+                        </Button>
+                    </div>
                 )}
             </CardHeader>
             <CardContent className="space-y-10 px-10 pb-12 pt-6">
-                {data.education.map((edu: any, index: any) => (
+                {localEducation.map((edu: any, index: any) => (
                     <div key={edu.id} className={cn(
                         "relative flex gap-6 group",
-                        index !== data.education.length - 1 ? "pb-10 border-b border-border/50" : ""
+                        index !== localEducation.length - 1 ? "pb-10 border-b border-border/50" : ""
                     )}>
                         <div className="w-16 h-16 bg-muted/30 border border-border rounded-2xl flex items-center justify-center shrink-0 shadow-inner group-hover:scale-105 transition-transform duration-500">
                             <GraduationCap className="w-7 h-7 text-primary/30" />
@@ -49,14 +118,14 @@ export function EducationTab({ data, isEditing, onAdd, onDelete, onUpdate }: Edu
                                     {isEditing ? (
                                         <div className="space-y-3">
                                             <Input
-                                                defaultValue={edu.institution}
-                                                onChange={(e) => onUpdate?.(edu.id, 'institution', e.target.value)}
+                                                value={edu.institution || ""}
+                                                onChange={(e) => handleUpdate(edu.id, 'institution', e.target.value)}
                                                 className="font-bold h-10 glass border-border rounded-lg text-sm"
                                                 placeholder="Institution Name"
                                             />
                                             <Input
-                                                defaultValue={edu.degree}
-                                                onChange={(e) => onUpdate?.(edu.id, 'degree', e.target.value)}
+                                                value={edu.degree || ""}
+                                                onChange={(e) => handleUpdate(edu.id, 'degree', e.target.value)}
                                                 className="h-9 glass border-border rounded-lg text-xs"
                                                 placeholder="Degree / Specification"
                                             />
@@ -73,7 +142,7 @@ export function EducationTab({ data, isEditing, onAdd, onDelete, onUpdate }: Edu
                                         <Button
                                             variant="ghost"
                                             size="icon"
-                                            onClick={() => onDelete?.(edu.id)}
+                                            onClick={() => handleDelete(edu.id)}
                                             className="h-10 w-10 text-muted-foreground/50 hover:text-rose-500 hover:bg-rose-500/10 rounded-xl"
                                         >
                                             <Trash2 className="w-4 h-4" />
@@ -86,8 +155,8 @@ export function EducationTab({ data, isEditing, onAdd, onDelete, onUpdate }: Edu
                                     <div className="space-y-1 w-24">
                                          <Label className="text-[9px] font-black uppercase text-muted-foreground ml-1">Start Year</Label>
                                          <Input
-                                            value={edu.startYear || ""}
-                                            onChange={(e) => onUpdate?.(edu.id, 'startYear', e.target.value)}
+                                             value={edu.startYear || ""}
+                                            onChange={(e) => handleUpdate(edu.id, 'startYear', e.target.value)}
                                             className="h-9 glass border-border rounded-lg text-xs text-foreground"
                                             placeholder="YYYY"
                                         />
@@ -96,7 +165,7 @@ export function EducationTab({ data, isEditing, onAdd, onDelete, onUpdate }: Edu
                                          <Label className="text-[9px] font-black uppercase text-muted-foreground ml-1">End Year</Label>
                                          <Input
                                             value={edu.endYear || ""}
-                                            onChange={(e) => onUpdate?.(edu.id, 'endYear', e.target.value)}
+                                            onChange={(e) => handleUpdate(edu.id, 'endYear', e.target.value)}
                                             className="h-9 glass border-border rounded-lg text-xs text-foreground disabled:opacity-30"
                                             placeholder="YYYY"
                                             disabled={edu.current}
@@ -106,16 +175,16 @@ export function EducationTab({ data, isEditing, onAdd, onDelete, onUpdate }: Edu
                                          <input 
                                              type="checkbox" 
                                              checked={edu.current || false} 
-                                             onChange={(e) => onUpdate?.(edu.id, 'current', e.target.checked)}
+                                             onChange={(e) => handleUpdate(edu.id, 'current', e.target.checked)}
                                              className="rounded border-border bg-muted/50 w-4 h-4 accent-primary cursor-pointer"
                                          />
-                                         <Label className="text-[10px] font-bold uppercase text-muted-foreground cursor-pointer pt-0.5" onClick={() => onUpdate?.(edu.id, 'current', !edu.current)}>Pursuing / Present</Label>
+                                         <Label className="text-[10px] font-bold uppercase text-muted-foreground cursor-pointer pt-0.5" onClick={() => handleUpdate(edu.id, 'current', !edu.current)}>Pursuing / Present</Label>
                                     </div>
                                     <div className="space-y-1 w-24 ml-auto">
                                          <Label className="text-[9px] font-black uppercase text-muted-foreground ml-1">Grade</Label>
                                          <Input
                                             value={edu.grade || ""}
-                                            onChange={(e) => onUpdate?.(edu.id, 'grade', e.target.value)}
+                                            onChange={(e) => handleUpdate(edu.id, 'grade', e.target.value)}
                                             className="h-9 glass border-border rounded-lg text-xs text-foreground"
                                             placeholder="G.P.A / %"
                                         />
@@ -136,7 +205,7 @@ export function EducationTab({ data, isEditing, onAdd, onDelete, onUpdate }: Edu
                         </div>
                     </div>
                 ))}
-                {data.education.length === 0 && (
+                {localEducation.length === 0 && (
                     <div className="text-center py-20 bg-muted/30 border border-dashed border-border rounded-[2rem]">
                          <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/50">Awaiting Academic Node Initialization...</p>
                     </div>

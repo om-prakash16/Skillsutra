@@ -10,6 +10,8 @@ from fastapi.responses import ORJSONResponse
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+import os
 
 from core.config import settings
 from core.logging import ProtocolLogger, setup_logging
@@ -50,6 +52,9 @@ app = FastAPI(
     docs_url="/docs" if settings.DEBUG else None,
     redoc_url="/redoc" if settings.DEBUG else None,
 )
+
+os.makedirs("uploads", exist_ok=True)
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 from api.middleware.rate_limit import RateLimitMiddleware
 from starlette.middleware.gzip import GZipMiddleware

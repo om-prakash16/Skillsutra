@@ -49,8 +49,10 @@ async def get_me(current_user: dict = Depends(get_current_user), db: AsyncSessio
         await db.commit()
 
     # Resolve roles
-    roles_list = [r.name for r in user.roles] if user.roles else ["user"]
+    roles_list = [r.role_name for r in user.roles] if user.roles else ["user"]
     primary_role = roles_list[0] if roles_list else "user"
+    if "admin" in roles_list:
+        primary_role = "admin"
 
     return {
         "status": "success",
@@ -61,6 +63,7 @@ async def get_me(current_user: dict = Depends(get_current_user), db: AsyncSessio
             "role": primary_role,
             "roles": roles_list,
             "username": user.username,
+            "avatar_url": user.avatar_url,
         }
     }
 
@@ -178,7 +181,37 @@ async def reset_password(
     await service.reset_password(data.token, data.new_password)
     return {"status": "success", "message": "Password has been successfully reset. Please log in with your new password."}
 
-from schemas.auth import MagicLinkRequest, MagicLinkVerify
+from schemas.auth import MagicLinkRequest, MagicLinkVerify, OTPRequest, OTPVerify, MagicLinkSetup
+
+@router.post("/send-otp")
+async def send_otp(
+    data: OTPRequest,
+    db: AsyncSession = Depends(get_db_session)
+):
+    service = AuthService(db)
+    await service.send_otp(data.email, data.name)
+    return {"message": "Verification code sent."}
+
+@router.post("/verify-otp")
+async def verify_otp(
+    data: OTPVerify,
+    db: AsyncSession = Depends(get_db_session)
+):
+    service = AuthService(db)
+    setup_token = await service.verify_otp(data.email, data.code)
+    return {"status": "success", "setup_token": setup_token}
+
+@router.post("/complete-setup")
+async def complete_setup(
+    data: MagicLinkSetup,
+    request: Request,
+    db: AsyncSession = Depends(get_db_session)
+):
+    service = AuthService(db)
+    ip = get_client_ip(request)
+    device = get_device_info(request)
+    result = await service.complete_magic_setup(data.token, data.password, data.name, ip, device)
+    return result
 
 @router.post("/magic-link")
 async def magic_link(
@@ -190,7 +223,7 @@ async def magic_link(
     await service.send_magic_link(data.email, request)
     return {"message": "If an account exists with that email, a magic link has been sent."}
 
-@router.post("/verify-magic", response_model=Token)
+@router.post("/verify-magic")
 async def verify_magic(
     data: MagicLinkVerify,
     request: Request,
@@ -199,13 +232,9 @@ async def verify_magic(
     service = AuthService(db)
     ip = get_client_ip(request)
     device = get_device_info(request)
-    user, access_token, refresh_token = await service.verify_magic_link(data.token, ip, device)
+    result = await service.verify_magic_link(data.token, ip, device)
     
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer"
-    }
+    return result
 
 # --- OAuth Routes ---
 
@@ -216,12 +245,26 @@ async def google_auth(
     db: AsyncSession = Depends(get_db_session)
 ):
     service = OAuthService(db)
-    user, access, refresh = await service.handle_google_id_token(
-        id_token=data.id_token,
-        ip_address=request.client.host if request.client else "unknown",
-        device_info=request.headers.get("User-Agent", "unknown"),
-        role=data.role
-    )
+    ip = request.client.host if request.client else "unknown"
+    device = request.headers.get("User-Agent", "unknown")
+    
+    if data.access_token:
+        user, access, refresh = await service.handle_google_access_token(
+            access_token=data.access_token,
+            ip_address=ip,
+            device_info=device,
+            role=data.role
+        )
+    elif data.id_token:
+        user, access, refresh = await service.handle_google_id_token(
+            id_token=data.id_token,
+            ip_address=ip,
+            device_info=device,
+            role=data.role
+        )
+    else:
+        raise HTTPException(status_code=400, detail="Must provide either id_token or access_token")
+        
     return {
         "access_token": access,
         "refresh_token": refresh,
@@ -229,12 +272,16 @@ async def google_auth(
     }
 
 @router.get("/oauth/github/url")
-async def get_github_auth_url():
+async def get_github_auth_url(intent: str = "login"):
+    import base64
+    import json
     client_id = os.getenv("GITHUB_CLIENT_ID", "YOUR_GITHUB_CLIENT_ID")
     redirect_uri = os.getenv("FRONTEND_URL", "http://localhost:3000") + "/api/auth/callback/github"
+    state_payload = {"intent": intent}
+    state = base64.b64encode(json.dumps(state_payload).encode()).decode()
     url = (
         f"https://github.com/login/oauth/authorize"
-        f"?client_id={client_id}&redirect_uri={redirect_uri}&scope=user:email"
+        f"?client_id={client_id}&redirect_uri={redirect_uri}&scope=user:email&state={state}"
     )
     return {"url": url}
 
@@ -244,11 +291,45 @@ async def github_callback(
     request: Request,
     db: AsyncSession = Depends(get_db_session)
 ):
+    import base64
+    import json
     service = OAuthService(db)
     ip = get_client_ip(request)
     device = get_device_info(request)
     
-    user, access, refresh = await service.handle_github_callback(data.code, ip, device)
+    intent = "login"
+    if data.state:
+        try:
+            state_data = json.loads(base64.b64decode(data.state).decode())
+            intent = state_data.get("intent", "login")
+        except:
+            pass
+            
+    if intent == "link":
+        auth_header = request.headers.get("Authorization")
+        if not auth_header or not auth_header.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Missing auth token for linking")
+        token_str = auth_header.split(" ")[1]
+        
+        # Verify token using dependency logic
+        from core.security import verify_access_token
+        payload = verify_access_token(token_str)
+        if not payload:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        
+        user_id = payload.get("sub")
+        # Ensure we return a dictionary structure that matches token so the frontend doesn't crash if it expects token
+        # But wait, the frontend callback expects token to login. For linking, we need to handle it properly.
+        # Actually, let's just return the same access token back to keep it compatible!
+        await service.link_github_account(data.code, user_id)
+        # Dummy token structure for link intent
+        return {
+            "access_token": token_str,
+            "refresh_token": "linked",
+            "token_type": "bearer"
+        }
+            
+    user, access, refresh = await service.handle_github_callback(data.code, ip, device, intent=intent)
     return {
         "access_token": access,
         "refresh_token": refresh,

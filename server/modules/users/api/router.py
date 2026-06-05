@@ -46,8 +46,10 @@ async def get_public_portfolio(user_code: str):
 
 @router.get("/public/{user_id}")
 async def get_public_profile_by_id(user_id: str):
-    """Publicly accessible profile endpoint by user UUID."""
+    """Publicly accessible profile endpoint by user UUID or username."""
     profile = await user_service.get_full_profile(user_id)
+    if not profile:
+        return success_response(data=None, message="Profile not found", status_code=404)
     return success_response(data=profile)
 
 @router.get("/search/{user_code}")

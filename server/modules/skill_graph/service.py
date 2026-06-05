@@ -32,12 +32,12 @@ class SkillGraphService:
             return {"nodes": [], "total": 0}
 
         res = db.table("user_skill_nodes").select(
-            "*, skill_taxonomy(name, slug, category, icon_url)"
+            "*, skills(name, category)"
         ).eq("user_id", user_id).order("is_primary", desc=True).order("proof_score", desc=True).execute()
 
         nodes = []
         for row in (res.data or []):
-            tax = row.get("skill_taxonomy", {}) or {}
+            tax = row.get("skills", {}) or {}
             # Count endorsements
             end_res = db.table("skill_endorsements").select("id", count="exact").eq(
                 "user_skill_node_id", row["id"]

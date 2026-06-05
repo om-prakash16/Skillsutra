@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { login as apiLogin, signup as apiSignup, refreshSession as apiRefreshSession, logout as apiLogout, me as apiMe, verifyMagicLink } from "@/lib/api/auth-api"
+import { login as apiLogin, signup as apiSignup, refreshSession as apiRefreshSession, logout as apiLogout, me as apiMe, verifyMagicLink, sendSignupOtp as apiSendSignupOtp, verifySignupOtp as apiVerifySignupOtp, completeMagicLinkSetup as apiCompleteMagicSetup } from "@/lib/api/auth-api"
 
 type UserRole = "user" | "company" | "admin" | "recruiter" | string
 
@@ -20,6 +20,7 @@ interface User {
     profile_data?: any
     dynamic_profile_data?: any
     companies?: any[]
+    avatar_url?: string
 }
 
 interface AuthContextType {
@@ -27,11 +28,14 @@ interface AuthContextType {
     token: string | null
     isLoading: boolean
     isAuthenticated: boolean
-    signInWithGoogle: (role?: string) => Promise<void>
-    signInWithGitHub: (role?: string) => Promise<void>
+    signInWithGoogle: (role?: string, intent?: "login" | "register" | "link") => Promise<void>
+    signInWithGitHub: (role?: string, intent?: "login" | "register" | "link") => Promise<void>
     loginUser: (data: any) => Promise<void>
-    loginWithMagicLink: (token: string) => Promise<void>
+    loginWithMagicLink: (token: string) => Promise<any>
     signupUser: (data: any) => Promise<void>
+    sendSignupOtp: (email: string, name?: string) => Promise<void>
+    verifySignupOtp: (email: string, code: string) => Promise<string>
+    completeMagicLinkSetup: (data: any) => Promise<void>
     logout: () => void
     setAuthSession: (user: User, accessToken: string, refreshToken: string) => void
 }
@@ -93,18 +97,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, [])
 
-    const signInWithGoogle = async (role = "user") => {
+    const signInWithGoogle = async (role = "user", intent: "login" | "register" | "link" = "login") => {
         setIsLoading(true)
         localStorage.setItem("requested_role", role)
         // Redirect to the login page where the proper GoogleLogin button is rendered
-        router.push('/auth/login?role=' + role)
+        router.push(`/auth/${intent}?role=${role}`)
         setIsLoading(false)
     }
 
-    const signInWithGitHub = async (role = "user") => {
+    const signInWithGitHub = async (role = "user", intent: "login" | "register" | "link" = "login") => {
         setIsLoading(true)
         localStorage.setItem("requested_role", role)
-        window.location.href = `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/auth/oauth/github/url`
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/auth/oauth/github/url?intent=${intent}`)
+            const data = await res.json()
+            if (data.url) {
+                window.location.href = data.url
+            }
+        } catch (error) {
+            console.error("Failed to get GitHub auth URL", error)
+            toast.error("Failed to initialize GitHub login")
+            setIsLoading(false)
+        }
     }
 
     const loginUser = async (data: any) => {
@@ -128,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } else if (realUser?.role === "company") {
                 router.push("/company/dashboard")
             } else {
-                router.push("/user/dashboard")
+                router.push("/feed")
             }
         } catch (err: any) {
             toast.error(err.message || "Login failed")
@@ -142,6 +156,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(true)
         try {
             const result = await verifyMagicLink(magicToken)
+            
+            if (result.needs_setup) {
+                setIsLoading(false)
+                return result // Return to let the component handle setup UI
+            }
+            
             localStorage.setItem("accessToken", result.access_token)
             localStorage.setItem("refreshToken", result.refresh_token)
             document.cookie = `auth_token=${result.access_token}; path=/; max-age=86400; SameSite=Lax`
@@ -160,6 +180,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } else {
                 router.push("/user/dashboard")
             }
+            return result
         } catch (err: any) {
             toast.error(err.message || "Magic link verification failed")
             throw err
@@ -172,9 +193,58 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(true)
         try {
             await apiSignup(data)
-            await loginUser({ email_or_username: data.email, password: data.password })
+            // loginUser is no longer called here to enforce email verification
         } catch (err: any) {
             toast.error(err.message || "Signup failed")
+            throw err
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const sendSignupOtp = async (email: string, name?: string) => {
+        setIsLoading(true)
+        try {
+            await apiSendSignupOtp(email, name)
+        } catch (err: any) {
+            toast.error(err.message || "Failed to send OTP")
+            throw err
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const verifySignupOtp = async (email: string, code: string) => {
+        setIsLoading(true)
+        try {
+            const res = await apiVerifySignupOtp(email, code)
+            return res.setup_token
+        } catch (err: any) {
+            toast.error(err.message || "Invalid OTP")
+            throw err
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const completeMagicLinkSetup = async (data: any) => {
+        setIsLoading(true)
+        try {
+            const result = await apiCompleteMagicSetup(data)
+            
+            localStorage.setItem("accessToken", result.access_token)
+            localStorage.setItem("refreshToken", result.refresh_token)
+            document.cookie = `auth_token=${result.access_token}; path=/; max-age=86400; SameSite=Lax`
+            setToken(result.access_token)
+            
+            const realUser = await apiMe()
+            setUser(realUser)
+            setIsAuthenticated(true)
+            
+            toast.success("Account created successfully")
+            router.push("/user/dashboard")
+        } catch (err: any) {
+            toast.error(err.message || "Setup failed")
             throw err
         } finally {
             setIsLoading(false)
@@ -219,6 +289,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 loginUser,
                 loginWithMagicLink,
                 signupUser,
+                sendSignupOtp,
+                verifySignupOtp,
+                completeMagicLinkSetup,
                 logout,
                 setAuthSession,
             }}

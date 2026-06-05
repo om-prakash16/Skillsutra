@@ -11,6 +11,7 @@ import SkillGapAnalyzer from "@/components/skills/SkillGapAnalyzer";
 import { ProjectLedgerList } from "@/components/projects/ProjectLedgerList";
 import { AddProjectModal } from "@/components/projects/AddProjectModal";
 import { GitHubSyncWizard } from "@/components/projects/GitHubSyncWizard";
+import { DeveloperEcosystemSync } from "@/components/skills/DeveloperEcosystemSync";
 import { Plus, Github } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -83,8 +84,8 @@ export default function SkillsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Skill Graph</h1>
-          <p className="text-sm text-zinc-500 mt-1">
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Skill Graph</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             Build your proof-based skill identity. Add, verify, and visualize your competencies.
           </p>
         </div>
@@ -111,9 +112,9 @@ export default function SkillsPage() {
         ].map((stat) => (
           <div
             key={stat.label}
-            className="p-4 rounded-xl bg-zinc-950/50 border border-border/50 backdrop-blur-sm"
+            className="p-4 rounded-xl bg-card border border-border shadow-sm"
           >
-            <div className="text-xs text-zinc-500 flex items-center gap-1.5">
+            <div className="text-xs text-muted-foreground flex items-center gap-1.5">
               <span>{stat.icon}</span> {stat.label}
             </div>
             <div className={`text-2xl font-bold mt-1 ${stat.color}`}>{stat.value}</div>
@@ -123,7 +124,7 @@ export default function SkillsPage() {
 
       {/* Main content tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="bg-zinc-900/50 border border-border/50">
+        <TabsList className="bg-muted border border-border">
           <TabsTrigger value="graph" className="text-xs">
             🌐 Graph View
           </TabsTrigger>
@@ -136,19 +137,22 @@ export default function SkillsPage() {
           <TabsTrigger value="gaps" className="text-xs">
             🎯 Gap Analysis
           </TabsTrigger>
+          <TabsTrigger value="sync" className="text-xs">
+            🔄 Professional Presence
+          </TabsTrigger>
           <TabsTrigger value="projects" className="text-xs">
             📂 Projects
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="graph" className="mt-0">
-          <div className="rounded-xl border border-border/50 bg-zinc-950/50 backdrop-blur-sm overflow-hidden">
+          <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
             {loading ? (
-              <div className="h-[500px] flex items-center justify-center text-zinc-500 text-sm animate-pulse">
+              <div className="h-[500px] flex items-center justify-center text-muted-foreground text-sm animate-pulse">
                 Loading skill graph...
               </div>
             ) : skills.length === 0 ? (
-              <div className="h-[500px] flex flex-col items-center justify-center text-zinc-500 text-sm gap-3">
+              <div className="h-[500px] flex flex-col items-center justify-center text-muted-foreground text-sm gap-3">
                 <span className="text-4xl">🧠</span>
                 <p>No skills yet. Add skills or use AI extraction to get started.</p>
               </div>
@@ -175,6 +179,10 @@ export default function SkillsPage() {
 
         <TabsContent value="gaps" className="mt-0">
           <SkillGapAnalyzer jobs={jobs} />
+        </TabsContent>
+
+        <TabsContent value="sync" className="mt-0">
+          <DeveloperEcosystemSync />
         </TabsContent>
 
         <TabsContent value="projects" className="mt-0">

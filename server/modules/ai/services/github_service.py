@@ -40,10 +40,27 @@ class GitHubService:
                 # Fetch repositories
                 repos_resp = await client.get(f"https://api.github.com/users/{github_handle}/repos?sort=updated&per_page=100", headers=headers)
                 repos = repos_resp.json() if repos_resp.status_code == 200 else []
+                
+                # Fetch PRs
+                prs_resp = await client.get(f"https://api.github.com/search/issues?q=type:pr+author:{github_handle}", headers=headers)
+                prs_count = prs_resp.json().get("total_count", 0) if prs_resp.status_code == 200 else 0
+                
+                # Fetch Issues
+                issues_resp = await client.get(f"https://api.github.com/search/issues?q=type:issue+author:{github_handle}", headers=headers)
+                issues_count = issues_resp.json().get("total_count", 0) if issues_resp.status_code == 200 else 0
+                
+                # Fetch Commits (requires preview header)
+                commit_headers = {**headers, "Accept": "application/vnd.github.cloak-preview"}
+                commits_resp = await client.get(f"https://api.github.com/search/commits?q=author:{github_handle}", headers=commit_headers)
+                commits_count = commits_resp.json().get("total_count", 0) if commits_resp.status_code == 200 else 0
+                
             except Exception as e:
                 logger.error(f"GitHub API error: {e}")
                 user_data = {}
                 repos = []
+                prs_count = 0
+                issues_count = 0
+                commits_count = 0
 
         if not user_data:
              raise Exception(f"GitHub handle '{github_handle}' not found or API error.")
@@ -62,7 +79,7 @@ class GitHubService:
         primary_languages = [l[0] for l in sorted_langs[:5]]
 
         # 3. AI Insight Generation
-        insight = await self._generate_ai_insight(github_handle, total_repos, stars_earned, primary_languages)
+        ai_data = await self._generate_ai_insight(github_handle, total_repos, stars_earned, primary_languages)
 
         # 4. Heuristic Metrics (Simulated from real data points)
         code_quality_index = min(99, 70 + (stars_earned // 10) + (len(primary_languages) * 2))
@@ -73,32 +90,62 @@ class GitHubService:
             "total_repositories": total_repos,
             "stars_earned": stars_earned,
             "primary_languages": primary_languages,
+            "prs_count": prs_count,
+            "issues_count": issues_count,
+            "commits_count": commits_count,
             "metrics": {
                 "architectural_complexity_handling": architectural_complexity,
-                "commit_velocity_weekly": random.randint(10, 85), # Keep as heuristic for now
+                "commit_velocity_weekly": max(10, min(100, commits_count // 10)),
                 "code_quality_index": code_quality_index,
             },
-            "insight": insight
+            "ai_insights": ai_data
         }
 
-    async def _generate_ai_insight(self, handle: str, repos: int, stars: int, langs: List[str]) -> str:
-        """Generate human-readable AI insight based on real GitHub data."""
+    async def _generate_ai_insight(self, handle: str, repos: int, stars: int, langs: List[str]) -> Dict[str, Any]:
+        """Generate human-readable AI insight and inferred skills based on real GitHub data."""
+        fallback = {
+            "insight": "Strong technical footprint detected based on repository analysis.",
+            "skills": {lang: "Intermediate" for lang in langs},
+            "scores": {
+                "Backend Developer Score": min(95, 60 + len(langs)*5),
+                "Open Source Score": min(99, 50 + stars*2)
+            }
+        }
+        
         if not self.model:
-            return "Strong technical footprint detected based on repository analysis."
+            return fallback
 
-        prompt = f"""Generate a one-sentence professional technical insight for a developer's GitHub profile.
+        prompt = f"""Analyze a developer's GitHub profile and generate inferred skills and scores.
 Handle: {handle}
 Public Repos: {repos}
 Total Stars: {stars}
 Primary Languages: {', '.join(langs)}
 
-Insight should be concise and sophisticated.
+Output EXACTLY as a JSON object (no markdown, no backticks) with this structure:
+{{
+  "insight": "One-sentence professional technical insight.",
+  "skills": {{
+     "Python": "Advanced",
+     "Docker": "Beginner"
+  }},
+  "scores": {{
+     "Backend Developer Score": 88,
+     "Open Source Score": 82,
+     "Frontend Expertise": 40
+  }}
+}}
 """
         try:
+            import json
             response = self.model.generate_content(prompt)
-            return response.text.strip()
+            text = response.text.strip()
+            if text.startswith('```json'):
+                text = text[7:-3]
+            elif text.startswith('```'):
+                text = text[3:-3]
+            return json.loads(text.strip())
         except Exception:
-            return "Diverse technical skill set demonstrated across multiple repositories."
+            return fallback
 
 import random
 # Singleton instance

@@ -169,7 +169,7 @@ export function DynamicProfileForm() {
                                         <SelectTrigger className="bg-muted/50 border-border/50 rounded-2xl h-14 font-bold focus:ring-primary/20 backdrop-blur-md">
                                             <SelectValue placeholder={field.placeholder || "Select option"} />
                                         </SelectTrigger>
-                                        <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-border rounded-2xl">
+                                        <SelectContent className="bg-background/95 backdrop-blur-xl border-border rounded-2xl">
                                             {field.validation_rules?.options?.map((opt: any) => (
                                                 <SelectItem key={opt} value={opt} className="font-bold">{opt}</SelectItem>
                                             ))}

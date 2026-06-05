@@ -134,7 +134,7 @@ export function EditUserModal({ user, isOpen, onClose, onSuccess }: EditUserModa
                                     <SelectTrigger className="bg-background/40 border-border/50 rounded-2xl h-14 font-bold focus:ring-primary/20">
                                         <SelectValue placeholder="Select Role" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-border rounded-2xl">
+                                    <SelectContent className="bg-background/95 backdrop-blur-xl border-border rounded-2xl">
                                         <SelectItem value="talent" className="font-bold">Talent</SelectItem>
                                         <SelectItem value="company" className="font-bold">Company</SelectItem>
                                         <SelectItem value="admin" className="font-bold">Admin</SelectItem>
@@ -150,7 +150,7 @@ export function EditUserModal({ user, isOpen, onClose, onSuccess }: EditUserModa
                                     <SelectTrigger className="bg-background/40 border-border/50 rounded-2xl h-14 font-bold focus:ring-primary/20">
                                         <SelectValue placeholder="Select Status" />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-[#0a0a0a]/95 backdrop-blur-xl border-border rounded-2xl">
+                                    <SelectContent className="bg-background/95 backdrop-blur-xl border-border rounded-2xl">
                                         <SelectItem value="active" className="font-bold text-emerald-400">Active</SelectItem>
                                         <SelectItem value="suspended" className="font-bold text-rose-400">Suspended</SelectItem>
                                         <SelectItem value="pending" className="font-bold text-amber-400">Pending</SelectItem>
@@ -161,7 +161,7 @@ export function EditUserModal({ user, isOpen, onClose, onSuccess }: EditUserModa
                     </div>
                 </div>
 
-                <DialogFooter className="px-8 py-6 bg-[#0c0c0c]/50">
+                <DialogFooter className="px-8 py-6 bg-background/50">
                     <Button 
                         variant="ghost" 
                         onClick={onClose}

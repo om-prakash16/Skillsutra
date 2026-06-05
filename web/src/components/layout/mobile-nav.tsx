@@ -68,10 +68,12 @@ export function MobileNav() {
                 let targetHref = item.href;
                 
                 // Route unauthenticated users to login for the profile icon (if they somehow get it)
-                if (item.id === "profile" && !isAuthenticated) {
-                    targetHref = `/auth/login?redirectedFrom=${encodeURIComponent(item.href)}`;
-                } else if (item.id === "profile" && user?.username) {
-                    targetHref = `/${user.username}`;
+                if (item.id === "profile") {
+                    if (!isAuthenticated) {
+                        targetHref = `/auth/login?redirectedFrom=${encodeURIComponent(item.href)}`;
+                    } else if (user?.id) {
+                        targetHref = `/in/${user.username || user.id}`;
+                    }
                 }
                 
                 const isActive = pathname === targetHref || (targetHref !== "/" && pathname?.startsWith(targetHref))

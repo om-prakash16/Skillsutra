@@ -1,7 +1,14 @@
 from fastapi import APIRouter, HTTPException, Depends, Body
+from pydantic import BaseModel
 from modules.auth.core.service import get_current_user
 from modules.career.service import CareerService
 from modules.career.models import CareerGoalCreate, CareerTaskCreate
+
+class RoadmapGenerateRequest(BaseModel):
+    target_role: str
+    current_state: str = ""
+    timeline: str = ""
+    daily_routine: str = ""
 
 router = APIRouter()
 career_service = CareerService()
@@ -44,14 +51,21 @@ async def get_goals(current_user=Depends(get_current_user)):
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/roadmap/generate")
-async def generate_roadmap(target_role: str = Body(..., embed=True), current_user=Depends(get_current_user)):
+async def generate_roadmap(req: RoadmapGenerateRequest, current_user=Depends(get_current_user)):
     user_id = current_user.get("sub")
     try:
         from modules.users.core.service import UserService
         profile = await UserService.get_full_profile(user_id)
         user_skills = [s["name"] for s in profile.get("skills", [])] if profile else []
         
-        data = await career_service.generate_roadmap(user_id, target_role, user_skills)
+        data = await career_service.generate_roadmap(
+            user_id, 
+            req.target_role, 
+            user_skills, 
+            req.current_state, 
+            req.timeline, 
+            req.daily_routine
+        )
         return {"status": "success", "data": data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

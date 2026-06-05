@@ -5,30 +5,65 @@ import { UserProfile } from "@/types/profile"
 import { ArrowRight, Star, Clock } from "lucide-react"
 
 import { Textarea } from "@/components/ui/textarea"
+import { useState } from "react"
+import { Edit, Save, X, Loader2 } from "lucide-react"
 
 interface OverviewTabProps {
     data: any
     isEditing?: boolean
+    onSave?: (payload: any) => Promise<void>
     onUpdateBio?: (bio: string) => void
 }
 
-export function OverviewTab({ data, isEditing, onUpdateBio }: OverviewTabProps) {
+export function OverviewTab({ data, onSave, onUpdateBio }: OverviewTabProps) {
+    const [isEditing, setIsEditing] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
+    const [localBio, setLocalBio] = useState(data.basic?.bio || "")
+
+    const handleSave = async () => {
+        setIsSaving(true)
+        onUpdateBio?.(localBio)
+        if (onSave) {
+            await onSave({ profile: { bio: localBio } })
+        }
+        setIsSaving(false)
+        setIsEditing(false)
+    }
+
     return (
         <div className="grid gap-10 lg:grid-cols-3">
             {/* Summary Section */}
             <div className="lg:col-span-2 space-y-10">
                 <Card className="glass border-border/50 rounded-[2.5rem] overflow-hidden relative">
                     <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-                    <CardHeader className="pt-10 px-10">
+                    <CardHeader className="pt-10 px-10 flex flex-row items-center justify-between">
                         <CardTitle className="text-xl font-black uppercase italic tracking-tight">Neural Synthesis</CardTitle>
+                        {onSave && !isEditing && (
+                            <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                                <Edit className="w-4 h-4 mr-2" />
+                                Edit
+                            </Button>
+                        )}
                     </CardHeader>
                     <CardContent className="px-10 pb-12">
                         {isEditing ? (
-                            <Textarea
-                                defaultValue={data.basic.bio}
-                                onChange={(e) => onUpdateBio?.(e.target.value)}
-                                className="min-h-[160px] glass border-border rounded-[2rem] focus:ring-primary/30 p-8 text-sm leading-relaxed"
-                            />
+                            <div className="space-y-4">
+                                <Textarea
+                                    value={localBio}
+                                    placeholder="Add your bio..."
+                                    onChange={(e) => setLocalBio(e.target.value)}
+                                    className="min-h-[160px] glass border-border rounded-[2rem] focus:ring-primary/30 p-8 text-sm leading-relaxed"
+                                />
+                                <div className="flex gap-2 justify-end">
+                                    <Button onClick={handleSave} disabled={isSaving}>
+                                        {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                                        Save
+                                    </Button>
+                                    <Button variant="ghost" onClick={() => { setIsEditing(false); setLocalBio(data.basic?.bio || "") }} disabled={isSaving}>
+                                        Cancel
+                                    </Button>
+                                </div>
+                            </div>
                         ) : (
                             <p className="text-foreground/80 leading-[1.8] text-sm font-medium italic">
                                 {data.basic.bio}

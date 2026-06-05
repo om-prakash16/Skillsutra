@@ -233,16 +233,16 @@ export function HeroSection() {
               rotateY: rotateY, 
               transformStyle: "preserve-3d" 
             }}
-            className="relative h-[440px] w-full rounded-[2rem] bg-[#0c0c14]/90 backdrop-blur-3xl border border-border shadow-floating overflow-hidden flex flex-col transition-all duration-200 ease-out"
+            className="relative h-[440px] w-full rounded-[2rem] bg-card/90 dark:bg-background/90 backdrop-blur-3xl border border-border shadow-floating overflow-hidden flex flex-col transition-all duration-200 ease-out"
           >
             {/* Monitor Screen Glass Glare overlay */}
             <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 pointer-events-none z-20" />
             
             {/* Monitor Scanlines overlay */}
             <div 
-              className="absolute inset-0 pointer-events-none z-20 opacity-[0.03]"
+              className="absolute inset-0 pointer-events-none z-20 opacity-[0.03] dark:opacity-[0.03]"
               style={{
-                backgroundImage: 'repeating-linear-gradient(0deg, rgba(255,255,255,1), rgba(255,255,255,1) 1px, transparent 1px, transparent 3px)'
+                backgroundImage: 'repeating-linear-gradient(0deg, currentColor, currentColor 1px, transparent 1px, transparent 3px)'
               }}
             />
 
@@ -268,7 +268,7 @@ export function HeroSection() {
                 <div 
                   key={i}
                   className={`
-                    ${log.includes('[SUCCESS]') ? 'text-primary font-semibold' : 'text-neutral-400'}
+                    ${log.includes('[SUCCESS]') ? 'text-primary font-semibold' : 'text-muted-foreground dark:text-neutral-400'}
                     ${log.includes('[INTEGRITY_SUCCESS]') ? 'text-[#10b981] font-semibold' : ''}
                     ${log.includes('[SYNCED]') ? 'text-secondary font-semibold' : ''}
                   `}

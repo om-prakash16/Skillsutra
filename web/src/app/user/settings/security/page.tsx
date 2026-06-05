@@ -123,7 +123,7 @@ export default function SecurityCenterPage() {
                                 <div className="p-8 text-center text-muted-foreground text-sm font-bold">No trusted devices found.</div>
                             ) : (
                                 devices?.map((device: any) => (
-                                    <div key={device.id} className="p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
+                                    <div key={device.id} className="p-8 flex items-center justify-between hover:bg-muted/5 transition-colors">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center">
                                                 <Smartphone className="w-6 h-6 text-primary" />
@@ -155,7 +155,7 @@ export default function SecurityCenterPage() {
                                 <div className="p-8 text-center text-muted-foreground text-sm font-bold">No active sessions.</div>
                             ) : (
                                 sessions?.map((session: any) => (
-                                    <div key={session.id} className="p-8 flex items-center justify-between hover:bg-white/5 transition-colors">
+                                    <div key={session.id} className="p-8 flex items-center justify-between hover:bg-muted/5 transition-colors">
                                         <div className="flex items-center gap-4">
                                             <div className="w-12 h-12 bg-emerald-500/10 rounded-2xl flex items-center justify-center">
                                                 <Globe className="w-6 h-6 text-emerald-500" />
@@ -220,7 +220,7 @@ export default function SecurityCenterPage() {
                                 <div className="p-8 text-center text-muted-foreground text-sm font-bold">No security events found.</div>
                             ) : (
                                 events?.map((event: any) => (
-                                    <div key={event.id} className="p-6 flex items-center gap-4 hover:bg-white/5 transition-colors">
+                                    <div key={event.id} className="p-6 flex items-center gap-4 hover:bg-muted/5 transition-colors">
                                         <div className="w-10 h-10 bg-amber-500/10 rounded-xl flex items-center justify-center shrink-0">
                                             <AlertTriangle className="w-5 h-5 text-amber-500" />
                                         </div>

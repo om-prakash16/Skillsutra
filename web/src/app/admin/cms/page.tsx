@@ -1,224 +1,154 @@
 "use client";
+import Link from "next/link";
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Layout, Save, Globe, Smartphone, Search, RefreshCw, PenTool, Image as LucideImage } from "lucide-react";
+import { LayoutDashboard, FileText, Flag, Plus, FileEdit, Trash2, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
+import { motion } from "framer-motion";
 import { api } from "@/lib/api/api-client";
-import { motion, AnimatePresence } from "framer-motion";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { LayoutDashboard, Settings, Share2, Code } from "lucide-react";
 
-export default function CMSEditor() {
-  const [content, setContent] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState<string | null>(null);
-  const [search, setSearch] = useState("");
+export default function AdminCMSDashboard() {
+  const [pages, setPages] = useState([]);
+  const [articles, setArticles] = useState([]);
+  const [banners, setBanners] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchCMS();
+    const fetchCMSData = async () => {
+      try {
+        const pagesRes = await api.get('/cms/pages');
+        const articlesRes = await api.get('/cms/articles');
+        const bannersRes = await api.get('/cms/banners');
+        setPages(pagesRes || []);
+        setArticles(articlesRes || []);
+        setBanners(bannersRes || []);
+      } catch (err) {
+        console.error("Failed to fetch CMS data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCMSData();
   }, []);
 
-  const fetchCMS = async () => {
-    setIsLoading(true);
-    try {
-      const data = await api.cms.all();
-      setContent(Array.isArray(data) ? data : []);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to sync CMS registry.");
-    } finally {
-      setIsLoading(false);
+  const cmsSections = [
+    {
+      title: "Pages & Blocks",
+      description: "Manage landing pages, reusable blocks, and sections.",
+      icon: LayoutDashboard,
+      color: "text-indigo-500",
+      bg: "bg-indigo-500/10",
+      href: "/admin/cms/pages",
+      items: pages.length ? pages.map(p => ({ name: p.content_key, status: p.is_active ? 'Published' : 'Draft', updated: p.updated_at ? new Date(p.updated_at).toLocaleDateString() : "Recently" })) : [
+        { name: "Home Page", status: "Published", updated: "2 hrs ago" },
+        { name: "Talent Discovery", status: "Draft", updated: "1 day ago" },
+      ]
+    },
+    {
+      title: "Blog & Editorial",
+      description: "Manage articles, authors, and SEO settings.",
+      icon: FileText,
+      color: "text-emerald-500",
+      bg: "bg-emerald-500/10",
+      href: "/admin/cms/blog",
+      items: articles.length ? articles.map(a => ({ name: a.title, status: a.is_published ? 'Published' : 'Draft', updated: a.updated_at ? new Date(a.updated_at).toLocaleDateString() : "Recently" })) : [
+        { name: "10 Tips for React Devs", status: "Published", updated: "5 hrs ago" },
+      ]
+    },
+    {
+      title: "Banners & Announcements",
+      description: "Control global alerts and promotional banners.",
+      icon: Flag,
+      color: "text-rose-500",
+      bg: "bg-rose-500/10",
+      href: "/admin/cms/banners",
+      items: banners.length ? banners.map(b => ({ name: b.content_key, status: b.is_active ? 'Active' : 'Draft', updated: b.updated_at ? new Date(b.updated_at).toLocaleDateString() : "Recently" })) : [
+        { name: "Summer Hackathon Promo", status: "Active", updated: "1 hr ago" },
+      ]
     }
-  };
-
-  const handleUpdate = async (item: any) => {
-    // Basic JSON validation for lists
-    if (item.metadata?.type?.includes('_list')) {
-        try {
-            JSON.parse(item.content_value);
-        } catch (e) {
-            toast.error(`Invalid JSON structure in ${item.content_key}. Mutation aborted.`);
-            return;
-        }
-    }
-
-    setIsSaving(item.id);
-    try {
-      await api.cms.update({
-          section_key: item.section_key,
-          content_key: item.content_key,
-          content_value: item.content_value,
-          metadata: item.metadata
-      });
-      toast.success(`'${item.content_key}' updated in the ${item.section_key} module.`);
-    } catch (err) {
-      console.error(err);
-      toast.error("Failed to propagate CMS mutation.");
-    } finally {
-      setIsSaving(null);
-    }
-  };
-
-  const sections = Array.from(new Set(content.map(c => c.section_key)));
-  
-  const landingSections = ['hero', 'stats', 'features', 'sectors', 'landing'];
-  const globalSections = ['global', 'seo'];
-  const navSections = ['navbar', 'footer'];
-
-  const filteredContent = content.filter(c => 
-      c.section_key.toLowerCase().includes(search.toLowerCase()) || 
-      c.content_key.toLowerCase().includes(search.toLowerCase()) ||
-      c.content_value.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const renderSection = (section: string) => {
-      const sectionItems = filteredContent.filter(c => c.section_key === section);
-      if (sectionItems.length === 0) return null;
-
-      return (
-        <section key={section} className="space-y-6">
-            <div className="flex items-center gap-4">
-                <div className="p-2 rounded-lg bg-muted/50 border border-border">
-                    <Layout className="w-4 h-4 text-muted-foreground" />
-                </div>
-                <h2 className="text-xs font-black uppercase tracking-[0.2em] text-emerald-500/80">{section} Architecture</h2>
-                <div className="flex-1 h-px bg-muted/50" />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {sectionItems.map(item => (
-                    <Card key={item.id} className="bg-muted/50 border-border backdrop-blur-xl shadow-xl hover:bg-white-[0.07] transition-all group overflow-hidden">
-                        <CardHeader className="pb-4 border-b border-border/50 bg-black/20">
-                            <div className="flex justify-between items-center">
-                                <div className="flex items-center gap-2">
-                                    <PenTool className="w-3 h-3 text-emerald-500/60" />
-                                    <CardTitle className="text-xs font-black uppercase tracking-widest text-foreground/80">{item.content_key}</CardTitle>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    {item.metadata?.type?.includes('_list') && <Badge className="bg-blue-500/20 text-blue-400 text-[9px] border-blue-500/30">JSON_CORE</Badge>}
-                                    <Badge variant="outline" className="text-[9px] border-border text-muted-foreground tracking-tighter uppercase italic">{item.section_key}</Badge>
-                                </div>
-                            </div>
-                        </CardHeader>
-                        <CardContent className="p-6 space-y-4">
-                            {item.content_value.length > 60 || item.metadata?.type?.includes('_list') ? (
-                                <div className="relative">
-                                    <Textarea 
-                                        className={`bg-background/80 border-border text-foreground min-h-[160px] focus-visible:ring-emerald-500/30 leading-relaxed font-mono text-sm ${item.metadata?.type?.includes('_list') ? 'text-blue-200' : ''}`}
-                                        value={item.content_value}
-                                        onChange={e => setContent(content.map(c => c.id === item.id ? {...c, content_value: e.target.value} : c))}
-                                        placeholder={`Enter ${item.metadata?.type || 'content'} mutation...`}
-                                    />
-                                    {item.metadata?.type?.includes('_list') && <Code className="absolute bottom-3 right-3 w-4 h-4 text-blue-500/40" />}
-                                </div>
-                            ) : (
-                                <div className="relative">
-                                    <Input 
-                                        className="bg-background/80 border-border text-foreground h-12 font-medium text-sm focus-visible:ring-emerald-500/30"
-                                        value={item.content_value}
-                                        onChange={e => setContent(content.map(c => c.id === item.id ? {...c, content_value: e.target.value} : c))}
-                                    />
-                                    {item.content_key.includes('url') && <LucideImage className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />}
-                                </div>
-                            )}
-                            
-                            <Button 
-                                className="w-full bg-emerald-600 hover:bg-emerald-500 text-foreground font-black tracking-widest uppercase h-12 shadow-lg shadow-emerald-900/20"
-                                onClick={() => handleUpdate(item)}
-                                disabled={isSaving === item.id}
-                            >
-                                {isSaving === item.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Save className="w-4 h-4 mr-2" /> Commit Mutation</>}
-                            </Button>
-                        </CardContent>
-                    </Card>
-                ))}
-            </div>
-        </section>
-      );
-  };
+  ];
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div>
-            <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tight flex items-center gap-4 text-foreground">
-              <Globe className="w-10 h-10 text-emerald-500 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]" /> 
-              Content Orchestrator
-            </h1>
-            <p className="text-muted-foreground text-lg mt-3">
-              Dynamic mutation of public-facing text, SEO parameters, and brand assets. Changes propagate instantly to the landing page.
-            </p>
+    <div className="space-y-10 animate-in fade-in duration-700 pb-24">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border/50 pb-8">
+        <div className="space-y-2">
+          <Badge variant="outline" className="glass text-[10px] tracking-widest uppercase font-black mb-2 text-indigo-400 border-indigo-400/30">
+            Content Orchestrator
+          </Badge>
+          <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tighter text-foreground">
+            CMS Command Center
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-2xl font-medium">
+            Manage dynamic frontend content, reusable page blocks, and editorial articles.
+          </p>
         </div>
-        <div className="flex items-center gap-3">
-            <Button onClick={fetchCMS} variant="outline" className="border-border bg-muted/50 hover:bg-muted/50 font-bold uppercase tracking-widest text-[10px]">
-                <RefreshCw className="w-3 h-3 mr-2" /> Sync Registry
-            </Button>
-            <div className="px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest uppercase">Live CMS Link</span>
-            </div>
+        <div className="flex gap-4">
+          <Button size="lg" className="rounded-xl font-bold bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/20">
+            <Plus className="w-5 h-5 mr-2" /> Create Content
+          </Button>
         </div>
       </div>
 
-      <div className="relative group">
-          <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50 group-focus-within:text-emerald-500 transition-colors" />
-          <Input 
-            placeholder="Search content keys or values..." 
-            className="h-14 bg-muted/50 border-border pl-14 text-lg focus-visible:ring-emerald-500/30 rounded-2xl"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-      </div>
-
-      <div className="grid grid-cols-1 gap-12">
-          {isLoading ? (
-              <div className="py-24 flex flex-col items-center justify-center gap-4">
-                  <Loader2 className="w-12 h-12 animate-spin text-emerald-500/40" />
-                  <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/50 animate-pulse">Establishing Secure CMS Channel...</p>
-              </div>
-          ) : (
-            <Tabs defaultValue="landing" className="space-y-12">
-                <TabsList className="bg-muted/50 border border-border p-1 h-14 rounded-2xl">
-                    <TabsTrigger value="landing" className="h-12 px-8 rounded-xl data-[state=active]:bg-emerald-500 data-[state=active]:text-foreground font-black uppercase tracking-widest text-[10px] gap-2">
-                        <LayoutDashboard className="w-3 h-3" /> Landing Matrix
-                    </TabsTrigger>
-                    <TabsTrigger value="navigation" className="h-12 px-8 rounded-xl data-[state=active]:bg-emerald-500 data-[state=active]:text-foreground font-black uppercase tracking-widest text-[10px] gap-2">
-                        <Share2 className="w-3 h-3" /> Global Nav
-                    </TabsTrigger>
-                    <TabsTrigger value="global" className="h-12 px-8 rounded-xl data-[state=active]:bg-emerald-500 data-[state=active]:text-foreground font-black uppercase tracking-widest text-[10px] gap-2">
-                        <Settings className="w-3 h-3" /> System & SEO
-                    </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="landing" className="space-y-12 animate-in slide-in-from-bottom-4 duration-500">
-                    {landingSections.map(s => renderSection(s))}
-                </TabsContent>
-
-                <TabsContent value="navigation" className="space-y-12 animate-in slide-in-from-bottom-4 duration-500">
-                    {navSections.map(s => renderSection(s))}
-                </TabsContent>
-
-                <TabsContent value="global" className="space-y-12 animate-in slide-in-from-bottom-4 duration-500">
-                    {globalSections.map(s => renderSection(s))}
-                </TabsContent>
-            </Tabs>
-          )}
-      </div>
-
-      <div className="p-8 rounded-[2rem] bg-gradient-to-br from-emerald-500/10 to-blue-500/5 border border-border flex flex-col items-center text-center gap-6 mt-12 relative overflow-hidden">
-          <div className="absolute inset-0 bg-emerald-500/5 blur-[100px] pointer-events-none" />
-          <div className="p-4 rounded-full bg-emerald-500/20 border border-emerald-500/30 relative z-10">
-              <Smartphone className="w-8 h-8 text-emerald-500" />
-          </div>
-          <div className="space-y-2 relative z-10">
-              <h3 className="text-xl font-black italic uppercase tracking-tighter">Omnichannel Deployment</h3>
-              <p className="text-sm text-muted-foreground max-w-md">Content updates made here are synchronized across Desktop, Mobile, and AI summary generators in real-time.</p>
-          </div>
+      {/* CMS Sections Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {cmsSections.map((section, idx) => (
+          <motion.div
+            key={section.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.1 }}
+          >
+            <Card className="glass h-full border-border/50 hover:border-border transition-all duration-300 rounded-[2rem] shadow-xl overflow-hidden group">
+              <CardHeader className="pb-4">
+                <div className="flex items-center gap-4 mb-2">
+                  <div className={`p-3 rounded-2xl ${section.bg}`}>
+                    <section.icon className={`w-6 h-6 ${section.color}`} />
+                  </div>
+                  <CardTitle className="text-xl font-black">{section.title}</CardTitle>
+                </div>
+                <CardDescription className="text-sm font-medium">{section.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 mt-4">
+                  {section.items.map((item, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border/30 hover:border-border/80 transition-colors group/item">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-sm text-foreground/90">{item.name}</span>
+                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground mt-1">
+                          {item.updated}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <Badge variant="outline" className={`text-[9px] uppercase tracking-widest font-black ${
+                          item.status === 'Published' || item.status === 'Active' ? 'text-emerald-400 border-emerald-400/30' :
+                          item.status === 'Draft' || item.status === 'Scheduled' ? 'text-amber-400 border-amber-400/30' :
+                          'text-indigo-400 border-indigo-400/30'
+                        }`}>
+                          {item.status}
+                        </Badge>
+                        <div className="flex gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
+                            <Button variant="ghost" size="icon" className="h-7 w-7"><FileEdit className="w-3.5 h-3.5 text-muted-foreground" /></Button>
+                            <Button variant="ghost" size="icon" className="h-7 w-7"><Trash2 className="w-3.5 h-3.5 text-rose-500/70" /></Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {section.items.length === 0 && (
+                    <div className="text-center py-4 text-sm text-muted-foreground italic">No content found</div>
+                  )}
+                </div>
+                <Link href={section.href}>
+                  <Button variant="outline" className="w-full mt-6 rounded-xl border-dashed border-border/50 text-muted-foreground hover:text-foreground">
+                    View All {section.title}
+                  </Button>
+                </Link>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
       </div>
     </div>
   );

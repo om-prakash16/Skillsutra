@@ -1,12 +1,30 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db_session
 from modules.auth.core.service import get_current_user
 from schemas.profile import ProfileResponse, ProfileCreate, ExperienceResponse, ExperienceCreate, EducationResponse, EducationCreate, ProjectResponse, ProjectCreate
 from modules.profile.service import ProfileService
 from uuid import UUID
+import os
+import uuid
 
 router = APIRouter()
+
+@router.post("/upload-file")
+async def upload_file(
+    file: UploadFile = File(...),
+    current_user: dict = Depends(get_current_user)
+):
+    """Upload a file (image/resume) and return the static URL."""
+    ext = file.filename.split('.')[-1]
+    filename = f"{uuid.uuid4().hex}.{ext}"
+    os.makedirs("uploads", exist_ok=True)
+    file_path = f"uploads/{filename}"
+    
+    with open(file_path, "wb") as buffer:
+        buffer.write(await file.read())
+        
+    return {"status": "success", "url": f"http://localhost:8000/uploads/{filename}"}
 
 @router.get("/me", response_model=ProfileResponse)
 async def get_my_profile(
@@ -67,6 +85,13 @@ async def get_profile_strength(
     db: AsyncSession = Depends(get_db_session)
 ):
     """Calculate and return the Profile Strength Score dynamically."""
+    from core.redis import redis_get, redis_set
+    
+    cache_key = f"profile_strength:{current_user['id']}"
+    cached_score = await redis_get(cache_key)
+    if cached_score:
+        return {"status": "success", "data": cached_score}
+        
     service = ProfileService(db)
     profile = await service.get_or_create_profile(current_user["id"])
     
@@ -91,4 +116,7 @@ async def get_profile_strength(
     if profile.projects: score += 20
     else: missing.append("Add portfolio projects")
         
-    return {"status": "success", "data": {"score": min(score, 100), "missing": missing}}
+    result_data = {"score": min(score, 100), "missing": missing}
+    await redis_set(cache_key, result_data, ttl_seconds=3600)
+    
+    return {"status": "success", "data": result_data}

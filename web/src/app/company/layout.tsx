@@ -14,7 +14,7 @@ export default function CompanyLayout({
 
     if (isLoading || !isAuthorized) {
         return (
-            <div className="flex h-screen w-full flex-col items-center justify-center bg-[#020617] text-foreground overflow-hidden relative">
+            <div className="flex h-screen w-full flex-col items-center justify-center bg-background text-foreground overflow-hidden relative">
                 <div className="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[150px] rounded-full animate-pulse" />
                 
                 <motion.div 
@@ -57,7 +57,7 @@ export default function CompanyLayout({
     }
 
     return (
-        <div className="flex min-h-screen bg-[#030712] text-slate-50 selection:bg-primary/40 overflow-hidden">
+        <div className="flex min-h-screen bg-background text-slate-50 selection:bg-primary/40 overflow-hidden">
             {/* Ambient Background */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
                 <div className="absolute top-[10%] left-[-5%] w-[50%] h-[50%] bg-primary/[0.04] blur-[160px] rounded-full" />

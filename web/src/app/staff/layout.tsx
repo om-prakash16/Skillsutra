@@ -31,7 +31,7 @@ export default function StaffLayout({ children }: { children: ReactNode }) {
     const pathname = usePathname()
 
     return (
-        <div className="min-h-screen bg-[#050505] text-foreground selection:bg-primary/30 font-sans selection:text-primary">
+        <div className="min-h-screen bg-background text-foreground selection:bg-primary/30 font-sans selection:text-primary">
             {/* Ambient Background */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full opacity-50" />

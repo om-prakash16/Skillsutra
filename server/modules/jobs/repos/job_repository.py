@@ -1,5 +1,5 @@
 from typing import List, Dict, Any
-import db.engine as engine
+from core.db import get_db
 from core.exceptions import NotFoundError, ExternalServiceError
 from core.logging import ProtocolLogger
 
@@ -11,7 +11,7 @@ class JobRepository:
 
     @property
     def db(self):
-        return engine.db_client
+        return get_db()
 
     def _base_query(self):
         """Standard base query with soft-delete protection."""

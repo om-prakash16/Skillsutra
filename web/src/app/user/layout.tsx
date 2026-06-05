@@ -2,8 +2,11 @@
 
 import { Sidebar } from "@/components/layout/sidebar"
 import { useRoleGuard } from "@/hooks/useRoleGuard"
-import { Loader2, Zap } from "lucide-react"
+import { Loader2, Zap, Menu } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button"
+import { usePathname } from "next/navigation"
 
 export default function UserLayout({
     children,
@@ -11,10 +14,15 @@ export default function UserLayout({
     children: React.ReactNode
 }) {
     const { isLoading, isAuthorized } = useRoleGuard(["user", "admin"])
+    const pathname = usePathname()
 
-    if (isLoading || !isAuthorized) {
+    // Check if this is a dynamic profile route (UUID)
+    const isPublicProfileRoute = pathname?.match(/^\/user\/[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/i);
+    
+    // If not a public profile, enforce auth
+    if (!isPublicProfileRoute && (isLoading || !isAuthorized)) {
         return (
-            <div className="flex h-screen w-full flex-col items-center justify-center bg-[#020617] text-foreground overflow-hidden relative">
+            <div className="flex h-screen w-full flex-col items-center justify-center bg-background text-foreground overflow-hidden relative">
                 <div className="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[150px] rounded-full animate-pulse" />
                 
                 <motion.div 
@@ -56,6 +64,8 @@ export default function UserLayout({
         )
     }
 
+    const showSidebar = isAuthorized && !isLoading;
+
     return (
         <div className="flex min-h-screen bg-background text-foreground selection:bg-primary/40 overflow-hidden">
             {/* Ambient Background */}
@@ -65,10 +75,28 @@ export default function UserLayout({
                 <div className="absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-emerald-500/[0.03] blur-[180px] rounded-full" />
             </div>
 
-            <Sidebar role="user" className="hidden lg:flex" />
+            {showSidebar && <Sidebar role="user" className="hidden lg:flex" />}
             
-            <main className="flex-1 w-full pt-16 relative scroll-smooth custom-scrollbar z-10">
-                <div className="sticky top-0 w-full h-8 bg-gradient-to-b from-background to-transparent z-40 pointer-events-none opacity-60" />
+            <main className="flex-1 w-full pt-16 lg:pt-0 relative scroll-smooth custom-scrollbar z-10">
+                {/* Mobile Header with Hamburger */}
+                {showSidebar && (
+                    <div className="lg:hidden fixed top-0 left-0 right-0 h-16 border-b border-border bg-background/80 backdrop-blur-md z-50 flex items-center px-4">
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon" className="shrink-0 text-foreground">
+                                    <Menu className="h-6 w-6" />
+                                    <span className="sr-only">Toggle navigation</span>
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent side="left" className="p-0 w-72 bg-background border-border z-[200]">
+                                <Sidebar role="user" variant="mobile" />
+                            </SheetContent>
+                        </Sheet>
+                        <div className="ml-4 font-black tracking-widest text-primary uppercase text-[10px]">Dashboard</div>
+                    </div>
+                )}
+
+                <div className="sticky top-0 w-full h-8 bg-gradient-to-b from-background to-transparent z-40 pointer-events-none opacity-60 hidden lg:block" />
                 
                 <div className="w-full px-4 py-4 md:px-8 md:py-8 max-w-[1600px] mx-auto">
                     <AnimatePresence mode="wait">

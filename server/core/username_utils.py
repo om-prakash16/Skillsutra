@@ -12,7 +12,7 @@ RESERVED_USERNAMES = {
 
 def is_valid_username(username: str) -> bool:
     """Check if a username matches length and character requirements."""
-    if not username or len(username) < 3 or len(username) > 30:
+    if not username or len(username) < 3 or len(username) > 50:
         return False
     # Strict regex: lowercase letters and numbers, hyphens allowed in between
     # No leading/trailing hyphens, no underscores, no special characters
@@ -55,10 +55,10 @@ async def generate_unique_username(raw_name: str, existing_usernames_check_func=
     """
     base_slug = generate_base_slug(raw_name)
     
-    # Trim base slug to allow room for suffixes (max length is 30)
+    # Trim base slug to allow room for suffixes (max length is 50)
     # Give a buffer of 5 characters for suffixes e.g., "-9999"
-    if len(base_slug) > 25:
-        base_slug = base_slug[:25].rstrip('-')
+    if len(base_slug) > 45:
+        base_slug = base_slug[:45].rstrip('-')
     
     # Try the base slug first if it's not reserved and valid length
     if not is_reserved_username(base_slug) and len(base_slug) >= 3:

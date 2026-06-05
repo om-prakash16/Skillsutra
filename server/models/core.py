@@ -18,7 +18,9 @@ class Role(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     role_name = Column(String, unique=True, nullable=False)
+    description = Column(String, nullable=True)
     permissions = Column(JSONB, default=list)
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
 
     users = relationship("User", secondary=user_roles, back_populates="roles")
 
@@ -28,7 +30,7 @@ class Company(Base):
     __tablename__ = "companies"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    name = Column(String, nullable=False)
+    company_name = Column(String, nullable=False)
     created_by_user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
     industry = Column(String, nullable=True)
     

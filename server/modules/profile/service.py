@@ -12,14 +12,7 @@ class ProfileService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
-    async def get_profile_by_user_id(self, user_id: UUID, skip_cache: bool = False):
-        cache_key = f"profile:{user_id}"
-        if not skip_cache:
-            cached_data = await redis_get(cache_key)
-            if cached_data:
-                # Return the dict (FastAPI's response_model handles dicts easily)
-                return cached_data
-
+    async def get_orm_profile(self, user_id: UUID):
         stmt = (
             select(Profile)
             .options(
@@ -30,7 +23,17 @@ class ProfileService:
             .where(Profile.user_id == user_id)
         )
         result = await self.db.execute(stmt)
-        profile = result.scalars().first()
+        return result.scalars().first()
+
+    async def get_profile_by_user_id(self, user_id: UUID, skip_cache: bool = False):
+        cache_key = f"profile:{user_id}"
+        if not skip_cache:
+            cached_data = await redis_get(cache_key)
+            if cached_data:
+                # Return the dict (FastAPI's response_model handles dicts easily)
+                return cached_data
+
+        profile = await self.get_orm_profile(user_id)
         
         if profile:
             # Convert SQLAlchemy model to Pydantic dict and cache it
@@ -64,9 +67,14 @@ class ProfileService:
         return profile
         
     async def get_or_create_profile(self, user_id: UUID) -> Profile:
-        profile = await self.get_profile_by_user_id(user_id)
+        profile = await self.get_orm_profile(user_id)
         if not profile:
-            profile = Profile(user_id=user_id)
+            from models.user import User
+            user_res = await self.db.execute(select(User).where(User.id == user_id))
+            user = user_res.scalars().first()
+            fallback_name = user.username if user else "Unknown User"
+            
+            profile = Profile(user_id=user_id, full_name=fallback_name, headline=fallback_name, email=user.email if user else None)
             self.db.add(profile)
             await self.db.commit()
             await self.db.refresh(profile)
@@ -75,11 +83,6 @@ class ProfileService:
     async def update_profile(self, user_id: UUID, data: ProfileCreate):
         profile = await self.get_or_create_profile(user_id)
         
-        # profile from get_or_create might be a dict if it came from cache
-        if isinstance(profile, dict):
-            # Refetch from DB to get the SQLAlchemy object to update
-            profile = await self.get_profile_by_user_id(user_id, skip_cache=True)
-            
         for key, value in data.dict(exclude_unset=True).items():
             setattr(profile, key, value)
             
@@ -88,6 +91,7 @@ class ProfileService:
         
         # Invalidate cache
         await redis_delete(f"profile:{user_id}")
+        await redis_delete(f"profile_strength:{user_id}")
         
         return profile
 

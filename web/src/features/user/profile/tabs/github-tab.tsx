@@ -14,9 +14,11 @@ import { GitPullRequest, LayoutGrid } from "lucide-react"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useQuery } from "@tanstack/react-query"
+import { Edit, Save } from "lucide-react"
 
 interface GithubTabProps {
     data: UserProfile
+    onSave?: (payload: any) => Promise<void>
     isEditing?: boolean
     onUpdate?: (username: string) => void
 }
@@ -60,10 +62,33 @@ const fetchGithubPRs = async (username: string): Promise<GithubPR[]> => {
     }))
 }
 
-export function GithubTab({ data, isEditing, onUpdate }: GithubTabProps) {
-    const username = data.github.username
+export function GithubTab({ data, onSave }: GithubTabProps) {
+    const [isEditing, setIsEditing] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
+    const [localUsername, setLocalUsername] = useState(data.github?.username || "")
+
+    const username = data.github?.username || ""
     const [filterStack, setFilterStack] = useState("All")
     const [activeVault, setActiveVault] = useState<"repos" | "prs">("repos")
+
+    const handleCommitChanges = async () => {
+        setIsSaving(true)
+        if (onSave) {
+            await onSave({
+                github: {
+                    ...data.github,
+                    username: localUsername
+                }
+            })
+        }
+        setIsSaving(false)
+        setIsEditing(false)
+    }
+
+    const handleCancel = () => {
+        setLocalUsername(data.github?.username || "")
+        setIsEditing(false)
+    }
 
     const { data: realRepos, isLoading: isLoadingRepos } = useQuery({
         queryKey: ["github-repos-full", username],
@@ -155,8 +180,8 @@ export function GithubTab({ data, isEditing, onUpdate }: GithubTabProps) {
                             <div className="flex items-center gap-2 mt-1">
                                 <span className="text-xs text-muted-foreground hidden sm:inline">Username:</span>
                                 <input
-                                    value={username}
-                                    onChange={(e) => onUpdate?.(e.target.value)}
+                                    value={localUsername}
+                                    onChange={(e) => setLocalUsername(e.target.value)}
                                     className="h-6 w-40 text-sm bg-background border rounded px-2 focus:ring-1 focus:ring-primary outline-none"
                                     placeholder="GitHub Username"
                                 />
@@ -175,6 +200,23 @@ export function GithubTab({ data, isEditing, onUpdate }: GithubTabProps) {
                         )}
                     </div>
                 </div>
+                {onSave && !isEditing && (
+                    <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit
+                    </Button>
+                )}
+                {isEditing && (
+                    <div className="flex items-center gap-2">
+                        <Button size="sm" onClick={handleCommitChanges} disabled={isSaving}>
+                            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                            Save
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={handleCancel} disabled={isSaving}>
+                            Cancel
+                        </Button>
+                    </div>
+                )}
                 {!isEditing && (
                     <Badge variant="outline" className="bg-background text-green-600 border-green-200">
                         <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5 animate-pulse"></span>

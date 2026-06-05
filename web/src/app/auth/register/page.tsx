@@ -22,10 +22,10 @@ export default function RegisterPage() {
         try {
             switch (provider) {
                 case "google":
-                    await signInWithGoogle(selectedRole)
+                    await signInWithGoogle(selectedRole, "register")
                     break
                 case "github":
-                    await signInWithGitHub(selectedRole)
+                    await signInWithGitHub(selectedRole, "register")
                     break
                 case "keycloak":
                     router.push("/auth/email-register")

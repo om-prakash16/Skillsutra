@@ -159,7 +159,7 @@ export default function CandidateApplications() {
               <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Your Intelligence Profile is automatically synchronized with all active nodes.</p>
           </div>
           <div className="relative z-10">
-              <Link href="/user/profile">
+              <Link href={user?.id ? `/user/${user.id}` : "#"}>
                   <Button variant="outline" className="h-12 px-8 border-border hover:bg-muted/50 font-black text-[10px] uppercase tracking-widest rounded-2xl">
                       UPDATE IDENTITY MATRIX
                   </Button>

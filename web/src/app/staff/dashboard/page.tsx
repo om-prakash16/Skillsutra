@@ -46,7 +46,7 @@ export default function StaffDashboardPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {mockStats.map((stat) => (
                     <Link key={stat.label} href={stat.href}
-                        className="rounded-xl border border-slate-800 bg-slate-900 p-4 hover:border-violet-600/50 transition-all group">
+                        className="rounded-xl border border-slate-800 bg-background p-4 hover:border-violet-600/50 transition-all group">
                         <div className={`w-8 h-8 rounded-lg ${stat.bg} flex items-center justify-center mb-3`}>
                             <stat.icon className={`w-4 h-4 ${stat.color}`} />
                         </div>
@@ -58,7 +58,7 @@ export default function StaffDashboardPage() {
 
             <div className="grid md:grid-cols-2 gap-6">
                 {/* Priority Queue */}
-                <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+                <div className="rounded-xl border border-slate-800 bg-background p-6">
                     <div className="flex items-center gap-2 mb-4">
                         <AlertTriangle className="w-4 h-4 text-yellow-400" />
                         <h2 className="font-semibold text-foreground">Priority Queue</h2>
@@ -80,7 +80,7 @@ export default function StaffDashboardPage() {
                 </div>
 
                 {/* Recent Activity */}
-                <div className="rounded-xl border border-slate-800 bg-slate-900 p-6">
+                <div className="rounded-xl border border-slate-800 bg-background p-6">
                     <div className="flex items-center gap-2 mb-4">
                         <TrendingUp className="w-4 h-4 text-green-400" />
                         <h2 className="font-semibold text-foreground">Recent Activity</h2>

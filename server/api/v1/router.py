@@ -12,12 +12,14 @@ from modules.notifications.api.router import router as notifications_router
 from modules.identity.api.router import router as identity_router
 from modules.analytics.router import router as analytics_router
 from modules.chat.router import router as chat_router
+from modules.messages.router import router as messages_router
 from modules.admin.api.router import router as admin_router
 from modules.admin.api.feature_router import router as feature_router
 from modules.admin.api.db_proxy import router as db_proxy_router
 from modules.users.api.github_integration import router as github_router
 from modules.challenges.router import router as challenges_router
 from modules.career.router import router as career_router
+from modules.career.os_router import router as os_router
 from modules.skill_graph.router import router as skill_graph_router
 from modules.search.router import router as search_router
 from modules.projects.router import router as projects_router
@@ -33,6 +35,7 @@ from modules.ecosystem.habits_router import router as habits_router
 from modules.ecosystem.feed_router import router as feed_router
 from modules.portfolio.router import router as portfolio_router
 from modules.workspaces.router import router as workspaces_router
+from modules.blog.router import router as blog_router
 
 from api.routers.resume import router as resume_router
 from api.routers.cover_letter import router as cover_letter_router
@@ -40,12 +43,14 @@ from api.routers.social import router as social_router
 from api.routers.security import router as security_router
 
 v1_router = APIRouter()
+v1_router.include_router(blog_router)
 v1_router.include_router(resume_router, prefix="", tags=["AI Resume Builder"])
 v1_router.include_router(cover_letter_router, prefix="", tags=["AI Cover Letter Generator"])
 v1_router.include_router(social_router, prefix="", tags=["Social Networking"])
 v1_router.include_router(security_router, prefix="", tags=["Security Center"])
 
 from api.v1.public_profile import router as public_profile_router
+from api.v1.integrations import router as integrations_router
 
 v1_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 v1_router.include_router(identity_router, prefix="/identity", tags=["Identity"])
@@ -60,12 +65,15 @@ v1_router.include_router(cms_router, prefix="/cms", tags=["CMS Content"])
 v1_router.include_router(notifications_router, prefix="/notifications", tags=["Notifications"])
 v1_router.include_router(analytics_router, prefix="/analytics", tags=["Performance Metrics"])
 v1_router.include_router(chat_router, prefix="/chat", tags=["Direct Communication"])
+v1_router.include_router(messages_router, prefix="/messages", tags=["Direct Messaging"])
 v1_router.include_router(admin_router, prefix="/admin", tags=["Admin Control Panel"])
 v1_router.include_router(feature_router, prefix="/admin/features", tags=["Admin Features"])
 v1_router.include_router(db_proxy_router, prefix="/db", tags=["Database Proxy"])
+v1_router.include_router(integrations_router, prefix="/integrations", tags=["Developer Platforms Sync"])
 v1_router.include_router(github_router, prefix="/github", tags=["GitHub Integration"])
 v1_router.include_router(challenges_router, prefix="/challenges", tags=["Coding Challenges"])
 v1_router.include_router(career_router, prefix="/career", tags=["Career Development"])
+v1_router.include_router(os_router, prefix="/os", tags=["Career OS"])
 v1_router.include_router(skill_graph_router, prefix="/skills", tags=["Skills & Taxonomy"])
 v1_router.include_router(search_router, prefix="/search", tags=["Global Search"])
 v1_router.include_router(projects_router, prefix="/projects", tags=["Project Ledger"])

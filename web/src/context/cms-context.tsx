@@ -49,6 +49,9 @@ export function CMSProvider({ children }: { children: ReactNode }) {
     const item = content.find(c => c.section_key === section && c.content_key === key);
     if (!item) return fallback;
     try {
+      if (typeof item.content_value !== 'string') {
+        return item.content_value;
+      }
       return JSON.parse(item.content_value);
     } catch (e) {
       console.error(`CMS JSON Parse Error for ${section}.${key}:`, e);

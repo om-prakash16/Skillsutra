@@ -44,7 +44,7 @@ export function ApplySuccessModal({ isOpen, onClose, matchScore, jobTitle, jobId
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                        className="relative w-full max-w-xl bg-[#0a0a0a] border border-border rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/20"
+                        className="relative w-full max-w-xl bg-background border border-border rounded-[2.5rem] overflow-hidden shadow-2xl shadow-primary/20"
                     >
                         {/* Decorative Background */}
                         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[300px] bg-gradient-to-b from-primary/20 to-transparent blur-3xl opacity-50" />

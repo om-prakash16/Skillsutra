@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 from core.database import Base
 
 class AuditLog(Base):
-    __tablename__ = "audit_logs"
+    __tablename__ = "admin_audit_logs"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     actor_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
@@ -30,7 +30,7 @@ class AuditLog(Base):
 
 
 class CMSPage(Base):
-    __tablename__ = "cms_pages"
+    __tablename__ = "admin_cms_pages"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     slug = Column(String, unique=True, nullable=False)

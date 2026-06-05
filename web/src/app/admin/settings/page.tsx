@@ -214,7 +214,7 @@ export default function AdminSettingsPage() {
                                                     <SelectTrigger className="bg-background/80 border-border h-12 text-foreground font-black uppercase tracking-widest text-[10px] rounded-xl">
                                                         <SelectValue />
                                                     </SelectTrigger>
-                                                    <SelectContent className="bg-slate-950 border-border text-foreground">
+                                                    <SelectContent className="bg-background border-border text-foreground">
                                                         {(item as any).options?.map((opt: string) => (
                                                             <SelectItem key={opt} value={opt} className="focus:bg-rose-500/20">{opt}</SelectItem>
                                                         ))}

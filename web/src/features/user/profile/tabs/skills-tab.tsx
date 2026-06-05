@@ -4,30 +4,65 @@ import { Button } from "@/components/ui/button"
 import { Plus, X, Check } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { UserProfile, Skill, ProficiencyLevel } from "@/types/profile"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { cn } from "@/lib/utils"
+import { Edit, Save, Loader2 } from "lucide-react"
 
 interface SkillsTabProps {
     data: UserProfile
+    onSave?: (payload: any) => Promise<void>
     isEditing?: boolean
-    onAddSkill?: (skill: Skill) => void
-    onDeleteSkill?: (name: string) => void
+    onAddSkill?: (newSkill: Skill) => void
+    onDeleteSkill?: (skillName: string) => void
 }
 
-export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }: SkillsTabProps) {
+export function SkillsTab({ data, onSave }: SkillsTabProps) {
     const levels: ProficiencyLevel[] = ["Expert", "Advanced", "Intermediate", "Beginner"]
+    const [isEditing, setIsEditing] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
     const [isAdding, setIsAdding] = useState(false)
+    
+    const [localSkills, setLocalSkills] = useState<Skill[]>(data.skills || [])
+    useEffect(() => {
+        setLocalSkills(data.skills || [])
+    }, [data.skills])
+
     const [newSkillName, setNewSkillName] = useState("")
     const [newSkillLevel, setNewSkillLevel] = useState<ProficiencyLevel>("Advanced")
 
     const handleSaveSkill = () => {
-        if (newSkillName.trim() && onAddSkill) {
-            onAddSkill({ name: newSkillName, level: newSkillLevel })
+        if (newSkillName.trim()) {
+            setLocalSkills([...localSkills, { name: newSkillName, level: newSkillLevel }])
             setNewSkillName("")
             setIsAdding(false)
         }
+    }
+
+    const handleDeleteSkill = (name: string) => {
+        setLocalSkills(localSkills.filter(s => s.name !== name))
+    }
+
+    const handleCommitChanges = async () => {
+        setIsSaving(true)
+        if (onSave) {
+            await onSave({
+                skills: localSkills.map(s => ({
+                    name: s.name,
+                    proficiency: s.level,
+                    category: s.category
+                }))
+            })
+        }
+        setIsSaving(false)
+        setIsEditing(false)
+    }
+
+    const handleCancel = () => {
+        setLocalSkills(data.skills || [])
+        setIsAdding(false)
+        setIsEditing(false)
     }
 
     return (
@@ -40,11 +75,28 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                         Manage your technical nodes and proficiency synthesis.
                     </CardDescription>
                 </div>
-                {isEditing && !isAdding && (
-                    <Button size="sm" onClick={() => setIsAdding(true)} variant="premium" className="h-10 px-5 rounded-xl shadow-xl shadow-primary/20">
-                        <Plus className="w-4 h-4 mr-2" />
-                        Add Node
+                {onSave && !isEditing && (
+                    <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
+                        <Edit className="w-4 h-4 mr-2" />
+                        Edit
                     </Button>
+                )}
+                {isEditing && (
+                    <div className="flex items-center gap-2">
+                        {!isAdding && (
+                            <Button size="sm" onClick={() => setIsAdding(true)} variant="premium" className="h-10 px-5 rounded-xl shadow-xl shadow-primary/20">
+                                <Plus className="w-4 h-4 mr-2" />
+                                Add Node
+                            </Button>
+                        )}
+                        <Button size="sm" onClick={handleCommitChanges} disabled={isSaving}>
+                            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                            Save
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={handleCancel} disabled={isSaving}>
+                            Cancel
+                        </Button>
+                    </div>
                 )}
             </CardHeader>
             <CardContent className="space-y-12 px-10 pb-12 pt-6">
@@ -54,9 +106,9 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-transparent opacity-50" />
                         <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 blur-[100px] rounded-full pointer-events-none" />
                         
-                        <div className="relative flex flex-col md:flex-row items-end gap-6">
-                            <div className="flex-1 w-full space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
+                        <div className="relative flex flex-col md:flex-row items-end gap-4">
+                            <div className="flex-1 w-full space-y-2">
+                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                                     <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                                     Skill Node Identification
                                 </Label>
@@ -64,13 +116,13 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                                     value={newSkillName}
                                     onChange={(e) => setNewSkillName(e.target.value)}
                                     placeholder="e.g. Rust, Solidity, React..."
-                                    className="h-14 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground rounded-2xl focus:bg-muted/50 focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all text-sm font-medium px-5"
+                                    className="h-12 bg-muted/50 border-border text-foreground placeholder:text-muted-foreground rounded-xl focus:bg-muted/50 focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition-all text-sm font-medium px-4"
                                     autoFocus
                                 />
                             </div>
                             
-                            <div className="w-full md:w-[220px] space-y-3">
-                                <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
+                            <div className="w-full md:w-[220px] space-y-2">
+                                <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                                     <div className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
                                     Resonance Level
                                 </Label>
@@ -78,12 +130,12 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                                     value={newSkillLevel}
                                     onValueChange={(val: any) => setNewSkillLevel(val)}
                                 >
-                                    <SelectTrigger className="h-14 bg-muted/50 border-border text-foreground rounded-2xl focus:ring-2 focus:ring-primary/50 transition-all text-sm font-medium px-5">
+                                    <SelectTrigger className="h-12 bg-muted/50 border-border text-foreground rounded-xl focus:ring-2 focus:ring-primary/50 transition-all text-sm font-medium px-4">
                                         <SelectValue />
                                     </SelectTrigger>
-                                    <SelectContent className="bg-zinc-950/95 border-border backdrop-blur-xl rounded-xl shadow-2xl overflow-hidden">
+                                    <SelectContent className="bg-popover text-popover-foreground border-border backdrop-blur-xl rounded-xl shadow-2xl overflow-hidden">
                                         {levels.map(l => (
-                                            <SelectItem key={l} value={l} className="focus:bg-muted/50 focus:text-foreground text-foreground/90 transition-colors cursor-pointer rounded-lg mx-1 my-1">
+                                            <SelectItem key={l} value={l} className="focus:bg-muted focus:text-foreground text-foreground transition-colors cursor-pointer rounded-lg mx-1 my-1">
                                                 {l}
                                             </SelectItem>
                                         ))}
@@ -91,21 +143,21 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                                 </Select>
                             </div>
                             
-                            <div className="flex gap-3 w-full md:w-auto pt-4 md:pt-0">
+                            <div className="flex gap-2 w-full md:w-auto mt-4 md:mt-0 flex-shrink-0">
                                 <Button 
                                     onClick={handleSaveSkill} 
                                     disabled={!newSkillName.trim()}
-                                    className="h-14 px-8 rounded-2xl bg-primary text-primary-foreground hover:bg-primary/90 hover:scale-105 transition-all shadow-[0_0_30px_-5px_rgba(var(--primary),0.4)] disabled:opacity-50 disabled:hover:scale-100 font-bold tracking-wide"
+                                    className="h-12 px-6 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 disabled:opacity-50 font-bold tracking-wide flex-shrink-0 whitespace-nowrap"
                                 >
-                                    <Check className="w-5 h-5 mr-2" /> 
+                                    <Check className="w-4 h-4 mr-2" /> 
                                     Commit
                                 </Button>
                                 <Button 
                                     variant="outline" 
                                     onClick={() => setIsAdding(false)} 
-                                    className="h-14 px-6 rounded-2xl border-border bg-muted/50 hover:bg-muted/50 hover:text-foreground transition-all text-foreground/80 hover:border-rose-500/50 hover:bg-rose-500/10 group"
+                                    className="h-12 w-12 p-0 rounded-xl border-border bg-muted/50 hover:bg-rose-500/10 hover:text-rose-500 hover:border-rose-500/50 transition-all flex-shrink-0"
                                 >
-                                    <X className="w-5 h-5 group-hover:text-rose-400 transition-colors" />
+                                    <X className="w-4 h-4" />
                                 </Button>
                             </div>
                         </div>
@@ -113,7 +165,7 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                 )}
 
                 {levels.map(level => {
-                    const skillsInLevel = data.skills.filter((s: any) => s.level === level)
+                    const skillsInLevel = localSkills.filter((s: any) => s.level === level)
                     if (skillsInLevel.length === 0 && !isEditing) return null
 
                     const levelColors = {
@@ -139,9 +191,9 @@ export function SkillsTab({ data, isEditing = false, onAddSkill, onDeleteSkill }
                                         )}
                                     >
                                         <span className="text-xs font-black tracking-tight">{skill.name}</span>
-                                        {isEditing && onDeleteSkill && (
+                                        {isEditing && (
                                             <button
-                                                onClick={() => onDeleteSkill(skill.name)}
+                                                onClick={() => handleDeleteSkill(skill.name)}
                                                 className="text-muted-foreground/50 hover:text-rose-500 transition-colors ml-1"
                                             >
                                                 <X className="w-3.5 h-3.5" />

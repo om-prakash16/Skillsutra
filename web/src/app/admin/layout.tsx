@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { Loader2, Zap } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { GlobalSearchCommand } from "@/components/admin/GlobalSearchCommand"
 
 export default function AdminLayout({
     children,
@@ -27,7 +28,7 @@ export default function AdminLayout({
 
     if (isLoading || !user || (user.role !== "admin" && (user.role as string) !== "super_admin")) {
         return (
-            <div className="flex h-screen w-full flex-col items-center justify-center bg-[#020617] text-foreground overflow-hidden relative">
+            <div className="flex h-screen w-full flex-col items-center justify-center bg-background text-foreground overflow-hidden relative">
                 {/* Background Glows */}
                 <div className="absolute top-[30%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 blur-[150px] rounded-full animate-pulse" />
                 
@@ -79,7 +80,7 @@ export default function AdminLayout({
     }
 
     return (
-        <div className="flex min-h-screen bg-[#030712] text-slate-50 selection:bg-primary/40 overflow-hidden">
+        <div className="flex min-h-screen bg-background text-slate-50 selection:bg-primary/40 overflow-hidden">
             {/* Advanced Ambient Background */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
                 {/* Primary Mesh Glow */}
@@ -124,6 +125,7 @@ export default function AdminLayout({
                 {/* Bottom dynamic fade mask */}
                 <div className="sticky bottom-0 w-full h-12 bg-gradient-to-t from-[#030712] to-transparent z-30 pointer-events-none opacity-60" />
             </main>
+            <GlobalSearchCommand />
         </div>
     )
 }

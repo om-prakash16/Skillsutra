@@ -7,9 +7,11 @@ export function QueryProvider({ children }: { children: React.ReactNode }) {
     const [queryClient] = useState(() => new QueryClient({
         defaultOptions: {
             queries: {
-                // With SSR, we usually want to set some default staleTime
-                // above 0 to avoid refetching immediately on the client
-                staleTime: 60 * 1000,
+                // Keep data fresh for 5 minutes before refetching
+                staleTime: 5 * 60 * 1000,
+                // Keep unused data in cache for 30 minutes before garbage collection
+                gcTime: 30 * 60 * 1000,
+                refetchOnWindowFocus: false, // Prevent unnecessary refetches on focus
             },
         },
     }))

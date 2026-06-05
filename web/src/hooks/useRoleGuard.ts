@@ -36,6 +36,12 @@ export function useRoleGuard(allowedRoles: AllowedRole[]) {
             return
         }
 
+        if (isAuthenticated && !user) {
+            // Edge case: AuthContext optimistically kept auth state but couldn't fetch user (e.g. 500/502 error)
+            router.replace(`/auth/login?error=server_unreachable`)
+            return
+        }
+
         if (user && !allowedRoles.includes(user.role as AllowedRole)) {
             // Redirect to the appropriate dashboard based on actual role
             switch (user.role) {

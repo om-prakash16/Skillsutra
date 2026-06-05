@@ -118,7 +118,7 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
                 <div className="flex gap-16 whitespace-nowrap animate-marquee">
                     {[...sectors, ...sectors].map((sector, i) => (
                         <div key={i} className="flex items-center gap-4 text-muted-foreground/40 hover:text-primary transition-all duration-300 cursor-default group scale-95 hover:scale-100">
-                            <div className="p-2.5 rounded-xl bg-black/5 dark:bg-muted/50 border border-black/5 dark:border-border/50 group-hover:bg-primary/10 group-hover:border-primary/20 transition-all shadow-sm">
+                            <div className="p-2.5 rounded-xl bg-muted/5 dark:bg-muted/50 border border-black/5 dark:border-border/50 group-hover:bg-primary/10 group-hover:border-primary/20 transition-all shadow-sm">
                                 {sector.icon}
                             </div>
                             <span className="text-[11px] font-bold tracking-widest uppercase">{sector.name}</span>
@@ -151,7 +151,7 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
                                     href={social.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="w-10 h-10 rounded-xl bg-black/5 dark:bg-muted/50 border border-black/10 dark:border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-all shadow-sm backdrop-blur-sm"
+                                    className="w-10 h-10 rounded-xl bg-muted/5 dark:bg-muted/50 border border-black/10 dark:border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-all shadow-sm backdrop-blur-sm"
                                 >
                                     {(social.platform === "twitter" || social.platform === "x") && (
                                         <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" aria-hidden="true">
@@ -189,7 +189,7 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
                             <form className="flex flex-col sm:flex-row gap-3 relative z-10" onSubmit={(e) => e.preventDefault()}>
                                 <Input 
                                     placeholder="Professional email" 
-                                    className="bg-black/5 dark:bg-muted/50 border-black/10 dark:border-border focus:border-primary/50 h-12 rounded-xl transition-all shadow-inner text-sm px-5"
+                                    className="bg-muted/5 dark:bg-muted/50 border-black/10 dark:border-border focus:border-primary/50 h-12 rounded-xl transition-all shadow-inner text-sm px-5"
                                 />
                                 <Button variant="premium" className="h-12 px-8 rounded-xl font-bold text-xs tracking-widest">
                                     Subscribe
@@ -223,7 +223,7 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
                 </div>
 
                 {/* Protocol Telemetry Dashboard Control Panel */}
-                <div className="mt-8 border border-white/[0.03] dark:border-border/50 bg-black/5 dark:bg-[#07070a]/60 backdrop-blur-md p-6 rounded-3xl grid grid-cols-2 md:grid-cols-4 gap-6 items-center shadow-inner relative overflow-hidden">
+                <div className="mt-8 border border-white/[0.03] dark:border-border/50 bg-muted/5 dark:bg-background/60 backdrop-blur-md p-6 rounded-3xl grid grid-cols-2 md:grid-cols-4 gap-6 items-center shadow-inner relative overflow-hidden">
                     <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
                     
                     <div className="flex items-center gap-3">

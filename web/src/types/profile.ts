@@ -50,6 +50,7 @@ export interface BasicInfo {
   location: string;
   title: string;
   avatar: string;
+  banner?: string;
   completion: number;
   experienceLevel?: string;
   jobType?: string;
@@ -88,4 +89,6 @@ export interface UserProfile {
     technical_score: number;
     proof_score: number;
   };
+  socialLinks?: any[];
+  dynamicSections?: any[];
 }

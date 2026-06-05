@@ -95,9 +95,13 @@ class AuthService:
         
         # 1. Check Redis Blacklist (Revocation)
         redis_client = get_redis_client()
-        is_blacklisted = await redis_client.get(f"blacklist:{token}")
-        if is_blacklisted:
-            raise AuthorizationError(message="Token has been revoked")
+        try:
+            is_blacklisted = await redis_client.get(f"blacklist:{token}")
+            if is_blacklisted:
+                raise AuthorizationError(message="Token has been revoked")
+        except Exception as e:
+            logger.error(f"Redis get failed: {e}")
+            # Assume not blacklisted if Redis is unreachable
             
         payload = decode_token(token)
         if not payload:

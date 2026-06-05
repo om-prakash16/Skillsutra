@@ -16,19 +16,45 @@ import { Input } from "@/components/ui/input"
 
 interface SettingsTabProps {
     data: UserProfile
+    onSave?: (payload: any) => Promise<void>
+    isEditing?: boolean
     onUpdateSettings?: (field: string, value: any) => void
 }
 
-export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
+export function SettingsTab({ data, onSave }: SettingsTabProps) {
     const { theme, setTheme } = useTheme()
     const { user } = useAuth()
     const [mounted, setMounted] = useState(false)
     const [usernameInput, setUsernameInput] = useState(user?.username || "")
     const [isClaiming, setIsClaiming] = useState(false)
+    const [availability, setAvailability] = useState<{available?: boolean, reason?: string, checking: boolean}>({ checking: false })
 
     useEffect(() => {
         if (user?.username) setUsernameInput(user.username)
     }, [user?.username])
+
+    useEffect(() => {
+        if (!usernameInput || usernameInput === user?.username || usernameInput.length < 3) {
+            setAvailability({ checking: false });
+            return;
+        }
+        
+        setAvailability({ checking: true });
+        const timer = setTimeout(async () => {
+            try {
+                const res = await userApi.profile.checkUsername(usernameInput);
+                if (res) {
+                    setAvailability({ available: res.available, reason: res.reason, checking: false });
+                } else {
+                    setAvailability({ checking: false });
+                }
+            } catch (e) {
+                setAvailability({ checking: false });
+            }
+        }, 500);
+        
+        return () => clearTimeout(timer);
+    }, [usernameInput, user?.username]);
 
     const handleClaimUsername = async () => {
         if (!usernameInput || usernameInput === user?.username) return
@@ -49,6 +75,9 @@ export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
         setMounted(true)
     }, [])
 
+    const [isEditingUrl, setIsEditingUrl] = useState(false)
+    const domain = mounted && typeof window !== "undefined" ? window.location.origin : "https://yourdomain.com"
+
     return (
         <Card className="glass border-border/50 rounded-[2rem] overflow-hidden shadow-2xl">
             <CardHeader className="border-b border-border/50 pb-8 pt-8 px-10">
@@ -58,35 +87,66 @@ export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
                 </CardDescription>
             </CardHeader>
             <CardContent className="space-y-8 p-10">
-                <div className="flex items-center justify-between space-x-2">
-                    <div className="space-y-2">
-                        <Label className="text-sm font-black uppercase tracking-[0.1em] text-foreground">Nexus Notifications</Label>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Receive cryptographic alerts about new matches.</p>
-                    </div>
-                    <Switch defaultChecked={data.settings.notifications} onCheckedChange={(checked) => onUpdateSettings?.('notifications', checked)} className="data-[state=checked]:bg-primary" />
-                </div>
-
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
                     <div className="space-y-2 flex-1">
-                        <Label className="text-sm font-black uppercase tracking-[0.1em] text-foreground">Public URL Node</Label>
-                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Your unique identifier on the network.</p>
+                        <Label className="text-sm font-black uppercase tracking-[0.1em] text-foreground">Profile URL</Label>
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Manage your custom profile link.</p>
                     </div>
-                    <div className="flex w-full md:w-[320px] gap-2 items-center">
-                        <span className="text-muted-foreground text-xs font-bold shrink-0">skillsutra.com/</span>
-                        <Input 
-                            value={usernameInput} 
-                            onChange={(e) => setUsernameInput(e.target.value.toLowerCase())} 
-                            placeholder="username"
-                            className="h-12 glass border-border rounded-xl focus:ring-primary/20 text-xs font-bold"
-                        />
-                        <Button 
-                            onClick={handleClaimUsername} 
-                            disabled={isClaiming || usernameInput === user?.username || usernameInput.length < 3}
-                            variant="default"
-                            className="h-12 rounded-xl font-black uppercase tracking-widest text-[10px] shrink-0"
-                        >
-                            {isClaiming ? <Loader2 className="w-4 h-4 animate-spin" /> : "Claim"}
-                        </Button>
+                    
+                    <div className="flex flex-col w-full md:w-[400px] gap-3">
+                        {!isEditingUrl ? (
+                            <div className="flex items-center justify-between glass border-border rounded-xl p-4">
+                                <span className="text-xs font-bold text-foreground truncate">
+                                    {domain}/in/{user?.username || "[username]"}
+                                </span>
+                                <Button variant="ghost" size="sm" onClick={() => setIsEditingUrl(true)} className="h-8 text-xs font-bold uppercase tracking-widest text-primary hover:text-primary hover:bg-primary/10">
+                                    Edit
+                                </Button>
+                            </div>
+                        ) : (
+                            <div className="glass border border-border rounded-xl p-4 space-y-4">
+                                <div className="space-y-1">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Profile URL Preview:</Label>
+                                    <p className="text-xs font-bold text-primary truncate">
+                                        {domain}/in/{usernameInput || "[username]"}
+                                    </p>
+                                </div>
+                                <div className="flex gap-2 items-center">
+                                    <Input 
+                                        value={usernameInput} 
+                                        onChange={(e) => setUsernameInput(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))} 
+                                        placeholder="username"
+                                        className={`h-10 glass border-border rounded-lg focus:ring-primary/20 text-xs font-bold ${availability.available === false ? 'border-red-500/50' : availability.available === true ? 'border-green-500/50' : ''}`}
+                                    />
+                                    <Button 
+                                        onClick={async () => {
+                                            await handleClaimUsername();
+                                            setIsEditingUrl(false);
+                                        }} 
+                                        disabled={isClaiming || usernameInput === user?.username || usernameInput.length < 3 || availability.available === false || availability.checking}
+                                        variant="default"
+                                        className="h-10 rounded-lg font-black uppercase tracking-widest text-[10px] shrink-0"
+                                    >
+                                        {isClaiming || availability.checking ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save"}
+                                    </Button>
+                                    <Button 
+                                        onClick={() => {
+                                            setUsernameInput(user?.username || "");
+                                            setIsEditingUrl(false);
+                                        }} 
+                                        variant="ghost"
+                                        className="h-10 rounded-lg font-black uppercase tracking-widest text-[10px] shrink-0"
+                                    >
+                                        Cancel
+                                    </Button>
+                                </div>
+                                {availability.reason && usernameInput !== user?.username && (
+                                    <p className={`text-[10px] font-bold ${availability.available ? 'text-green-500' : 'text-red-500'}`}>
+                                        {availability.available ? 'Username is available' : `Unavailable: ${availability.reason}`}
+                                    </p>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
 
@@ -95,7 +155,7 @@ export function SettingsTab({ data, onUpdateSettings }: SettingsTabProps) {
                         <Label className="text-sm font-black uppercase tracking-[0.1em] text-foreground">Identity Visibility</Label>
                         <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">Control the exposure of your Matrix Profile.</p>
                     </div>
-                    <Select defaultValue={data.settings.visibility.toLowerCase()} onValueChange={(val) => onUpdateSettings?.('visibility', val === "public" ? "Public" : "Private")}>
+                    <Select defaultValue={data.settings?.visibility?.toLowerCase()} onValueChange={(val) => onSave?.({ settings: { visibility: val === "public" ? "Public" : "Private" } })}>
                         <SelectTrigger className="w-full md:w-[220px] h-12 glass border-border rounded-xl focus:ring-primary/20 text-xs font-black uppercase tracking-widest">
                             <SelectValue placeholder="Select visibility" />
                         </SelectTrigger>

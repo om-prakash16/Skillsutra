@@ -44,6 +44,8 @@ export async function updateSession(request: NextRequest) {
 
   // ─── ROLE DETECTION ────────────────────────────────────────────────
   let role: string | null = null
+  let userId: string | null = null
+  let username: string | null = null
 
   // Check for custom JWT cookie (auth_token)
   const customToken = request.cookies.get('auth_token')?.value
@@ -57,10 +59,17 @@ export async function updateSession(request: NextRequest) {
       } else if (payload && payload.role) {
          role = payload.role
       }
+      userId = payload?.sub || payload?.id || payload?.user_id
+      username = payload?.username || payload?.preferred_username || payload?.name
       console.log("[Middleware] Extracted role:", role)
     } catch (e) {
       console.error("Middleware JWT Decode Error:", e)
     }
+  }
+
+  // Intercept /user/profile requests
+  if ((path === '/user/profile' || path === '/profile') && userId) {
+      return NextResponse.redirect(new URL(`/in/${username || userId}`, request.url))
   }
 
   // ─── ROUTE CLASSIFICATION ─────────────────────────────────────────

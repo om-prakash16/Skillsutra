@@ -32,12 +32,10 @@ async def get_public_profile(username: str, db: AsyncSession = Depends(get_db_se
     if not target_user:
         raise HTTPException(status_code=404, detail="Profile not found")
         
-    # Get profile data
-    profile_result = await db.execute(select(Profile).where(Profile.user_id == target_user.id))
-    profile = profile_result.scalars().first()
-    
-    if not profile:
-        raise HTTPException(status_code=404, detail="Profile not configured")
+    # Get or create profile data
+    from modules.profile.service import ProfileService
+    service = ProfileService(db)
+    profile = await service.get_or_create_profile(target_user.id)
         
     # Check visibility settings
     visibility_result = await db.execute(select(VisibilitySettings).where(VisibilitySettings.user_id == target_user.id))

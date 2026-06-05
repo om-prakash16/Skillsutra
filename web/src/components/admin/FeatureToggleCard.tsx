@@ -31,7 +31,7 @@ export function FeatureToggleCard({ feature, onToggle }: FeatureToggleCardProps)
   };
 
   return (
-    <Card className="bg-[#050505] border-border hover:border-border transition-all duration-500 overflow-hidden relative group">
+    <Card className="bg-background border-border hover:border-border transition-all duration-500 overflow-hidden relative group">
       <CardHeader className="pb-4">
         <div className="flex justify-between items-start">
             <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 border border-border bg-muted/50 transition-colors group-hover:bg-muted/50`}>

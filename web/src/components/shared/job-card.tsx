@@ -41,7 +41,7 @@ export function JobCard({ job }: JobCardProps) {
                     <div className="w-12 h-12 rounded-xl bg-black/[0.03] dark:bg-muted/30 border border-black/5 dark:border-border flex items-center justify-center text-sm font-bold text-muted-foreground/30 group-hover:bg-primary/10 group-hover:text-primary transition-all duration-500 shadow-inner uppercase tracking-wider">
                         {job.company.substring(0, 2)}
                     </div>
-                    <Badge variant="outline" className="glass bg-black/5 dark:bg-muted/50 text-muted-foreground/50 border-black/5 dark:border-border text-micro font-bold py-1 px-4 rounded-lg group-hover:border-primary/20 group-hover:text-primary transition-all">
+                    <Badge variant="outline" className="glass bg-muted/5 dark:bg-muted/50 text-muted-foreground/50 border-black/5 dark:border-border text-micro font-bold py-1 px-4 rounded-lg group-hover:border-primary/20 group-hover:text-primary transition-all">
                         {job.type}
                     </Badge>
                 </div>
@@ -91,7 +91,7 @@ export function JobCard({ job }: JobCardProps) {
                     <span>{job.postedAt}</span>
                 </div>
                 <div className="flex gap-3">
-                    <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl bg-black/5 dark:bg-muted/50 text-muted-foreground/20 hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/10">
+                    <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl bg-muted/5 dark:bg-muted/50 text-muted-foreground/20 hover:text-primary hover:bg-primary/10 transition-all border border-transparent hover:border-primary/10">
                         <Bookmark className="w-5 h-5" />
                     </Button>
                     <Link href={createSlug(job.title, job.company, job.id)}>

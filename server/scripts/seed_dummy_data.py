@@ -61,7 +61,7 @@ async def seed_data():
             db.table("companies")
             .insert(
                 {
-                    "name": company_name,
+                    "company_name": company_name,
                     "created_by_user_id": user_id,
                 }
             )

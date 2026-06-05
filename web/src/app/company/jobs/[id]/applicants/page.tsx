@@ -1,4 +1,5 @@
 "use client"
+import { useState } from "react"
 
 import { useQuery, useMutation } from "@tanstack/react-query"
 import { useParams, useRouter } from "next/navigation"
@@ -21,6 +22,10 @@ import {
     TableHeader, 
     TableRow 
 } from "@/components/ui/table"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { 
     Loader2, 
     Users, 
@@ -33,7 +38,10 @@ import {
     CheckCircle2,
     XCircle,
     Cpu,
-    Activity
+    Activity,
+    Bot,
+    Edit3,
+    Save
 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
@@ -43,6 +51,14 @@ export default function PersonnelResonanceArchive() {
     const { id } = useParams() // job_id
     const { user } = useAuth()
     const router = useRouter()
+    
+    // Copilot State
+    const [selectedApp, setSelectedApp] = useState<any>(null)
+    const [isCopilotOpen, setIsCopilotOpen] = useState(false)
+    const [isPremiumGateOpen, setIsPremiumGateOpen] = useState(false)
+    const [interviewQuestions, setInterviewQuestions] = useState<any[]>([])
+    const [isGenerating, setIsGenerating] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
 
     // 1. Fetch Company Info (to get companyId)
     const { data: company } = useQuery({
@@ -76,6 +92,68 @@ export default function PersonnelResonanceArchive() {
             toast.error(`State update failed: ${err.message}`)
         }
     })
+
+    // 5. Fetch Features
+    const { data: features } = useQuery({
+        queryKey: ["publicFeatures"],
+        queryFn: () => api.admin.getPublicFeatures(),
+    })
+    
+    const isCopilotEnabled = features?.find((f: any) => f.feature_name === 'ai_interviews')?.is_enabled ?? true;
+
+    // Copilot Handlers
+    const handleOpenCopilot = async (app: any) => {
+        // Mock Premium Check - Require specific company tier or credits
+        if (company?.subscription_tier === 'free' || !company?.subscription_tier) {
+            setIsPremiumGateOpen(true);
+            return;
+        }
+        setSelectedApp(app)
+        setIsCopilotOpen(true)
+        setInterviewQuestions([])
+        try {
+            const data = await api.interview.get(app.user_id, id as string)
+            if (data && data.length > 0) {
+                setInterviewQuestions(data)
+            }
+        } catch (e) {
+            console.error("Failed to fetch existing questions")
+        }
+    }
+
+    const handleGenerate = async () => {
+        if (!selectedApp) return;
+        setIsGenerating(true);
+        try {
+            const generated = await api.interview.generate(selectedApp.user_id, id as string, 5)
+            setInterviewQuestions(generated)
+            toast.success("AI Synthesis complete.")
+        } catch (e: any) {
+            toast.error(e.message || "Synthesis failed")
+        } finally {
+            setIsGenerating(false)
+        }
+    }
+
+    const handleSaveQuestions = async () => {
+        if (!selectedApp) return;
+        setIsSaving(true)
+        try {
+            await api.interview.set(selectedApp.user_id, id as string, interviewQuestions)
+            toast.success("Interview logic committed to memory.")
+            setIsCopilotOpen(false)
+        } catch (e: any) {
+            toast.error("Failed to commit questions")
+        } finally {
+            setIsSaving(false)
+        }
+    }
+
+    const handleQuestionChange = (index: number, text: string) => {
+        const newQs = [...interviewQuestions];
+        newQs[index].question = text;
+        setInterviewQuestions(newQs);
+    }
 
     const calculateFinalResonance = (matchScore: number, assessmentScore: number | null) => {
         if (assessmentScore === null) return matchScore * 0.4
@@ -117,7 +195,7 @@ export default function PersonnelResonanceArchive() {
             </div>
 
             {/* Application Matrix */}
-            <Card className="bg-[#0a0a0a] border-border rounded-[2.5rem] overflow-hidden shadow-2xl relative">
+            <Card className="bg-background border-border rounded-[2.5rem] overflow-hidden shadow-2xl relative">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
                 <CardHeader className="p-10 border-b border-border/50">
                     <div className="flex items-center justify-between">
@@ -237,6 +315,17 @@ export default function PersonnelResonanceArchive() {
                                                     >
                                                         <XCircle className="w-5 h-5 text-muted-foreground group-hover/de:text-rose-500" />
                                                     </Button>
+                                                    {isCopilotEnabled && (
+                                                        <Button 
+                                                            onClick={() => handleOpenCopilot(app)}
+                                                            variant="ghost" 
+                                                            size="icon" 
+                                                            title="AI Copilot"
+                                                            className="h-12 w-12 rounded-2xl bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 group/ai"
+                                                        >
+                                                            <Bot className="w-5 h-5 text-blue-500" />
+                                                        </Button>
+                                                    )}
                                                     <Button variant="ghost" size="icon" asChild className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 hover:bg-primary/20">
                                                         <Link href={`/company/talent`}>
                                                             <ArrowRight className="w-5 h-5 text-primary" />
@@ -265,6 +354,92 @@ export default function PersonnelResonanceArchive() {
                     "The Personnel Resonance Archive provides an uncompromising view of global talent. By weighting live assessments over profile claims, we've reduced hiring fraud by 98% across the infrastructure nexus."
                 </p>
             </div>
+
+            {/* AI Copilot Modal */}
+            <Dialog open={isCopilotOpen} onOpenChange={setIsCopilotOpen}>
+                <DialogContent className="max-w-3xl bg-background border-border shadow-2xl rounded-[2rem] overflow-hidden p-0 gap-0">
+                    <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 p-8 border-b border-border/50">
+                        <DialogHeader>
+                            <DialogTitle className="text-2xl font-black flex items-center gap-3">
+                                <Bot className="w-6 h-6 text-blue-500" /> AI Interview Synthesis
+                            </DialogTitle>
+                            <DialogDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground italic">
+                                Target: {selectedApp?.users?.full_name}
+                            </DialogDescription>
+                        </DialogHeader>
+                    </div>
+                    <div className="p-8 space-y-6 bg-white/[0.01]">
+                        {interviewQuestions.length === 0 ? (
+                            <div className="text-center py-10 space-y-4">
+                                <BrainCircuit className="w-16 h-16 text-muted-foreground/30 mx-auto" />
+                                <p className="text-muted-foreground italic text-sm max-w-md mx-auto">
+                                    Click below to prompt the AI to read {selectedApp?.users?.full_name}'s resume and generate 5 highly technical interview questions specifically targeted at their claimed skills and your job requirements.
+                                </p>
+                            </div>
+                        ) : (
+                            <ScrollArea className="h-[40vh] pr-4">
+                                <div className="space-y-6">
+                                    {interviewQuestions.map((q, idx) => (
+                                        <div key={idx} className="space-y-2 bg-muted/30 p-4 rounded-xl border border-border/50 relative group">
+                                            <div className="absolute top-4 right-4 opacity-30 group-hover:opacity-100 transition-opacity">
+                                                <Edit3 className="w-4 h-4 text-primary" />
+                                            </div>
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-primary flex items-center gap-2">
+                                                Question {idx + 1}
+                                            </label>
+                                            <Textarea 
+                                                value={q.question || q} 
+                                                onChange={(e) => handleQuestionChange(idx, e.target.value)}
+                                                className="bg-background border-border resize-none text-sm font-medium h-20"
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+                            </ScrollArea>
+                        )}
+                        <div className="flex justify-between items-center pt-4 border-t border-border/50">
+                            <Button 
+                                variant="outline" 
+                                onClick={handleGenerate} 
+                                disabled={isGenerating}
+                                className="bg-blue-500/10 text-blue-500 border-blue-500/30 hover:bg-blue-500/20 font-black tracking-widest uppercase text-[10px] gap-2"
+                            >
+                                {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Bot className="w-4 h-4" />}
+                                {interviewQuestions.length > 0 ? "Regenerate" : "Synthesize Questions"}
+                            </Button>
+                            {interviewQuestions.length > 0 && (
+                                <Button 
+                                    onClick={handleSaveQuestions}
+                                    disabled={isSaving}
+                                    className="gap-2 font-black tracking-widest uppercase text-[10px]"
+                                >
+                                    {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                                    Commit Protocol
+                                </Button>
+                            )}
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
+
+            {/* Premium Gate Modal */}
+            <Dialog open={isPremiumGateOpen} onOpenChange={setIsPremiumGateOpen}>
+                <DialogContent className="max-w-md bg-background border-border shadow-2xl rounded-3xl p-8 text-center">
+                    <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mx-auto mb-6">
+                        <Zap className="w-8 h-8" />
+                    </div>
+                    <h3 className="text-2xl font-black italic mb-2">Upgrade Required</h3>
+                    <p className="text-muted-foreground text-sm mb-8">
+                        The AI Interview Synthesis engine is a premium feature. Upgrade your corporate tier to access hyper-personalized candidate interviews.
+                    </p>
+                    <div className="flex gap-4 w-full">
+                        <Button variant="outline" className="flex-1" onClick={() => setIsPremiumGateOpen(false)}>Cancel</Button>
+                        <Button className="flex-1 gap-2" asChild>
+                            <Link href="/pricing"><Zap className="w-4 h-4" /> View Plans</Link>
+                        </Button>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     )
 }

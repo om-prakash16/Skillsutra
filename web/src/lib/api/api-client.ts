@@ -54,7 +54,7 @@ async function refreshAccessToken(): Promise<string | null> {
 
 export async function fetchWithAuth(endpoint: string, options: RequestInit & { timeout?: number } = {}) {
     const { timeout = 10000, ...fetchOptions } = options;
-    let token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
 
     const controller = new AbortController();
     const id = setTimeout(() => controller.abort(), timeout);
@@ -134,6 +134,10 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit & { t
 
 // API module bindings
 export const api = {
+    get: (endpoint: string) => fetchWithAuth(endpoint),
+    post: (endpoint: string, data: any) => fetchWithAuth(endpoint, { method: "POST", body: JSON.stringify(data) }),
+    put: (endpoint: string, data: any) => fetchWithAuth(endpoint, { method: "PUT", body: JSON.stringify(data) }),
+    delete: (endpoint: string) => fetchWithAuth(endpoint, { method: "DELETE" }),
     auth: {
         sync: (requested_role?: string) => 
             fetchWithAuth("/auth/sync", { 
@@ -223,6 +227,7 @@ export const api = {
         retry: (type: string) => fetchWithAuth("/sync/retry", { method: "POST", body: JSON.stringify({ entity_type: type }) })
     },
     admin: {
+        getPublicFeatures: () => fetchWithAuth("/admin/features/public"),
         getUsers: () => fetchWithAuth("/admin/users"),
         updateUser: (account: string, data: any) => fetchWithAuth(`/admin/users/${account}`, { method: "PATCH", body: JSON.stringify(data) }),
         getSchema: () => fetchWithAuth("/admin/schema"),
@@ -257,7 +262,20 @@ export const api = {
         all: () => fetchWithAuth("/cms"),
         section: (section: string) => fetchWithAuth(`/cms/${section}`),
         update: (data: any) => fetchWithAuth("/cms/update", { method: "PATCH", body: JSON.stringify(data) }),
-        delete: (section: string, key: string) => fetchWithAuth(`/cms/${section}/${key}`, { method: "DELETE" })
+        delete: (section: string, key: string) => fetchWithAuth(`/cms/${section}/${key}`, { method: "DELETE" }),
+        // New CMS Routes
+        getPages: () => fetchWithAuth("/cms/pages"),
+        getPage: (id: string) => fetchWithAuth(`/cms/pages/${id}`),
+        createPage: (data: any) => fetchWithAuth("/cms/pages", { method: "POST", body: JSON.stringify(data) }),
+        updatePage: (id: string, data: any) => fetchWithAuth(`/cms/pages/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+        deletePage: (id: string) => fetchWithAuth(`/cms/pages/${id}`, { method: "DELETE" }),
+        getArticles: () => fetchWithAuth("/cms/articles"),
+        getArticle: (id: string) => fetchWithAuth(`/cms/articles/${id}`),
+        createArticle: (data: any) => fetchWithAuth("/cms/articles", { method: "POST", body: JSON.stringify(data) }),
+        updateArticle: (id: string, data: any) => fetchWithAuth(`/cms/articles/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+        deleteArticle: (id: string) => fetchWithAuth(`/cms/articles/${id}`, { method: "DELETE" }),
+        getBanners: () => fetchWithAuth("/cms/banners"),
+        getTaxonomy: () => fetchWithAuth("/cms/taxonomy"),
     },
     career: {
         getGoals: () => fetchWithAuth("/career/goals"),
@@ -272,12 +290,22 @@ export const api = {
         getStatus: (userId?: string) => fetchWithAuth(`/profile/identity/status${userId ? `?user_id=${userId}` : ""}`),
     },
     interview: {
-        generate: (jobId: string, count: number = 10) => fetchWithAuth("/ai/generate-interview-questions", { method: "POST", body: JSON.stringify({ job_id: jobId, count }) }),
-        get: (jobId?: string) => fetchWithAuth(`/ai/interview-questions${jobId ? `?job_id=${jobId}` : ""}`),
+        generate: (userId: string, jobId: string, count: number = 10) => fetchWithAuth("/ai/generate-interview-questions", { method: "POST", body: JSON.stringify({ user_id: userId, job_id: jobId, count }) }),
+        get: (userId: string, jobId?: string) => fetchWithAuth(`/ai/interview-questions?user_id=${userId}${jobId ? `&job_id=${jobId}` : ""}`),
+        set: (userId: string, jobId: string, questions: any[]) => fetchWithAuth(`/ai/set-interview-questions?user_id=${userId}&job_id=${jobId}`, { method: "POST", body: JSON.stringify(questions) }),
     },
     chat: {
         getRooms: () => fetchWithAuth("/chat/rooms"),
         getHistory: (roomId: string) => fetchWithAuth(`/chat/history/${roomId}`),
+    },
+
+    messages: {
+        getInbox: () => fetchWithAuth("/messages/inbox"),
+        getHistory: (conversationId: string) => fetchWithAuth(`/messages/${conversationId}/history`),
+        startConversation: (data: { receiver_id: string, subject?: string, initial_message: string }) => 
+            fetchWithAuth("/messages/start", { method: "POST", body: JSON.stringify(data) }),
+        sendMessage: (conversationId: string, content: string) => 
+            fetchWithAuth(`/messages/${conversationId}/send`, { method: "POST", body: JSON.stringify({ content }) }),
     },
     competitions: {
         get: () => fetchWithAuth("/competitions"),
@@ -288,6 +316,11 @@ export const api = {
         get: () => fetchWithAuth("/talent-pool"),
         post: (data: any) => fetchWithAuth("/talent-pool", { method: "POST", body: JSON.stringify(data) }),
         delete: (id: string) => fetchWithAuth(`/talent-pool/${id}`, { method: "DELETE" })
+    },
+    feed: {
+        getPosts: (limit = 20, offset = 0) => fetchWithAuth(`/social/feed?limit=${limit}&offset=${offset}`),
+        createPost: (data: any) => fetchWithAuth("/social/posts", { method: "POST", body: JSON.stringify(data) }),
+        toggleLike: (postId: string) => fetchWithAuth(`/social/posts/${postId}/like`, { method: "POST" }),
     }
 };
 

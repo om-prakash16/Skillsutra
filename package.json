@@ -1,4 +1,7 @@
 {
   "name": "best-hiring-tool",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "puppeteer": "^25.1.0"
+  }
 }

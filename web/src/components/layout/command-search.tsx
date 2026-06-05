@@ -158,13 +158,13 @@ export function CommandSearch() {
             <button 
                 onClick={toggle}
                 className={cn(
-                    "hidden md:flex items-center gap-3 px-4 py-2 rounded-xl bg-black/5 dark:bg-muted/50 border border-black/10 dark:border-border hover:bg-black/10 dark:hover:bg-muted/50 transition-all text-muted-foreground group",
+                    "hidden md:flex items-center gap-3 px-4 py-2 rounded-xl bg-muted/5 dark:bg-muted/50 border border-black/10 dark:border-border hover:bg-black/10 dark:hover:bg-muted/50 transition-all text-muted-foreground group",
                     isAdmin ? "hover:border-rose-500/40" : "hover:border-primary/40"
                 )}
             >
                 <Search className={cn("w-4 h-4 transition-colors", isAdmin ? "group-hover:text-rose-400" : "group-hover:text-primary")} />
                 <span className="text-xs font-black uppercase tracking-widest">Search Command</span>
-                <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-1 rounded border border-black/10 dark:border-border bg-black/5 dark:bg-muted/50 px-1.5 font-mono text-[10px] font-medium opacity-100">
+                <kbd className="hidden lg:inline-flex h-5 select-none items-center gap-1 rounded border border-black/10 dark:border-border bg-muted/5 dark:bg-muted/50 px-1.5 font-mono text-[10px] font-medium opacity-100">
                     <span className="text-xs">⌘</span>K
                 </kbd>
             </button>
@@ -185,7 +185,7 @@ export function CommandSearch() {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: -20 }}
                             className={cn(
-                                "relative w-full max-w-2xl bg-[#0a0a0a] border rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-300",
+                                "relative w-full max-w-2xl bg-background border rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-300",
                                 isAdmin ? "border-rose-500/20 shadow-rose-500/5" : "border-border"
                             )}
                         >

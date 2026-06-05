@@ -26,7 +26,7 @@ export function Breadcrumbs() {
     const segments = pathname.split("/").filter(Boolean)
     
     return (
-        <nav className="flex items-center gap-2 px-6 py-4 bg-[#050505]/50 backdrop-blur-xl border-b border-border/50 overflow-x-auto whitespace-nowrap no-scrollbar">
+        <nav className="flex items-center gap-2 px-6 py-4 bg-background/50 backdrop-blur-xl border-b border-border/50 overflow-x-auto whitespace-nowrap no-scrollbar">
             <Link 
                 href="/" 
                 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary transition-colors"

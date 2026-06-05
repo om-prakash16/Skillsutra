@@ -134,7 +134,7 @@ export default function CompanyModeration() {
                       <SelectTrigger className="w-48 bg-transparent border-none focus:ring-0 text-foreground font-black uppercase tracking-widest text-[10px]">
                           <SelectValue placeholder="All Tiers" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-950 border-border text-foreground">
+                      <SelectContent className="bg-background border-border text-foreground">
                           <SelectItem value="all">ALL TIERS</SelectItem>
                           <SelectItem value="premium">PREMIUM (LVL 3)</SelectItem>
                           <SelectItem value="advanced">ADVANCED (LVL 2)</SelectItem>
@@ -240,7 +240,7 @@ export default function CompanyModeration() {
                                     <MoreVertical className="w-5 h-5" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-slate-950 border-border text-foreground w-64 p-2 rounded-2xl shadow-2xl">
+                            <DropdownMenuContent className="bg-background border-border text-foreground w-64 p-2 rounded-2xl shadow-2xl">
                                 <DropdownMenuLabel className="text-[10px] uppercase font-black text-muted-foreground tracking-widest p-2">Escalate Provinance</DropdownMenuLabel>
                                 <DropdownMenuItem className="focus:bg-rose-500/20 rounded-xl cursor-pointer py-3" onClick={() => handleUpdateTier(company.id, 'basic')}>
                                     <ShieldCheck className="w-4 h-4 mr-3 text-muted-foreground" /> Basic Verification (L1)

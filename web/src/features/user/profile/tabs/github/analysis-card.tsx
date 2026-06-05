@@ -45,7 +45,7 @@ export function GithubAnalysis({ repos }: GithubAnalysisProps) {
                             <Zap className="w-4 h-4" /> Core Strengths
                         </h4>
                         <ul className="space-y-2">
-                            {report.technicalStrengths.map((strength, i) => (
+                            {(report.technicalStrengths || []).map((strength, i) => (
                                 <li key={i} className="flex items-start gap-2 text-sm">
                                     <span className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 shrink-0" />
                                     <span>{strength}</span>
@@ -62,7 +62,7 @@ export function GithubAnalysis({ repos }: GithubAnalysisProps) {
                         <div className="space-y-3">
                             <div className="flex justify-between items-center text-sm p-2 bg-muted/40 rounded border">
                                 <span className="text-muted-foreground">Best Fit</span>
-                                <span className="font-medium text-right">{report.roleFit.bestFitRole}</span>
+                                <span className="font-medium text-right">{report.roleFit?.bestFitRole || 'N/A'}</span>
                             </div>
                         </div>
                     </div>
@@ -74,7 +74,7 @@ export function GithubAnalysis({ repos }: GithubAnalysisProps) {
                         <Layers className="w-4 h-4" /> Architecture Signals
                     </h4>
                     <div className="grid sm:grid-cols-3 gap-4">
-                        {report.architectureSignals.map((signal) => (
+                        {(report.architectureSignals || []).map((signal) => (
                             <div key={signal.label} className="p-3 rounded-lg border bg-card/50 space-y-1">
                                 <div className="text-xs text-muted-foreground">{signal.label}</div>
                                 <div className="font-semibold text-sm">{signal.value}</div>
@@ -92,7 +92,7 @@ export function GithubAnalysis({ repos }: GithubAnalysisProps) {
                         <TrendingUp className="w-4 h-4" /> Growth Trajectory
                     </h4>
                     <div className="space-y-2">
-                        {report.growthRecommendations.map((rec, i) => (
+                        {(report.growthRecommendations || []).map((rec, i) => (
                             <div key={i} className="flex gap-3 text-sm text-muted-foreground p-2 hover:bg-muted/30 rounded transition-colors">
                                 <span className="font-mono text-xs opacity-50">0{i + 1}</span>
                                 <span>{rec}</span>

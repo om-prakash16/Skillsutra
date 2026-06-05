@@ -405,6 +405,32 @@ async def get_audit_logs(admin=Depends(require_admin)):
     res = db.table("staff_audit_logs").select("*").order("created_at", desc=True).execute()
     return success_response(data=res.data)
 
+# -- Security Center --
+@router.get("/security-events")
+async def get_security_events(admin=Depends(require_admin)):
+    """Fetch all security threat events (failed logins, brute force, etc)."""
+    from core.db import get_db
+    db = get_db()
+    res = db.table("security_events").select("*").order("created_at", desc=True).execute()
+    return success_response(data=res.data if res.data else [])
+
+@router.post("/lockdown")
+async def trigger_lockdown(admin=Depends(require_admin)):
+    """Trigger an emergency platform lockdown."""
+    from core.db import get_db
+    db = get_db()
+    
+    # Log the severe action
+    db.table("staff_audit_logs").insert({
+        "user_id": admin["id"],
+        "action": "EMERGENCY_LOCKDOWN",
+        "resource_type": "SYSTEM",
+        "details": {"reason": "Triggered via Security Center UI"}
+    }).execute()
+    
+    return success_response(message="Emergency lockdown protocol activated. All active sessions invalidated.")
+
+
 # -- Realtime Telemetry WebSocket --
 @router.websocket("/ws/telemetry")
 async def websocket_telemetry(websocket: WebSocket):

@@ -133,3 +133,42 @@ export async function verifyMagicLink(token: string) {
   if (!response.ok) throw new Error(json?.detail || "Verification failed");
   return json;
 }
+
+export async function sendSignupOtp(email: string, name?: string) {
+  const response = await fetch(`${API_URL}/auth/send-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, name }),
+  });
+  
+  let json;
+  try { json = await response.json(); } catch(e) {}
+  if (!response.ok) throw new Error(json?.detail || "Request failed");
+  return json;
+}
+
+export async function verifySignupOtp(email: string, code: string) {
+  const response = await fetch(`${API_URL}/auth/verify-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, code }),
+  });
+  
+  let json;
+  try { json = await response.json(); } catch(e) {}
+  if (!response.ok) throw new Error(json?.detail || "Verification failed");
+  return json;
+}
+
+export async function completeMagicLinkSetup(data: any) {
+  const response = await fetch(`${API_URL}/auth/complete-setup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  
+  let json;
+  try { json = await response.json(); } catch(e) {}
+  if (!response.ok) throw new Error(json?.detail || "Setup failed");
+  return json;
+}

@@ -4,32 +4,41 @@ import { useState } from "react"
 import { useAuth } from "@/context/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { Briefcase, Loader2 } from "lucide-react"
-import { motion } from "framer-motion"
+import { Briefcase, Loader2, Eye, EyeOff } from "lucide-react"
+import { motion, AnimatePresence } from "framer-motion"
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton"
 
 export default function LoginPage() {
     const { signInWithGoogle, signInWithGitHub, loginUser, isLoading } = useAuth()
-    const [loadingProvider, setLoadingProvider] = useState<"google" | "github" | "keycloak" | null>(null)
-    const router = useRouter()
+    const [loadingProvider, setLoadingProvider] = useState<"google" | "github" | "email" | null>(null)
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    const [showPassword, setShowPassword] = useState(false)
 
-    const handleLogin = async (provider: "google" | "github" | "keycloak") => {
+    const handleLogin = async (provider: "google" | "github") => {
         setLoadingProvider(provider)
         try {
             switch (provider) {
                 case "google":
-                    await signInWithGoogle()
+                    await signInWithGoogle("user", "login")
                     break
                 case "github":
-                    await signInWithGitHub()
-                    break
-                case "keycloak":
-                    // Redirect to standard email login page or handle it
-                    router.push("/auth/email-login")
+                    await signInWithGitHub("user", "login")
                     break
             }
+        } catch {
+            setLoadingProvider(null)
+        }
+    }
+
+    const handleEmailLogin = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setLoadingProvider("email")
+        try {
+            await loginUser({ email_or_username: email, password })
         } catch {
             setLoadingProvider(null)
         }
@@ -53,7 +62,7 @@ export default function LoginPage() {
             </CardHeader>
             <CardContent className="px-10 pb-10">
                 <div className="space-y-4">
-                    {/* Google (New id_token flow) */}
+                    {/* Google */}
                     <div className="w-full">
                         <GoogleLoginButton />
                     </div>
@@ -78,7 +87,6 @@ export default function LoginPage() {
                         </Button>
                     </motion.div>
 
-
                     {/* Divider */}
                     <div className="pt-4">
                         <div className="relative">
@@ -87,17 +95,62 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    {/* Email/Password via Keycloak */}
-                    <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-                        <Button
-                            variant="premium"
-                            className="w-full h-12 rounded-xl text-sm mt-2 shadow-premium font-bold tracking-widest"
-                            onClick={() => handleLogin("keycloak")}
-                            disabled={isDisabled}
-                        >
-                            {loadingProvider === "keycloak" ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "SIGN IN WITH EMAIL"}
-                        </Button>
-                    </motion.div>
+                    {/* Email/Password Form */}
+                    <form onSubmit={handleEmailLogin} className="space-y-4 pt-2">
+                        <div className="space-y-2">
+                            <Label className="text-micro text-muted-foreground/80 ml-2">Email Address</Label>
+                            <Input
+                                type="email"
+                                required
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="h-12 glass border-border rounded-xl"
+                                placeholder="you@example.com"
+                                disabled={isDisabled}
+                            />
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <div className="flex justify-between items-center ml-2 mr-2">
+                                <Label className="text-micro text-muted-foreground/80">Password</Label>
+                                <Link href="/auth/forgot-password" className="text-[10px] text-muted-foreground hover:text-primary transition-colors">
+                                    Forgot?
+                                </Link>
+                            </div>
+                            <div className="relative">
+                                <Input
+                                    type={showPassword ? "text" : "password"}
+                                    required
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    className="h-12 glass border-border rounded-xl pr-12"
+                                    placeholder="••••••••"
+                                    disabled={isDisabled}
+                                />
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className="absolute right-1 top-1 h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-transparent"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    disabled={isDisabled}
+                                >
+                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                </Button>
+                            </div>
+                        </div>
+
+                        <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className="pt-2">
+                            <Button
+                                type="submit"
+                                variant="premium"
+                                className="w-full h-12 rounded-xl text-sm shadow-premium font-bold tracking-widest uppercase"
+                                disabled={isDisabled || !email || !password}
+                            >
+                                {loadingProvider === "email" ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "SIGN IN WITH EMAIL"}
+                            </Button>
+                        </motion.div>
+                    </form>
                 </div>
             </CardContent>
             <CardFooter className="justify-center pb-8 pt-0 text-micro text-muted-foreground/60">

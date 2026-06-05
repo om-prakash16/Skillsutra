@@ -114,8 +114,17 @@ class ApplicationService:
 
     async def get_user_applications(self, user_id: str) -> List[Dict[str, Any]]:
         db = get_db()
-        res = db.table("applications").select("*, jobs(title, companies(name))").eq("candidate_id", user_id).execute()
-        return res.data or []
+        res = db.table("applications").select("*").eq("candidate_id", user_id).execute()
+        apps = res.data or []
+        for app in apps:
+            job_res = db.table("jobs").select("title, company_id").eq("id", app["job_id"]).single().execute()
+            if job_res and job_res.data:
+                job = job_res.data
+                comp_res = db.table("companies").select("name").eq("id", job.get("company_id")).single().execute()
+                if comp_res and comp_res.data:
+                    job["companies"] = comp_res.data
+                app["jobs"] = job
+        return apps
 
     async def submit_assessment(self, app_id: str, score: float, answers: List[Any]) -> Dict[str, Any]:
         db = get_db()

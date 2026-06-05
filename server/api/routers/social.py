@@ -62,17 +62,109 @@ async def create_post(
     
     return new_post
 
-@router.get("/feed", response_model=List[PostResponse])
+from schemas.social import EnrichedPostResponse
+from models.profile import Profile
+from models.social import Reaction
+from sqlalchemy.orm import selectinload
+from typing import List
+
+@router.get("/feed", response_model=List[EnrichedPostResponse])
 async def get_social_feed(
+    current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db_session)
 ):
     """
     Get the social feed. 
-    NOTE: In production, this will hydrate from Redis feed caches.
     """
-    stmt = select(Post).order_by(Post.created_at.desc()).limit(20)
+    user_id = UUID(current_user["id"])
+    
+    stmt = (
+        select(Post, Profile)
+        .join(Profile, Post.author_id == Profile.user_id)
+        .options(selectinload(Post.media))
+        .filter(Post.deleted_at == None)
+        .order_by(Post.created_at.desc())
+        .limit(20)
+    )
     result = await db.execute(stmt)
-    return result.scalars().unique().all()
+    rows = result.all()
+    
+    post_ids = [row[0].id for row in rows]
+    liked_post_ids = set()
+    
+    if post_ids:
+        reaction_stmt = select(Reaction.post_id).where(
+            Reaction.user_id == user_id,
+            Reaction.post_id.in_(post_ids),
+            Reaction.reaction_type == "LIKE"
+        )
+        reaction_result = await db.execute(reaction_stmt)
+        liked_post_ids = {row[0] for row in reaction_result.all()}
+
+    enriched_posts = []
+    for post, profile in rows:
+        post_dict = {
+            "id": post.id,
+            "author_id": post.author_id,
+            "content_markdown": post.content_markdown,
+            "visibility": post.visibility,
+            "likes_count": post.likes_count,
+            "comments_count": post.comments_count,
+            "reposts_count": post.reposts_count,
+            "created_at": post.created_at,
+            "updated_at": post.updated_at,
+            "media": post.media,
+            "author_profile": {
+                "id": profile.user_id,
+                "full_name": profile.full_name,
+                "headline": profile.headline,
+                "banner_url": profile.banner_url
+            },
+            "has_liked": post.id in liked_post_ids
+        }
+        enriched_posts.append(post_dict)
+        
+    return enriched_posts
+
+@router.post("/posts/{post_id}/like")
+async def toggle_like(
+    post_id: UUID,
+    current_user: dict = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db_session)
+):
+    user_id = UUID(current_user["id"])
+    
+    stmt = select(Reaction).where(
+        Reaction.user_id == user_id,
+        Reaction.post_id == post_id,
+        Reaction.reaction_type == "LIKE"
+    )
+    result = await db.execute(stmt)
+    reaction = result.scalars().first()
+    
+    post_stmt = select(Post).where(Post.id == post_id)
+    post_result = await db.execute(post_stmt)
+    post = post_result.scalars().first()
+    
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    if reaction:
+        db.delete(reaction)
+        post.likes_count = max(0, post.likes_count - 1)
+        liked = False
+    else:
+        new_reaction = Reaction(
+            user_id=user_id,
+            post_id=post_id,
+            reaction_type="LIKE"
+        )
+        db.add(new_reaction)
+        post.likes_count += 1
+        liked = True
+        
+    await db.commit()
+    return {"likes_count": post.likes_count, "liked": liked}
 
 # ==============================================================================
 # CONNECTIONS API

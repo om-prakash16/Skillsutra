@@ -180,7 +180,7 @@ export default function SchemaBuilder() {
                             <SelectTrigger className="bg-background/80 border-border h-12">
                                 <SelectValue placeholder="Select Section" />
                             </SelectTrigger>
-                            <SelectContent className="bg-slate-950 border-border text-foreground">
+                            <SelectContent className="bg-background border-border text-foreground">
                                 {SECTION_OPTIONS.map(opt => (
                                     <SelectItem key={opt.id} value={opt.id}>{opt.label}</SelectItem>
                                 ))}
@@ -194,7 +194,7 @@ export default function SchemaBuilder() {
                                 <SelectTrigger className="bg-background/80 border-border h-12 text-xs">
                                     <SelectValue placeholder="Type" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-slate-950 border-border text-foreground">
+                                <SelectContent className="bg-background border-border text-foreground">
                                     {TYPE_OPTIONS.map(opt => (
                                         <SelectItem key={opt.id} value={opt.id}>{opt.label}</SelectItem>
                                     ))}

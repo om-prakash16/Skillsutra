@@ -109,7 +109,7 @@ export default function UserManagement() {
                       <SelectTrigger className="w-48 bg-transparent border-none focus:ring-0 text-foreground font-bold uppercase tracking-widest text-xs">
                           <SelectValue placeholder="All Roles" />
                       </SelectTrigger>
-                      <SelectContent className="bg-slate-950 border-border text-foreground">
+                      <SelectContent className="bg-background border-border text-foreground">
                           <SelectItem value="all">ALL ENTITIES</SelectItem>
                           <SelectItem value="admin">ADMINISTRATORS</SelectItem>
                           <SelectItem value="COMPANY">CORPORATE ENTITIES</SelectItem>
@@ -207,7 +207,7 @@ export default function UserManagement() {
                                     <MoreVertical className="w-4 h-4" />
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent className="bg-slate-950 border-border text-foreground w-56">
+                            <DropdownMenuContent className="bg-background border-border text-foreground w-56">
                                 <DropdownMenuLabel className="text-[10px] uppercase font-black text-muted-foreground tracking-widest">Privilege Escalation</DropdownMenuLabel>
                                 <DropdownMenuItem className="focus:bg-indigo-500 cursor-pointer text-xs" onClick={() => handleUpdateUser(user.wallet_address, { role: 'COMPANY' })}>
                                     <ShieldCheck className="w-4 h-4 mr-2" /> Promote Recruiter

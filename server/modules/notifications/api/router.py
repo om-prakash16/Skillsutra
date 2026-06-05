@@ -94,7 +94,7 @@ async def mute_entity(
         
     return success_response(data=None, message=f"{payload.target_type} muted successfully")
 
-@router.get("/")
+@router.get("/list")
 async def get_notifications(
     current_user: dict = Depends(get_current_user),
     limit: int = Query(50, ge=1, le=100),
@@ -123,7 +123,7 @@ async def mark_notification_read(
     if not notification:
         raise HTTPException(status_code=404, detail="Notification not found")
         
-    notification.is_read = True
+    notification.status = "read"
     await db.commit()
     
     return success_response(data=None, message="Notification marked as read")

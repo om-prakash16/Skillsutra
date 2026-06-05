@@ -41,6 +41,7 @@ const fetchTalentFromApi = async (params: FetchParams) => {
     const data = (Array.isArray(candidates) ? candidates : []).map((c: any) => ({
         id: c.user_id || c.id,
         name: c.full_name || c.username || "Anonymous Node",
+        username: c.username,
         title: c.headline || "Professional",
         role: c.primary_role || "Developer",
         avatar: "", // Add default or fetch from profile
@@ -91,8 +92,9 @@ function TalentContent() {
         try {
             const res = await publicApi.ai.matchByJd(file, text)
             const mapped = (res.data || []).map((c: any) => ({
-                id: c.user_id,
-                name: c.full_name,
+                id: c.user_id || c.id,
+                name: c.full_name || c.username || "Anonymous Node",
+                username: c.username,
                 title: c.headline || "Professional",
                 role: c.primary_role || "Developer",
                 avatar: "",

@@ -10,6 +10,14 @@ const nextConfig: NextConfig = {
     '@noble/hashes'
   ],
   serverExternalPackages: ['pino-pretty', 'lokijs', 'encoding'],
+  async rewrites() {
+    return [
+      {
+        source: '/api/auth/callback/github',
+        destination: '/auth/callback/github',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

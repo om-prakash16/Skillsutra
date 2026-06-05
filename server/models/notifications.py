@@ -55,13 +55,12 @@ class Notification(Base):
     
     type = Column(String(50), nullable=False)  # 'JOB_ALERT', 'MENTION', 'APPLICATION_UPDATE', etc.
     title = Column(String(255), nullable=False)
-    body = Column(String, nullable=True)
-    action_url = Column(String, nullable=True)
+    message = Column(String, nullable=False)
+    status = Column(String(50), default="unread")
     
     # Metadata for grouping or filtering (e.g., {"company_id": "..."})
-    metadata_json = Column(JSON, default=dict)
+    notification_metadata = Column("metadata", JSON, default=dict)
     
-    is_read = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
 
 class PendingDigest(Base):

@@ -86,45 +86,88 @@ class UserService:
     _PROFILE_CACHE = TTLCache(maxsize=1000, ttl=120)
 
     @staticmethod
-    async def get_full_profile(user_id: str) -> Dict[str, Any]:
+    async def get_full_profile(user_identifier: str) -> Dict[str, Any]:
         """
-        Fetches the complete normalized profile using parallel queries and TTL caching.
+        Fetches the complete normalized profile using parallel queries and Redis TTL caching.
         """
-        if user_id in UserService._PROFILE_CACHE:
-            return UserService._PROFILE_CACHE[user_id]
+        from core.redis import redis_get, redis_set
+        cache_key = f"profile:full:{user_identifier}"
+        cached_profile = await redis_get(cache_key)
+        if cached_profile:
+            return cached_profile
+
+        import uuid
+        def is_valid_uuid(val):
+            try:
+                uuid.UUID(str(val))
+                return True
+            except ValueError:
+                return False
+
+        is_uuid = is_valid_uuid(user_identifier)
 
         db = get_db()
         if not db: return {}
 
-        # Define wrapper functions for asyncio.to_thread
-        def run_q(table, select="*", order_by=None, desc=True, single=False):
-            q = db.table(table).select(select).eq("user_id", user_id)
+        async def run_user_q():
+            if is_uuid:
+                return await db.table("users").select("*, profiles(*)").eq("id", user_identifier).execute()
+            else:
+                return await db.table("users").select("*, profiles(*)").eq("username", user_identifier.lower()).execute()
+
+        res_user = await run_user_q()
+        user_data = res_user.data[0] if res_user.data else {}
+        actual_user_id = user_data.get("id")
+        
+        if not actual_user_id:
+            return {}
+
+        # Define wrapper functions that are async natively
+        async def run_q(table, select="*", order_by=None, desc=True, single=False):
+            q = db.table(table).select(select).eq("user_id", actual_user_id)
             if order_by:
                 q = q.order(order_by, desc=desc)
-            return q.single().execute() if single else q.execute()
+            res = q.single().execute() if single else q.execute()
+            return await res
 
-        # Users table query is slightly different as it uses 'id' instead of 'user_id'
-        def run_user_q():
-            return db.table("users").select("*, profiles(*)").eq("id", user_id).execute()
-
+        profiles_raw = user_data.get("profiles", {})
+        profiles_cleaned = profiles_raw[0] if isinstance(profiles_raw, list) and profiles_raw else (profiles_raw or {})
+        profile_id = profiles_cleaned.get("id")
+        
+        async def run_profile_q(table, order_by=None):
+            if not profile_id:
+                return type('obj', (object,), {'data': []})()
+            q = db.table(table).select("*").eq("profile_id", profile_id)
+            if order_by:
+                q = q.order(order_by, desc=True)
+            return await q.execute()
         try:
-            # Try parallel fetch
-            res_user, res_skills, res_exp, res_proj, res_edu, res_scores = await asyncio.gather(
-                asyncio.to_thread(run_user_q),
-                asyncio.to_thread(run_q, "user_skills_relational", "*, skills(name, category)"),
-                asyncio.to_thread(run_q, "experiences", "*", "start_date"),
-                asyncio.to_thread(run_q, "projects", "*", "start_date"),
-                asyncio.to_thread(run_q, "education", "*", "start_date"),
-                asyncio.to_thread(run_q, "ai_scores", "*")
+            # Native parallel fetch without blocking threads
+            res_skills, res_exp, res_proj, res_edu, res_scores = await asyncio.gather(
+                run_q("user_skills_relational", "*, skills(name, category)"),
+                run_profile_q("experiences", "start_date"),
+                run_profile_q("projects"),
+                run_profile_q("educations", "start_date"),
+                run_q("ai_scores", "*")
             )
         except Exception as e:
             print(f"Parallel fetch error: {e}. Falling back to sequential.")
-            res_user = run_user_q()
-            res_skills = run_q("user_skills_relational", "*, skills(name, category)")
-            res_exp = run_q("experiences", "*", "start_date")
-            res_proj = run_q("projects", "*", "start_date")
-            res_edu = run_q("education", "*", "start_date")
-            res_scores = run_q("ai_scores", "*")
+            res_user = await run_user_q()
+            user_data = res_user.data[0] if res_user.data else {}
+            profiles_raw = user_data.get("profiles", {})
+            profiles_cleaned = profiles_raw[0] if isinstance(profiles_raw, list) and profiles_raw else (profiles_raw or {})
+            profile_id = profiles_cleaned.get("id")
+            
+            try: res_skills = await run_q("user_skills_relational", "*, skills(name, category)")
+            except: res_skills = type('obj', (object,), {'data': []})()
+            try: res_exp = await db.table("experiences").select("*").eq("profile_id", profile_id).order("start_date", desc=True).execute() if profile_id else type('obj', (object,), {'data': []})()
+            except: res_exp = type('obj', (object,), {'data': []})()
+            try: res_proj = await db.table("projects").select("*").eq("profile_id", profile_id).execute() if profile_id else type('obj', (object,), {'data': []})()
+            except: res_proj = type('obj', (object,), {'data': []})()
+            try: res_edu = await db.table("educations").select("*").eq("profile_id", profile_id).order("start_date", desc=True).execute() if profile_id else type('obj', (object,), {'data': []})()
+            except: res_edu = type('obj', (object,), {'data': []})()
+            try: res_scores = await run_q("ai_scores", "*")
+            except: res_scores = type('obj', (object,), {'data': []})()
         
         user_data = res_user.data[0] if res_user.data else {}
         skills_data = res_skills.data if res_skills.data else []
@@ -139,10 +182,13 @@ class UserService:
         
         result = {
             "profile": {
-                "user_id": user_id,
+                "user_id": actual_user_id,
                 "user_code": user_data.get("user_code"),
                 "username": user_data.get("username"),
                 "visibility": user_data.get("visibility"),
+                "avatar_url": user_data.get("avatar_url"),
+                "github_data": user_data.get("github_data"),
+                "dynamic_profile_data": user_data.get("dynamic_profile_data"),
                 **profiles_cleaned
             },
             "skills": [
@@ -156,7 +202,11 @@ class UserService:
         }
 
         # Update Cache
-        UserService._PROFILE_CACHE[user_id] = result
+        UserService._PROFILE_CACHE[user_identifier] = result
+        await redis_set(cache_key, result, ttl_seconds=1800) # 30 min cache
+        if user_data.get("username"):
+             await redis_set(f"profile:full:{user_data['username'].lower()}", result, ttl_seconds=1800)
+             
         return result
 
     @staticmethod
@@ -164,6 +214,9 @@ class UserService:
         """
         Professional relational update flow with batch processing and dictionary linking.
         """
+        from core.redis import redis_delete
+        await redis_delete(f"profile:full:{user_id}")
+        
         db = get_db()
         if not db: return {"status": "error", "message": "Database connection failed"}
 
@@ -176,47 +229,96 @@ class UserService:
             
             profile_payload = {
                 "user_id": user_id,
-                "full_name": p.get("full_name", "Anonymous"),
                 "headline": p.get("headline"),
-                "bio": p.get("bio"),
+                "about": p.get("bio") or p.get("about"),
+                "banner_url": p.get("banner_url"),
+                "visibility_mode": p.get("visibility"),
                 "location": p.get("location"),
-                "experience_level": p.get("experience_level"),
-                "job_type": p.get("job_type"),
-                "languages": p.get("languages"),
-                "avatar_url": p.get("avatar_url"),
-                "banner_url": p.get("banner_url")
+                "full_name": p.get("full_name"),
+                "phone": p.get("phone")
             }
             # Clean None values so we don't accidentally wipe existing DB fields
             profile_payload = {k: v for k, v in profile_payload.items() if v is not None}
             
+            # Additional fields to track in users dynamic profile data
+            u_meta = {}
+            dynamic_updates = {}
+            if "experience_level" in p: dynamic_updates["experienceLevel"] = p["experience_level"]
+            if "job_type" in p: dynamic_updates["jobType"] = p["job_type"]
+            
+            if dynamic_updates:
+                # Need to merge with existing dynamic_profile_data
+                existing_user = await db.table("users").select("dynamic_profile_data").eq("id", user_id).execute()
+                current_dyn = existing_user.data[0].get("dynamic_profile_data") if existing_user.data else {}
+                if not current_dyn: current_dyn = {}
+                current_dyn.update(dynamic_updates)
+                u_meta["dynamic_profile_data"] = current_dyn
+
+            
             if existing.data:
                 await db.table("profiles").update(profile_payload).eq("id", existing.data[0]["id"]).execute()
+                profile_id = existing.data[0]["id"]
             else:
-                await db.table("profiles").insert(profile_payload).execute()
+                res_ins = await db.table("profiles").insert(profile_payload).execute()
+                profile_id = res_ins.data[0]["id"] if res_ins.data else None
             
-            u_meta = {}
-            if "visibility" in p: u_meta["visibility"] = p["visibility"]
             if "username" in p: u_meta["username"] = p["username"]
+            if "avatar_url" in p: u_meta["avatar_url"] = p["avatar_url"]
+            if "dynamic_profile_data" in p: 
+                if "dynamic_profile_data" in u_meta:
+                    u_meta["dynamic_profile_data"].update(p["dynamic_profile_data"])
+                else:
+                    u_meta["dynamic_profile_data"] = p["dynamic_profile_data"]
             if u_meta:
                 await db.table("users").update(u_meta).eq("id", user_id).execute()
+        else:
+            existing = await db.table("profiles").select("id").eq("user_id", user_id).execute()
+            profile_id = existing.data[0]["id"] if existing.data else None
 
-        # 2. Batch Update Experiences
-        if "experiences" in data:
-            await db.table("experiences").delete().eq("user_id", user_id).execute()
-            exps = [{**exp, "user_id": user_id} for exp in data["experiences"]]
-            if exps: await db.table("experiences").insert(exps).execute()
+        if profile_id:
+            # 2. Batch Update Experiences
+            if "experiences" in data:
+                await db.table("experiences").delete().eq("profile_id", profile_id).execute()
+                import datetime
+                def parse_date(d_str):
+                    if not d_str: return None
+                    d_str = str(d_str).strip()
+                    try:
+                        if len(d_str) == 4: return datetime.date(int(d_str), 1, 1)
+                        if len(d_str) == 7: return datetime.date(int(d_str[:4]), int(d_str[5:]), 1)
+                        if len(d_str) >= 10: return datetime.date.fromisoformat(d_str[:10])
+                    except: pass
+                    return None
+                
+                exps = []
+                for exp in data["experiences"]:
+                    parsed_exp = {**exp, "profile_id": profile_id}
+                    if "start_date" in parsed_exp and parsed_exp["start_date"]:
+                        parsed_exp["start_date"] = parse_date(parsed_exp["start_date"])
+                    if "end_date" in parsed_exp and parsed_exp["end_date"]:
+                        parsed_exp["end_date"] = parse_date(parsed_exp["end_date"])
+                    exps.append(parsed_exp)
+                    
+                if exps: await db.table("experiences").insert(exps).execute()
 
-        # 3. Batch Update Projects
-        if "projects" in data:
-            await db.table("projects").delete().eq("user_id", user_id).execute()
-            projs = [{**proj, "user_id": user_id} for proj in data["projects"]]
-            if projs: await db.table("projects").insert(projs).execute()
+            # 3. Batch Update Projects
+            if "projects" in data:
+                await db.table("projects").delete().eq("profile_id", profile_id).execute()
+                projs = [{**proj, "profile_id": profile_id} for proj in data["projects"]]
+                if projs: await db.table("projects").insert(projs).execute()
 
-        # 4. Batch Update Education
-        if "education" in data:
-            await db.table("education").delete().eq("user_id", user_id).execute()
-            edus = [{**edu, "user_id": user_id} for edu in data["education"]]
-            if edus: await db.table("education").insert(edus).execute()
+            # 4. Batch Update Education
+            if "education" in data:
+                await db.table("educations").delete().eq("profile_id", profile_id).execute()
+                edus = []
+                for edu in data["education"]:
+                    parsed_edu = {**edu, "profile_id": profile_id}
+                    if "start_date" in parsed_edu and parsed_edu["start_date"]:
+                        parsed_edu["start_date"] = parse_date(parsed_edu["start_date"])
+                    if "end_date" in parsed_edu and parsed_edu["end_date"]:
+                        parsed_edu["end_date"] = parse_date(parsed_edu["end_date"])
+                    edus.append(parsed_edu)
+                if edus: await db.table("educations").insert(edus).execute()
 
         # 5. Professional Skill Linking (Dictionary Pattern)
         if "skills" in data:

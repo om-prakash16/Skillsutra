@@ -65,27 +65,28 @@ export function Navbar() {
         >
             <div className="container mx-auto flex items-center justify-between h-20 px-4 md:px-8 gap-4">
 
-                {/* Logo - Centered everywhere */}
-                {!isDashboard && (
-                    <Link href="/" className="absolute left-1/2 -translate-x-1/2 flex items-center gap-3 group shrink-0">
-                        <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-all shadow-[0_0_20px_hsl(var(--primary)/0.15)] backdrop-blur-md border border-primary/20 shrink-0">
-                            <ShieldCheck className="w-6 h-6 text-primary fill-primary/10" />
-                        </div>
-                        <span className="text-xl font-bold font-heading tracking-tight text-gradient leading-none">
-                            {siteName}
-                        </span>
-                    </Link>
-                )}
+                <div className="flex items-center gap-8">
+                    {/* Logo */}
+                    {!isDashboard && (
+                        <Link href="/" className="flex items-center gap-3 group shrink-0">
+                            <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-all shadow-[0_0_20px_hsl(var(--primary)/0.15)] backdrop-blur-md border border-primary/20 shrink-0">
+                                <ShieldCheck className="w-6 h-6 text-primary fill-primary/10" />
+                            </div>
+                            <span className="text-xl font-bold font-heading tracking-tight text-gradient leading-none hidden lg:block">
+                                {siteName}
+                            </span>
+                        </Link>
+                    )}
 
-                {/* Desktop Nav */}
-                <nav className="hidden md:flex items-center gap-10">
+                    {/* Desktop Nav */}
+                    <nav className="hidden md:flex items-center gap-6">
                     {navLinks.map((link: any) => (
                         <Link
                             key={link.href}
                             href={link.href}
                             className={cn(
-                                "text-micro font-bold transition-colors hover:text-primary relative py-2 block",
-                                pathname === link.href ? "text-primary" : "text-muted-foreground/60"
+                                "text-sm font-bold transition-colors hover:text-primary relative py-2 block",
+                                pathname === link.href ? "text-primary" : "text-foreground/80 hover:text-foreground"
                             )}
                         >
                             <motion.div whileTap={{ scale: 0.95 }}>
@@ -102,15 +103,15 @@ export function Navbar() {
                     ))}
                     {user && (
                         <Link
-                            href="/user/profile"
+                            href={`/user/${user.id}`}
                             className={cn(
-                                "text-micro font-bold transition-colors hover:text-primary relative py-2 block",
-                                pathname?.startsWith("/user/profile") ? "text-primary" : "text-muted-foreground/60"
+                                "text-sm font-bold transition-colors hover:text-primary relative py-2 block uppercase",
+                                pathname?.startsWith(`/user/${user.id}`) ? "text-primary" : "text-foreground/80 hover:text-foreground"
                             )}
                         >
                             <motion.div whileTap={{ scale: 0.95 }}>
                                 PROFILE
-                                {pathname?.startsWith("/user/profile") && (
+                                {pathname?.startsWith(`/user/${user.id}`) && (
                                     <motion.div
                                         layoutId="nav-underline"
                                         className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
@@ -121,6 +122,7 @@ export function Navbar() {
                         </Link>
                     )}
                 </nav>
+                </div>
 
                 {/* Actions */}
                 <div className="hidden md:flex items-center gap-6">
@@ -136,19 +138,22 @@ export function Navbar() {
                         </div>
                     ) : !user ? (
                         <>
-                            <div className="flex items-center gap-3">
-                                <Link href="/auth/login">
-                                    <Button variant="ghost" size="sm" className="text-micro font-bold h-10 px-6 rounded-xl">
-                                        Log In
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button size="sm" variant="premium" className="text-micro font-bold h-10 px-6 rounded-xl shadow-premium">
+                                        Sign In
                                     </Button>
-                                </Link>
-                                <Link href="/auth/register">
-                                    <Button size="sm" variant="premium" className="text-micro font-bold h-10 px-8 rounded-xl shadow-premium">
-                                        Register
-                                    </Button>
-                                </Link>
-                            </div>
-                            <div className="w-px h-6 bg-black/5 dark:bg-muted/50 mx-1" />
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" className="w-40">
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/auth/login" className="cursor-pointer w-full font-medium">Log In</Link>
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem asChild>
+                                        <Link href="/auth/register" className="cursor-pointer w-full font-medium text-primary">Register</Link>
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                            <div className="w-px h-6 bg-muted/5 dark:bg-muted/50 mx-1" />
                             <Link href="/post-job">
                                 <Button variant="outline" size="sm" className="hidden lg:flex text-micro font-bold h-10 px-6 rounded-xl border-primary/20 hover:bg-primary/5 transition-all">
                                     Post a Job
@@ -161,12 +166,12 @@ export function Navbar() {
                                 <DropdownMenuTrigger asChild>
                                     <Button variant="ghost" className="relative h-10 w-10 rounded-full border border-primary/20 p-0 overflow-hidden shadow-premium">
                                         <Avatar className="h-full w-full">
-                                            <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} alt={user.name} />
-                                            <AvatarFallback className="bg-primary/10 text-primary">{user.name[0]}</AvatarFallback>
+                                            <AvatarImage src={user.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`} alt={user.name || "User"} />
+                                            <AvatarFallback className="bg-primary/10 text-primary">{(user.name && user.name[0]) || 'U'}</AvatarFallback>
                                         </Avatar>
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent className="w-64" align="end" forceMount>
+                                <DropdownMenuContent className="w-64 z-[200]" align="end" forceMount>
                                     <DropdownMenuLabel className="font-normal py-3">
                                         <div className="flex flex-col space-y-1">
                                             <p className="text-sm font-bold leading-none">{user.name}</p>
@@ -181,8 +186,9 @@ export function Navbar() {
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
                                         <DropdownMenuItem asChild>
-                                            <Link href={user.username ? `/${user.username}` : (user.role === 'admin' ? "/admin/profile" : user.role === 'company' ? "/company/profile" : "/user/profile")} className="cursor-pointer">
-                                                Profile
+                                            <Link href={user.username ? `/in/${user.username}` : (user.role === 'admin' ? "/admin/profile" : user.role === 'company' ? "/company/profile" : `/in/${user.id}`)} className="cursor-pointer">
+                                                <User className="w-4 h-4 mr-2" />
+                                                <span>Profile</span>
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>

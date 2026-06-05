@@ -19,6 +19,8 @@ export const userApi = {
                 method: "POST",
                 body: JSON.stringify({ username }),
             }),
+        checkUsername: (username: string) =>
+            fetchWithAuth(`/profiles/check-username/${username}`),
         uploadFile: (formData: FormData) =>
             fetchWithAuth("/profile/upload-file", {
                 method: "POST",

@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends
 
 from core.response import success_response
 from core.dependencies import get_db, get_current_user_id, get_company_id
+from core.redis import get_redis_client
+import json
 from modules.auth.schemas.models import CompanyCreate, CompanyInvite, ApiKeyCreate
 from modules.activity.service import record_event
 from modules.companies.enterprise_api_service import EnterpriseApiService
@@ -23,6 +25,18 @@ async def get_company_profile(
     company_id = member_res.data[0]["company_id"]
     company_role = member_res.data[0]["company_role"]
 
+    # Try to get from cache first
+    cache_key = f"company_profile:{company_id}"
+    try:
+        client = get_redis_client()
+        cached = await client.get(cache_key) if client else None
+        if cached:
+            company_data = json.loads(cached)
+            company_data["my_role"] = company_role
+            return success_response(data=company_data)
+    except Exception:
+        pass
+
     # Fetch company details
     company_res = db.table("companies").select("*").eq("id", company_id).single().execute()
     
@@ -30,6 +44,15 @@ async def get_company_profile(
         return success_response(data=None, message="Company not found")
 
     company_data = company_res.data
+    
+    # Save to cache
+    try:
+        client = get_redis_client()
+        if client:
+            await client.set(cache_key, json.dumps(company_data), ex=3600)
+    except Exception:
+        pass
+        
     company_data["my_role"] = company_role
     return success_response(data=company_data)
 
@@ -64,11 +87,24 @@ async def update_company_profile(
         "about_company": data.get("about_company"),
     }
     
+    if "branding_profile" in data:
+        update_data["branding_profile"] = data["branding_profile"]
+    if "company_metadata" in data:
+        update_data["company_metadata"] = data["company_metadata"]
+        
     # Remove None values
     update_data = {k: v for k, v in update_data.items() if v is not None}
     
     if update_data:
         db.table("companies").update(update_data).eq("id", company_id).execute()
+        
+        # Invalidate cache
+        try:
+            client = get_redis_client()
+            if client:
+                await client.delete(f"company_profile:{company_id}")
+        except Exception:
+            pass
         
     return success_response(message="Company profile updated")
 

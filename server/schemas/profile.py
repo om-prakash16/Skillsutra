@@ -58,6 +58,8 @@ class ProjectResponse(ProjectBase):
 
 class ProfileBase(BaseModel):
     headline: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
     about: Optional[str] = None
     resume_url: Optional[str] = None
     banner_url: Optional[str] = None

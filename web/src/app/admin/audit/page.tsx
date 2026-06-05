@@ -76,7 +76,7 @@ export default function GlobalAuditPage() {
             </div>
 
             {/* Live Telemetry Card */}
-            <Card className="bg-[#020202] border-border rounded-[2.5rem] shadow-2xl relative overflow-hidden border-t-primary/40 border-t-2">
+            <Card className="bg-background border-border rounded-[2.5rem] shadow-2xl relative overflow-hidden border-t-primary/40 border-t-2">
                 <CardHeader className="bg-muted/30 border-b border-border p-10">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-6">
                         <div className="flex items-center gap-4">

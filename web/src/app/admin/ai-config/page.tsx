@@ -211,6 +211,47 @@ export default function AITuningPanel() {
                         </div>
                     </div>
 
+                    <div className="pt-8 border-t border-border space-y-8">
+                        <div>
+                            <CardTitle className="text-xl flex items-center gap-2 mb-2"><Settings2 className="w-5 h-5 text-indigo-400" /> API Models & Global Configuration</CardTitle>
+                            <CardDescription>Manage global provider settings and system-wide rate limits.</CardDescription>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-4">
+                                <label className="text-sm uppercase tracking-widest font-black text-foreground/90">Primary Model Architecture</label>
+                                <select className="w-full bg-background/80 border border-border text-foreground h-10 px-3 rounded-md">
+                                    <option value="gpt-4-turbo">OpenAI GPT-4 Turbo (Resonance V2)</option>
+                                    <option value="claude-3-opus">Anthropic Claude 3 Opus</option>
+                                    <option value="gemini-1.5-pro">Google Gemini 1.5 Pro</option>
+                                </select>
+                            </div>
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center">
+                                    <label className="text-sm uppercase tracking-widest font-black text-foreground/90">Global Temperature</label>
+                                    <span className="text-sm font-black text-foreground">0.2</span>
+                                </div>
+                                <Slider 
+                                    defaultValue={[20]} 
+                                    max={100} 
+                                    step={1} 
+                                    className="[&_[role=slider]]:bg-indigo-400 [&>span:first-child]:bg-indigo-400/20" 
+                                />
+                                <p className="text-xs text-muted-foreground italic">Lower temperature (0.0 - 0.3) strictly advised for objective candidate parsing.</p>
+                            </div>
+                        </div>
+
+                        <div className="space-y-4">
+                            <label className="text-sm uppercase tracking-widest font-black text-foreground/90 text-rose-500">API Rate Limits (Tokens / min)</label>
+                            <Input 
+                                type="number" 
+                                defaultValue={150000}
+                                className="bg-background/80 border-border text-foreground font-mono"
+                            />
+                            <p className="text-xs text-muted-foreground italic">System-wide cap to prevent unexpected LLM billing spikes.</p>
+                        </div>
+                    </div>
+
                     <Button 
                         onClick={handleSaveTuning} 
                         disabled={isSaving || (weights.skill_match_weight + weights.experience_weight + weights.project_score_weight !== 100)} 

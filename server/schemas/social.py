@@ -63,6 +63,16 @@ class PostResponse(PostBase):
     class Config:
         from_attributes = True
 
+class AuthorProfileBase(BaseModel):
+    id: UUID
+    full_name: str
+    headline: Optional[str] = None
+    banner_url: Optional[str] = None
+
+class EnrichedPostResponse(PostResponse):
+    author_profile: AuthorProfileBase
+    has_liked: bool = False
+
 # ==============================================================================
 # MESSAGE SCHEMAS
 # ==============================================================================

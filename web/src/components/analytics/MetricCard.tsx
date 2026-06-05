@@ -15,7 +15,7 @@ interface MetricCardProps {
 
 export function MetricCard({ title, value, description, trend, icon, color = "text-primary" }: MetricCardProps) {
   return (
-    <Card className="bg-[#050505] border-border hover:border-border transition-all duration-500 overflow-hidden relative group">
+    <Card className="bg-background border-border hover:border-border transition-all duration-500 overflow-hidden relative group">
       <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
         {getIcon(icon, "w-24 h-24 " + color)}
       </div>

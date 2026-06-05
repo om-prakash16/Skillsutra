@@ -20,16 +20,23 @@ async def get_all_features(admin=Depends(require_admin)):
     features = await feature_service.list_all_features()
     return success_response(data=features)
 
+@router.get("/public")
+async def get_public_features():
+    """Fetch all feature flags and their current status (publicly accessible)."""
+    features = await feature_service.list_all_features()
+    return success_response(data=features)
+
 @router.post("/update")
 async def update_feature_status(
     req: FeatureUpdateReq,
     admin=Depends(require_admin)
 ):
     """Securely update feature status for administrators."""
+    admin_id = admin.get("id") or admin.get("sub") or "system"
     await feature_service.update_feature(
         feature_name=req.feature_name,
         is_enabled=req.is_enabled,
-        admin_id=uuid.UUID(admin["id"]),
+        admin_id=admin_id,
     )
     return success_response(
         data={"feature": req.feature_name, "is_enabled": req.is_enabled},

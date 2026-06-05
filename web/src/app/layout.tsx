@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -13,18 +12,7 @@ import { MobileNav } from "@/components/layout/mobile-nav";
 import { CMSProvider } from "@/context/cms-context";
 import { API_BASE_URL } from "@/lib/api/api-client";
 
-const inter = Inter({ 
-  subsets: ["latin"], 
-  variable: "--font-inter",
-  display: 'swap',
-});
 
-const headingFont = Plus_Jakarta_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-plus-jakarta",
-  display: 'swap',
-});
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -40,11 +28,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${inter.variable} ${headingFont.variable} scroll-smooth`}>
+    <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body className="antialiased font-sans bg-background text-foreground selection:bg-primary/20">
         <ThemeProvider
           attribute="class"
-          defaultTheme="dark"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >

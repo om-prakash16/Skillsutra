@@ -86,6 +86,13 @@ class SearchEngine:
             FROM users u
             LEFT JOIN profiles p ON p.user_id = u.id
             WHERE u.is_active = true
+            AND u.username != 'admin'
+            AND u.email NOT LIKE 'admin@%'
+            AND NOT EXISTS (
+                SELECT 1 FROM user_roles ur
+                JOIN roles r ON r.id = ur.role_id
+                WHERE ur.user_id = u.id AND r.role_name IN ('ADMIN', 'SUPER_ADMIN', 'COMPANY')
+            )
         """
 
         if open_to_work is True:

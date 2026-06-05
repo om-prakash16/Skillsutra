@@ -225,7 +225,7 @@ export function ApiDeveloperPortal() {
 
             {/* Create Modal */}
             <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-                <DialogContent className="bg-[#0a0a0a] border border-border rounded-[2.5rem] p-10 max-w-xl">
+                <DialogContent className="bg-background border border-border rounded-[2.5rem] p-10 max-w-xl">
                     <DialogHeader className="space-y-4">
                         <DialogTitle className="text-3xl font-black italic tracking-tighter">
                             {generatedKey ? "Save Your Secret Key" : "New API Integration"}

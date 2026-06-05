@@ -1,6 +1,6 @@
 import logging
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 from typing import List, Optional, Dict, Any
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
@@ -28,7 +28,7 @@ class SecurityService:
         ).first()
 
         if existing:
-            existing.last_used_at = datetime.utcnow()
+            existing.last_used_at = datetime.now(timezone.utc)
             existing.last_ip_address = ip_address
             self.db.commit()
             self.db.refresh(existing)
@@ -95,8 +95,9 @@ class SecurityService:
         # Broadcast via Redis Pub/Sub for Realtime WebSocket Alert
         try:
             import json
-            from core.redis import redis_client
-            if redis_client:
+            from core.redis import get_redis_client
+            client = get_redis_client()
+            if client:
                 payload = {
                     "type": "SECURITY_ALERT",
                     "user_id": str(user_id),
@@ -107,7 +108,7 @@ class SecurityService:
                         "ip": ip_address
                     }
                 }
-                redis_client.publish("chat_broadcasts", json.dumps(payload))
+                client.publish("chat_broadcasts", json.dumps(payload))
         except Exception as e:
             logger.error(f"Failed to broadcast security event: {e}")
 
@@ -131,7 +132,7 @@ class SecurityService:
         recent_bad_events = self.db.query(SecurityEvent).filter(
             SecurityEvent.user_id == user_id,
             SecurityEvent.severity == 'high',
-            SecurityEvent.created_at >= datetime.utcnow() - timedelta(days=7)
+            SecurityEvent.created_at >= datetime.now(timezone.utc) - timedelta(days=7)
         ).count()
         if recent_bad_events > 0:
             score -= 30

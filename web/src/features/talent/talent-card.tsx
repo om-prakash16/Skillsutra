@@ -1,4 +1,4 @@
-﻿import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
@@ -73,7 +73,7 @@ export function TalentCard({ talent }: TalentCardProps) {
             </CardContent>
 
             <CardFooter className="p-4 bg-muted/5 border-t mt-auto">
-                <Link href={`/talent/${talent.id}`} className="w-full">
+                <Link href={talent.username ? `/in/${talent.username}` : `/user/${talent.id}`} className="w-full">
                     <Button className="w-full" variant="outline">
                         View Profile
                     </Button>

@@ -18,8 +18,12 @@ class Profile(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False)
     
+    full_name = Column(String, nullable=False)
     headline = Column(String, nullable=True)
+    email = Column(String, nullable=True)
+    phone = Column(String, nullable=True)
     about = Column(Text, nullable=True)
+    location = Column(String, nullable=True)
     resume_url = Column(String, nullable=True)
     banner_url = Column(String, nullable=True)
     

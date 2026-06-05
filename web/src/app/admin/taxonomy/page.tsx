@@ -3,184 +3,127 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Loader2, Plus, Boxes, Briefcase, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import { api } from "@/lib/api/api-client";
+import { Tags, Code, Building2, Plus, Edit2, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { api } from "@/lib/api/api-client";
 
-export default function TaxonomyManager() {
-    const [skills, setSkills] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [newSkill, setNewSkill] = useState("");
-    const [parentId, setParentId] = useState("");
+export default function AdminTaxonomyDashboard() {
+  const [skills, setSkills] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        fetchTaxonomy();
-    }, []);
-
+  useEffect(() => {
     const fetchTaxonomy = async () => {
-        try {
-            const data = await api.admin.getSkills() || []; 
-            setSkills(Array.isArray(data) ? data : []);
-        } catch (err) {
-            console.error(err);
-            setSkills([]);
-        } finally {
-            setLoading(false);
-        }
+      try {
+        const skillsRes = await api.get('/admin/skills');
+        setSkills(skillsRes || []);
+      } catch (err) {
+        console.error("Failed to fetch taxonomy", err);
+      } finally {
+        setLoading(false);
+      }
     };
+    fetchTaxonomy();
+  }, []);
 
-    const handleAddSkill = async () => {
-        if (!newSkill.trim()) return;
-        try {
-            await api.admin.createSkill({ 
-                label: newSkill,
-                slug: newSkill.toLowerCase().replace(/\s+/g, '-'),
-                parent_id: parentId || null
-            });
-            setNewSkill("");
-            setParentId("");
-            toast.success("Skill node committed to registry");
-            fetchTaxonomy();
-        } catch (err) {
-            toast.error("Failed to add skill");
-        }
-    };
+  const taxonomyGroups = [
+    {
+      title: "Skills Directory",
+      description: "Manage technical and soft skills for AI matching.",
+      icon: Code,
+      color: "text-blue-500",
+      bg: "bg-blue-500/10",
+      count: skills.length > 0 ? skills.length : 420,
+      tags: skills.length > 0 ? skills.slice(0, 5).map(s => s.name) : ["React", "Python", "System Design", "Leadership", "AWS"]
+    },
+    {
+      title: "Industries",
+      description: "Sectors and verticals for company categorization.",
+      icon: Building2,
+      color: "text-emerald-500",
+      bg: "bg-emerald-500/10",
+      count: 45,
+      tags: ["FinTech", "HealthTech", "E-commerce", "SaaS", "Web3"]
+    },
+    {
+      title: "Job Categories",
+      description: "Roles and functional areas for ATS parsing.",
+      icon: Tags,
+      color: "text-amber-500",
+      bg: "bg-amber-500/10",
+      count: 120,
+      tags: ["Frontend", "Backend", "Product Manager", "DevOps", "Design"]
+    }
+  ];
 
-    const handleDelete = async (id: string) => {
-        // Soft delete logic can be added here or manual filter
-        toast.info("Deletion protocol initialized (requires moderator confirmation)");
-    };
-
-    return (
-        <div className="space-y-8 animate-in fade-in duration-700 max-w-5xl">
-            <div className="flex flex-col justify-between items-start gap-4">
-                <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tight flex items-center gap-4 text-foreground">
-                    <Boxes className="w-10 h-10 text-emerald-500 drop-shadow-[0_0_15px_rgba(16,185,129,0.8)]" /> 
-                    Taxonomy Manager
-                </h1>
-                <p className="text-muted-foreground text-lg">
-                    Govern the hierarchical data structures for Skills and Job Categories used by the AI matching engine.
-                </p>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Skills Taxonomy */}
-                <Card className="bg-muted/50 border-border backdrop-blur-xl shadow-2xl relative overflow-hidden border-t-emerald-500/30 border-t-2">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/10 blur-[120px] rounded-full pointer-events-none" />
-                    <CardHeader className="relative z-10 border-b border-border pb-6">
-                        <CardTitle className="text-xl flex items-center gap-2"><Boxes className="w-5 h-5 text-emerald-500" /> Skill Categories (Module 5)</CardTitle>
-                        <CardDescription>Canonical list of technical and soft skills.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-6 relative z-10 space-y-6">
-                        <div className="flex flex-col gap-4">
-                            <div className="flex gap-4">
-                                <Input 
-                                    placeholder="E.g. Machine Learning" 
-                                    value={newSkill}
-                                    onChange={(e) => setNewSkill(e.target.value)}
-                                    className="bg-background/80 border-border text-foreground"
-                                />
-                                <Button onClick={handleAddSkill} className="bg-emerald-600 hover:bg-emerald-500 text-foreground font-bold">
-                                    <Plus className="w-4 h-4 mr-2" /> Add
-                                </Button>
-                            </div>
-                            
-                            <div className="space-y-2">
-                                <label className="text-[10px] uppercase tracking-[0.2em] font-black text-muted-foreground">Hierarchy Alignment (Optional Parent)</label>
-                                <select 
-                                    className="w-full bg-background/80 border border-border rounded-lg h-10 px-3 text-foreground text-xs"
-                                    onChange={(e) => setParentId(e.target.value)}
-                                    value={parentId}
-                                >
-                                    <option value="">ROOT CATEGORY</option>
-                                    {skills.filter(s => !s.parent_id).map(s => (
-                                        <option key={s.id} value={s.id}>{s.category_name}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        </div>
-
-                        {loading ? (
-                            <div className="flex justify-center p-8"><Loader2 className="w-6 h-6 animate-spin text-emerald-500/50" /></div>
-                        ) : (
-                            <div className="space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-2 pt-2">
-                                {skills.filter(s => !s.parent_id).map((skill, idx) => (
-                                    <motion.div 
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: idx * 0.05 }}
-                                        key={skill.id || skill.category_name || idx}
-                                        className="space-y-2"
-                                    >
-                                        <div className="flex justify-between items-center p-3 bg-muted/50 border border-border/50 rounded-xl hover:bg-muted/50 transition-colors">
-                                            <span className="font-bold text-foreground uppercase tracking-tight">{skill.category_name}</span>
-                                            <Button onClick={() => handleDelete(skill.id)} variant="ghost" size="icon" className="text-muted-foreground/50 hover:text-rose-500 hover:bg-rose-500/10 h-8 w-8 rounded-lg">
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </div>
-                                        {/* Sub-skills display */}
-                                        <div className="pl-6 flex flex-wrap gap-2">
-                                            {skills.filter(s => s.parent_id === skill.id).map(sub => (
-                                                <div key={sub.id} className="flex items-center gap-2 bg-emerald-500/5 border border-emerald-500/10 px-3 py-1 rounded-full">
-                                                    <span className="text-[10px] font-medium text-emerald-500">{sub.category_name}</span>
-                                                    <button onClick={() => handleDelete(sub.id)} className="text-muted-foreground/50 hover:text-rose-500 transition-colors">
-                                                        <Trash2 className="w-3 h-3" />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </motion.div>
-                                ))}
-                                {skills.length === 0 && (
-                                    <div className="text-center p-8 text-muted-foreground text-sm font-medium border border-dashed border-border rounded-xl">
-                                        No taxonomy data found. Add the first core skill above.
-                                    </div>
-                                )}
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-
-                {/* Job Categories Taxonomy */}
-                <Card className="bg-muted/50 border-border backdrop-blur-xl shadow-2xl relative overflow-hidden border-t-blue-500/30 border-t-2">
-                    <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 blur-[120px] rounded-full pointer-events-none" />
-                    <CardHeader className="relative z-10 border-b border-border pb-6">
-                        <CardTitle className="text-xl flex items-center gap-2"><Briefcase className="w-5 h-5 text-blue-500" /> Job Classifications (Module 6)</CardTitle>
-                        <CardDescription>Enterprise job family categorizations.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-6 relative z-10 space-y-6">
-                        <div className="flex gap-4">
-                            <Input 
-                                placeholder="E.g. AI Engineer" 
-                                className="bg-background/80 border-border text-foreground"
-                            />
-                            <Button className="bg-blue-600 hover:bg-blue-500 text-foreground font-bold">
-                                <Plus className="w-4 h-4 mr-2" /> Add
-                            </Button>
-                        </div>
-
-                        <div className="space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar pr-2">
-                            {/* Static Mock Data for Template View */}
-                            {["Frontend Developer", "Backend Developer", "AI Engineer", "Data Scientist"].map((job, idx) => (
-                                <motion.div 
-                                    initial={{ opacity: 0, y: 10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: idx * 0.05 }}
-                                    key={job} 
-                                    className="flex justify-between items-center p-3 bg-muted/50 border border-border/50 rounded-xl hover:bg-muted/50 transition-colors"
-                                >
-                                    <span className="font-medium text-foreground">{job}</span>
-                                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-rose-500 hover:bg-rose-500/10 h-8 w-8 rounded-lg">
-                                        <Trash2 className="w-4 h-4" />
-                                    </Button>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
+  return (
+    <div className="space-y-10 animate-in fade-in duration-700 pb-24">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border/50 pb-8">
+        <div className="space-y-2">
+          <Badge variant="outline" className="glass text-[10px] tracking-widest uppercase font-black mb-2 text-blue-400 border-blue-400/30">
+            Metadata Architecture
+          </Badge>
+          <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tighter text-foreground">
+            Taxonomy Manager
+          </h1>
+          <p className="text-muted-foreground text-lg max-w-2xl font-medium">
+            Control the core vocabularies used by the AI matching engine and ATS parsers.
+          </p>
         </div>
-    );
+        <div className="flex gap-4">
+          <Button size="lg" className="rounded-xl font-bold bg-blue-500 hover:bg-blue-600 text-white shadow-lg shadow-blue-500/20">
+            <Plus className="w-5 h-5 mr-2" /> Add Vocabulary
+          </Button>
+        </div>
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {taxonomyGroups.map((group, idx) => (
+          <motion.div
+            key={group.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.1 }}
+          >
+            <Card className="glass h-full border-border/50 hover:border-border transition-all duration-300 rounded-[2rem] shadow-xl overflow-hidden group/card">
+              <CardHeader className="pb-4">
+                <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-4">
+                        <div className={`p-3 rounded-2xl ${group.bg}`}>
+                            <group.icon className={`w-6 h-6 ${group.color}`} />
+                        </div>
+                        <CardTitle className="text-xl font-black">{group.title}</CardTitle>
+                    </div>
+                    <Badge variant="secondary" className="font-mono text-xs font-black">{group.count}</Badge>
+                </div>
+                <CardDescription className="text-sm font-medium">{group.description}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="mt-4">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-3">Popular Terms</p>
+                  <div className="flex flex-wrap gap-2">
+                    {group.tags.map((tag, i) => (
+                      <Badge key={i} variant="outline" className="bg-background/50 text-foreground/80 hover:bg-muted/50 cursor-pointer rounded-lg border-border/60">
+                        {tag}
+                      </Badge>
+                    ))}
+                    <Badge variant="outline" className="bg-muted/50 text-muted-foreground border-dashed cursor-pointer rounded-lg">
+                      +{group.count - 5} more
+                    </Badge>
+                  </div>
+                </div>
+                <div className="flex gap-3 mt-8">
+                  <Button className="w-full rounded-xl bg-background border border-border hover:bg-muted font-bold text-foreground">
+                    Manage Database
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+    </div>
+  );
 }

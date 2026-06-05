@@ -14,6 +14,12 @@ import { api } from "@/lib/api/api-client";
 export default function JobMarketplace() {
   const { user } = useAuth();
   const [search, setSearch] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
+  const [filters, setFilters] = useState({
+      jobType: "",
+      experienceLevel: "",
+      location: ""
+  });
 
   const { data: jobs = [], isLoading } = useQuery({
     queryKey: ['jobs', user?.id],
@@ -31,10 +37,19 @@ export default function JobMarketplace() {
     }
   });
 
-  const filteredJobs = jobs.filter(job => 
-    job.title?.toLowerCase().includes(search.toLowerCase()) ||
-    job.companies?.company_name?.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredJobs = jobs.filter(job => {
+    const matchesSearch = job.title?.toLowerCase().includes(search.toLowerCase()) ||
+                          job.companies?.company_name?.toLowerCase().includes(search.toLowerCase());
+    
+    const matchesJobType = !filters.jobType || job.job_type === filters.jobType;
+    const matchesExp = !filters.experienceLevel || job.experience_level === filters.experienceLevel;
+    
+    // For location, if filter is "Remote", it should match exactly. If "Onsite/Hybrid", it might just check if location != Remote or matches the string.
+    // For simplicity, we'll do an exact/includes match.
+    const matchesLocation = !filters.location || (job.location && job.location.toLowerCase().includes(filters.location.toLowerCase()));
+
+    return matchesSearch && matchesJobType && matchesExp && matchesLocation;
+  });
 
   return (
     <div className="min-h-screen py-24 px-4 md:px-8 relative overflow-hidden">
@@ -56,23 +71,70 @@ export default function JobMarketplace() {
            </p>
         </div>
 
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-4 glass p-2 rounded-3xl border-border/50 shadow-premium">
-           <div className="flex-1 relative group">
-             <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
-             <Input 
-                placeholder="Search roles, companies, or skills..." 
-                className="bg-transparent border-none pl-14 h-14 text-lg focus-visible:ring-0 placeholder:text-muted-foreground/30 font-medium"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-             />
-           </div>
-           <Button 
-              variant="premium" 
-              className="h-14 px-8 text-xs font-bold tracking-widest uppercase rounded-2xl transition-all"
-              onClick={() => alert("Advanced Filters Interface will be deployed in the next protocol update.")}
-           >
-              <Filter className="w-4 h-4 mr-2" /> Advanced Filters
-           </Button>
+        <div className="max-w-4xl mx-auto space-y-4">
+            <div className="flex flex-col md:flex-row gap-4 glass p-2 rounded-3xl border-border/50 shadow-premium">
+               <div className="flex-1 relative group">
+                 <Search className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
+                 <Input 
+                    placeholder="Search roles, companies, or skills..." 
+                    className="bg-transparent border-none pl-14 h-14 text-lg focus-visible:ring-0 placeholder:text-muted-foreground/30 font-medium"
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                 />
+               </div>
+               <Button 
+                  variant={showFilters ? "default" : "premium"}
+                  className="h-14 px-8 text-xs font-bold tracking-widest uppercase rounded-2xl transition-all"
+                  onClick={() => setShowFilters(!showFilters)}
+               >
+                  <Filter className="w-4 h-4 mr-2" /> {showFilters ? "Hide Filters" : "Advanced Filters"}
+               </Button>
+            </div>
+
+            {showFilters && (
+                <div className="glass p-6 rounded-3xl border-border/50 shadow-premium grid grid-cols-1 md:grid-cols-3 gap-6 animate-in fade-in slide-in-from-top-4 duration-300">
+                    <div className="space-y-3">
+                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Job Type</label>
+                        <select 
+                            className="w-full h-12 bg-black/40 border border-border/50 rounded-xl px-4 text-sm focus:outline-none focus:border-primary/50 text-foreground"
+                            value={filters.jobType}
+                            onChange={e => setFilters({...filters, jobType: e.target.value})}
+                        >
+                            <option value="">Any Job Type</option>
+                            <option value="Full-time">Full-time</option>
+                            <option value="Part-time">Part-time</option>
+                            <option value="Contract">Contract</option>
+                        </select>
+                    </div>
+                    <div className="space-y-3">
+                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Experience Level</label>
+                        <select 
+                            className="w-full h-12 bg-black/40 border border-border/50 rounded-xl px-4 text-sm focus:outline-none focus:border-primary/50 text-foreground"
+                            value={filters.experienceLevel}
+                            onChange={e => setFilters({...filters, experienceLevel: e.target.value})}
+                        >
+                            <option value="">Any Experience Level</option>
+                            <option value="Junior">Junior</option>
+                            <option value="Mid Level">Mid Level</option>
+                            <option value="Senior">Senior</option>
+                            <option value="Lead">Lead</option>
+                        </select>
+                    </div>
+                    <div className="space-y-3">
+                        <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Location</label>
+                        <select 
+                            className="w-full h-12 bg-black/40 border border-border/50 rounded-xl px-4 text-sm focus:outline-none focus:border-primary/50 text-foreground"
+                            value={filters.location}
+                            onChange={e => setFilters({...filters, location: e.target.value})}
+                        >
+                            <option value="">Any Location</option>
+                            <option value="Remote">Remote</option>
+                            <option value="Onsite">Onsite</option>
+                            <option value="Hybrid">Hybrid</option>
+                        </select>
+                    </div>
+                </div>
+            )}
         </div>
 
         {isLoading ? (

@@ -74,7 +74,7 @@ class CareerService:
 
         return goals
 
-    async def generate_roadmap(self, user_id: str, target_role: str, user_skills: List[str] = None) -> Dict[str, Any]:
+    async def generate_roadmap(self, user_id: str, target_role: str, user_skills: List[str] = None, current_state: str = "", timeline: str = "", daily_routine: str = "") -> Dict[str, Any]:
         sb = get_db()
         if not sb:
             raise Exception("DB unavailable")
@@ -91,18 +91,25 @@ class CareerService:
         if api_key:
             try:
                 genai.configure(api_key=api_key)
-                model = genai.GenerativeModel("gemini-1.5-flash-latest")
+                model = genai.GenerativeModel("gemini-2.5-flash")
                 
-                skills_context = f"The user currently has these skills: {', '.join(user_skills)}." if user_skills else "The user is starting fresh."
+                context_str = f"The user currently has these skills: {', '.join(user_skills)}." if user_skills else "The user is starting fresh."
+                if current_state:
+                    context_str += f"\nTheir current job/learning state is: {current_state}."
+                if timeline:
+                    context_str += f"\nTheir target timeline to achieve this is: {timeline}."
+                if daily_routine:
+                    context_str += f"\nTheir daily availability/routine is: {daily_routine}."
+
                 prompt = f"""You are an expert career coach and technical mentor.
 Create a step-by-step learning roadmap for a user who wants to become a "{target_role}".
-{skills_context}
+{context_str}
 
 Return ONLY a valid JSON array of objects representing milestones. Each object must have exactly these keys:
 - milestone: A short title for the milestone (e.g. "Master Database Connections")
-- tasks: An array of 3-5 specific, actionable strings (e.g. ["Implement PostgreSQL connection pool", "Design database indices"])
+- tasks: An array of 3-5 specific, actionable strings that fit their timeline and daily routine constraints.
 
-Generate exactly 4 milestones that progress from foundational to advanced for this role.
+Generate exactly 4 milestones that progress from foundational to advanced for this role, tailored to their constraints.
 """
                 response = model.generate_content(
                     prompt,

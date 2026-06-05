@@ -157,7 +157,7 @@ export default async function PublicProfilePage({ params }: PageProps) {
                             )}
                             {profile.social_links?.linkedin && (
                                 <a href={profile.social_links.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted/50 transition-colors group border border-transparent hover:border-border">
-                                    <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center group-hover:bg-[#0077b5]/20 transition-colors">
+                                    <div className="w-10 h-10 rounded-lg bg-muted/50 flex items-center justify-center group-hover:bg-background/20 transition-colors">
                                         <LinkIcon className="w-4 h-4 text-foreground/80 group-hover:text-[#0077b5] transition-colors" />
                                     </div>
                                     <div>

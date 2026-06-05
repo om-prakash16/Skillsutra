@@ -21,13 +21,14 @@ JOIN_RULES = {
     ("user_roles", "users"): "users.id = user_roles.user_id",
     ("connections", "users"): "users.id = connections.target_id",
     ("user_skills_relational", "skills"): "skills.id = user_skills_relational.skill_id",
+    ("user_skill_nodes", "skills"): "skills.id = user_skill_nodes.skill_id",
 }
 
 TABLE_COLUMNS = {
-    "profiles": ["id", "user_id", "full_name", "headline", "bio", "location", "avatar_url", "updated_at", "profile_banner", "social_links", "current_position"],
+    "profiles": ["id", "user_id", "created_at", "updated_at", "embedding", "open_to_work", "social_links", "linkedin_url", "portfolio_url", "profile_banner", "current_position", "headline", "about", "resume_url", "banner_url", "visibility_mode", "github_url"],
     "skills": ["id", "name", "category"],
-    "users": ["id", "wallet_address", "username", "email", "profile_picture", "bio", "reputation_score", "role", "created_at", "user_code", "visibility", "roles", "full_name", "profile_data"],
-    "companies": ["id", "name", "created_by_user_id", "created_at", "industry"],
+    "users": ["id", "search_vector", "is_active", "github_data", "created_at", "avatar_url", "username", "email", "password_hash", "user_code"],
+    "companies": ["id", "company_name", "created_by_user_id", "created_at", "industry"],
     "jobs": ["id", "company_id", "title", "description", "skills_required", "experience_level", "salary_range", "job_type", "location", "is_active", "created_at"],
     "search_candidates": ["user_id", "full_name", "skills", "experience_level", "proof_score", "location", "search_vector", "updated_at"],
     "search_jobs": ["job_id", "title", "skills", "salary_range", "experience_level", "job_type", "search_vector", "updated_at"],
@@ -233,9 +234,12 @@ class QueryBuilder:
                 db_loop = None
 
         if db_loop and db_loop.is_running():
-            if db_thread_id is not None and threading.get_ident() == db_thread_id:
+            # If we are inside an async context, always return an awaitable
+            try:
+                asyncio.get_running_loop()
                 return AwaitableDatabaseResponse(self.execute_async())
-            else:
+            except RuntimeError:
+                # We are in a synchronous thread but the db_loop is running elsewhere
                 future = asyncio.run_coroutine_threadsafe(self.execute_async(), db_loop)
                 return future.result()
         else:
@@ -467,7 +471,10 @@ class QueryBuilder:
                     
                     # Parse any serialized JSON fields back to objects
                     for key, val in row_dict.items():
-                        if isinstance(val, str) and (val.startswith("{") or val.startswith("[")):
+                        # Convert UUIDs to strings to fix ORJSON serialization errors
+                        if type(val).__name__ == "UUID" or hasattr(val, "version") and type(val).__module__ == "uuid":
+                            row_dict[key] = str(val)
+                        elif isinstance(val, str) and (val.startswith("{") or val.startswith("[")):
                             try:
                                 row_dict[key] = json.loads(val)
                             except:
