@@ -193,6 +193,15 @@ async def get_current_user(user=Depends(auth_service.get_current_user)):
     """Module-level dependency wrapper — used by all guards and routers."""
     return user
 
+async def get_optional_current_user(credentials: Optional[HTTPAuthorizationCredentials] = Security(HTTPBearer(auto_error=False))):
+    """Returns the current user if authenticated, otherwise None."""
+    if not credentials:
+        return None
+    try:
+        return await AuthService.get_current_user(credentials)
+    except Exception:
+        return None
+
 
 # In-memory permission cache with memory protection
 _PERMISSION_CACHE: Dict[str, tuple] = {}

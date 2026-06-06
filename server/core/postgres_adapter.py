@@ -22,16 +22,21 @@ JOIN_RULES = {
     ("connections", "users"): "users.id = connections.target_id",
     ("user_skills_relational", "skills"): "skills.id = user_skills_relational.skill_id",
     ("user_skill_nodes", "skills"): "skills.id = user_skill_nodes.skill_id",
+    ("conversations", "messages"): "messages.conversation_id = conversations.id",
+    ("conversations", "conversation_participants"): "conversation_participants.conversation_id = conversations.id",
+    ("search_jobs", "jobs"): "jobs.id = search_jobs.job_id",
 }
 
 TABLE_COLUMNS = {
     "profiles": ["id", "user_id", "created_at", "updated_at", "embedding", "open_to_work", "social_links", "linkedin_url", "portfolio_url", "profile_banner", "current_position", "headline", "about", "resume_url", "banner_url", "visibility_mode", "github_url"],
     "skills": ["id", "name", "category"],
-    "users": ["id", "search_vector", "is_active", "github_data", "created_at", "avatar_url", "username", "email", "password_hash", "user_code"],
+    "users": ["id", "search_vector", "is_active", "github_data", "created_at", "avatar_url", "username", "email", "password_hash", "user_code", "first_name", "last_name", "full_name"],
     "companies": ["id", "company_name", "created_by_user_id", "created_at", "industry"],
     "jobs": ["id", "company_id", "title", "description", "skills_required", "experience_level", "salary_range", "job_type", "location", "is_active", "created_at"],
     "search_candidates": ["user_id", "full_name", "skills", "experience_level", "proof_score", "location", "search_vector", "updated_at"],
     "search_jobs": ["job_id", "title", "skills", "salary_range", "experience_level", "job_type", "search_vector", "updated_at"],
+    "messages": ["id", "conversation_id", "sender_id", "content", "is_read", "created_at", "updated_at"],
+    "conversation_participants": ["id", "conversation_id", "user_id", "last_read_at", "created_at"],
 }
 
 import datetime

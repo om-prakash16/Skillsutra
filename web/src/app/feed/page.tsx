@@ -16,8 +16,7 @@ export default function FeedPage() {
         queryFn: async () => {
             const res = await api.feed.getPosts()
             return res.data
-        },
-        enabled: !!user
+        }
     })
 
     return (

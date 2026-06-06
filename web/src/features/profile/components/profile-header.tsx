@@ -22,13 +22,13 @@ const getBrandConfig = (platform: string) => {
 
 export function ProfileHeader({ user, socialLinks = [], isEditing, isOwner, onUpdateAvatar, action }: any) {
   return (
-    <div className="relative p-10 glass border-border/50 rounded-[3rem] overflow-hidden group">
+    <div className="relative p-6 md:p-10 glass border-border/50 rounded-[2rem] md:rounded-[3rem] overflow-hidden group">
       <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50" />
       
       <div className="flex flex-col md:flex-row gap-12 md:gap-16 items-start md:items-center relative z-10">
         <div className="relative group/avatar">
             <div className="absolute -inset-4 bg-primary/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-            <Avatar className="w-40 h-40 border-8 border-background/50 shadow-2xl relative z-10">
+            <Avatar className="w-28 h-28 md:w-40 md:h-40 border-4 md:border-8 border-background/50 shadow-2xl relative z-10">
               <AvatarImage src={user.avatar} className="object-cover" />
               <AvatarFallback className="glass bg-primary/10 text-primary font-black text-4xl">{user.firstName[0]}{user.lastName[0]}</AvatarFallback>
             </Avatar>
@@ -78,7 +78,7 @@ export function ProfileHeader({ user, socialLinks = [], isEditing, isOwner, onUp
         <div className="flex-1 space-y-6">
            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
               <div className="space-y-2">
-                 <h1 className="text-5xl md:text-6xl font-black tracking-tighter text-gradient leading-none">{user.firstName} {user.lastName}</h1>
+                 <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-gradient leading-none">{user.firstName} {user.lastName}</h1>
                  <p className="text-primary font-black uppercase text-[10px] tracking-[0.4em] pt-1">{user.title}</p>
               </div>
               <div className="flex items-center gap-4">
@@ -86,7 +86,7 @@ export function ProfileHeader({ user, socialLinks = [], isEditing, isOwner, onUp
               </div>
            </div>
 
-           <div className="flex flex-wrap gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 pt-2">
+           <div className="flex flex-wrap gap-4 md:gap-8 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 pt-2">
               <div className="flex items-center gap-2.5"><MapPin className="w-4 h-4 text-primary" /> {user.location}</div>
               <div className="flex items-center gap-2.5"><Calendar className="w-4 h-4 text-primary" /> Joined {user.joinDate}</div>
               <div className="flex items-center gap-2.5">

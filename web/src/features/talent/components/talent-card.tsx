@@ -25,9 +25,9 @@ export function TalentCard({ talent }: TalentCardProps) {
         <div className="absolute top-0 right-0 w-32 h-32 bg-primary/5 blur-3xl -z-10 rounded-full group-hover:bg-primary/10 transition-colors" />
         
         {/* Profile Header */}
-        <div className="flex justify-between items-start">
-          <div className="flex gap-5">
-            <div className="relative">
+        <div className="flex justify-between items-start gap-4">
+          <div className="flex gap-5 min-w-0">
+            <div className="relative shrink-0">
                 <div className="w-16 h-16 rounded-[1.25rem] bg-gradient-to-tr from-primary/20 to-indigo-500/20 p-0.5 group-hover:scale-105 transition-transform duration-500 shadow-lg">
                     <Avatar className="w-full h-full rounded-[1.2rem] border-none">
                         <AvatarImage src={talent.avatar} />
@@ -42,17 +42,17 @@ export function TalentCard({ talent }: TalentCardProps) {
                     </div>
                 )}
             </div>
-            <div className="space-y-1">
+            <div className="space-y-1 min-w-0">
                 <h3 className="font-black text-xl italic leading-none tracking-tight text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
-                    {talent.name}
-                    <ArrowUpRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500" />
+                    <span className="truncate">{talent.name}</span>
+                    <ArrowUpRight className="w-4 h-4 shrink-0 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500" />
                 </h3>
-                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">{talent.title}</p>
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground truncate">{talent.title}</p>
             </div>
           </div>
           
           {talent.match_score !== undefined ? (
-            <div className="flex flex-col items-end gap-2">
+            <div className="flex flex-col items-end gap-2 shrink-0">
                 <div className="flex flex-col items-end">
                     <p className="text-[9px] font-black uppercase tracking-widest text-primary mb-1">Resonance</p>
                     <p className="text-2xl font-black italic text-primary leading-none">{Math.round(talent.match_score)}%</p>
@@ -62,8 +62,8 @@ export function TalentCard({ talent }: TalentCardProps) {
                 </div>
             </div>
           ) : (
-            <div className="flex flex-col items-end gap-2">
-                <Badge className="glass bg-muted/50 text-muted-foreground border-border text-[9px] font-black uppercase tracking-widest py-1.5 px-3 rounded-xl group-hover:border-primary/20 group-hover:text-primary transition-all">
+            <div className="flex flex-col items-end gap-2 shrink-0">
+                <Badge className="glass bg-muted/50 text-muted-foreground border-border text-[9px] font-black uppercase tracking-widest py-1.5 px-3 rounded-xl group-hover:border-primary/20 group-hover:text-primary transition-all whitespace-nowrap">
                     <Zap className="w-3 h-3 mr-2" />
                     {talent.availability}
                 </Badge>

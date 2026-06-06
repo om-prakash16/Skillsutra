@@ -95,10 +95,10 @@ export function BasicInfoTab({ data, isEditing = false, onUpdate, onSave }: Basi
                         <Input 
                             id="email" 
                             defaultValue={data.basic.email} 
-                            disabled 
-                            className="h-14 bg-muted/50 border-border/50 rounded-2xl text-muted-foreground font-bold text-sm px-6 cursor-not-allowed" 
+                            onChange={(e) => onUpdate?.('email', e.target.value)} 
+                            disabled={!isEditingLocal} 
+                            className="h-14 glass border-border rounded-2xl focus:ring-primary/30 transition-all font-bold text-sm px-6" 
                         />
-                        <p className="text-[9px] text-muted-foreground/50 italic font-black uppercase tracking-[0.1em] ml-1">Locked for security. Contact protocol admin to update.</p>
                     </div>
                     <div className="space-y-3">
                         <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground ml-1">Communications Link</Label>

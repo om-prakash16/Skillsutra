@@ -11,7 +11,7 @@ async def send_email_async(to_email: str, subject: str, html_content: str):
     smtp_host = os.getenv("SMTP_HOST", "mailhog")
     smtp_port = int(os.getenv("SMTP_PORT", "1025"))
     smtp_user = os.getenv("SMTP_USER", "")
-    smtp_password = os.getenv("SMTP_PASSWORD", "")
+    smtp_password = os.getenv("SMTP_PASSWORD", "").replace(" ", "")
     sender_email = os.getenv("SMTP_SENDER", "noreply@skillsutra.com")
     
     msg = MIMEMultipart("alternative")

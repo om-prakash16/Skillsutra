@@ -24,6 +24,7 @@ export default function EmailRegisterPage() {
     const [formData, setFormData] = useState({ 
         role: "user",
         name: "",
+        headline: "",
         email: "", 
         otp: "",
         password: "", 
@@ -73,7 +74,8 @@ export default function EmailRegisterPage() {
                 email: formData.email,
                 password: formData.password,
                 name: formData.name,
-                role: formData.role
+                role: formData.role,
+                headline: formData.headline
             })
             toast.success("Account created successfully!")
             router.push("/auth/login")
@@ -148,11 +150,15 @@ export default function EmailRegisterPage() {
                                     <Input required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="h-12 glass border-border rounded-xl" placeholder="John Doe" />
                                 </div>
                                 <div className="space-y-2">
+                                    <Label className="text-micro text-muted-foreground/80 ml-2">Professional Headline</Label>
+                                    <Input required value={formData.headline} onChange={(e) => setFormData({ ...formData, headline: e.target.value })} className="h-12 glass border-border rounded-xl" placeholder="Software Engineer at Acme Corp" />
+                                </div>
+                                <div className="space-y-2">
                                     <Label className="text-micro text-muted-foreground/80 ml-2">Email Address</Label>
                                     <Input type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="h-12 glass border-border rounded-xl" placeholder="sysadmin@nexus.core" />
                                 </div>
                             </div>
-                            <Button type="submit" variant="premium" className="w-full h-12 rounded-xl text-sm shadow-premium font-bold tracking-widest" disabled={isDisabled || !formData.email || !formData.name}>
+                            <Button type="submit" variant="premium" className="w-full h-12 rounded-xl text-sm shadow-premium font-bold tracking-widest" disabled={isDisabled || !formData.email || !formData.name || !formData.headline}>
                                 {isDisabled ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "CONTINUE"}
                             </Button>
                         </motion.form>
@@ -176,6 +182,16 @@ export default function EmailRegisterPage() {
                             <Button type="submit" variant="premium" className="w-full h-12 rounded-xl text-sm shadow-premium font-bold tracking-widest bg-yellow-500 hover:bg-yellow-600 text-black" disabled={isDisabled || formData.otp.length !== 6}>
                                 {isDisabled ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "VERIFY CODE"}
                             </Button>
+                            <div className="text-center pt-2">
+                                <button 
+                                    type="button" 
+                                    onClick={handleSendOtp} 
+                                    disabled={isDisabled} 
+                                    className="text-sm text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+                                >
+                                    Didn't receive a code? <span className="font-semibold underline">Resend</span>
+                                </button>
+                            </div>
                         </motion.form>
                     )}
 

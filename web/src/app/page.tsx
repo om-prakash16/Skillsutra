@@ -1,5 +1,5 @@
-import { Navbar } from "@/components/layout/navbar"
-import { Footer } from "@/components/layout/footer"
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
 import { HeroSection } from "@/features/landing/components/hero-section"
 import { VisionManifest } from "@/features/landing/components/vision-manifest"
 import { Categories } from "@/features/landing/components/categories"
@@ -12,7 +12,14 @@ import { FinalCTA } from "@/features/landing/components/final-cta"
 import { Integrations } from "@/features/landing/components/integrations"
 import { Roadmap } from "@/features/landing/components/roadmap"
 
-export default function LandingPage() {
+export default function Home() {
+  const cookieStore = cookies()
+  const token = cookieStore.get('auth_token')
+  
+  if (token) {
+    redirect('/feed')
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <main className="flex-1">

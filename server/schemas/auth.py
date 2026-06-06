@@ -11,6 +11,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     password: str = Field(..., min_length=8)
     role: Optional[str] = "user"
+    headline: Optional[str] = None
     
     @validator("password")
     def password_complexity(cls, v):
@@ -62,6 +63,7 @@ class MagicLinkVerify(BaseModel):
 class OTPRequest(BaseModel):
     email: EmailStr
     name: Optional[str] = None
+    headline: Optional[str] = None
 
 class OTPVerify(BaseModel):
     email: EmailStr

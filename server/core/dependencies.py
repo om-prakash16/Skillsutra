@@ -2,7 +2,7 @@ from typing import Dict, Any
 from fastapi import Depends
 import db.engine as engine
 from core.exceptions import AuthorizationError, ExternalServiceError
-from modules.auth.core.service import get_current_user
+from modules.auth.core.service import get_current_user, get_optional_current_user
 from core.database import get_db_session
 
 async def get_db():

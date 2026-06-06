@@ -12,7 +12,7 @@ from schemas.social import (
     MessageCreate, MessageResponse,
     ConversationCreate, ConversationResponse
 )
-from core.dependencies import get_current_user
+from core.dependencies import get_current_user, get_optional_current_user
 
 router = APIRouter(prefix="/social", tags=["Social Networking"])
 
@@ -70,13 +70,13 @@ from typing import List
 
 @router.get("/feed", response_model=List[EnrichedPostResponse])
 async def get_social_feed(
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(get_optional_current_user),
     db: AsyncSession = Depends(get_db_session)
 ):
     """
     Get the social feed. 
     """
-    user_id = UUID(current_user["id"])
+    user_id = UUID(current_user["id"]) if current_user else None
     
     stmt = (
         select(Post, Profile)
@@ -92,7 +92,7 @@ async def get_social_feed(
     post_ids = [row[0].id for row in rows]
     liked_post_ids = set()
     
-    if post_ids:
+    if post_ids and user_id:
         reaction_stmt = select(Reaction.post_id).where(
             Reaction.user_id == user_id,
             Reaction.post_id.in_(post_ids),

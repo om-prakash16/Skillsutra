@@ -160,7 +160,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-5xl md:text-7xl font-extrabold font-heading tracking-tight text-foreground leading-[1.1] text-wrap:balance"
+            className="text-4xl sm:text-5xl md:text-7xl font-extrabold font-heading tracking-tight text-foreground leading-[1.1] text-wrap:balance"
           >
             {content.title.split('.').map((part: string, i: number) => (
               <span key={i} className={i === 1 ? "text-gradient italic font-black" : ""}>

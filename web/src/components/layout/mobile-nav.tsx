@@ -62,7 +62,7 @@ export function MobileNav() {
     }
 
     return (
-        <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] w-[95%] max-w-md h-16 glass rounded-2xl border-border shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl flex items-center justify-around px-2 border border-t-white/20">
+        <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] w-[95%] max-w-md h-16 glass rounded-2xl border-border shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl flex items-center justify-around px-2 border border-t-white/20">
             {navItems.map((item) => {
                 const Icon = item.icon
                 let targetHref = item.href;

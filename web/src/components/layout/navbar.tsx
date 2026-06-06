@@ -43,8 +43,9 @@ export function Navbar() {
     }, [pathname])
 
     const navLinks = getJson("navbar", "links") || [
-        { href: "/verify", label: "Verify Resume" },
-        { href: "/jobs", label: "Find Jobs" },
+        { href: "/", label: "Home" },
+        { href: "/welcome", label: "About Us" },
+        { href: "/jobs", label: "Jobs" },
         { href: "/companies", label: "Companies" },
         { href: "/talent", label: "Talent" },
     ]
@@ -210,7 +211,7 @@ export function Navbar() {
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
                                         <DropdownMenuItem asChild>
-                                            <Link href="/messages" className="cursor-pointer">Messages</Link>
+                                            <Link href="/user/messages" className="cursor-pointer">Messages</Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
                                             <Link href="/notifications" className="cursor-pointer">Notifications</Link>

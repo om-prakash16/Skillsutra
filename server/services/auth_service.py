@@ -61,7 +61,7 @@ class AuthService:
         new_profile = Profile(
             user_id=new_user.id,
             full_name=user_in.name or user_in.first_name or final_username,
-            headline=user_in.name or user_in.first_name or final_username,
+            headline=user_in.headline or user_in.name or user_in.first_name or final_username,
             email=user_in.email,
             visibility_mode="PUBLIC"
         )

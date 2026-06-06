@@ -26,11 +26,21 @@ export interface Post {
     has_liked: boolean
 }
 
+import { useAuth } from "@/context/auth-context"
+import { toast } from "sonner"
+
 export function PostCard({ post }: { post: Post }) {
     const queryClient = useQueryClient()
+    const { user } = useAuth()
 
     const likeMutation = useMutation({
-        mutationFn: () => api.feed.toggleLike(post.id),
+        mutationFn: () => {
+            if (!user) {
+                toast.error("Please log in to like this post")
+                return Promise.reject("Not logged in")
+            }
+            return api.feed.toggleLike(post.id)
+        },
         onMutate: async () => {
             await queryClient.cancelQueries({ queryKey: ["feed"] })
             const previousFeed = queryClient.getQueryData(["feed"])
@@ -133,25 +143,26 @@ export function PostCard({ post }: { post: Post }) {
                         </div>
                     </div>
 
-                    <div className="flex flex-wrap justify-between items-center pt-1">
-                        <Button 
-                            variant="ghost" 
-                            className={`flex-1 sm:flex-none hover:bg-muted rounded-xl h-12 ${post.has_liked ? 'text-primary' : 'text-muted-foreground hover:text-foreground'}`}
-                            onClick={() => likeMutation.mutate()}
-                            disabled={likeMutation.isPending}
-                        >
-                            <ThumbsUp className={`w-5 h-5 sm:mr-2 ${post.has_liked ? 'fill-current' : ''}`} />
-                            <span className="text-sm font-medium hidden sm:inline">Like</span>
+                    <div className="flex items-center justify-between pt-2 border-t border-border/50">
+                        <Button variant="ghost" className="flex-1 sm:flex-none text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-xl h-12" onClick={() => likeMutation.mutate()} disabled={likeMutation.isPending}>
+                            <ThumbsUp className={cn("w-5 h-5 mr-1.5 sm:mr-2", post.has_liked && "fill-primary text-primary")} />
+                            <span className={cn("text-sm font-medium", post.has_liked && "text-primary")}>
+                                {post.likes_count > 0 ? post.likes_count : <span className="hidden sm:inline">Like</span>}
+                            </span>
                         </Button>
-                        <Button variant="ghost" className="flex-1 sm:flex-none text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl h-12">
-                            <MessageSquare className="w-5 h-5 sm:mr-2" />
-                            <span className="text-sm font-medium hidden sm:inline">Comment</span>
+                        <Button variant="ghost" className="flex-1 sm:flex-none text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl h-12" onClick={() => { if (!user) toast.error("Please log in to interact with posts") }}>
+                            <MessageSquare className="w-5 h-5 mr-1.5 sm:mr-2" />
+                            <span className="text-sm font-medium">
+                                {post.comments_count > 0 ? post.comments_count : <span className="hidden sm:inline">Comment</span>}
+                            </span>
                         </Button>
-                        <Button variant="ghost" className="flex-1 sm:flex-none text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl h-12">
-                            <Repeat2 className="w-5 h-5 sm:mr-2" />
-                            <span className="text-sm font-medium hidden sm:inline">Repost</span>
+                        <Button variant="ghost" className="flex-1 sm:flex-none text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl h-12" onClick={() => { if (!user) toast.error("Please log in to interact with posts") }}>
+                            <Repeat2 className="w-5 h-5 mr-1.5 sm:mr-2" />
+                            <span className="text-sm font-medium">
+                                {post.reposts_count > 0 ? post.reposts_count : <span className="hidden sm:inline">Repost</span>}
+                            </span>
                         </Button>
-                        <Button variant="ghost" className="flex-1 sm:flex-none text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl h-12">
+                        <Button variant="ghost" className="flex-1 sm:flex-none text-muted-foreground hover:text-foreground hover:bg-muted rounded-xl h-12" onClick={() => { if (!user) toast.error("Please log in to interact with posts") }}>
                             <Send className="w-5 h-5 sm:mr-2" />
                             <span className="text-sm font-medium hidden sm:inline">Send</span>
                         </Button>
