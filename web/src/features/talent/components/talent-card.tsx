@@ -42,12 +42,15 @@ export function TalentCard({ talent }: TalentCardProps) {
                     </div>
                 )}
             </div>
-            <div className="space-y-1 min-w-0">
+            <div className="space-y-1 flex-1 min-w-0 py-1">
                 <h3 className="font-black text-xl italic leading-none tracking-tight text-foreground group-hover:text-primary transition-colors flex items-center gap-2">
                     <span className="truncate">{talent.name}</span>
                     <ArrowUpRight className="w-4 h-4 shrink-0 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500" />
                 </h3>
                 <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground truncate">{talent.title}</p>
+                <div className="pt-1">
+                    <Badge variant="secondary" className="text-[9px] font-bold uppercase tracking-widest bg-primary/10 text-primary border-primary/20">{talent.role}</Badge>
+                </div>
             </div>
           </div>
           

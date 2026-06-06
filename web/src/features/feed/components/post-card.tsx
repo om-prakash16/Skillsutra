@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { ThumbsUp, MessageSquare, Repeat2, Send, MoreHorizontal, Globe2 } from "lucide-react"
 import Link from "next/link"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -128,20 +129,6 @@ export function PostCard({ post }: { post: Post }) {
                 )}
 
                 <div className="px-4 sm:px-6 py-3">
-                    <div className="flex items-center justify-between text-xs text-muted-foreground border-b border-border/50 pb-3 mb-1">
-                        <div className="flex items-center gap-1 hover:text-primary hover:underline cursor-pointer">
-                            <div className="flex -space-x-1">
-                                <div className="w-4 h-4 rounded-full bg-blue-500 flex items-center justify-center ring-2 ring-background z-10">
-                                    <ThumbsUp className="w-2 h-2 text-white fill-current" />
-                                </div>
-                            </div>
-                            <span className="ml-1">{post.likes_count}</span>
-                        </div>
-                        <div className="flex gap-3">
-                            <span className="hover:text-primary hover:underline cursor-pointer">{post.comments_count} comments</span>
-                            <span className="hover:text-primary hover:underline cursor-pointer">{post.reposts_count} reposts</span>
-                        </div>
-                    </div>
 
                     <div className="flex items-center justify-between pt-2 border-t border-border/50">
                         <Button variant="ghost" className="flex-1 sm:flex-none text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-xl h-12" onClick={() => likeMutation.mutate()} disabled={likeMutation.isPending}>

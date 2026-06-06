@@ -142,7 +142,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             } else if (realUser?.role === "company") {
                 router.push("/company/dashboard")
             } else {
-                router.push("/feed")
+                router.push("/")
             }
         } catch (err: any) {
             toast.error(err.message || "Login failed")

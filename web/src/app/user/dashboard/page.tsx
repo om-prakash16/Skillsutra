@@ -16,7 +16,7 @@ import { useEffect } from "react"
 export default function UserDashboard() {
     const router = useRouter()
     useEffect(() => {
-        router.push("/feed")
+        router.push("/")
     }, [router])
 
     return null;

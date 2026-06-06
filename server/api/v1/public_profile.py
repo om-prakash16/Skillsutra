@@ -59,10 +59,11 @@ async def get_public_profile(username: str, db: AsyncSession = Depends(get_db_se
         "data": {
             "id": str(target_user.id),
             "username": target_user.username,
+            "email": target_user.email,
             "headline": profile.headline,
             "about": profile.about,
             "banner_url": profile.banner_url,
-            "avatar_url": None, # Should join with User profile pic if added
+            "avatar_url": target_user.avatar_url,
             "social_links": {
                 "github": profile.github_url,
                 "linkedin": profile.linkedin_url,

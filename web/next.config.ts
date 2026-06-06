@@ -10,11 +10,12 @@ const nextConfig: NextConfig = {
     '@noble/hashes'
   ],
   serverExternalPackages: ['pino-pretty', 'lokijs', 'encoding'],
-  async rewrites() {
+  async redirects() {
     return [
       {
         source: '/api/auth/callback/github',
         destination: '/auth/callback/github',
+        permanent: false,
       },
     ];
   },

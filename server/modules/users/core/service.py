@@ -185,6 +185,7 @@ class UserService:
                 "user_id": actual_user_id,
                 "user_code": user_data.get("user_code"),
                 "username": user_data.get("username"),
+                "email": user_data.get("email"),
                 "visibility": user_data.get("visibility"),
                 "avatar_url": user_data.get("avatar_url"),
                 "github_data": user_data.get("github_data"),

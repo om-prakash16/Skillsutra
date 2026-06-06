@@ -78,7 +78,7 @@ function GitHubCallbackHandler() {
                 } else if (userPayload?.role === "company") {
                     router.push("/company/dashboard");
                 } else {
-                    router.push("/feed");
+                    router.push("/");
                 }
             } catch (err: any) {
                 console.error(err);

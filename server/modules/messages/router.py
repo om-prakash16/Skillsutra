@@ -72,14 +72,20 @@ async def send_message(conversation_id: str, req: SendMessageRequest, current_us
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+from core.security import decode_token
+
 @router.websocket("/ws/{conversation_id}")
 async def websocket_messaging(websocket: WebSocket, conversation_id: str, token: str = Query(None)):
-    user_id = token if token else "anonymous"
-    
-    # 1. Authorize: check if user is a participant
-    if user_id == "anonymous":
+    if not token:
         await websocket.close(code=4001, reason="Unauthorized")
         return
+        
+    payload = decode_token(token)
+    if not payload or not payload.get("sub"):
+        await websocket.close(code=4001, reason="Unauthorized")
+        return
+        
+    user_id = payload.get("sub")
         
     sb = get_db()
     if sb:

@@ -52,7 +52,7 @@ export default function MessagesPage() {
                 setInbox(prev => prev.map(c => c.id === selectedConv ? { ...c, unread_count: 0 } : c));
 
                 // 2. Connect WebSocket
-                const token = localStorage.getItem("token") || "";
+                const token = localStorage.getItem("accessToken") || "";
                 const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
                 const wsUrl = `${wsProtocol}//${window.location.host}/api/v1/messages/ws/${selectedConv}?token=${token}`;
                 
