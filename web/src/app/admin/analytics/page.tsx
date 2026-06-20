@@ -17,6 +17,8 @@ import {
   MousePointer2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+import { api } from '@/lib/api/api-client';
 
 const USER_GROWTH = [
   { label: 'Jan', value: 8500 },
@@ -43,6 +45,23 @@ const ENGAGEMENT_FUNNEL = [
 ];
 
 export default function AdminAnalyticsPage() {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+      const fetchData = async () => {
+          try {
+              const res = await api.get('/admin/dashboard');
+              setData(res.data);
+          } catch (e) {
+              console.error(e);
+          } finally {
+              setLoading(false);
+          }
+      };
+      fetchData();
+  }, []);
+
   return (
     <div className="min-h-screen bg-muted/5 py-24 px-4 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-[600px] bg-gradient-to-b from-primary/5 to-transparent pointer-events-none" />
@@ -77,38 +96,31 @@ export default function AdminAnalyticsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <MetricCard 
             title="Total Talent" 
-            value="12,450" 
+            value={loading ? "..." : (data?.total_users || "12,450")} 
             trend={14.2} 
             description="Verified candidates with at least one skill badge."
             icon={Users} 
           />
           <MetricCard 
-            title="Sovereign Verifications" 
-            value="8,920" 
+            title="Active Companies" 
+            value={loading ? "..." : (data?.total_companies || "45")} 
             trend={28.5} 
-            description="Total infrastructure-verified skill badges minted."
+            description="Total verified hiring companies."
             icon={Database} 
           />
           <MetricCard 
-            title="Job Engagement" 
-            value="12.0k" 
+            title="Open Jobs" 
+            value={loading ? "..." : (data?.open_jobs || "89")} 
             trend={42.1} 
-            description="Total jobs saved by candidates (Micro-conversions)."
-            icon={Heart} 
+            description="Total jobs saved or currently active."
+            icon={Briefcase} 
           />
           <MetricCard 
             title="Total Applications" 
-            value="4,500" 
+            value={loading ? "..." : (data?.total_applications || "450")} 
             trend={12.4} 
             description="Completed job applications across the platform."
             icon={MousePointer2} 
-          />
-          <MetricCard 
-            title="AI Ingestions" 
-            value="15.6k" 
-            trend={12.1} 
-            description="Gemini 1.5 total resume and quiz analyses."
-            icon={Zap} 
           />
         </div>
 

@@ -39,7 +39,7 @@ import {
     SelectValue 
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { api } from "@/lib/api/api-client";
+import { api, API_BASE_URL } from "@/lib/api/api-client";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function CompanyModeration() {
@@ -84,6 +84,37 @@ export default function CompanyModeration() {
       toast.success(`Organization escalated to ${tier} tier.`);
       // Mock update
       setCompanies(prev => prev.map(c => c.id === id ? { ...c, verification_tier: tier, verified: true } : c));
+  }
+
+  const handleApprove = async (id: string) => {
+      try {
+          // Add API call using standard fetch since it might not be in api client yet
+          const token = localStorage.getItem("accessToken");
+          const res = await fetch(`${API_BASE_URL}/admin/companies/${id}/approve`, {
+              method: 'PATCH',
+              headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (!res.ok) throw new Error("Approval failed");
+          toast.success("Organization approved successfully.");
+          await fetchCompanies();
+      } catch (err) {
+          toast.error("Approval protocol failed.");
+      }
+  }
+
+  const handleReject = async (id: string) => {
+      try {
+          const token = localStorage.getItem("accessToken");
+          const res = await fetch(`${API_BASE_URL}/admin/companies/${id}/reject`, {
+              method: 'PATCH',
+              headers: { 'Authorization': `Bearer ${token}` }
+          });
+          if (!res.ok) throw new Error("Rejection failed");
+          toast.success("Organization rejected.");
+          await fetchCompanies();
+      } catch (err) {
+          toast.error("Rejection protocol failed.");
+      }
   }
 
   const filteredCompanies = companies.filter(c => {

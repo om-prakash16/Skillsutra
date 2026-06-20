@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from 'react';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useAuth } from '@/context/auth-context';
 import { useRouter } from 'next/navigation';
+import { getPostLoginDestination } from '@/lib/auth-utils';
+import { API_BASE_URL } from '@/lib/api/api-client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
@@ -29,7 +31,7 @@ export default function GoogleLoginButton({ role = "user" }: GoogleLoginButtonPr
       try {
         setIsLoading(true);
         const currentRole = roleRef.current;
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/auth/google`, {
+        const res = await fetch(`${API_BASE_URL}/auth/google`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ access_token: tokenResponse.access_token, role: currentRole }),
@@ -41,7 +43,7 @@ export default function GoogleLoginButton({ role = "user" }: GoogleLoginButtonPr
 
         const data = await res.json();
         // Fetch user profile
-        const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/auth/me`, {
+        const userRes = await fetch(`${API_BASE_URL}/auth/me`, {
           headers: { 'Authorization': `Bearer ${data.access_token}` }
         });
         
@@ -58,12 +60,11 @@ export default function GoogleLoginButton({ role = "user" }: GoogleLoginButtonPr
         toast.success('Successfully logged in with Google!');
         
         // Redirect based on role
-        if (userPayload?.role === "admin") {
-            router.push("/admin");
-        } else if (userPayload?.role === "company") {
-            router.push("/company/dashboard");
+        const destination = getPostLoginDestination(userPayload);
+        if (destination) {
+            router.push(destination);
         } else {
-            router.push("/user/dashboard");
+            router.push("/feed");
         }
       } catch (err) {
         console.error(err);

@@ -1,4 +1,4 @@
-﻿import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Company } from '@/types'
@@ -21,7 +21,7 @@ export function CompanyCard({ company }: CompanyCardProps) {
                     <Avatar className="h-16 w-16 rounded-lg border bg-background shadow-sm">
                         <AvatarImage src={company.logo} alt={company.name} className="object-cover" />
                         <AvatarFallback className="rounded-lg bg-primary/5 text-primary text-xl font-bold">
-                            {company.name.substring(0, 2).toUpperCase()}
+                            {(company.name || "CO").substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
 

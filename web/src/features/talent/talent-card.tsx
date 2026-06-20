@@ -16,7 +16,7 @@ export function TalentCard({ talent }: TalentCardProps) {
             <div className="p-6 pb-2 flex items-start gap-4">
                 <Avatar className="h-16 w-16 border-2 border-background shadow-sm">
                     <AvatarImage src={talent.avatar} alt={talent.name} />
-                    <AvatarFallback>{talent.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                    <AvatarFallback>{(talent.name || "T").substring(0, 2).toUpperCase()}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
@@ -59,14 +59,14 @@ export function TalentCard({ talent }: TalentCardProps) {
                 </div>
 
                 <div className="flex flex-wrap gap-1.5">
-                    {talent.skills.slice(0, 3).map(skill => (
+                    {(talent.skills || []).slice(0, 3).map(skill => (
                         <Badge key={skill} variant="secondary" className="px-2 py-0 text-xs font-normal bg-secondary/50 text-secondary-foreground hover:bg-secondary">
                             {skill}
                         </Badge>
                     ))}
-                    {talent.skills.length > 3 && (
+                    {(talent.skills || []).length > 3 && (
                         <span className="text-xs text-muted-foreground self-center px-1">
-                            +{talent.skills.length - 3}
+                            +{(talent.skills || []).length - 3}
                         </span>
                     )}
                 </div>

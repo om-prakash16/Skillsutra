@@ -35,6 +35,8 @@ router = APIRouter()
 router.include_router(scoring_router, tags=["Scoring"])
 router.include_router(quiz_router, tags=["Quiz"])
 router.include_router(interview_router, tags=["Interview"])
+from modules.ai.chat.router import router as ai_chat_router
+router.include_router(ai_chat_router)
 router.include_router(portfolio_router, prefix="/portfolio", tags=["Portfolio"])
 router.include_router(salary_router, prefix="/salary", tags=["Salary"])
 router.include_router(fraud_router, prefix="/fraud", tags=["Fraud"])

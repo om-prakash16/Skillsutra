@@ -7,7 +7,7 @@ from sqlalchemy.future import select
 from core.response import success_response
 from core.database import get_db_session
 from modules.auth.core.service import get_current_user
-from models.notifications import NotificationPreference, Notification, UserMute
+from models.communication import NotificationPreference, Notification, UserMute
 from schemas.notifications import NotificationPreferencesUpdate, NotificationPreferencesResponse, UserMuteCreate
 
 router = APIRouter()

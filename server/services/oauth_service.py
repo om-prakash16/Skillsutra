@@ -220,7 +220,7 @@ class OAuthService:
             
             # Add in-app notification
             try:
-                from models.notifications import Notification
+                from models.communication import Notification
                 welcome_notification = Notification(
                     user_id=user.id,
                     type="SYSTEM_ALERT",
@@ -245,23 +245,33 @@ class OAuthService:
         await self.db.commit()
         await self.db.refresh(user)
 
+        # Check if MFA is enabled
+        from models.iam import MFAMethod
+        mfa_query = select(MFAMethod).where(MFAMethod.user_id == user.id, MFAMethod.is_enabled == True)
+        mfa_res = await self.db.execute(mfa_query)
+        mfa_method = mfa_res.scalars().first()
+
+        if mfa_method and intent == "login":
+            from core.security import create_mfa_token
+            mfa_token = create_mfa_token(subject=user.id)
+            return {"requires_mfa": True, "mfa_token": mfa_token}
+
         # Generate tokens
         # If user has multiple roles, just pick the first or fallback to default
         actual_role = user.roles[0].role_name if user.roles else role
-        access_token = create_access_token(subject=user.id, role=actual_role)
-        refresh_token = create_refresh_token(subject=user.id)
         
+        from modules.auth.core.session_service import SessionService
         from core.security import REFRESH_TOKEN_EXPIRE_DAYS
-        from core.redis import redis_set
-        expires_at = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-
-        session_data = {
-            "user_id": str(user.id),
-            "device_info": device_info,
-            "ip_address": ip_address,
-            "expires_at": expires_at.isoformat()
-        }
-        await redis_set(f"session:{refresh_token}", session_data, ttl_seconds=REFRESH_TOKEN_EXPIRE_DAYS * 86400)
+        
+        jti = await SessionService.create_session(
+            user_id=str(user.id),
+            ip_address=ip_address,
+            user_agent=device_info,
+            expires_in_seconds=REFRESH_TOKEN_EXPIRE_DAYS * 86400
+        )
+        
+        access_token = create_access_token(subject=user.id, role=actual_role, jti=jti)
+        refresh_token = create_refresh_token(subject=user.id, jti=jti)
 
         return user, access_token, refresh_token
 

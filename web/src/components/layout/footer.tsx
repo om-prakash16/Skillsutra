@@ -109,7 +109,7 @@ export function Footer({ forceVisible }: { forceVisible?: boolean }) {
     ]
 
     return (
-        <footer className="relative bg-background pt-8 pb-12 overflow-hidden border-t border-black/5 dark:border-border/50">
+        <footer className="relative bg-background pt-8 pb-28 md:pb-12 overflow-hidden border-t border-black/5 dark:border-border/50">
             {/* Market Sectors Marquee */}
             <div className="w-full border-b border-black/5 dark:border-border/50 pb-10 mb-16 overflow-hidden">
                 <div className="container mx-auto px-4 mb-8">

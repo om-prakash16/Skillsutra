@@ -16,10 +16,11 @@ const guestNav = [
 ]
 
 const userNav = [
-    { id: "home", href: "/user/dashboard", label: "Home", icon: Home },
+    { id: "home", href: "/feed", label: "Feed", icon: Home },
     { id: "apps", href: "/user/applications", label: "Apps", icon: Briefcase },
     { id: "notif", href: "/notifications", label: "Alerts", icon: Bell },
     { id: "discover", href: "/search/candidates", label: "Discover", icon: Globe },
+    { id: "messages", href: "/user/messages", label: "Messages", icon: Briefcase },
     { id: "profile", href: "/user/profile", label: "Profile", icon: User },
 ]
 
@@ -36,6 +37,7 @@ const companyNav = [
     { id: "jobs", href: "/company/jobs", label: "Jobs", icon: Briefcase },
     { id: "talent", href: "/search/talent", label: "Talent", icon: Search },
     { id: "analytics", href: "/company/analytics", label: "Stats", icon: BarChart3 },
+    { id: "messages", href: "/user/messages", label: "Messages", icon: Briefcase },
     { id: "profile", href: "/company/profile", label: "Profile", icon: User },
 ]
 
@@ -55,14 +57,13 @@ export function MobileNav() {
 
     let navItems = guestNav;
     if (isAuthenticated && user) {
-        if (user.role === 'admin') navItems = adminNav;
+        if (['super_admin', 'admin'].includes(user.role)) navItems = adminNav;
         else if (user.role === 'company') navItems = companyNav;
-        else if (user.role === 'recruiter') navItems = recruiterNav;
         else navItems = userNav;
     }
 
     return (
-        <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[200] w-[95%] max-w-md h-16 glass rounded-2xl border-border shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl flex items-center justify-around px-2 border border-t-white/20">
+        <div className="md:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-40 w-[95%] max-w-md h-16 glass rounded-2xl border-border shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-2xl flex items-center justify-around px-2 border border-t-white/20">
             {navItems.map((item) => {
                 const Icon = item.icon
                 let targetHref = item.href;

@@ -1,70 +1,106 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
-from typing import List, Optional
-from core.response import success_response
-from modules.auth.core.service import get_current_user
+from fastapi import APIRouter, Depends, HTTPException, Body, BackgroundTasks
+from sqlalchemy.orm import Session
+from typing import Dict, Any, List
+import uuid
+from datetime import datetime
+
+from database.core import get_db
+from models.learning import LearningCourse, LearningModule, LearningLesson, LearningEnrollment, LearningAssessment, LearningAssessmentAttempt
+from models.talent import TalentProfile, TalentSkill, SkillTaxonomy
+from api.v1.auth_router import get_current_user
 
 router = APIRouter()
 
-@router.post("/paths/generate")
-async def generate_learning_path(
-    target_job_id: str,
-    current_user = Depends(get_current_user)
-):
-    """Generate a personalized learning path based on skill gaps."""
-    user_id = current_user.get("sub") or current_user.get("id")
-    
-    # Placeholder for DAG learning path generation
-    # 1. Fetch user current skills (UserSkillNode)
-    # 2. Fetch target job required skills
-    # 3. Calculate gap
-    # 4. Map gaps to available Courses
-    
-    path = {
-        "target_job_id": target_job_id,
-        "recommended_courses": [
-            {"course_id": "uuid-1", "reason": "Missing advanced React skill"},
-            {"course_id": "uuid-2", "reason": "Missing system design skill"}
-        ],
-        "estimated_hours": 45
+@router.get("/courses", tags=["Learning Platform"])
+async def get_courses(db: Session = Depends(get_db)):
+    """Fetch the Course Catalog."""
+    courses = db.query(LearningCourse).all()
+    return {
+        "success": True,
+        "data": [
+            {
+                "id": c.id,
+                "title": c.title,
+                "slug": c.slug,
+                "difficulty": c.difficulty,
+                "estimated_duration_minutes": c.estimated_duration_minutes,
+                "granted_skills": c.granted_skills
+            } for c in courses
+        ]
     }
-    
-    return success_response(data=path, message="Learning path generated successfully")
 
-@router.get("/progress")
-async def get_learning_progress(
-    current_user = Depends(get_current_user)
-):
-    """Get the current user's learning progress across enrolled courses."""
-    user_id = current_user.get("sub") or current_user.get("id")
+@router.post("/courses/{course_id}/enroll", tags=["Learning Platform"])
+async def enroll_course(course_id: str, payload: Dict[str, Any], db: Session = Depends(get_db)):
+    """Enroll a user in a course."""
+    profile_id = payload.get("talent_profile_id", "mock-profile-id")
     
-    # Placeholder for fetching UserProgress from DB
-    progress = []
+    # Check if already enrolled
+    existing = db.query(LearningEnrollment).filter(
+        LearningEnrollment.course_id == course_id,
+        LearningEnrollment.talent_profile_id == profile_id
+    ).first()
+    if existing:
+        return {"success": True, "data": {"enrollment_id": existing.id, "status": existing.status}}
+        
+    enrollment = LearningEnrollment(
+        course_id=course_id,
+        talent_profile_id=profile_id,
+        status="in_progress"
+    )
+    db.add(enrollment)
+    db.commit()
+    db.refresh(enrollment)
     
-    return success_response(data=progress)
+    return {"success": True, "data": {"enrollment_id": enrollment.id}}
 
-@router.post("/tracks")
-async def create_learning_track(
-    payload: dict,
-    current_user = Depends(get_current_user)
-):
-    """Companies can create a sponsored learning track."""
-    track = {
-        "id": "uuid-track-1",
-        "title": payload.get("title"),
-        "company_id": payload.get("company_id")
-    }
-    return success_response(data=track, message="Company learning track created")
-
-@router.post("/tracks/{track_id}/complete")
-async def complete_learning_track(
-    track_id: str,
-    current_user = Depends(get_current_user)
-):
-    """
-    Mark a track as complete. 
-    Triggers Gamification (XP/Badges) and ATS Priority integration.
-    """
-    user_id = current_user.get("sub") or current_user.get("id")
-    # Emitting an event to Redis/Celery for Gamification and ATS
-    # e.g., publish("learning_events", {"event": "track_completed", "user": user_id})
-    return success_response(data={"track_id": track_id, "priority_status": True}, message="Track completed! You are now a priority applicant.")
+@router.post("/assessments/{assessment_id}/submit", tags=["Learning Assessments"])
+async def submit_assessment(assessment_id: str, payload: Dict[str, Any], db: Session = Depends(get_db)):
+    """Submit an assessment. If passed, automatically update the Talent Identity Skills Graph."""
+    profile_id = payload.get("talent_profile_id", "mock-profile-id")
+    score = payload.get("score", 0.0)
+    
+    assessment = db.query(LearningAssessment).filter(LearningAssessment.id == assessment_id).first()
+    if not assessment:
+        raise HTTPException(status_code=404, detail="Assessment not found")
+        
+    passed = score >= assessment.passing_score_percentage
+    
+    attempt = LearningAssessmentAttempt(
+        assessment_id=assessment_id,
+        talent_profile_id=profile_id,
+        score=score,
+        passed=passed,
+        submitted_answers=payload.get("answers", {}),
+        started_at=datetime.utcnow()
+    )
+    db.add(attempt)
+    
+    if passed and assessment.course_id:
+        course = db.query(LearningCourse).filter(LearningCourse.id == assessment.course_id).first()
+        if course and course.granted_skills:
+            # Automatic Skill Verification Pipeline
+            for skill_name in course.granted_skills:
+                # 1. Find global skill
+                taxonomy_skill = db.query(SkillTaxonomy).filter(SkillTaxonomy.name == skill_name).first()
+                if taxonomy_skill:
+                    # 2. Check if user already has it
+                    existing_skill = db.query(TalentSkill).filter(
+                        TalentSkill.profile_id == profile_id,
+                        TalentSkill.skill_id == taxonomy_skill.id
+                    ).first()
+                    
+                    if existing_skill:
+                        # Upgrade proficiency or confidence
+                        existing_skill.ai_confidence_score = 1.0
+                    else:
+                        # Add new verified skill
+                        new_skill = TalentSkill(
+                            profile_id=profile_id,
+                            skill_id=taxonomy_skill.id,
+                            proficiency_level="intermediate",
+                            ai_confidence_score=1.0
+                        )
+                        db.add(new_skill)
+    
+    db.commit()
+    return {"success": True, "passed": passed, "score": score}

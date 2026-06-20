@@ -44,3 +44,25 @@ async def get_db_session():
             raise
         finally:
             await session.close()
+
+from fastapi import Request
+
+async def get_tenant_db_session(request: Request):
+    """
+    Dependency for injecting a Tenant-aware SQLAlchemy session.
+    Automatically retrieves the X-Tenant-ID from headers and can be used 
+    by repositories to enforce tenant isolation.
+    """
+    tenant_id = request.headers.get("X-Tenant-ID")
+    async with AsyncSessionLocal() as session:
+        # We can store the tenant_id in the session info dictionary 
+        # so Repositories can extract it and append .where(tenant_id=...)
+        session.info["tenant_id"] = tenant_id
+        try:
+            yield session
+        except Exception as e:
+            logger.error(f"Tenant database session error: {e}")
+            await session.rollback()
+            raise
+        finally:
+            await session.close()

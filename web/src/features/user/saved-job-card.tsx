@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -21,7 +21,7 @@ export function SavedJobCard({ job, onRemove }: SavedJobCardProps) {
                     <Avatar className="h-12 w-12 rounded-lg border">
                         <AvatarImage src={job.logo} alt={job.company} />
                         <AvatarFallback className="rounded-lg bg-primary/5 text-primary font-bold">
-                            {job.company.substring(0, 2).toUpperCase()}
+                            {(job.company || "CO").substring(0, 2).toUpperCase()}
                         </AvatarFallback>
                     </Avatar>
                     <div className="space-y-1">

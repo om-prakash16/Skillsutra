@@ -20,11 +20,10 @@ async def seed_data():
     try:
         await db.table("users").insert({
             "id": user_id,
-            "wallet_address": "0xadmin_wallet_address_30811af7",
             "username": "admin",
             "email": "admin@skillsutra.com",
-            "role": "admin",
-            "roles": ["admin"]
+            "first_name": "Admin",
+            "last_name": "User"
         }).execute()
         print("  + Admin user node established.")
     except Exception as e:
@@ -56,11 +55,14 @@ async def seed_data():
     # 3. Create Dummy Company
     company_name = "Best Hiring Tool AI - Demo Corp"
     print(f"[3/4] Synthesizing dummy company node: {company_name}")
+    import uuid
+    company_id = str(uuid.uuid4())
     try:
         company_resp = await (
             db.table("companies")
             .insert(
                 {
+                    "id": company_id,
                     "company_name": company_name,
                     "created_by_user_id": user_id,
                 }
@@ -76,8 +78,9 @@ async def seed_data():
         print(f"  + Company established: {company_id}")
 
         # Add as owner in company_members
+        member_id = str(uuid.uuid4())
         await db.table("company_members").insert(
-            {"company_id": company_id, "user_id": user_id, "company_role": "OWNER"}
+            {"id": member_id, "company_id": company_id, "user_id": user_id, "company_role": "OWNER"}
         ).execute()
     except Exception as e:
         print(f"[ERROR] Company synthesis failed: {e}")
@@ -156,8 +159,23 @@ async def seed_data():
     ]
 
     for job in jobs_data:
+        job_id = str(uuid.uuid4())
+        desc = job.pop("description")
+        experience_level = job.pop("experience_level")
+        salary_range = job.pop("salary_range")
+        job_type = job.pop("job_type")
+        location = job.pop("location")
+        
         await db.table("jobs").insert(
-            {"company_id": company_id, **job, "is_active": True}
+            {
+                "id": job_id, 
+                "company_id": company_id, 
+                "description_markdown": desc,
+                "requirements": {"experience_level": experience_level},
+                "logistics": {"salary_range": salary_range, "location": location, "remote_policy": job_type},
+                **job, 
+                "status": "OPEN"
+            }
         ).execute()
         print(f"  + Added Job: {job['title']}")
 

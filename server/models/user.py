@@ -24,6 +24,7 @@ class User(Base):
     avatar_url = Column(String, nullable=True)
     github_data = Column(JSONB, nullable=True)
     dynamic_profile_data = Column(JSONB, nullable=True)
+    sidebar_preferences = Column(JSONB, nullable=True)
     last_login_at = Column(DateTime(timezone=True), nullable=True)
     profile_synced_at = Column(DateTime(timezone=True), nullable=True)
     locale = Column(String, nullable=True)

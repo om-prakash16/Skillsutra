@@ -54,11 +54,7 @@ class GoogleAuthRequest(BaseModel):
     role: Optional[str] = "user"
     intent: Optional[str] = "login"
 
-class MagicLinkRequest(BaseModel):
-    email: EmailStr
 
-class MagicLinkVerify(BaseModel):
-    token: str
 
 class OTPRequest(BaseModel):
     email: EmailStr
@@ -69,7 +65,7 @@ class OTPVerify(BaseModel):
     email: EmailStr
     code: str
 
-class MagicLinkSetup(BaseModel):
+class AccountSetupRequest(BaseModel):
     token: str
     password: str = Field(..., min_length=8)
     name: Optional[str] = None

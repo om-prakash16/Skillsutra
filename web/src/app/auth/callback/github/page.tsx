@@ -5,6 +5,8 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { getPostLoginDestination } from "@/lib/auth-utils";
+import { API_BASE_URL } from "@/lib/api/api-client";
 
 function GitHubCallbackHandler() {
     const searchParams = useSearchParams();
@@ -36,7 +38,7 @@ function GitHubCallbackHandler() {
                 }
 
                 // Post the code to the backend
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/auth/oauth/github/callback`, {
+                const res = await fetch(`${API_BASE_URL}/auth/oauth/github/callback`, {
                     method: "POST",
                     headers,
                     body: JSON.stringify({ code, state }),
@@ -56,7 +58,7 @@ function GitHubCallbackHandler() {
                 }
 
                 // Fetch user profile
-                const userRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/auth/me`, {
+                const userRes = await fetch(`${API_BASE_URL}/auth/me`, {
                     headers: { 'Authorization': `Bearer ${data.access_token}` }
                 });
                 
@@ -73,12 +75,11 @@ function GitHubCallbackHandler() {
                 toast.success('Successfully logged in with GitHub!');
                 
                 // Redirect based on role
-                if (userPayload?.role === "admin") {
-                    router.push("/admin");
-                } else if (userPayload?.role === "company") {
-                    router.push("/company/dashboard");
+                const destination = getPostLoginDestination(userPayload)
+                if (destination) {
+                    router.push(destination)
                 } else {
-                    router.push("/");
+                    throw new Error("Role not found on user profile")
                 }
             } catch (err: any) {
                 console.error(err);
@@ -89,7 +90,7 @@ function GitHubCallbackHandler() {
         };
 
         handleGitHubCallback();
-    }, [searchParams, router, setAuthSession]);
+    }, [searchParams, router, setAuthSession, token]);
 
     return (
         <div className="text-center space-y-4">

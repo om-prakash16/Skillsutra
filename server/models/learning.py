@@ -1,67 +1,131 @@
-import uuid
-from datetime import datetime
-from sqlalchemy import Column, String, Float, Boolean, DateTime, ForeignKey, Text
-from sqlalchemy.dialects.postgresql import UUID, ARRAY
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, Integer, JSON, Boolean, ForeignKey, Text, Float, DateTime
 from sqlalchemy.orm import relationship
-from core.database import Base
+from .mixins import EnterpriseMixin
+from database.core import Base
 
-class Course(Base):
-    __tablename__ = "courses"
+# --- Course Catalog ---
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    title = Column(String, nullable=False)
+class LearningCourse(EnterpriseMixin, Base):
+    __tablename__ = "learning_courses"
+    
+    title = Column(String(255), nullable=False)
+    slug = Column(String(255), nullable=False, unique=True, index=True)
     description = Column(Text, nullable=True)
-    industry_category = Column(String, nullable=True) # e.g., 'Software Development', 'AI/ML'
     
-    # Array of SkillTaxonomy UUIDs that this course teaches
-    skills_taught = Column(ARRAY(UUID(as_uuid=True)), default=list)
+    difficulty = Column(String(50), default="beginner") # beginner, intermediate, advanced
+    estimated_duration_minutes = Column(Integer, default=0)
     
-    # URL to the video, external LMS, or internal content
-    content_url = Column(String, nullable=True)
-    duration_minutes = Column(Float, default=0.0)
+    # Store MediaAsset IDs for thumbnail/promo video
+    thumbnail_url = Column(String(500), nullable=True)
     
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    # Required skills to start
+    prerequisite_skills = Column(JSON, default=list)
+    # Skills granted upon completion
+    granted_skills = Column(JSON, default=list)
+    
+    modules = relationship("LearningModule", back_populates="course", cascade="all, delete-orphan", order_by="LearningModule.sequence")
+    enrollments = relationship("LearningEnrollment", back_populates="course", cascade="all, delete-orphan")
 
-    # Relationships
-    user_progress = relationship("UserProgress", back_populates="course", cascade="all, delete-orphan")
-
-
-class UserProgress(Base):
-    __tablename__ = "user_progress"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    course_id = Column(UUID(as_uuid=True), ForeignKey('courses.id', ondelete='CASCADE'), nullable=False)
+class LearningModule(EnterpriseMixin, Base):
+    __tablename__ = "learning_modules"
     
-    status = Column(String, default="ENROLLED") # ENROLLED, IN_PROGRESS, COMPLETED
-    completion_percentage = Column(Float, default=0.0)
+    course_id = Column(UUID(as_uuid=True), ForeignKey("learning_courses.id"), nullable=False)
     
-    last_accessed_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    title = Column(String(255), nullable=False)
+    sequence = Column(Integer, default=0)
+    
+    course = relationship("LearningCourse", back_populates="modules")
+    lessons = relationship("LearningLesson", back_populates="module", cascade="all, delete-orphan", order_by="LearningLesson.sequence")
+
+class LearningLesson(EnterpriseMixin, Base):
+    __tablename__ = "learning_lessons"
+    
+    module_id = Column(UUID(as_uuid=True), ForeignKey("learning_modules.id"), nullable=False)
+    
+    title = Column(String(255), nullable=False)
+    sequence = Column(Integer, default=0)
+    type = Column(String(50), default="video") # video, article, interactive
+    
+    content = Column(Text, nullable=True) # Markdown or HTML
+    video_url = Column(String(500), nullable=True) # e.g. Vimeo/YouTube embed
+    
+    module = relationship("LearningModule", back_populates="lessons")
+
+class LearningPath(EnterpriseMixin, Base):
+    __tablename__ = "learning_paths"
+    
+    title = Column(String(255), nullable=False)
+    description = Column(Text, nullable=True)
+    
+    # e.g. ["course_id_1", "course_id_2"]
+    course_ids = Column(JSON, default=list)
+
+# --- Enrollments & Progress ---
+
+class LearningEnrollment(EnterpriseMixin, Base):
+    __tablename__ = "learning_enrollments"
+    
+    course_id = Column(UUID(as_uuid=True), ForeignKey("learning_courses.id"), nullable=False)
+    talent_profile_id = Column(UUID(as_uuid=True), ForeignKey("talent_profiles.id"), nullable=False)
+    
+    status = Column(String(50), default="in_progress") # in_progress, completed, dropped
+    progress_percentage = Column(Float, default=0.0)
+    
     completed_at = Column(DateTime(timezone=True), nullable=True)
     
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    course = relationship("LearningCourse", back_populates="enrollments")
 
-    # Relationships
-    course = relationship("Course", back_populates="user_progress")
-    user = relationship("User")
-
-class CompanyLearningTrack(Base):
-    """A sponsored curriculum built by a company."""
-    __tablename__ = "company_learning_tracks"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    company_id = Column(UUID(as_uuid=True), ForeignKey('companies.id', ondelete='CASCADE'), nullable=False)
+class LearningProgress(EnterpriseMixin, Base):
+    __tablename__ = "learning_progress"
     
-    title = Column(String, nullable=False)
+    enrollment_id = Column(UUID(as_uuid=True), ForeignKey("learning_enrollments.id", ondelete="CASCADE"), nullable=False)
+    lesson_id = Column(UUID(as_uuid=True), ForeignKey("learning_lessons.id"), nullable=False)
+    
+    is_completed = Column(Boolean, default=False)
+    completed_at = Column(DateTime(timezone=True), nullable=True)
+
+# --- Assessments ---
+
+class LearningAssessment(EnterpriseMixin, Base):
+    __tablename__ = "learning_assessments"
+    
+    title = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
     
-    # Ordered array of Course UUIDs
-    required_courses = Column(ARRAY(UUID(as_uuid=True)), default=list)
+    course_id = Column(UUID(as_uuid=True), ForeignKey("learning_courses.id", ondelete="SET NULL"), nullable=True)
     
-    # Badge awarded upon completion
-    reward_badge_id = Column(UUID(as_uuid=True), ForeignKey('achievement_badges.id', ondelete='SET NULL'), nullable=True)
+    time_limit_minutes = Column(Integer, nullable=True)
+    passing_score_percentage = Column(Float, default=70.0)
     
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
-    updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
+    questions = relationship("LearningAssessmentQuestion", back_populates="assessment", cascade="all, delete-orphan")
+
+class LearningAssessmentQuestion(EnterpriseMixin, Base):
+    __tablename__ = "learning_assessment_questions"
+    
+    assessment_id = Column(UUID(as_uuid=True), ForeignKey("learning_assessments.id", ondelete="CASCADE"), nullable=False)
+    
+    type = Column(String(50), default="mcq") # mcq, coding, essay
+    prompt = Column(Text, nullable=False)
+    
+    # JSON schema holding options, correct answer, or test cases for coding
+    payload = Column(JSON, nullable=False) 
+    
+    points = Column(Integer, default=1)
+    
+    assessment = relationship("LearningAssessment", back_populates="questions")
+
+class LearningAssessmentAttempt(EnterpriseMixin, Base):
+    __tablename__ = "learning_assessment_attempts"
+    
+    assessment_id = Column(UUID(as_uuid=True), ForeignKey("learning_assessments.id", ondelete="CASCADE"), nullable=False)
+    talent_profile_id = Column(UUID(as_uuid=True), ForeignKey("talent_profiles.id"), nullable=False)
+    
+    score = Column(Float, nullable=True)
+    passed = Column(Boolean, nullable=True)
+    
+    started_at = Column(DateTime(timezone=True), nullable=False)
+    completed_at = Column(DateTime(timezone=True), nullable=True)
+    
+    # The actual answers submitted by the user
+    submitted_answers = Column(JSON, default=dict)

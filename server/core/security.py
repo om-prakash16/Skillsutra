@@ -7,7 +7,11 @@ import secrets
 import hashlib
 
 # Use a specific JWT Secret, falling back to a default if not set
-SECRET_KEY = os.getenv("JWT_SECRET", "super-secret-key-please-change-in-production")
+SECRET_KEY = os.getenv("JWT_SECRET")
+if not SECRET_KEY:
+    if os.getenv("ENVIRONMENT", "development") == "production":
+        raise ValueError("FATAL ERROR: JWT_SECRET environment variable is not set in production!")
+    SECRET_KEY = "super-secret-key-please-change-in-production"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7
@@ -20,7 +24,7 @@ async def get_password_hash(password: str) -> str:
     """Hash a password using bcrypt."""
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-def create_access_token(subject: Union[str, Any], role: str = "user") -> str:
+def create_access_token(subject: Union[str, Any], role: str = "user", jti: Optional[str] = None) -> str:
     expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode = {
         "exp": expire,
@@ -28,18 +32,32 @@ def create_access_token(subject: Union[str, Any], role: str = "user") -> str:
         "role": role,
         "type": "access"
     }
+    if jti:
+        to_encode["jti"] = jti
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def create_refresh_token(subject: Union[str, Any]) -> str:
+def create_refresh_token(subject: Union[str, Any], jti: Optional[str] = None) -> str:
     expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
     to_encode = {
         "exp": expire,
         "sub": str(subject),
         "type": "refresh"
     }
+    if jti:
+        to_encode["jti"] = jti
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+def create_mfa_token(subject: Union[str, Any]) -> str:
+    """Short-lived token used exclusively for passing MFA verification."""
+    expire = datetime.utcnow() + timedelta(minutes=5)
+    to_encode = {
+        "exp": expire,
+        "sub": str(subject),
+        "type": "mfa"
+    }
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 def create_setup_token(email: str) -> str:
     expire = datetime.utcnow() + timedelta(minutes=15)
@@ -64,3 +82,20 @@ def generate_secure_token(length: int = 64) -> str:
 def hash_token(token: str) -> str:
     """Hash a token using SHA-256 for secure database storage."""
     return hashlib.sha256(token.encode('utf-8')).hexdigest()
+
+from fastapi import HTTPException
+
+ROLE_HIERARCHY = {
+    "super_admin": 100,
+    "admin": 90,
+    "moderator": 80,
+    "company": 70,
+    "mentor": 60,
+    "career_professional": 50,
+    "user": 10
+}
+
+def get_primary_role(roles: list[str]) -> str:
+    if not roles:
+        raise HTTPException(status_code=403, detail="AUTH_ROLE_NOT_FOUND")
+    return max(roles, key=lambda role: ROLE_HIERARCHY.get(role, 0))

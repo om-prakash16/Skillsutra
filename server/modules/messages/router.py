@@ -1,15 +1,41 @@
 from fastapi import APIRouter, Depends, Query, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.encoders import jsonable_encoder
 from typing import Dict, Any, List
 import json
 from pydantic import BaseModel
 from modules.auth.core.service import get_current_user
 from modules.messages.service import MessageService
 from modules.chat.ws_manager import manager
+from modules.notifications.core.service import NotificationService
 from core.response import success_response
 from core.db import get_db
 
 router = APIRouter()
 message_service = MessageService()
+
+async def notify_participants(conversation_id: str, sender_id: str, content: str):
+    try:
+        sb = get_db()
+        if sb:
+            cp_resp = await sb.table("conversation_participants").select("user_id").eq("conversation_id", conversation_id).execute()
+            if cp_resp.data:
+                sender_resp = await sb.table("users").select("first_name, last_name").eq("id", sender_id).execute()
+                sender_name = "Someone"
+                if sender_resp.data:
+                    sender_name = f"{sender_resp.data[0].get('first_name','')} {sender_resp.data[0].get('last_name','')}".strip() or "Someone"
+                    
+                for cp in cp_resp.data:
+                    if cp["user_id"] != sender_id:
+                        await NotificationService.create_event_notification(
+                            user_id=cp["user_id"],
+                            type="job_app",
+                            title=f"New Message from {sender_name}",
+                            message=content[:50] + ("..." if len(content) > 50 else ""),
+                            link=f"/user/messages?conv={conversation_id}"
+                        )
+    except Exception as e:
+        print(f"[WARN] notify_participants failed (non-critical): {e}")
+
 
 class StartConversationRequest(BaseModel):
     receiver_id: str
@@ -45,11 +71,27 @@ async def start_conversation(req: StartConversationRequest, current_user=Depends
             initial_message=req.initial_message
         )
         
-        # Notify the receiver if they are online
-        await manager.send_personal_message(
-            {"type": "new_conversation", "conversation_id": result["conversation_id"], "message": result["message"]},
-            req.receiver_id
-        )
+        # Non-critical: send notification & websocket push
+        try:
+            await NotificationService.create_event_notification(
+                user_id=req.receiver_id,
+                type="job_app",
+                title=f"New Conversation Started",
+                message=req.subject or req.initial_message[:50],
+                link=f"/user/messages?conv={result['conversation_id']}"
+            )
+        except Exception as notify_err:
+            print(f"[WARN] Notification failed (non-critical): {notify_err}")
+        
+        try:
+            sb = get_db()
+            local_receiver_id = req.receiver_id
+            await manager.send_personal_message(
+                {"type": "new_conversation", "conversation_id": result["conversation_id"], "message": result["message"]},
+                local_receiver_id
+            )
+        except Exception as ws_err:
+            print(f"[WARN] WebSocket push failed (non-critical): {ws_err}")
         
         return success_response(data=result)
     except Exception as e:
@@ -65,8 +107,11 @@ async def send_message(conversation_id: str, req: SendMessageRequest, current_us
             content=req.content
         )
         
+        await notify_participants(conversation_id, current_user["id"], req.content)
+        
+        
         # Broadcast to room
-        await manager.broadcast(json.dumps({"type": "message", "message": result}), conversation_id)
+        await manager.broadcast(json.dumps({"type": "message", "message": jsonable_encoder(result)}), conversation_id)
         
         return success_response(data=result)
     except Exception as e:
@@ -89,10 +134,15 @@ async def websocket_messaging(websocket: WebSocket, conversation_id: str, token:
         
     sb = get_db()
     if sb:
-        cp_resp = sb.table("conversation_participants").select("id").eq("conversation_id", conversation_id).eq("user_id", user_id).execute()
+        local_user_id = user_id
+        cp_resp = await sb.table("conversation_participants").select("id").eq("conversation_id", conversation_id).eq("user_id", local_user_id).execute()
         if not cp_resp.data:
-            await websocket.close(code=4003)
-            return
+            # Fallback for old corrupt data
+            cp_resp_old = await sb.table("conversation_participants").select("id").eq("conversation_id", conversation_id).eq("user_id", user_id).execute()
+            if not cp_resp_old.data:
+                await websocket.close(code=4003)
+                return
+        user_id = local_user_id
             
     await manager.connect(websocket, room_id=conversation_id, user_id=user_id)
     try:
@@ -110,15 +160,23 @@ async def websocket_messaging(websocket: WebSocket, conversation_id: str, token:
                 sender_id=user_id,
                 content=payload.get("content", "")
             )
+            
+            await notify_participants(conversation_id, user_id, payload.get("content", ""))
 
             # Broadcast to everyone in the conversation
-            await manager.broadcast(json.dumps({"type": "message", "message": saved_msg}), conversation_id)
+            await manager.broadcast(json.dumps({"type": "message", "message": jsonable_encoder(saved_msg)}), conversation_id)
             
             # Update last_read_at for sender
             from datetime import datetime
-            sb.table("conversation_participants").update({"last_read_at": datetime.utcnow().isoformat()}).eq("conversation_id", conversation_id).eq("user_id", user_id).execute()
+            try:
+                await sb.table("conversation_participants").update({"last_read_at": datetime.utcnow().isoformat()}).eq("conversation_id", conversation_id).eq("user_id", user_id).execute()
+            except Exception:
+                pass
 
     except WebSocketDisconnect:
         manager.disconnect(websocket, room_id=conversation_id, user_id=user_id)
     except Exception as e:
+        import traceback
+        print(f"WebSocket Error: {e}")
+        traceback.print_exc()
         manager.disconnect(websocket, room_id=conversation_id, user_id=user_id)

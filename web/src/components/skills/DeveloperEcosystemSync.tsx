@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { API_BASE_URL } from "@/lib/api/api-client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -74,7 +76,7 @@ export function DeveloperEcosystemSync() {
 
     setSyncing(prev => ({ ...prev, [platformId]: true }));
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/integrations/sync/${platformId}?username=${encodeURIComponent(handle)}`, {
+      const res = await fetch(`${API_BASE_URL}/integrations/sync/${platformId}?username=${encodeURIComponent(handle)}`, {
         headers: {
             "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
         }

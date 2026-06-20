@@ -8,7 +8,7 @@ from core.database import get_db_session
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.response import success_response
 from modules.search.service import SearchService
-from modules.auth.core.service import get_current_user
+from modules.auth.core.service import get_current_user, get_optional_current_user
 
 router = APIRouter()
 search_service = SearchService()
@@ -57,7 +57,7 @@ async def search_jobs(
     cursor: Optional[str] = Query(None, description="Pagination cursor"),
     limit: int = Query(20, ge=1, le=50),
     db: AsyncSession = Depends(get_db_session),
-    current_user: Optional[Dict[str, Any]] = Depends(get_current_user)
+    current_user: Optional[Dict[str, Any]] = Depends(get_optional_current_user)
 ):
     """Personalized job discovery with AI ranking."""
     skill_list = skills.split(",") if skills else None

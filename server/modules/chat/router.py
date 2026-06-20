@@ -1,4 +1,5 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends, Query
+from fastapi.encoders import jsonable_encoder
 from typing import List
 from modules.auth.core.service import get_current_user
 from modules.chat.service import ChatService
@@ -43,7 +44,7 @@ async def websocket_endpoint(websocket: WebSocket, room_id: str):
             )
 
             # Broadcast to everyone in the room
-            await manager.broadcast(json.dumps(saved_msg), room_id)
+            await manager.broadcast(json.dumps(jsonable_encoder(saved_msg)), room_id)
 
     except WebSocketDisconnect:
         manager.disconnect(websocket, room_id=room_id)

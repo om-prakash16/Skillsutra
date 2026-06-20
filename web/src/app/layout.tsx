@@ -1,26 +1,49 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/context/auth-context";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { MobileNav } from "@/components/layout/mobile-nav";
 import { CMSProvider } from "@/context/cms-context";
 import { API_BASE_URL } from "@/lib/api/api-client";
-
+import { Toaster } from "@/components/ui/sonner";
+import { SmoothScroll } from "@/components/providers/smooth-scroll";
 
 
 export async function generateMetadata(): Promise<Metadata> {
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
   return {
-    title: "SkillSutra | AI-Powered Talent Verification & Hiring Platform",
+    title: {
+      template: '%s | SkillSutra',
+      default: 'SkillSutra | AI-Powered Talent Verification & Hiring Platform'
+    },
     description: "Replace resumes with verified Proof Scores. AI-powered skill verification, semantic JD matching, and platform credentials. Built with Next.js 16, FastAPI, Gemini AI, and infrastructure.",
-    keywords: "AI hiring, skill verification, proof scores, talent matching, Gemini AI, infrastructure, infrastructure credentials, resume verification",
+    keywords: ["AI hiring", "skill verification", "proof scores", "talent matching", "Gemini AI", "infrastructure", "infrastructure credentials", "resume verification"],
+    metadataBase: new URL(baseUrl),
+    alternates: {
+      canonical: '/',
+    },
+    openGraph: {
+      title: 'SkillSutra | AI-Powered Talent Verification',
+      description: 'Replace resumes with verified Proof Scores. AI-powered skill verification.',
+      url: baseUrl,
+      siteName: 'SkillSutra',
+      locale: 'en_US',
+      type: 'website',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: 'SkillSutra | AI-Powered Talent Verification',
+      description: 'Replace resumes with verified Proof Scores. AI-powered skill verification.',
+    },
   };
 }
+
+import { OrganizationSchema, WebSiteSchema } from "@/components/seo/schema";
+import { Analytics } from "@/components/seo/analytics";
 
 export default function RootLayout({
   children,
@@ -30,6 +53,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="scroll-smooth">
       <body className="antialiased font-sans bg-background text-foreground selection:bg-primary/20">
+        <OrganizationSchema />
+        <WebSiteSchema />
+        <Analytics />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -37,7 +63,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
             <QueryProvider>
-              <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""}>
+              <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "dummy_client_id"}>
                 <AuthProvider>
                   <CMSProvider>
                     <SmoothScroll />
@@ -55,7 +81,7 @@ export default function RootLayout({
                 </AuthProvider>
               </GoogleOAuthProvider>
             </QueryProvider>
-          <Toaster position="top-center" richColors />
+          <Toaster position="top-center" richColors offset={80} toastOptions={{ className: "mt-4" }} />
         </ThemeProvider>
       </body>
     </html>

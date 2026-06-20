@@ -44,7 +44,7 @@ export function Navbar() {
 
     const navLinks = getJson("navbar", "links") || [
         { href: "/", label: "Home" },
-        { href: "/welcome", label: "About Us" },
+        { href: "/about", label: "About Us" },
         { href: "/jobs", label: "Jobs" },
         { href: "/companies", label: "Companies" },
         { href: "/talent", label: "Talent" },
@@ -69,7 +69,7 @@ export function Navbar() {
                 <div className="flex items-center gap-8">
                     {/* Logo */}
                     {!isDashboard && (
-                        <Link href="/" className="flex items-center gap-3 group shrink-0">
+                        <Link href={user ? (['super_admin', 'admin'].includes(user.role) ? '/admin' : user.role === 'company' ? '/company/dashboard' : user.role === 'mentor' ? '/mentor' : user.role === 'moderator' ? '/moderation' : '/feed') : '/'} className="flex items-center gap-3 group shrink-0">
                             <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-all shadow-[0_0_20px_hsl(var(--primary)/0.15)] backdrop-blur-md border border-primary/20 shrink-0">
                                 <ShieldCheck className="w-6 h-6 text-primary fill-primary/10" />
                             </div>
@@ -104,15 +104,15 @@ export function Navbar() {
                     ))}
                     {user && (
                         <Link
-                            href={`/user/${user.id}`}
+                            href={`/in/${user.username || user.id}`}
                             className={cn(
                                 "text-sm font-bold transition-colors hover:text-primary relative py-2 block uppercase",
-                                pathname?.startsWith(`/user/${user.id}`) ? "text-primary" : "text-foreground/80 hover:text-foreground"
+                                pathname?.startsWith(`/in/${user.username || user.id}`) ? "text-primary" : "text-foreground/80 hover:text-foreground"
                             )}
                         >
                             <motion.div whileTap={{ scale: 0.95 }}>
                                 PROFILE
-                                {pathname?.startsWith(`/user/${user.id}`) && (
+                                {pathname?.startsWith(`/in/${user.username || user.id}`) && (
                                     <motion.div
                                         layoutId="nav-underline"
                                         className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-full"
@@ -145,12 +145,12 @@ export function Navbar() {
                                         Sign In
                                     </Button>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="w-40">
-                                    <DropdownMenuItem asChild>
-                                        <Link href="/auth/login" className="cursor-pointer w-full font-medium">Log In</Link>
+                                <DropdownMenuContent align="end" className="w-48 p-2 rounded-2xl glass border-white/10 shadow-2xl dark:bg-black/80 bg-white/80 backdrop-blur-xl">
+                                    <DropdownMenuItem asChild className="rounded-xl cursor-pointer w-full font-bold p-3 transition-all hover:bg-primary/10 hover:text-primary">
+                                        <Link href="/auth/login">Log In</Link>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link href="/auth/register" className="cursor-pointer w-full font-medium text-primary">Register</Link>
+                                    <DropdownMenuItem asChild className="rounded-xl cursor-pointer w-full font-bold p-3 text-primary transition-all hover:bg-primary/10 mt-1">
+                                        <Link href="/auth/register">Register</Link>
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
@@ -193,8 +193,13 @@ export function Navbar() {
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href={user.role === 'admin' ? "/admin" : user.role === 'company' ? "/company/dashboard" : "/user/dashboard"} className="cursor-pointer">
+                                            <Link href={['super_admin', 'admin'].includes(user.role) ? "/admin" : user.role === 'company' ? "/company/dashboard" : user.role === 'mentor' ? "/mentor" : user.role === 'moderator' ? "/moderation" : "/user/dashboard"} className="cursor-pointer">
                                                 Dashboard
+                                            </Link>
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem asChild>
+                                            <Link href="/feed" className="cursor-pointer">
+                                                Feed
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
@@ -256,16 +261,16 @@ export function Navbar() {
                                 </div>
 
                                 {/* Dashboard Links (if applicable) */}
-                                {isDashboard && (
+                                {user ? (
                                     <div className="flex flex-col gap-2">
                                         <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold mb-2">Dashboard</p>
                                         <Sidebar 
                                             variant="mobile"
-                                            role={pathname?.startsWith("/company") ? "company" : pathname?.startsWith("/admin") ? "admin" : "user"} 
+                                            role={user?.role === 'company' ? 'company' : ['super_admin', 'admin'].includes(user?.role as string) ? 'admin' : 'user'} 
                                         />
                                         <div className="h-px bg-border my-4" />
                                     </div>
-                                )}
+                                ) : null}
 
                                 {/* Site Links */}
                                 <div className="flex flex-col gap-4">

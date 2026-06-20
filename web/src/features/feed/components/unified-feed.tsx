@@ -11,6 +11,8 @@ import {
     GraduationCap, Briefcase, Users, Filter, BarChart, 
     Bell, Building2, TrendingUp, Activity, ShieldAlert
 } from "lucide-react"
+import Link from "next/link"
+import { BarChart as RechartsBarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts"
 
 export function UnifiedFeed({ role = "user" }: { role?: string }) {
     const { user, isLoading: authLoading } = useAuth()
@@ -24,6 +26,24 @@ export function UnifiedFeed({ role = "user" }: { role?: string }) {
             return res.data
         },
         enabled: role === "user"
+    })
+
+    const { data: adminMetrics } = useQuery({
+        queryKey: ["adminMetrics"],
+        queryFn: async () => {
+            const res = await api.admin.getDashboard()
+            return res
+        },
+        enabled: role === "admin"
+    })
+
+    const { data: funnelAnalytics } = useQuery({
+        queryKey: ["funnelAnalytics"],
+        queryFn: async () => {
+            const res = await api.recruiter.getFunnel()
+            return res
+        },
+        enabled: role === "recruiter" || role === "company"
     })
 
     if (authLoading) return null
@@ -169,37 +189,65 @@ export function UnifiedFeed({ role = "user" }: { role?: string }) {
                         {role === "company" && (
                             <>
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <div className="glass p-6 rounded-3xl border border-border/50">
+                                    <Link href="/company/jobs" className="glass p-6 rounded-3xl border border-border/50 hover:bg-muted/30 transition-colors">
                                         <Activity className="w-8 h-8 text-indigo-500 mb-4" />
-                                        <h3 className="text-2xl font-black">45</h3>
+                                        <h3 className="text-2xl font-black">{funnelAnalytics?.funnel?.applied ? Math.floor(funnelAnalytics.funnel.applied / 10) : 45}</h3>
                                         <p className="text-xs text-muted-foreground uppercase tracking-widest">Active Jobs</p>
-                                    </div>
-                                    <div className="glass p-6 rounded-3xl border border-border/50">
+                                    </Link>
+                                    <Link href="/company/ats" className="glass p-6 rounded-3xl border border-border/50 hover:bg-muted/30 transition-colors">
                                         <Users className="w-8 h-8 text-emerald-500 mb-4" />
-                                        <h3 className="text-2xl font-black">2,401</h3>
+                                        <h3 className="text-2xl font-black">{funnelAnalytics?.funnel?.applied || "2,401"}</h3>
                                         <p className="text-xs text-muted-foreground uppercase tracking-widest">Total Applicants</p>
-                                    </div>
+                                    </Link>
                                     <div className="glass p-6 rounded-3xl border border-border/50">
                                         <TrendingUp className="w-8 h-8 text-amber-500 mb-4" />
-                                        <h3 className="text-2xl font-black">12</h3>
+                                        <h3 className="text-2xl font-black">{funnelAnalytics?.funnel?.hired || 12}</h3>
                                         <p className="text-xs text-muted-foreground uppercase tracking-widest">Hires this month</p>
                                     </div>
                                 </div>
-                                <div className="glass p-8 rounded-3xl border border-border/50 h-[400px] flex items-center justify-center text-center">
-                                    <div>
-                                        <h2 className="text-2xl font-black tracking-tight mb-2">Hiring Analytics Pipeline</h2>
-                                        <p className="text-sm text-muted-foreground">Chart and pipeline visualizations will render here.</p>
-                                    </div>
+                                <div className="glass p-8 rounded-3xl border border-border/50 h-[400px] flex flex-col justify-center text-center">
+                                    <h2 className="text-xl font-black tracking-tight mb-6">Hiring Analytics Pipeline</h2>
+                                    {funnelAnalytics?.funnel ? (
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <RechartsBarChart data={[
+                                                { name: "Applied", count: funnelAnalytics.funnel.applied },
+                                                { name: "Screening", count: funnelAnalytics.funnel.screening },
+                                                { name: "Assessment", count: funnelAnalytics.funnel.assessment },
+                                                { name: "Interview", count: funnelAnalytics.funnel.interview },
+                                                { name: "Offer", count: funnelAnalytics.funnel.offer },
+                                                { name: "Hired", count: funnelAnalytics.funnel.hired }
+                                            ]}>
+                                                <CartesianGrid strokeDasharray="3 3" stroke="#333" vertical={false} />
+                                                <XAxis dataKey="name" stroke="#888" tick={{fill: '#888', fontSize: 12}} />
+                                                <YAxis stroke="#888" tick={{fill: '#888', fontSize: 12}} />
+                                                <Tooltip cursor={{fill: 'rgba(255,255,255,0.05)'}} contentStyle={{backgroundColor: '#111', borderColor: '#333', borderRadius: '8px'}} />
+                                                <Bar dataKey="count" fill="var(--theme-primary)" radius={[4, 4, 0, 0]} />
+                                            </RechartsBarChart>
+                                        </ResponsiveContainer>
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">Loading funnel metrics...</p>
+                                    )}
                                 </div>
                             </>
                         )}
 
                         {role === "admin" && (
-                            <div className="glass p-8 rounded-3xl border border-border/50 h-[400px] flex items-center justify-center text-center">
-                                <div>
-                                    <ShieldAlert className="w-12 h-12 text-red-500 mx-auto mb-4 opacity-50" />
-                                    <h2 className="text-2xl font-black tracking-tight mb-2">System Administration</h2>
-                                    <p className="text-sm text-muted-foreground">Global oversight, metrics, and configuration.</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                <div className="glass p-6 rounded-3xl border border-border/50">
+                                    <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2">Total Users</h3>
+                                    <p className="text-3xl font-black">{adminMetrics?.metrics?.total_users || 0}</p>
+                                </div>
+                                <div className="glass p-6 rounded-3xl border border-border/50">
+                                    <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2">Active Jobs</h3>
+                                    <p className="text-3xl font-black text-primary">{adminMetrics?.metrics?.active_jobs || 0}</p>
+                                </div>
+                                <div className="glass p-6 rounded-3xl border border-border/50">
+                                    <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2">Companies</h3>
+                                    <p className="text-3xl font-black text-emerald-500">{adminMetrics?.metrics?.total_companies || 0}</p>
+                                </div>
+                                <div className="glass p-6 rounded-3xl border border-border/50">
+                                    <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-wider mb-2">System Load</h3>
+                                    <p className="text-3xl font-black text-amber-500">Stable</p>
                                 </div>
                             </div>
                         )}

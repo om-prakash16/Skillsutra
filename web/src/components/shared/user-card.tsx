@@ -18,7 +18,7 @@ export function UserCard({ user }: UserCardProps) {
                     <div className="flex gap-4">
                         <Avatar className="h-14 w-14 border-2 border-background shadow-sm">
                             <AvatarImage src={user.avatar} alt={user.name} />
-                            <AvatarFallback>{user.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback>{(user.name || "U").substring(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div>
                             <div className="flex items-center gap-1.5">
@@ -52,14 +52,14 @@ export function UserCard({ user }: UserCardProps) {
                 )}
 
                 <div className="flex flex-wrap gap-1.5">
-                    {user.skills.slice(0, 5).map(skill => (
+                    {(user.skills || []).slice(0, 5).map(skill => (
                         <Badge key={skill} variant="secondary" className="text-xs font-normal">
                             {skill}
                         </Badge>
                     ))}
-                    {user.skills.length > 5 && (
+                    {(user.skills || []).length > 5 && (
                         <Badge variant="outline" className="text-xs text-muted-foreground">
-                            +{user.skills.length - 5}
+                            +{(user.skills || []).length - 5}
                         </Badge>
                     )}
                 </div>

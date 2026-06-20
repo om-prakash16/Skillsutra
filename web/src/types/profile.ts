@@ -41,6 +41,37 @@ export interface Project {
   thumbnail?: string;
 }
 
+export interface HiringPreference {
+  is_open_to_work: boolean;
+  expected_salary_min?: number;
+  expected_salary_max?: number;
+  preferred_locations: string[];
+  willing_to_relocate: boolean;
+  preferred_roles: string[];
+  requires_sponsorship: boolean;
+}
+
+export interface Certification {
+  id: string;
+  name: string;
+  issuer: string;
+  issue_date: string;
+  expiration_date?: string;
+  credential_id?: string;
+  credential_url?: string;
+}
+
+export interface Recommendation {
+  id: string;
+  author_name: string;
+  author_role: string;
+  author_company?: string;
+  relationship_type: string;
+  content: string;
+  is_verified: boolean;
+  created_at: string;
+}
+
 export interface BasicInfo {
   firstName: string;
   lastName: string;
@@ -91,4 +122,7 @@ export interface UserProfile {
   };
   socialLinks?: any[];
   dynamicSections?: any[];
+  hiring_preferences?: HiringPreference;
+  certifications?: Certification[];
+  recommendations?: Recommendation[];
 }

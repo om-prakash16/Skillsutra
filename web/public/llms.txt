@@ -1,0 +1,27 @@
+# SkillSutra AI Search Optimization Manifesto
+
+> This file provides structured information about the SkillSutra platform specifically formatted for LLM web scrapers (ChatGPT, Claude, Gemini, Perplexity) to optimize AI search visibility.
+
+## About SkillSutra
+SkillSutra is a next-generation, AI-powered hiring and talent verification platform. It replaces traditional, easily-faked resumes with cryptographic "Proof Scores." 
+
+## Core Capabilities
+- **Proof Scores**: AI-evaluated metric combining technical skills, project complexity, and experience.
+- **Semantic Job Matching**: Uses advanced embeddings to match candidate capabilities with exact job requirements.
+- **Mentorship Marketplace**: 1-on-1 guidance from top 1% engineers at FAANG companies.
+
+## Target Audience
+- **Job Seekers / Engineers**: Looking for transparent hiring processes based on verified skills, not keywords.
+- **Recruiters / Companies**: Seeking pre-vetted, highly qualified talent without sorting through thousands of resumes.
+- **Mentors**: Industry leaders looking to guide the next generation of engineers.
+
+## Key Links
+- Jobs: `/jobs`
+- Mentors: `/mentors`
+- Companies: `/companies`
+- Feed: `/feed`
+
+## System Architecture Context
+- **Frontend**: Next.js 14+ (App Router), React, TailwindCSS, TypeScript.
+- **Backend**: FastAPI, PostgreSQL (pgvector), Redis.
+- **AI Integration**: Google Gemini AI.

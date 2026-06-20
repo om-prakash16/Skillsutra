@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { api } from '@/lib/api/api-client';
+import { publicApi } from '@/lib/api/public-api';
 import { Activity, ShieldCheck, Database, Cpu } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -17,19 +17,22 @@ export function StatsSection() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const cmsData = await api.cms.section('stats');
-        const adminAnalytics = await api.analytics.admin();
+        const [cmsData, publicAnalytics] = await Promise.all([
+            fetch('/api/v1/cms').then(r => r.ok ? r.json() : []).then(d => d?.data || d || []).catch(() => []),
+            publicApi.analytics.public().catch(() => null)
+        ]);
 
         const newStats = [...stats];
 
-        if (adminAnalytics) {
-          if (adminAnalytics.total_users) newStats[0].value = adminAnalytics.total_users.toLocaleString();
-          if (adminAnalytics.total_nfts) newStats[1].value = adminAnalytics.total_nfts.toLocaleString();
-          if (adminAnalytics.total_companies) newStats[2].value = adminAnalytics.total_companies.toLocaleString();
+        if (publicAnalytics) {
+          if (publicAnalytics.total_users) newStats[0].value = publicAnalytics.total_users.toLocaleString();
+          if (publicAnalytics.total_nfts) newStats[1].value = publicAnalytics.total_nfts.toLocaleString();
+          if (publicAnalytics.total_companies) newStats[2].value = publicAnalytics.total_companies.toLocaleString();
         }
 
         if (Array.isArray(cmsData)) {
-          cmsData.forEach(item => {
+          const statsContent = cmsData.filter(item => item.section_key === 'stats');
+          statsContent.forEach(item => {
             if (item.content_key === 'users_count_label') newStats[0].label = item.content_value;
             if (item.content_key === 'skills_verified_label') newStats[1].label = item.content_value;
             if (item.content_key === 'companies_count_label') newStats[2].label = item.content_value;
@@ -38,10 +41,11 @@ export function StatsSection() {
 
         setStats(newStats);
       } catch (e) {
-        console.error("Stats Sync Failed:", e);
+        console.warn("Stats Sync Failed:", e);
       }
     };
     fetchStats();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

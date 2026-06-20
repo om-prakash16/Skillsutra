@@ -3,7 +3,11 @@
  * Central binding for all backend service calls.
  */
 
-export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+// Use relative path in browser to leverage Next.js proxy rewrites, preventing CORS and Docker host network issues.
+// Use absolute URL on server-side rendering.
+export const API_BASE_URL = typeof window !== 'undefined' 
+  ? "/api/v1" 
+  : (process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1");
 
 let isRefreshing = false;
 let refreshPromise: Promise<string | null> | null = null;
@@ -135,8 +139,9 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit & { t
 // API module bindings
 export const api = {
     get: (endpoint: string) => fetchWithAuth(endpoint),
-    post: (endpoint: string, data: any) => fetchWithAuth(endpoint, { method: "POST", body: JSON.stringify(data) }),
-    put: (endpoint: string, data: any) => fetchWithAuth(endpoint, { method: "PUT", body: JSON.stringify(data) }),
+    post: (endpoint: string, data?: any) => fetchWithAuth(endpoint, { method: "POST", body: data ? JSON.stringify(data) : undefined }),
+    put: (endpoint: string, data?: any) => fetchWithAuth(endpoint, { method: "PUT", body: data ? JSON.stringify(data) : undefined }),
+    patch: (endpoint: string, data?: any) => fetchWithAuth(endpoint, { method: "PATCH", body: data ? JSON.stringify(data) : undefined }),
     delete: (endpoint: string) => fetchWithAuth(endpoint, { method: "DELETE" }),
     auth: {
         sync: (requested_role?: string) => 
@@ -153,8 +158,8 @@ export const api = {
     },
     profile: {
         getSchema: () => fetchWithAuth("/profile/schema"),
-        get: () => fetchWithAuth("/profile"),
-        update: (data: any) => fetchWithAuth("/profile/update", { method: "POST", body: JSON.stringify(data) }),
+        get: () => fetchWithAuth("/users/"),
+        update: (data: any) => fetchWithAuth("/users/update", { method: "POST", body: JSON.stringify(data) }),
         uploadFile: (formData: FormData) => fetchWithAuth("/profile/upload-file", { method: "POST", body: formData, headers: { "Content-Type": "multipart/form-data" } })
     },
     publicProfile: {
@@ -170,7 +175,7 @@ export const api = {
     company: {
         create: (data: any) => fetchWithAuth("/company/create", { method: "POST", body: JSON.stringify(data) }),
         get: () => fetchWithAuth("/company/profile"),
-        invite: (email: string, role: string) => fetchWithAuth("/company/invite-member", { method: "POST", body: JSON.stringify({ email, role }) }),
+        invite: (wallet_address: string, role: string) => fetchWithAuth("/company/invite-member", { method: "POST", body: JSON.stringify({ wallet_address, role }) }),
         getTeam: () => fetchWithAuth("/company/team")
     },
     jobs: {
@@ -189,7 +194,9 @@ export const api = {
     applications: {
         user: () => fetchWithAuth("/applications/my-applications"),
         company: (id: string, jobId?: string) => fetchWithAuth(`/applications/company-applications${jobId ? `?job_id=${jobId}` : ""}`),
-        updateStatus: (id: string, status: string) => fetchWithAuth(`/applications/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) })
+        updateStatus: (id: string, status: string) => fetchWithAuth(`/applications/${id}/status`, { method: "PATCH", body: JSON.stringify({ status }) }),
+        getPipeline: (jobId: string) => fetchWithAuth(`/applications/jobs/${jobId}/pipeline`),
+        updateStage: (appId: string, stageId: string) => fetchWithAuth(`/applications/${appId}/stage`, { method: "PUT", body: JSON.stringify({ stage_id: stageId }) }),
     },
     Verifications: {
         mintProfile: () => fetchWithAuth("/Verifications/issue-profile", { method: "POST" }),
@@ -227,6 +234,7 @@ export const api = {
         retry: (type: string) => fetchWithAuth("/sync/retry", { method: "POST", body: JSON.stringify({ entity_type: type }) })
     },
     admin: {
+        getDashboard: () => fetchWithAuth("/admin/dashboard"),
         getPublicFeatures: () => fetchWithAuth("/admin/features/public"),
         getUsers: () => fetchWithAuth("/admin/users"),
         updateUser: (account: string, data: any) => fetchWithAuth(`/admin/users/${account}`, { method: "PATCH", body: JSON.stringify(data) }),
@@ -257,6 +265,9 @@ export const api = {
         updateTicket: (id: string, data: any) => fetchWithAuth(`/admin/tickets/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
         getAuditLogs: () => fetchWithAuth("/admin/audit-logs"),
         flagUser: (data: any) => fetchWithAuth("/admin/users/flag", { method: "POST", body: JSON.stringify(data) }),
+    },
+    recruiter: {
+        getFunnel: () => fetchWithAuth("/recruiter/analytics/funnel"),
     },
     cms: {
         all: () => fetchWithAuth("/cms"),

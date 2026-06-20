@@ -11,6 +11,8 @@ import { ProjectsTab } from "@/features/user/profile/tabs/projects-tab"
 import { GithubTab } from "@/features/user/profile/tabs/github-tab"
 import { LeetcodeTab } from "@/features/user/profile/tabs/leetcode-tab"
 import { AccountsTab } from "@/features/user/profile/tabs/accounts-tab"
+import { CertificationsTab } from "@/features/user/profile/tabs/certifications-tab"
+import { RecommendationsTab } from "@/features/user/profile/tabs/recommendations-tab"
 import { Loader2, ArrowLeft } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -24,27 +26,27 @@ const fetchTalentProfileById = async (id: string): Promise<any | null> => {
         if (!response) return null
         
         const data = response
-        const profile = data.profile || {}
+        const profile = data.profile || data
         
         return {
             ...data,
             basic: {
-                firstName: profile.full_name ? profile.full_name.split(" ")[0] : (profile.username || "Anonymous"),
+                firstName: profile.full_name ? profile.full_name.split(" ")[0] : (profile.username || data.username || "Anonymous"),
                 lastName: profile.full_name ? profile.full_name.split(" ").slice(1).join(" ") : "",
-                title: profile.headline || "Professional",
-                location: profile.location || "Remote",
-                avatar: profile.avatar_url || "",
+                title: profile.headline || data.headline || "Professional",
+                location: profile.location || data.location || "Remote",
+                avatar: profile.avatar_url || data.avatar_url || "",
                 experienceLevel: data.experiences?.length > 2 ? "Senior" : "Intermediate",
                 completion: profile.completion_percent || 80,
-                bio: profile.bio || "",
-                email: profile.email || "",
-                phone: profile.phone || "",
-                jobType: profile.job_type || "Full-time",
-                languages: profile.languages || [],
+                bio: profile.bio || data.about || "",
+                email: profile.email || data.email || "",
+                phone: profile.phone || data.phone || "",
+                jobType: profile.job_type || data.job_type || "Full-time",
+                languages: profile.languages || data.languages || [],
                 joinDate: profile.created_at ? new Date(profile.created_at).toLocaleDateString() : "",
             },
-            socialLinks: profile.dynamic_profile_data?.socialLinks || [],
-            dynamicSections: profile.dynamic_profile_data?.customSections || [],
+            socialLinks: profile.dynamic_profile_data?.socialLinks || data.social_links || [],
+            dynamicSections: profile.dynamic_profile_data?.customSections || data.dynamic_sections || [],
             skills: (data.skills || []).map((s: any) => ({
                 name: s.name,
                 level: s.proficiency || "Intermediate",
@@ -112,7 +114,7 @@ export default function PublicProfile({ talentId }: { talentId: string }) {
 
             <div className="relative z-10 space-y-12 max-w-7xl mx-auto pb-24 pt-8 px-4 sm:px-6 lg:px-8">
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <PublicProfileHeader user={{ ...userProfile.basic, id: userProfile.profile?.user_id }} />
+                    <PublicProfileHeader user={{ ...userProfile.basic, id: userProfile.id }} />
                 </div>
             
             <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
@@ -145,6 +147,14 @@ export default function PublicProfile({ talentId }: { talentId: string }) {
                     
                     {userProfile.experience?.length > 0 && (
                         <ExperienceTab data={userProfile} />
+                    )}
+
+                    {userProfile.certifications?.length > 0 && (
+                        <CertificationsTab data={userProfile} onSave={undefined as any} />
+                    )}
+
+                    {userProfile.recommendations?.length > 0 && (
+                        <RecommendationsTab data={userProfile} onSave={undefined as any} />
                     )}
                     
                     {userProfile.projects?.length > 0 && (

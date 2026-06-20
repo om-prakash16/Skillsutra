@@ -38,8 +38,8 @@ export default function GlobalAuditPage() {
     const fetchAudit = async () => {
         setLoading(true)
         try {
-            const data = await api.activity.admin(100)
-            setEvents(data || [])
+            const res = await api.get('/admin/audit-logs')
+            setEvents(res.data || [])
         } catch (e) {
             console.error("Administrative telemetry failure", e)
         } finally {

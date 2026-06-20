@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Calendar, Clock, Sparkles, Loader2 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { API_BASE_URL } from "@/lib/api/api-client";
 
 // Type definition for BlogPost
 interface BlogPost {
@@ -24,8 +25,7 @@ export default function BlogPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['blog-posts'],
     queryFn: async () => {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
-      const res = await fetch(`${apiUrl}/blog/posts`);
+      const res = await fetch(`${API_BASE_URL}/blog/posts`);
       if (!res.ok) throw new Error("Failed to fetch posts");
       return res.json() as Promise<{ data: BlogPost[], total: number }>;
     }

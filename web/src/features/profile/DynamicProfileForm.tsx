@@ -75,6 +75,7 @@ export function DynamicProfileForm() {
         defaultValues: user?.dynamic_profile_data || {}
     })
 
+    // eslint-disable-next-line react-hooks/incompatible-library
     const watchedValues = watch()
 
     const mutation = useMutation({

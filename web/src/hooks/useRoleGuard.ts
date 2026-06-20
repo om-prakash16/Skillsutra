@@ -4,7 +4,7 @@ import { useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { useAuth } from "@/context/auth-context"
 
-type AllowedRole = "user" | "company" | "admin"
+type AllowedRole = "super_admin" | "admin" | "career_professional" | "company" | "mentor" | "moderator" | "user"
 
 /**
  * Client-side role guard hook.
@@ -45,14 +45,23 @@ export function useRoleGuard(allowedRoles: AllowedRole[]) {
         if (user && !allowedRoles.includes(user.role as AllowedRole)) {
             // Redirect to the appropriate dashboard based on actual role
             switch (user.role) {
+                case "super_admin":
                 case "admin":
                     router.replace("/admin")
                     break
                 case "company":
                     router.replace("/company/dashboard")
                     break
+                case "mentor":
+                    router.replace("/mentor")
+                    break
+                case "moderator":
+                    router.replace("/moderation")
+                    break
+                case "career_professional":
+                case "user":
                 default:
-                    router.replace("/user/dashboard")
+                    router.replace("/feed")
             }
         }
     }, [user, isLoading, isAuthenticated, router, allowedRoles, pathname])

@@ -15,6 +15,9 @@ import { ApplicationsTab } from "@/features/user/profile/tabs/applications-tab"
 import { ReputationTab } from "@/features/user/profile/tabs/reputation-tab"
 import { AccountsTab } from "@/features/user/profile/tabs/accounts-tab"
 import { SettingsTab } from "@/features/user/profile/tabs/settings-tab"
+import { HiringPreferencesTab } from "@/features/user/profile/tabs/hiring-preferences-tab"
+import { CertificationsTab } from "@/features/user/profile/tabs/certifications-tab"
+import { RecommendationsTab } from "@/features/user/profile/tabs/recommendations-tab"
 import { DynamicProfileForm } from "@/features/profile/components/DynamicProfileForm"
 import { UserProfile, Skill, Experience, Education, Project } from "@/types/profile"
 import { userApi } from "@/lib/api/user-api"
@@ -130,7 +133,7 @@ export default function EditableProfile() {
         
         try {
             const response = await userApi.profile.update(sectionPayload)
-            if (response.status === "error") throw new Error(response.message)
+            if (response?.status === "error") throw new Error(response.message)
             toast.success("Section synchronized with network!")
             refetch()
         } catch (error: any) {
@@ -147,20 +150,22 @@ export default function EditableProfile() {
         })
     }
 
-    const handleUpdateAvatar = (url: string) => {
+    const handleUpdateAvatar = async (url: string) => {
         if (!profileData) return
         setProfileData({
             ...profileData,
             basic: { ...profileData.basic, avatar: url }
         })
+        await handleSaveSection({ profile: { avatar_url: url } })
     }
 
-    const handleUpdateBanner = (url: string) => {
+    const handleUpdateBanner = async (url: string) => {
         if (!profileData) return
         setProfileData({
             ...profileData,
             basic: { ...profileData.basic, banner: url }
         })
+        await handleSaveSection({ profile: { banner_url: url } })
     }
 
     if (isLoading) {
@@ -247,6 +252,9 @@ export default function EditableProfile() {
                             { value: "experience", label: "Experience" },
                             { value: "education", label: "Education" },
                             { value: "projects", label: "Projects" },
+                            { value: "hiring", label: "Preferences" },
+                            { value: "certifications", label: "Certifications" },
+                            { value: "recommendations", label: "Testimonials" },
                             { value: "github", label: "GitHub" },
                             { value: "accounts", label: "Accounts" },
                             { value: "applications", label: "Applications" },
@@ -293,6 +301,24 @@ export default function EditableProfile() {
                     </TabsContent>
                     <TabsContent value="projects" className="animate-in fade-in-50 duration-500">
                         <ProjectsTab
+                            data={activeData}
+                            onSave={handleSaveSection}
+                        />
+                    </TabsContent>
+                    <TabsContent value="hiring" className="animate-in fade-in-50 duration-500">
+                        <HiringPreferencesTab
+                            data={activeData}
+                            onSave={handleSaveSection}
+                        />
+                    </TabsContent>
+                    <TabsContent value="certifications" className="animate-in fade-in-50 duration-500">
+                        <CertificationsTab
+                            data={activeData}
+                            onSave={handleSaveSection}
+                        />
+                    </TabsContent>
+                    <TabsContent value="recommendations" className="animate-in fade-in-50 duration-500">
+                        <RecommendationsTab
                             data={activeData}
                             onSave={handleSaveSection}
                         />

@@ -19,7 +19,8 @@ export default function SubscriptionsManager() {
 
     const fetchSubscriptions = async () => {
         try {
-            const data = await api.admin.getSubscriptions?.() || [];
+            const res = await api.get('/admin/subscriptions');
+            const data = res.data;
             if(Array.isArray(data) && data.length > 0) {
                 setSubscriptions(data);
             } else {
@@ -40,9 +41,7 @@ export default function SubscriptionsManager() {
 
     const handleSave = async (id: string, updates: any) => {
         try {
-            if(api.admin.updateSubscription) {
-                await api.admin.updateSubscription(id, updates);
-            }
+            await api.patch(`/admin/subscriptions/${id}`, updates);
             toast.success("SaaS tier parameters updated");
         } catch (err) {
             toast.error("Failed to update tier");

@@ -20,6 +20,8 @@ cachetools
 nest-asyncio
 
 sqlalchemy
+alembic
+psycopg2-binary
 passlib[bcrypt]
 python-jose[cryptography]
 httpx
@@ -40,3 +42,5 @@ opentelemetry-sdk
 opentelemetry-instrumentation-fastapi
 
 gunicorn
+pyotp
+qrcode

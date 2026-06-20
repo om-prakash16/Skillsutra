@@ -5,6 +5,7 @@ import { UploadCloud, FileText, CheckCircle, Loader2, ArrowRight, ShieldCheck, C
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import { useAuth } from "@/context/auth-context"
+import { API_BASE_URL } from "@/lib/api/api-client"
 
 interface ParsedData {
     skills: string[]
@@ -70,10 +71,9 @@ export default function VerifyPage() {
         }
 
         try {
-            const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"
             const endpoint = isComparison 
-                ? `${baseUrl}/ai/compare-jd-cv`
-                : `${baseUrl}/ai/analyze-resume`
+                ? `${API_BASE_URL}/ai/compare-jd-cv`
+                : `${API_BASE_URL}/ai/analyze-resume`
 
             // Adjust form field for analyze-resume if not comparison
             if (!isComparison) {

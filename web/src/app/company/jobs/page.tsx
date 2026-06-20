@@ -137,6 +137,12 @@ export default function CompanyJobsPage() {
                                                                 View Applicants
                                                             </DropdownMenuItem>
                                                         </Link>
+                                                        <Link href={`/company/ats/${job.id}`}>
+                                                            <DropdownMenuItem>
+                                                                <Eye className="w-4 h-4 mr-2" />
+                                                                Kanban ATS
+                                                            </DropdownMenuItem>
+                                                        </Link>
                                                         <DropdownMenuItem disabled={job.status === "Closed"}>
                                                             <Archive className="w-4 h-4 mr-2" />
                                                             Close Job

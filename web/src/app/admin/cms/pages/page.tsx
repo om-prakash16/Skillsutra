@@ -1,201 +1,149 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { api } from "@/lib/api/api-client";
+import React, { useState } from "react";
+import { 
+  FileText, Search, Filter, Plus, MoreHorizontal, Globe, 
+  CheckCircle2, Clock, Bot, MousePointerClick
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Edit, Trash2, ArrowLeft, Loader2, Save } from "lucide-react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 
-export default function CMSPagesManager() {
-  const [contentList, setContentList] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ id: "", section_key: "", content_key: "", content_value: "", metadata: "", is_active: true });
-  const [submitting, setSubmitting] = useState(false);
+const mockPages = [
+  { id: "P-101", title: "Enterprise Landing Page", slug: "/", type: "Landing Page", author: "Jane Doe", status: "Published", seo: 98, updated: "2 hrs ago" },
+  { id: "P-102", title: "About Us (2024 Redesign)", slug: "/about", type: "Standard Page", author: "John Smith", status: "Draft", seo: 75, updated: "1 day ago" },
+  { id: "P-103", title: "Pricing & Plans", slug: "/pricing", type: "Pricing Page", author: "Jane Doe", status: "Published", seo: 92, updated: "5 days ago" },
+  { id: "P-104", title: "Black Friday Promo", slug: "/promo/bf24", type: "Campaign", author: "Marketing Team", status: "Scheduled", seo: 88, updated: "Just now" },
+  { id: "P-105", title: "Contact Sales", slug: "/contact", type: "Form Page", author: "System", status: "Published", seo: 100, updated: "1 month ago" },
+];
 
-  const fetchContent = async () => {
-    setLoading(true);
-    try {
-      const res = await api.get('/cms/pages');
-      setContentList(res || []);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function CMSPagesPage() {
+  const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    fetchContent();
-  }, []);
-
-  const openModal = (item?: any) => {
-    if (item) {
-      setFormData({
-        id: item.id,
-        section_key: item.section_key,
-        content_key: item.content_key,
-        content_value: item.content_value,
-        metadata: JSON.stringify(item.metadata || {}),
-        is_active: item.is_active
-      });
-    } else {
-      setFormData({ id: "", section_key: "", content_key: "", content_value: "", metadata: "{}", is_active: true });
-    }
-    setIsModalOpen(true);
-  };
-
-  const saveContent = async () => {
-    setSubmitting(true);
-    try {
-      const payload = {
-        section_key: formData.section_key,
-        content_key: formData.content_key,
-        content_value: formData.content_value,
-        metadata: JSON.parse(formData.metadata || "{}"),
-        is_active: formData.is_active
-      };
-      
-      if (formData.id) {
-        await api.put(`/cms/content/${formData.id}`, payload);
-      } else {
-        await api.post('/cms/content', payload);
-      }
-      setIsModalOpen(false);
-      fetchContent();
-    } catch (err) {
-      console.error(err);
-      alert("Failed to save content. Ensure metadata is valid JSON.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const deleteContent = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this content block?")) return;
-    try {
-      await api.delete(`/cms/content/${id}`);
-      fetchContent();
-    } catch (err) {
-      console.error(err);
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case "Published": return <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20"><CheckCircle2 className="w-3 h-3 mr-1" /> Published</Badge>;
+      case "Draft": return <Badge variant="outline" className="bg-muted text-muted-foreground border-border"><FileText className="w-3 h-3 mr-1" /> Draft</Badge>;
+      case "Scheduled": return <Badge variant="outline" className="bg-amber-500/10 text-amber-600 border-amber-500/20"><Clock className="w-3 h-3 mr-1" /> Scheduled</Badge>;
+      default: return null;
     }
   };
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500 pb-20">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div className="p-6 max-w-[1600px] mx-auto space-y-6">
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border/50 pb-6">
         <div>
-          <Link href="/admin/cms" className="flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-2">
-            <ArrowLeft className="w-4 h-4 mr-1" /> Back to Overview
-          </Link>
-          <h1 className="text-3xl font-black font-heading tracking-tight text-foreground">
-            Site Content Manager
-          </h1>
-          <p className="text-muted-foreground mt-1">Manage global site variables, sections, and metadata.</p>
+          <div className="flex items-center gap-3 mb-1">
+            <h1 className="text-3xl font-bold tracking-tight">Pages</h1>
+            <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">1,248 Total</Badge>
+          </div>
+          <p className="text-muted-foreground text-sm">Manage all static and dynamic pages across the platform.</p>
         </div>
-        <Button onClick={() => openModal()} className="bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-500/20">
-          <Plus className="w-4 h-4 mr-2" /> Add Key-Value Pair
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="text-indigo-600 border-indigo-500/30 hover:bg-indigo-500/10">
+            <Bot className="w-4 h-4 mr-2" /> AI Content Generate
+          </Button>
+          <Button><Plus className="w-4 h-4 mr-2" /> Create Page</Button>
+        </div>
       </div>
 
-      <Card className="glass border-border/50 shadow-xl overflow-hidden rounded-[2rem]">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm whitespace-nowrap">
-            <thead className="bg-muted/50 border-b border-border/50 text-muted-foreground font-semibold">
-              <tr>
-                <th className="px-6 py-4">Section</th>
-                <th className="px-6 py-4">Key</th>
-                <th className="px-6 py-4">Value snippet</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border/30">
-              {loading ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
-                    Loading content blocks...
-                  </td>
-                </tr>
-              ) : contentList.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-6 py-12 text-center text-muted-foreground">
-                    No site content found.
-                  </td>
-                </tr>
-              ) : (
-                contentList.map((item) => (
-                  <tr key={item.id} className="hover:bg-muted/30 transition-colors group">
-                    <td className="px-6 py-4 font-bold text-foreground/90">{item.section_key}</td>
-                    <td className="px-6 py-4 font-medium text-muted-foreground">{item.content_key}</td>
-                    <td className="px-6 py-4 truncate max-w-xs">{item.content_value}</td>
-                    <td className="px-6 py-4">
-                      <Badge variant="outline" className={item.is_active ? 'text-emerald-400 border-emerald-400/30 bg-emerald-500/5' : 'text-amber-400 border-amber-400/30 bg-amber-500/5'}>
-                        {item.is_active ? 'Active' : 'Draft'}
-                      </Badge>
-                    </td>
-                    <td className="px-6 py-4 text-right">
-                      <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="sm" onClick={() => openModal(item)} className="h-8 rounded-lg hover:bg-muted">
-                          <Edit className="w-4 h-4 text-muted-foreground" />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => deleteContent(item.id)} className="h-8 rounded-lg hover:bg-rose-500/10 hover:text-rose-500">
-                          <Trash2 className="w-4 h-4 text-rose-500/70" />
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </Card>
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="sm:max-w-[500px] glass border-border/50 rounded-2xl">
-          <DialogHeader>
-            <DialogTitle className="text-xl font-bold">{formData.id ? "Edit Content Block" : "Add Content Block"}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Section Key</Label>
-                <Input value={formData.section_key} onChange={(e) => setFormData({...formData, section_key: e.target.value})} placeholder="e.g. hero, footer" className="rounded-xl bg-background/50" />
-              </div>
-              <div className="space-y-2">
-                <Label>Content Key</Label>
-                <Input value={formData.content_key} onChange={(e) => setFormData({...formData, content_key: e.target.value})} placeholder="e.g. title, subtitle" className="rounded-xl bg-background/50" />
+      {/* Data Table */}
+      <Card className="border-border/50 shadow-sm">
+        <CardHeader className="pb-4 border-b border-border/50">
+          <div className="flex flex-col md:flex-row justify-between gap-4">
+            <div className="flex items-center gap-2">
+              <div className="relative w-full md:w-96">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input placeholder="Search pages by title or slug..." className="pl-9 h-9" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label>Content Value</Label>
-              <Textarea value={formData.content_value} onChange={(e) => setFormData({...formData, content_value: e.target.value})} rows={4} placeholder="The actual content text..." className="rounded-xl bg-background/50 resize-none" />
-            </div>
-            <div className="space-y-2">
-              <Label>Metadata (JSON)</Label>
-              <Textarea value={formData.metadata} onChange={(e) => setFormData({...formData, metadata: e.target.value})} rows={3} placeholder='{"alt": "Logo image"}' className="rounded-xl bg-background/50 font-mono text-xs" />
-            </div>
-            <div className="flex items-center gap-2 mt-2">
-              <input type="checkbox" id="active-check" checked={formData.is_active} onChange={(e) => setFormData({...formData, is_active: e.target.checked})} className="rounded border-border bg-background" />
-              <Label htmlFor="active-check" className="cursor-pointer">Set as Active</Label>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" className="h-9"><Filter className="w-4 h-4 mr-2" /> Filters</Button>
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsModalOpen(false)} className="rounded-xl">Cancel</Button>
-            <Button onClick={saveContent} disabled={submitting} className="rounded-xl bg-indigo-500 hover:bg-indigo-600 text-white">
-              {submitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />} Save Content
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader className="bg-muted/30">
+              <TableRow>
+                <TableHead>Page Title</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>SEO Score</TableHead>
+                <TableHead>Last Updated</TableHead>
+                <TableHead className="text-right">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {mockPages.map((page) => (
+                <TableRow key={page.id} className="group hover:bg-muted/20">
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <FileText className="w-4 h-4 text-primary" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-sm hover:underline cursor-pointer flex items-center gap-2">
+                          {page.title}
+                        </div>
+                        <div className="text-[11px] text-muted-foreground font-mono mt-0.5 flex items-center gap-1"><Globe className="w-3 h-3" /> {page.slug}</div>
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    {getStatusBadge(page.status)}
+                  </TableCell>
+                  <TableCell>
+                    <span className="text-xs font-medium text-muted-foreground bg-muted px-2 py-1 rounded-md">{page.type}</span>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full ${page.seo >= 90 ? 'bg-emerald-500' : page.seo >= 70 ? 'bg-amber-500' : 'bg-rose-500'}`} 
+                          style={{ width: `${page.seo}%` }}
+                        />
+                      </div>
+                      <span className="text-xs font-bold">{page.seo}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="text-xs">
+                      <span className="font-medium block">{page.updated}</span>
+                      <span className="text-muted-foreground">by {page.author}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Page Actions</DropdownMenuLabel>
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin/cms/builder"><MousePointerClick className="w-4 h-4 mr-2"/> Open in Visual Builder</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>Edit Settings & SEO</DropdownMenuItem>
+                        <DropdownMenuItem>View Live Page</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="text-rose-600">Archive Page</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
     </div>
   );
 }

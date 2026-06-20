@@ -43,3 +43,10 @@ database/local_data/
 
 # Local build logs / temporary lists
 web/ts_errors.txt
+
+# Local files
+server/test.db
+server/test_out.txt
+server/uploads/
+.venv/
+server/.venv/

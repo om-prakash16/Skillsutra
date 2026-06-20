@@ -1,445 +1,284 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import React, { useState, useEffect } from "react";
 import { 
-    Users, 
-    Building2, 
-    Briefcase, 
-    Zap, 
-    Activity, 
-    TrendingUp, 
-    ShieldCheck, 
-    Globe, 
-    BrainCircuit,
-    Fingerprint,
-    Loader2,
-    ArrowUpRight,
-    Radar,
-    Terminal,
-    Database,
-    ShieldAlert
+  Users, Building2, Briefcase, Zap, Activity, ShieldCheck, 
+  Globe, Database, ShieldAlert, Terminal, Search, LayoutDashboard,
+  Server, HardDrive, Bell, Star, Clock, FileText, ChevronRight,
+  Settings, PlayCircle, MoreHorizontal, UserPlus, Send, Box,
+  CreditCard, Lock, Fingerprint, RefreshCw, Command, Cpu
 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { api, API_BASE_URL } from "@/lib/api/api-client";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
+export default function SuperAdminDashboard() {
+  const [activeTab, setActiveTab] = useState("platform");
+  const [cmdOpen, setCmdOpen] = useState(false);
 
-export default function AdminDashboardOverview() {
-  const [stats, setStats] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [now, setNow] = useState("");
-  const [wsStatus, setWsStatus] = useState<"connecting" | "connected" | "disconnected">("disconnected");
-  const [telemetry, setTelemetry] = useState<any>({
-    latency: "14ms",
-    infrastructure: { block_height: 18290390, sync_status: "Synced", tps: 1500 },
-    ai: { accuracy: 94.2, throughput: "96.4%", queue_size: 0 }
-  });
-
+  // Command Palette listener
   useEffect(() => {
-    fetchAnalytics();
-    
-    // Live clock
-    const tick = () => setNow(new Date().toLocaleTimeString('en-US', { hour12: false }));
-    tick();
-    const clock = setInterval(tick, 1000);
-
-    // Setup WebSocket
-    let ws: WebSocket | null = null;
-    let reconnectTimeout: any = null;
-
-    const connectWS = () => {
-      try {
-        setWsStatus("connecting");
-        const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-        let host = window.location.host;
-        if (API_BASE_URL.startsWith("http")) {
-          const urlObj = new URL(API_BASE_URL);
-          host = urlObj.host;
-        }
-        const wsUrl = `${protocol}//${host}/api/v1/admin/ws/telemetry`;
-        ws = new WebSocket(wsUrl);
-
-        ws.onopen = () => {
-          setWsStatus("connected");
-        };
-
-        ws.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            if (data.type === "telemetry_update") {
-              setTelemetry({
-                latency: data.latency,
-                infrastructure: data.infrastructure,
-                ai: data.ai
-              });
-              if (data.totals) {
-                setStats((prev: any) => {
-                  if (!prev) return { totals: data.totals, trends: [], recent_activity: [] };
-                  const baseTrends = prev.trends || [];
-                  const updatedTrends = [...baseTrends];
-                  if (updatedTrends.length > 0 && Math.random() > 0.7) {
-                     const lastIndex = updatedTrends.length - 1;
-                     updatedTrends[lastIndex] = {
-                       ...updatedTrends[lastIndex],
-                       users: Math.max(0, updatedTrends[lastIndex].users + (Math.random() > 0.5 ? 1 : -1)),
-                     };
-                  }
-                  return {
-                    ...prev,
-                    totals: {
-                      ...prev.totals,
-                      ...data.totals,
-                      users: data.active_users || prev.totals.users
-                    },
-                    trends: updatedTrends
-                  };
-                });
-              }
-            }
-          } catch (e) {
-            console.error("Failed to parse telemetry data", e);
-          }
-        };
-
-        ws.onclose = () => {
-          setWsStatus("disconnected");
-          reconnectTimeout = setTimeout(connectWS, 5000);
-        };
-
-        ws.onerror = () => {
-          ws?.close();
-        };
-      } catch (err) {
-        console.error("WS error", err);
-        setWsStatus("disconnected");
-        reconnectTimeout = setTimeout(connectWS, 5000);
+    const down = (e: KeyboardEvent) => {
+      if (e.key === "k" && (e.metaKey || e.ctrlKey)) {
+        e.preventDefault();
+        setCmdOpen((open) => !open);
       }
     };
-
-    connectWS();
-
-    return () => {
-      clearInterval(clock);
-      if (ws) {
-        ws.close();
-      }
-      if (reconnectTimeout) {
-        clearTimeout(reconnectTimeout);
-      }
-    };
+    document.addEventListener("keydown", down);
+    return () => document.removeEventListener("keydown", down);
   }, []);
 
-  const fetchAnalytics = async () => {
-    try {
-      const data = await api.analytics.admin();
-      setStats(data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const QUICK_ACTIONS = [
+    { label: "Create Tenant", icon: Building2 },
+    { label: "Create Admin", icon: ShieldCheck },
+    { label: "Create User", icon: UserPlus },
+    { label: "Publish Announcement", icon: Send },
+  ];
 
-  const METRIC_CARDS = [
-      { 
-          label: "Active Entities", 
-          value: stats?.totals?.users || 0, 
-          trend: "+12.5%", 
-          icon: Users, 
-          color: "rose",
-          desc: "Unique verified identities"
-      },
-      { 
-          label: "Partner Nodes", 
-          value: stats?.totals?.companies || 0, 
-          trend: "+4.2%", 
-          icon: Building2, 
-          color: "indigo",
-          desc: "Verified corporate entities"
-      },
-      { 
-          label: "Network Load", 
-          value: stats?.totals?.jobs || 0, 
-          trend: "+22.1%", 
-          icon: Briefcase, 
-          color: "emerald",
-          desc: "Active hiring opportunities"
-      },
-      { 
-          label: "Total Applications", 
-          value: stats?.totals?.applications || 0, 
-          trend: "+8.9%", 
-          icon: Fingerprint, 
-          color: "amber",
-          desc: "Platform-wide candidacies"
-      }
+  const ACTIVITY_FEED = [
+    { id: 1, type: "system", msg: "Backup completed successfully", time: "2 mins ago", icon: Database, color: "text-emerald-500" },
+    { id: 2, type: "user", msg: "New user registered (jane@acme.com)", time: "15 mins ago", icon: Users, color: "text-blue-500" },
+    { id: 3, type: "security", msg: "Multiple failed logins from 192.168.1.44", time: "1 hour ago", icon: ShieldAlert, color: "text-rose-500" },
+    { id: 4, type: "billing", msg: "Subscription upgraded to Enterprise (Tenant #42)", time: "2 hours ago", icon: CreditCard, color: "text-purple-500" },
+    { id: 5, type: "ai", msg: "AI model routing timeout (fallback triggered)", time: "4 hours ago", icon: Cpu, color: "text-amber-500" },
   ];
 
   return (
-    <div className="space-y-12 animate-in fade-in duration-1000 pb-24 relative z-10">
+    <div className="p-6 max-w-[1600px] mx-auto space-y-6 relative">
       
-      {/* Hero Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border/50 pb-10">
-        <div className="space-y-4">
-          <div className="flex items-center gap-3 flex-wrap">
-              <div className="w-2 h-2 bg-rose-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.8)]" />
-              <Badge variant="outline" className="glass border-rose-500/30 text-rose-500 px-4 font-black tracking-widest text-[9px] uppercase rounded-full">
-                System Status: Operational
-              </Badge>
-              {wsStatus === "connected" && (
-                <Badge variant="outline" className="glass border-emerald-500/30 text-emerald-400 px-4 font-black tracking-widest text-[9px] uppercase rounded-full flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                  Telemetry: Live Feed
-                </Badge>
-              )}
-              {wsStatus === "connecting" && (
-                <Badge variant="outline" className="glass border-amber-500/30 text-amber-400 px-4 font-black tracking-widest text-[9px] uppercase rounded-full flex items-center gap-1.5 animate-pulse">
-                  <div className="w-1.5 h-1.5 bg-amber-500 rounded-full" />
-                  Telemetry: Syncing...
-                </Badge>
-              )}
-              {wsStatus === "disconnected" && (
-                <Badge variant="outline" className="glass border-rose-500/20 text-rose-400/60 px-4 font-black tracking-widest text-[9px] uppercase rounded-full flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 bg-rose-500/40 rounded-full" />
-                  Telemetry: Offline
-                </Badge>
-              )}
-              {now && (
-                <span className="font-mono text-[10px] font-black text-muted-foreground/60 tracking-widest">{now} UTC+5:30</span>
-              )}
+      {/* Command Palette Overlay */}
+      <AnimatePresence>
+        {cmdOpen && (
+          <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] px-4">
+            <motion.div 
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} 
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm" 
+              onClick={() => setCmdOpen(false)}
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: -20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              className="relative w-full max-w-2xl bg-card border border-border shadow-2xl rounded-2xl overflow-hidden flex flex-col"
+            >
+              <div className="flex items-center px-4 border-b border-border/50">
+                <Search className="w-5 h-5 text-muted-foreground" />
+                <Input placeholder="Search users, companies, jobs, settings..." className="flex-1 border-0 bg-transparent focus-visible:ring-0 h-14 text-lg" autoFocus />
+                <Badge variant="outline" className="font-mono text-[10px]">ESC</Badge>
+              </div>
+              <div className="max-h-[60vh] overflow-y-auto p-2">
+                <div className="px-3 py-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">Quick Links</div>
+                {["Manage Users", "View Analytics", "Security Center", "Billing Details"].map(item => (
+                  <button key={item} className="w-full text-left px-3 py-3 rounded-lg hover:bg-muted/50 flex items-center justify-between group">
+                    <span className="text-sm font-medium">{item}</span>
+                    <ChevronRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+                  </button>
+                ))}
+              </div>
+            </motion.div>
           </div>
-          <h1 className="text-5xl md:text-7xl font-black font-heading tracking-tighter text-foreground uppercase italic flex items-center gap-6 text-gradient">
-            Global <span className="text-rose-500">Surveillance</span> 
-            <Radar className="w-12 h-12 text-rose-500 animate-pulse" />
-          </h1>
-          <p className="text-muted-foreground text-xl max-w-2xl font-medium opacity-80">
-            Real-time heuristic analysis of the Best Hiring ecosystem. Absolute oversight of user migration, corporate engagement, and neural matching efficiency.
+        )}
+      </AnimatePresence>
+
+      {/* Header */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-6 border-b border-border/50 pb-6">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <LayoutDashboard className="w-8 h-8 text-primary" />
+            <h1 className="text-3xl font-bold tracking-tight">Super Admin Dashboard</h1>
+          </div>
+          <p className="text-muted-foreground text-sm flex items-center gap-2">
+            Global command center for platform infrastructure, tenants, and security. 
+            <kbd className="hidden md:inline-flex items-center gap-1 bg-muted px-2 py-0.5 rounded text-[10px] font-mono border border-border/50">
+              <Command className="w-3 h-3" /> K
+            </kbd>
+            to search anywhere.
           </p>
         </div>
-        <div className="flex gap-4">
-            <Link href="/admin/logs">
-                <Button size="lg" variant="premium" className="h-16 px-10 rounded-2xl shadow-2xl">
-                    <Activity className="w-6 h-6 mr-3" /> System Audit
-                </Button>
-            </Link>
+        <div className="flex flex-wrap gap-2">
+          {QUICK_ACTIONS.map((action, idx) => (
+            <Button key={idx} variant="outline" size="sm" className="h-9">
+              <action.icon className="w-4 h-4 mr-2" /> {action.label}
+            </Button>
+          ))}
         </div>
       </div>
 
-      {/* Main Metric Array */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {METRIC_CARDS.map((card, idx) => (
-              <motion.div
-                key={card.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.1 }}
-                className="group"
-              >
-                  <Card className="glass border-border/50 rounded-[2rem] overflow-hidden transition-all duration-500 hover:border-border cursor-default relative h-48 shadow-2xl">
-                      <div className={`absolute top-0 left-0 w-1.5 h-full opacity-40`} style={{ backgroundColor: card.color === 'rose' ? '#f43f5e' : card.color === 'indigo' ? '#6366f1' : card.color === 'emerald' ? '#10b981' : '#f59e0b' }} />
-                      <div className={`absolute -right-12 -top-12 w-40 h-40 blur-[80px] rounded-full transition-all duration-700 opacity-20 group-hover:opacity-40`} style={{ backgroundColor: card.color === 'rose' ? '#f43f5e' : card.color === 'indigo' ? '#6366f1' : card.color === 'emerald' ? '#10b981' : '#f59e0b' }} />
-                      <CardHeader className="flex flex-row items-center justify-between pb-2 px-8 pt-8">
-                        <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">{card.label}</CardTitle>
-                        <card.icon className="w-5 h-5" style={{ color: card.color === 'rose' ? '#f43f5e' : card.color === 'indigo' ? '#6366f1' : card.color === 'emerald' ? '#10b981' : '#f59e0b' }} />
-                      </CardHeader>
-                      <CardContent className="px-8 pb-8">
-                        {loading ? <Loader2 className="w-8 h-8 animate-spin text-muted-foreground/30" /> : (
-                            <div className="flex flex-col space-y-1">
-                                <div className="flex items-baseline gap-4">
-                                    <span className="text-5xl font-black text-foreground tracking-tighter">{card.value}</span>
-                                    <span className="text-[11px] font-black text-emerald-500 flex items-center">
-                                        <TrendingUp className="w-3.5 h-3.5 mr-1" /> {card.trend}
-                                    </span>
-                                </div>
-                                <span className="text-[9px] font-black text-muted-foreground/40 uppercase tracking-[0.2em]">{card.desc}</span>
-                            </div>
-                        )}
-                      </CardContent>
-                  </Card>
-              </motion.div>
-          ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+        
+        {/* Main Workspace (Left 3 cols) */}
+        <div className="xl:col-span-3 space-y-6">
           
-          {/* Neural Resonance Monitor (AI Stats) */}
-          <Card className="glass lg:col-span-2 border-t-rose-500/30 border-t-[3px] rounded-[2.5rem] relative overflow-hidden shadow-2xl">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-rose-500/5 blur-[150px] rounded-full pointer-events-none" />
-                <CardHeader className="border-b border-border/50 pb-8 px-10 pt-10">
-                    <div className="flex justify-between items-start">
-                        <div className="space-y-2">
-                            <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-4">
-                                <div className="p-3 glass rounded-2xl bg-rose-500/10 border-rose-500/20">
-                                    <BrainCircuit className="w-6 h-6 text-rose-500" />
-                                </div>
-                                Neural Resonance Monitor
-                            </CardTitle>
-                            <CardDescription className="text-[10px] uppercase font-black tracking-[0.3em] text-muted-foreground/60">Heuristic Engine Performance Metrics</CardDescription>
-                        </div>
-                        <Link href="/admin/ai-config">
-                            <Button variant="outline" size="sm" className="glass border-border text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-rose-500 rounded-xl px-6 h-10">Modify Formula</Button>
-                        </Link>
-                    </div>
-                </CardHeader>
-                <CardContent className="p-10">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                        <div className="space-y-5">
-                            <div className="flex justify-between items-end">
-                                <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Matching Accuracy</span>
-                                <span className="text-2xl font-black text-foreground italic">{telemetry?.ai?.accuracy ?? 94.2}%</span>
-                            </div>
-                            <div className="h-3 glass rounded-full overflow-hidden border border-border/50">
-                                <div className="h-full bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)] rounded-full transition-all duration-500" style={{ width: `${telemetry?.ai?.accuracy ?? 94.2}%` }} />
-                            </div>
-                        </div>
-                        <div className="space-y-5">
-                            <div className="flex justify-between items-end">
-                                <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Compute Latency</span>
-                                <span className="text-2xl font-black text-foreground italic">{telemetry?.latency ?? '140ms'}</span>
-                            </div>
-                            <div className="h-3 glass rounded-full overflow-hidden border border-border/50">
-                                <div className="h-full bg-rose-500 shadow-[0_0_15px_rgba(244,63,94,0.6)] rounded-full transition-all duration-500" style={{ width: `${Math.min(100, (parseInt(telemetry?.latency ?? '140ms') || 14) * 3.5)}%` }} />
-                            </div>
-                        </div>
-                        <div className="space-y-5">
-                            <div className="flex justify-between items-end">
-                                <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em]">Heuristic Load</span>
-                                <span className="text-2xl font-black text-foreground italic">
-                                    {(telemetry?.ai?.queue_size ?? 0) > 3 ? "High" : (telemetry?.ai?.queue_size ?? 0) > 0 ? "Moderate" : "Optimal"}
-                                </span>
-                            </div>
-                            <div className="h-3 glass rounded-full overflow-hidden border border-border/50">
-                                <div className="h-full bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.6)] rounded-full transition-all duration-500" style={{ width: `${Math.max(10, Math.min(100, (telemetry?.ai?.queue_size ?? 0) * 20))}%` }} />
-                            </div>
-                        </div>
-                    </div>
+          <Tabs defaultValue="platform" value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <div className="overflow-x-auto pb-2 scrollbar-none">
+              <TabsList className="bg-muted/30 border border-border/50 inline-flex w-max min-w-full justify-start p-1 h-12">
+                <TabsTrigger value="platform" className="rounded-md px-4 data-[state=active]:bg-primary/20 data-[state=active]:text-primary"><Globe className="w-4 h-4 mr-2" /> Platform</TabsTrigger>
+                <TabsTrigger value="users" className="rounded-md px-4"><Users className="w-4 h-4 mr-2" /> Users</TabsTrigger>
+                <TabsTrigger value="companies" className="rounded-md px-4"><Building2 className="w-4 h-4 mr-2" /> Companies</TabsTrigger>
+                <TabsTrigger value="jobs" className="rounded-md px-4"><Briefcase className="w-4 h-4 mr-2" /> Jobs</TabsTrigger>
+                <TabsTrigger value="ai" className="rounded-md px-4"><Cpu className="w-4 h-4 mr-2" /> AI</TabsTrigger>
+                <TabsTrigger value="storage" className="rounded-md px-4"><HardDrive className="w-4 h-4 mr-2" /> Storage</TabsTrigger>
+                <TabsTrigger value="api" className="rounded-md px-4"><Terminal className="w-4 h-4 mr-2" /> API</TabsTrigger>
+                <TabsTrigger value="revenue" className="rounded-md px-4"><CreditCard className="w-4 h-4 mr-2" /> Revenue</TabsTrigger>
+                <TabsTrigger value="security" className="rounded-md px-4"><ShieldAlert className="w-4 h-4 mr-2" /> Security</TabsTrigger>
+                <TabsTrigger value="system" className="rounded-md px-4"><Server className="w-4 h-4 mr-2" /> System</TabsTrigger>
+              </TabsList>
+            </div>
 
-                    <div className="mt-14 p-8 glass bg-black/60 border border-border/50 rounded-[2rem] relative group shadow-inner">
-                        <div className="flex items-center gap-4 mb-6">
-                            <Terminal className="w-5 h-5 text-indigo-400" />
-                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">Real-time Matching Stream</span>
-                        </div>
-                        <div className="space-y-4 font-mono text-xs leading-relaxed">
-                            <div className="flex gap-4 text-emerald-400/80">
-                                <span className="text-muted-foreground/40 font-black">[14:22:01]</span>
-                                <span>MATCH_SUCCESS: Candidate(0x7a...f2) paired with Job(FinTech Lead) | Score: 0.92</span>
-                            </div>
-                            <div className="flex gap-4 text-muted-foreground/60">
-                                <span className="text-muted-foreground/40 font-black">[14:21:45]</span>
-                                <span>HEURISTIC_INIT: RAG pipeline triggered for Python Backend evaluation...</span>
-                            </div>
-                            <div className="flex gap-4 text-rose-400/80">
-                                <span className="text-muted-foreground/40 font-black">[14:21:12]</span>
-                                <span>RESONANCE_LOW: Candidate(0x1c...e4) rejected for Senior Architect (Skill Gap: Rust)</span>
-                            </div>
-                        </div>
-                    </div>
-                </CardContent>
-          </Card>
-
-          {/* Recharts Analytics Visualization */}
-          <Card className="glass lg:col-span-3 mt-10 relative overflow-hidden border-t-indigo-500/30 border-t-[3px] rounded-[2.5rem] shadow-2xl">
-              <div className="absolute top-0 left-0 w-full h-full bg-indigo-500/5 pointer-events-none" />
-              <CardHeader className="border-b border-border/50 pb-8 px-10 pt-10">
-                  <div className="space-y-2">
-                      <CardTitle className="text-2xl font-black tracking-tight flex items-center gap-4">
-                          <div className="p-3 glass rounded-2xl bg-indigo-500/10 border-indigo-500/20">
-                              <TrendingUp className="w-6 h-6 text-indigo-500" />
-                          </div>
-                          Ecosystem Growth Trends
-                      </CardTitle>
-                      <CardDescription className="text-[10px] uppercase font-black tracking-[0.3em] text-muted-foreground/60">7-Day Moving Average for Users & Jobs</CardDescription>
-                  </div>
-              </CardHeader>
-              <CardContent className="p-10 h-[450px]">
-                  {loading ? (
-                      <div className="flex items-center justify-center h-full">
-                          <Loader2 className="w-12 h-12 animate-spin text-indigo-500/30" />
-                      </div>
-                  ) : (
-                    <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart
-                            data={stats?.trends || []}
-                            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                        >
-                            <defs>
-                                <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.5}/>
-                                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0}/>
-                                </linearGradient>
-                                <linearGradient id="colorJobs" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.5}/>
-                                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                                </linearGradient>
-                            </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
-                            <XAxis dataKey="name" stroke="#ffffff40" tick={{fill: '#ffffff60', fontSize: 10, fontWeight: 'bold'}} axisLine={false} tickLine={false} dy={10} />
-                            <YAxis stroke="#ffffff40" tick={{fill: '#ffffff60', fontSize: 10, fontWeight: 'bold'}} axisLine={false} tickLine={false} dx={-10} />
-                            <Tooltip 
-                                contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '16px', backdropFilter: 'blur(10px)' }}
-                                itemStyle={{ color: '#fff', fontWeight: 'bold', fontSize: '12px' }}
-                            />
-                            <Area type="monotone" dataKey="users" stroke="#f43f5e" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" />
-                            <Area type="monotone" dataKey="jobs" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorJobs)" />
-                        </AreaChart>
-                    </ResponsiveContainer>
-                  )}
-              </CardContent>
-          </Card>
-
-
-          {/* Operational Nexus (Quick Controls) */}
-          <div className="space-y-8 lg:col-span-1">
-              <h3 className="text-2xl font-black flex items-center gap-3 px-2 tracking-tight">
-                 <Globe className="w-6 h-6 text-rose-500" /> Operational Nexus
-              </h3>
-              
-              <div className="grid grid-cols-1 gap-4">
-                  {[
-                      { label: "Entity Registry", href: "/admin/users", icon: Users, color: "#f43f5e", count: stats?.totals?.users },
-                      { label: "Partner Matrix", href: "/admin/companies", icon: Building2, color: "#6366f1", count: stats?.totals?.companies },
-                      { label: "Network Load", href: "/admin/jobs", icon: Briefcase, color: "#10b981", count: stats?.totals?.jobs },
-                      { label: "Applications", href: "/admin/applications", icon: ShieldCheck, color: "#f59e0b", count: stats?.totals?.applications },
-                      { label: "Security Center", href: "/admin/security", icon: ShieldAlert, color: "#eab308" },
-                      { label: "Audit Stream", href: "/admin/logs", icon: Database, color: "#06b6d4" },
-                      { label: "Digital Identity", href: "/admin/infrastructure", icon: Fingerprint, color: "#3b82f6" },
-                      { label: "Moderation Queue", href: "/admin/reports", icon: ShieldAlert, color: "#ef4444" },
-                  ].map((link) => (
-                      <Link key={link.label} href={link.href}>
-                          <Card className="glass border-border/50 hover:border-border transition-all duration-300 cursor-pointer group rounded-2xl shadow-xl hover:-translate-y-1">
-                              <CardContent className="p-5 flex items-center justify-between">
-                                  <div className="flex items-center gap-4">
-                                      <div className="p-2.5 rounded-xl border transition-all duration-300 group-hover:scale-110 shadow-inner" style={{ backgroundColor: `${link.color}15`, borderColor: `${link.color}30` }}>
-                                          <link.icon className="w-5 h-5" style={{ color: link.color }} />
-                                      </div>
-                                      <span className="font-black text-foreground tracking-wide text-xs uppercase">{link.label}</span>
-                                  </div>
-                                  {link.count !== undefined ? (
-                                      <Badge variant="outline" className="font-mono font-black text-[10px] glass border-border px-3 py-1 rounded-full">{link.count}</Badge>
-                                  ) : <ArrowUpRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-foreground transition-colors" />}
-                              </CardContent>
-                          </Card>
-                      </Link>
-                  ))}
+            {/* PLATFORM TAB */}
+            <TabsContent value="platform" className="mt-4 animate-in fade-in slide-in-from-bottom-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <MetricCard title="Total Tenants" value="1,420" icon={Building2} trend="+12" trendDir="up" />
+                <MetricCard title="Active Tenants" value="1,205" icon={Activity} />
+                <MetricCard title="Suspended Tenants" value="14" icon={Lock} color="rose" />
+                <MetricCard title="Trial Tenants" value="156" icon={Clock} color="amber" />
+                <MetricCard title="Enterprise Tenants" value="45" icon={Star} color="indigo" />
+                <MetricCard title="Platform Uptime" value="99.99%" icon={ShieldCheck} color="emerald" />
               </div>
+            </TabsContent>
 
-              <Link href="/admin/reports" className="block pt-4">
-                  <Card className="p-8 rounded-[2rem] glass bg-rose-500/10 border border-rose-500/20 flex flex-col items-center gap-5 text-center hover:bg-rose-500/20 transition-all cursor-pointer group shadow-2xl">
-                      <div className="p-4 rounded-full bg-rose-500/20 border border-rose-500/30 group-hover:scale-110 transition-transform duration-500 shadow-[0_0_20px_rgba(244,63,94,0.3)]">
-                        <ShieldAlert className="w-8 h-8 text-rose-500" />
-                      </div>
-                      <div className="space-y-2">
-                          <h4 className="text-sm font-black italic uppercase tracking-widest text-rose-500">Override Authority</h4>
-                          <p className="text-[10px] text-rose-500/70 font-bold uppercase tracking-[0.2em] leading-relaxed">Security protocols active. Immutably logged.</p>
-                      </div>
-                  </Card>
-              </Link>
-          </div>
+            {/* USERS TAB */}
+            <TabsContent value="users" className="mt-4 animate-in fade-in slide-in-from-bottom-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <MetricCard title="Total Users" value="1.4M" icon={Users} trend="+5k" trendDir="up" />
+                <MetricCard title="Active Users" value="842K" icon={Activity} />
+                <MetricCard title="Online Users" value="42,105" icon={Globe} color="emerald" />
+                <MetricCard title="New Users Today" value="1,204" icon={UserPlus} />
+                <MetricCard title="Verified Users" value="1.2M" icon={ShieldCheck} color="blue" />
+                <MetricCard title="Pending Verification" value="14,201" icon={Clock} color="amber" />
+              </div>
+            </TabsContent>
+
+            {/* REVENUE TAB */}
+            <TabsContent value="revenue" className="mt-4 animate-in fade-in slide-in-from-bottom-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <MetricCard title="Monthly Recurring (MRR)" value="$4.2M" icon={CreditCard} trend="+$120k" trendDir="up" color="emerald" />
+                <MetricCard title="Annual Recurring (ARR)" value="$50.4M" icon={Building2} color="emerald" />
+                <MetricCard title="New Subscriptions" value="142" icon={UserPlus} />
+                <MetricCard title="Active Plans" value="1,420" icon={Box} />
+                <MetricCard title="Trial Conversions" value="42%" icon={Activity} color="indigo" />
+                <MetricCard title="Churn Rate" value="1.2%" icon={ShieldAlert} color="rose" />
+              </div>
+            </TabsContent>
+
+            {/* SYSTEM TAB */}
+            <TabsContent value="system" className="mt-4 animate-in fade-in slide-in-from-bottom-2">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <MetricCard title="Global CPU Usage" value="42%" icon={Cpu} color="emerald" />
+                <MetricCard title="RAM Allocation" value="84%" icon={Database} color="amber" />
+                <MetricCard title="PostgreSQL IOPS" value="12.4k" icon={Database} color="blue" />
+                <MetricCard title="Redis Cache Hit Rate" value="96.2%" icon={Zap} color="emerald" />
+                <MetricCard title="Celery Workers" value="48/48" icon={Activity} />
+                <MetricCard title="Background Queue" value="1,204" icon={Clock} />
+              </div>
+            </TabsContent>
+
+            {/* Fallback for other tabs to show they are wired up */}
+            {["companies", "jobs", "ai", "storage", "api", "security"].map(tab => (
+              <TabsContent key={tab} value={tab} className="mt-4 animate-in fade-in slide-in-from-bottom-2">
+                <div className="flex flex-col items-center justify-center p-12 border border-dashed border-border/50 rounded-2xl bg-muted/10">
+                  <Box className="w-12 h-12 text-muted-foreground/30 mb-4" />
+                  <h3 className="text-lg font-medium capitalize">{tab} Metrics Dashboard</h3>
+                  <p className="text-sm text-muted-foreground mt-1">Detailed widgets for {tab} will render here based on your layout settings.</p>
+                </div>
+              </TabsContent>
+            ))}
+
+          </Tabs>
+
+        </div>
+
+        {/* Sidebar (Right Col) */}
+        <div className="space-y-6">
+          
+          <Card className="border-border/50 shadow-sm bg-card flex flex-col h-[500px]">
+            <CardHeader className="pb-3 border-b border-border/50">
+              <CardTitle className="text-base flex items-center justify-between">
+                <span className="flex items-center gap-2"><Activity className="w-4 h-4 text-primary" /> Live Activity</span>
+                <Badge variant="outline" className="font-mono text-[10px]"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse mr-1" /> LIVE</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0 flex-1 overflow-y-auto">
+              <div className="divide-y divide-border/50">
+                {ACTIVITY_FEED.map((item) => (
+                  <div key={item.id} className="p-4 hover:bg-muted/30 transition-colors flex gap-4">
+                    <div className={`mt-0.5 ${item.color}`}>
+                      <item.icon className="w-4 h-4" />
+                    </div>
+                    <div className="flex-1 space-y-1">
+                      <p className="text-sm font-medium leading-none">{item.msg}</p>
+                      <p className="text-[10px] text-muted-foreground font-mono">{item.time}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+            <div className="p-3 border-t border-border/50">
+              <Button variant="ghost" className="w-full text-xs" size="sm">View All Activity <ChevronRight className="w-3 h-3 ml-1" /></Button>
+            </div>
+          </Card>
+
+          <Card className="border-border/50 shadow-sm bg-card">
+            <CardHeader className="pb-3 border-b border-border/50">
+              <CardTitle className="text-base flex items-center gap-2"><Bell className="w-4 h-4 text-amber-500" /> Notifications</CardTitle>
+            </CardHeader>
+            <CardContent className="p-4 space-y-4">
+              <div className="flex gap-3">
+                <div className="w-2 h-2 rounded-full bg-rose-500 mt-1.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium">New Enterprise Customer</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Acme Corp signed up for the 5k seat tier.</p>
+                </div>
+              </div>
+              <div className="flex gap-3">
+                <div className="w-2 h-2 rounded-full bg-amber-500 mt-1.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium">High CPU Alert</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">Worker node 04 exceeding 90% utilization.</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+        </div>
       </div>
     </div>
+  );
+}
+
+// Reusable Metric Card Component
+function MetricCard({ title, value, icon: Icon, trend, trendDir, color = "primary" }: any) {
+  const colorClasses: Record<string, string> = {
+    primary: "text-primary bg-primary/10 border-primary/20",
+    emerald: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+    rose: "text-rose-500 bg-rose-500/10 border-rose-500/20",
+    amber: "text-amber-500 bg-amber-500/10 border-amber-500/20",
+    indigo: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20",
+    blue: "text-blue-500 bg-blue-500/10 border-blue-500/20",
+  };
+
+  return (
+    <Card className="border-border/50 shadow-sm bg-card hover:border-primary/40 transition-colors">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-sm text-muted-foreground font-medium flex items-center justify-between">
+          <span className="flex items-center gap-2">
+            <div className={`p-1.5 rounded-lg border ${colorClasses[color]}`}>
+              <Icon className="w-3.5 h-3.5" />
+            </div>
+            {title}
+          </span>
+          {trend && (
+            <span className={`text-xs font-mono ${trendDir === "up" ? "text-emerald-500" : "text-rose-500"}`}>
+              {trend}
+            </span>
+          )}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="text-3xl font-bold">{value}</div>
+      </CardContent>
+    </Card>
   );
 }

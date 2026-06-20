@@ -72,7 +72,7 @@ class DbQueryBuilder {
   }
 
   async execute() {
-    const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1';
+    const API_URL = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
     let url = `${API_URL}/db/${this.table}`;
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',

@@ -1,180 +1,177 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import React from "react";
 import { 
-    ShieldCheck, 
-    ShieldAlert, 
-    CheckCircle2, 
-    XCircle, 
-    Eye, 
-    Loader2, 
-    User,
-    FileText,
-    Search,
-    Filter,
-    ArrowRight
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
-import { toast } from "sonner"
-import { api } from "@/lib/api/api-client"
+  Users, UserCheck, UserMinus, ShieldAlert, MonitorSmartphone, 
+  Globe, Key, Lock, Fingerprint, MapPin, Activity, ShieldCheck
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
 
-export default function IdentityQueuePage() {
-    const [queue, setQueue] = useState<any[]>([])
-    const [loading, setLoading] = useState(true)
-    const [filter, setFilter] = useState("pending")
+const mockRegistrations = [
+  { date: 'Mon', users: 1200 },
+  { date: 'Tue', users: 1900 },
+  { date: 'Wed', users: 1500 },
+  { date: 'Thu', users: 2200 },
+  { date: 'Fri', users: 2800 },
+  { date: 'Sat', users: 3400 },
+  { date: 'Sun', users: 4100 },
+];
 
-    useEffect(() => {
-        fetchQueue()
-    }, [filter])
+const mockMFA = [
+  { name: 'Authenticator App', value: 65 },
+  { name: 'SMS / Text', value: 20 },
+  { name: 'Hardware Key', value: 10 },
+  { name: 'Email Auth', value: 5 },
+];
 
-    const fetchQueue = async () => {
-        setLoading(true)
-        try {
-            // Placeholder: fetch from admin identity queue endpoint
-            // const data = await api.admin.getIdentityQueue(filter)
-            // Mock data for high-fidelity demonstration
-            const mockData = [
-                { id: '1', user_id: 'u-01', user_name: 'Om Prakash', id_type: 'passport', submitted_at: '2026-04-13T10:00:00Z', status: 'pending' },
-                { id: '2', user_id: 'u-02', user_name: 'John Doe', id_type: 'drivers_license', submitted_at: '2026-04-13T11:30:00Z', status: 'pending' }
-            ]
-            setQueue(mockData)
-        } catch (e) {
-            toast.error("Failed to sync identity queue.")
-        } finally {
-            setLoading(false)
-        }
-    }
-
-    const handleAction = async (userId: string, action: 'verified' | 'rejected') => {
-        try {
-            // await api.admin.verifyIdentity(userId, { status: action })
-            toast.success(`User ${action === 'verified' ? 'Authorized' : 'Rejected'} successfully.`)
-            setQueue(prev => prev.filter(q => q.user_id !== userId))
-        } catch (e) {
-            toast.error("Administrative protocol failure.")
-        }
-    }
-
-    return (
-        <div className="space-y-12 pb-20">
-            {/* Admin Header */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border/50 pb-10">
-                <div className="space-y-3">
-                    <Badge variant="outline" className="border-primary/30 text-primary bg-primary/5 px-4 font-black tracking-widest text-[9px] uppercase italic">
-                        Trust Governance Node
-                    </Badge>
-                    <h1 className="text-5xl md:text-6xl font-black italic tracking-tighter text-foreground uppercase flex items-center gap-6">
-                        Identity <span className="text-primary">Nexus</span> Queue
-                        <ShieldCheck className="w-12 h-12 text-primary animate-pulse" />
-                    </h1>
-                    <p className="text-muted-foreground text-lg max-w-2xl font-medium">
-                        Human-in-the-loop review for platform identities. Verify document integrity to issues the Blue Check of Trust.
-                    </p>
-                </div>
-                <div className="flex gap-4 bg-muted/50 p-2 rounded-2xl border border-border backdrop-blur-xl">
-                    {["pending", "verified", "rejected"].map((f) => (
-                        <Button 
-                            key={f} 
-                            onClick={() => setFilter(f)}
-                            variant="ghost" 
-                            className={`h-12 px-6 font-black uppercase tracking-widest text-[10px] rounded-xl transition-all ${filter === f ? 'bg-primary text-foreground shadow-lg shadow-primary/20' : 'text-muted-foreground hover:text-foreground'}`}
-                        >
-                            {f} Queue
-                        </Button>
-                    ))}
-                </div>
+export default function IdentityDashboardPage() {
+  return (
+    <div className="p-6 max-w-[1600px] mx-auto space-y-6">
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border/50 pb-6">
+        <div>
+          <div className="flex items-center gap-3 mb-1">
+            <div className="p-2 bg-indigo-500/10 rounded-lg">
+              <Fingerprint className="w-6 h-6 text-indigo-500" />
             </div>
-
-            <Card className="bg-muted/50 border-border backdrop-blur-xl border-t-primary/30 border-t-2 shadow-2xl relative overflow-hidden">
-                <CardHeader className="bg-background/80 border-b border-border p-8">
-                    <div className="flex justify-between items-center">
-                        <CardTitle className="text-xl italic font-black uppercase tracking-widest flex items-center gap-3">
-                            <FileText className="w-6 h-6 text-primary" /> Active Verification Requests
-                        </CardTitle>
-                        <div className="flex items-center gap-4">
-                            <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
-                                <Input placeholder="Filter by name/ID..." className="bg-muted/50 border-border pl-10 h-10 rounded-xl text-xs w-64" />
-                            </div>
-                        </div>
-                    </div>
-                </CardHeader>
-                <CardContent className="p-0">
-                    <Table>
-                        <TableHeader>
-                            <TableRow className="border-b border-border hover:bg-transparent uppercase font-black text-[10px] tracking-widest">
-                                <TableHead className="px-8 h-14">Candidate</TableHead>
-                                <TableHead className="h-14">Document Vector</TableHead>
-                                <TableHead className="h-14">Submitted</TableHead>
-                                <TableHead className="text-right px-8 h-14">Administrative Action</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {loading ? (
-                                <TableRow>
-                                    <TableCell colSpan={4} className="py-32 text-center">
-                                        <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto mb-4" />
-                                        <p className="text-muted-foreground/50 font-black italic uppercase tracking-widest text-xs">Syncing Personnel Data...</p>
-                                    </TableCell>
-                                </TableRow>
-                            ) : queue.length === 0 ? (
-                                <TableRow>
-                                    <TableCell colSpan={4} className="py-32 text-center text-muted-foreground/30 italic font-black tracking-widest uppercase text-xs">
-                                        No pending identity signals detected.
-                                    </TableCell>
-                                </TableRow>
-                            ) : queue.map((req, idx) => (
-                                <motion.tr 
-                                    key={req.id}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: idx * 0.05 }}
-                                    className="border-b border-border/50 hover:bg-muted/30 transition-colors"
-                                >
-                                    <TableCell className="px-8 py-6">
-                                        <div className="flex items-center gap-4">
-                                            <div className="w-10 h-10 rounded-xl bg-muted/50 flex items-center justify-center border border-border">
-                                                <User className="w-5 h-5 text-primary" />
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-foreground tracking-tight">{req.user_name}</p>
-                                                <p className="text-[10px] text-muted-foreground/50 font-mono tracking-widest uppercase">{req.user_id}</p>
-                                            </div>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <Badge variant="outline" className="bg-muted/50 border-border font-black uppercase text-[9px] px-3 py-1 italic tracking-widest">
-                                            {req.id_type}
-                                        </Badge>
-                                    </TableCell>
-                                    <TableCell className="text-muted-foreground font-mono text-xs italic">
-                                        {new Date(req.submitted_at).toLocaleString()}
-                                    </TableCell>
-                                    <TableCell className="text-right px-8">
-                                        <div className="flex items-center justify-end gap-3">
-                                            <Button variant="ghost" size="icon" className="h-10 w-10 text-muted-foreground/50 hover:text-primary hover:bg-primary/10 border border-border">
-                                                <Eye className="w-5 h-5" />
-                                            </Button>
-                                            <div className="w-px h-6 bg-muted/50" />
-                                            <Button variant="ghost" size="icon" className="h-10 w-10 text-rose-500/50 hover:text-rose-500 hover:bg-rose-500/10 border border-rose-500/10" onClick={() => handleAction(req.user_id, 'rejected')}>
-                                                <XCircle className="w-5 h-5" />
-                                            </Button>
-                                            <Button variant="ghost" size="icon" className="h-10 w-10 text-emerald-500/50 hover:text-emerald-500 hover:bg-emerald-500/10 border border-emerald-500/10" onClick={() => handleAction(req.user_id, 'verified')}>
-                                                <CheckCircle2 className="w-5 h-5" />
-                                            </Button>
-                                        </div>
-                                    </TableCell>
-                                </motion.tr>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </CardContent>
-            </Card>
+            <h1 className="text-3xl font-bold tracking-tight">Identity & Access Dashboard</h1>
+          </div>
+          <p className="text-muted-foreground text-sm">Global overview of authentication, sessions, devices, and MFA adoption across all tenants.</p>
         </div>
-    )
+      </div>
+
+      {/* KPI Cards Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        <MetricCard title="Total Users" value="1.4M" icon={Users} color="indigo" />
+        <MetricCard title="Active (30d)" value="842K" icon={Activity} color="emerald" />
+        <MetricCard title="Online Now" value="42,105" icon={Globe} color="blue" />
+        <MetricCard title="Verified" value="1.2M" icon={UserCheck} color="emerald" />
+        <MetricCard title="Blocked" value="1,402" icon={UserMinus} color="rose" />
+        <MetricCard title="MFA Enabled" value="84%" icon={Lock} color="amber" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Left Col: Area Chart */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="border-border/50 shadow-sm h-full flex flex-col">
+            <CardHeader className="pb-4 border-b border-border/50">
+              <CardTitle className="text-base flex items-center gap-2">Daily Registrations (7 Days)</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 flex-1 min-h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={mockRegistrations} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                  <XAxis dataKey="date" stroke="#ffffff40" tick={{fill: '#ffffff60', fontSize: 12}} axisLine={false} tickLine={false} dy={10} />
+                  <YAxis stroke="#ffffff40" tick={{fill: '#ffffff60', fontSize: 12}} axisLine={false} tickLine={false} />
+                  <Tooltip contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+                  <Area type="monotone" dataKey="users" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorUsers)" />
+                </AreaChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Right Col: MFA & Auth Stats */}
+        <div className="lg:col-span-1 space-y-6">
+          <Card className="border-border/50 shadow-sm">
+            <CardHeader className="pb-4 border-b border-border/50">
+              <CardTitle className="text-base flex items-center gap-2">MFA Adoption Methods</CardTitle>
+            </CardHeader>
+            <CardContent className="p-6 h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={mockMFA} layout="vertical" margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" horizontal={true} vertical={false} />
+                  <XAxis type="number" hide />
+                  <YAxis dataKey="name" type="category" width={120} stroke="#ffffff60" tick={{fontSize: 11}} axisLine={false} tickLine={false} />
+                  <Tooltip cursor={{fill: 'rgba(255,255,255,0.05)'}} contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+                  <Bar dataKey="value" fill="#f59e0b" radius={[0, 4, 4, 0]} barSize={20} />
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+      </div>
+
+      {/* Bottom Row: Geographic & Devices */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="border-border/50 shadow-sm">
+          <CardHeader className="pb-4 border-b border-border/50">
+            <CardTitle className="text-base flex items-center gap-2"><MapPin className="w-4 h-4" /> Top Active Regions</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border/50 text-sm">
+              <div className="flex justify-between p-4 hover:bg-muted/20"><span>United States</span><span className="font-mono">420K</span></div>
+              <div className="flex justify-between p-4 hover:bg-muted/20"><span>India</span><span className="font-mono">310K</span></div>
+              <div className="flex justify-between p-4 hover:bg-muted/20"><span>United Kingdom</span><span className="font-mono">142K</span></div>
+              <div className="flex justify-between p-4 hover:bg-muted/20"><span>Germany</span><span className="font-mono">84K</span></div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-border/50 shadow-sm">
+          <CardHeader className="pb-4 border-b border-border/50">
+            <CardTitle className="text-base flex items-center gap-2"><MonitorSmartphone className="w-4 h-4" /> Device Breakdown</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="divide-y divide-border/50 text-sm">
+              <div className="flex items-center justify-between p-4 hover:bg-muted/20">
+                <span className="flex items-center gap-2"><MonitorSmartphone className="w-4 h-4 text-indigo-500" /> Desktop / Web</span>
+                <span className="font-mono">68%</span>
+              </div>
+              <div className="flex items-center justify-between p-4 hover:bg-muted/20">
+                <span className="flex items-center gap-2"><MonitorSmartphone className="w-4 h-4 text-emerald-500" /> Mobile / iOS App</span>
+                <span className="font-mono">22%</span>
+              </div>
+              <div className="flex items-center justify-between p-4 hover:bg-muted/20">
+                <span className="flex items-center gap-2"><MonitorSmartphone className="w-4 h-4 text-blue-500" /> Mobile / Android App</span>
+                <span className="font-mono">8%</span>
+              </div>
+              <div className="flex items-center justify-between p-4 hover:bg-muted/20">
+                <span className="flex items-center gap-2"><MonitorSmartphone className="w-4 h-4 text-muted-foreground" /> Unknown / API</span>
+                <span className="font-mono">2%</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+    </div>
+  );
+}
+
+function MetricCard({ title, value, icon: Icon, color = "indigo" }: any) {
+  const colorClasses: Record<string, string> = {
+    indigo: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20",
+    emerald: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+    blue: "text-blue-500 bg-blue-500/10 border-blue-500/20",
+    amber: "text-amber-500 bg-amber-500/10 border-amber-500/20",
+    rose: "text-rose-500 bg-rose-500/10 border-rose-500/20",
+  };
+
+  return (
+    <Card className="border-border/50 shadow-sm bg-card">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-xs text-muted-foreground font-medium flex items-center justify-between">
+          {title}
+          <div className={`p-1.5 rounded-lg border ${colorClasses[color]}`}>
+            <Icon className="w-3.5 h-3.5" />
+          </div>
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold">{value}</div>
+      </CardContent>
+    </Card>
+  );
 }

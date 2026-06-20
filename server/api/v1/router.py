@@ -1,6 +1,34 @@
 from fastapi import APIRouter
 
-from api.v1.auth import router as auth_router
+from api.v1.auth_router import router as auth_router
+from modules.users.api.router import router as users_router
+from modules.profile.router import router as profile_router
+from modules.company.api.router import router as company_router
+from modules.jobs.api.router import router as jobs_router
+from modules.applications.router import router as applications_router
+from modules.ai.router import router as ai_router
+from modules.cms.router import router as cms_router
+from modules.notifications.api.router import router as notifications_router
+from modules.identity.api.router import router as identity_router
+from modules.analytics.router import router as analytics_router
+from modules.chat.router import router as chat_router
+from modules.messages.router import router as messages_router
+from modules.admin.api.router import router as admin_router
+from modules.admin.api.feature_router import router as feature_router
+from modules.admin.api.db_proxy import router as db_proxy_router
+from modules.users.api.github_integration import router as github_router
+from modules.challenges.router import router as challenges_router
+from modules.career.router import router as career_router
+from modules.career.os_router import router as os_router
+from modules.skill_graph.router import router as skill_graph_router
+from modules.search.router import router as search_router
+from modules.projects.router import router as projects_router
+from modules.activity.router import router as activity_router
+from modules.competitions.router import router as competitions_router
+from modules.learning.router import router as learning_router
+from fastapi import APIRouter
+
+from api.v1.auth_router import router as auth_router
 from modules.users.api.router import router as users_router
 from modules.profile.router import router as profile_router
 from modules.company.api.router import router as company_router
@@ -33,14 +61,20 @@ from modules.ecosystem.contests_router import router as contests_router
 from modules.ecosystem.gigs_router import router as gigs_router
 from modules.ecosystem.habits_router import router as habits_router
 from modules.ecosystem.feed_router import router as feed_router
+from modules.feed.router import router as social_feed_router
 from modules.portfolio.router import router as portfolio_router
 from modules.workspaces.router import router as workspaces_router
 from modules.blog.router import router as blog_router
+from modules.builder.router import router as builder_router
+from api.v1.navigation import router as navigation_router
 
 from api.routers.resume import router as resume_router
 from api.routers.cover_letter import router as cover_letter_router
 from api.routers.social import router as social_router
 from api.routers.security import router as security_router
+from api.v1.sessions_router import router as active_sessions_router
+from api.v1.auth.mfa_router import router as mfa_router
+from modules.security.api.router import router as security_lockdown_router
 
 v1_router = APIRouter()
 v1_router.include_router(blog_router)
@@ -48,11 +82,15 @@ v1_router.include_router(resume_router, prefix="", tags=["AI Resume Builder"])
 v1_router.include_router(cover_letter_router, prefix="", tags=["AI Cover Letter Generator"])
 v1_router.include_router(social_router, prefix="", tags=["Social Networking"])
 v1_router.include_router(security_router, prefix="", tags=["Security Center"])
+v1_router.include_router(security_lockdown_router)
+v1_router.include_router(navigation_router)
 
 from api.v1.public_profile import router as public_profile_router
 from api.v1.integrations import router as integrations_router
 
 v1_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
+v1_router.include_router(active_sessions_router, prefix="/auth/sessions", tags=["Session Management"])
+v1_router.include_router(mfa_router, prefix="/auth/mfa", tags=["MFA Management"])
 v1_router.include_router(identity_router, prefix="/identity", tags=["Identity"])
 v1_router.include_router(users_router, prefix="/users", tags=["Users Base"])
 v1_router.include_router(profile_router, prefix="/profile", tags=["Talent Profiles"])
@@ -62,6 +100,7 @@ v1_router.include_router(jobs_router, prefix="/jobs", tags=["Jobs Marketplace"])
 v1_router.include_router(applications_router, prefix="/applications", tags=["Applications"])
 v1_router.include_router(ai_router, prefix="/ai", tags=["AI Reasoning Engine"])
 v1_router.include_router(cms_router, prefix="/cms", tags=["CMS Content"])
+v1_router.include_router(builder_router, prefix="/builder", tags=["Visual Builder Core"])
 v1_router.include_router(notifications_router, prefix="/notifications", tags=["Notifications"])
 v1_router.include_router(analytics_router, prefix="/analytics", tags=["Performance Metrics"])
 v1_router.include_router(chat_router, prefix="/chat", tags=["Direct Communication"])
@@ -87,5 +126,36 @@ v1_router.include_router(contests_router)
 v1_router.include_router(gigs_router)
 v1_router.include_router(habits_router)
 v1_router.include_router(feed_router)
+v1_router.include_router(social_feed_router, prefix="/feed", tags=["Social Feed Posts"])
 v1_router.include_router(portfolio_router)
 v1_router.include_router(workspaces_router)
+
+from modules.workflow.router import router as workflow_router
+v1_router.include_router(workflow_router, prefix="/workflows", tags=["Workflow Automation"])
+
+from modules.operations.health_router import router as health_router
+v1_router.include_router(health_router, prefix="/ops", tags=["Operations & Health"])
+
+from modules.design.router import router as design_router
+v1_router.include_router(design_router, prefix="/design", tags=["Design System"])
+
+from modules.media.router import router as media_router
+v1_router.include_router(media_router, prefix="/media", tags=["Media DAM"])
+
+from modules.collaboration.router import router as collaboration_router
+v1_router.include_router(collaboration_router, prefix="/collaboration", tags=["Collaboration System"])
+
+from modules.delivery.router import router as delivery_router
+v1_router.include_router(delivery_router, prefix="/delivery", tags=["Content Delivery & Routing"])
+
+from modules.ats.router import router as ats_router
+v1_router.include_router(ats_router, prefix="/ats", tags=["Applicant Tracking System (ATS)"])
+
+from modules.crm.router import router as crm_router
+v1_router.include_router(crm_router, prefix="/crm", tags=["Talent CRM"])
+
+from modules.talent.router import router as talent_router
+v1_router.include_router(talent_router, prefix="/talent", tags=["Talent Identity Platform"])
+
+from modules.learning.router import router as learning_router
+v1_router.include_router(learning_router, prefix="/learning", tags=["Learning & Career Intelligence"])

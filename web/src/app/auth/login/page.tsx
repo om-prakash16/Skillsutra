@@ -10,13 +10,16 @@ import Link from "next/link"
 import { Briefcase, Loader2, Eye, EyeOff } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import GoogleLoginButton from "@/components/auth/GoogleLoginButton"
+import MicrosoftLoginButton from "@/components/auth/MicrosoftLoginButton"
 
 export default function LoginPage() {
-    const { signInWithGoogle, signInWithGitHub, loginUser, isLoading } = useAuth()
-    const [loadingProvider, setLoadingProvider] = useState<"google" | "github" | "email" | null>(null)
+    const { signInWithGoogle, signInWithGitHub, loginUser, sendSignupOtp, loginWithOtp, isLoading } = useAuth()
+    const [loadingProvider, setLoadingProvider] = useState<"google" | "github" | "email" | "otp" | null>(null)
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [otpCode, setOtpCode] = useState("")
     const [showPassword, setShowPassword] = useState(false)
+    const [authMode, setAuthMode] = useState<"password" | "request_otp" | "verify_otp">("password")
 
     const handleLogin = async (provider: "google" | "github") => {
         setLoadingProvider(provider)
@@ -39,6 +42,32 @@ export default function LoginPage() {
         setLoadingProvider("email")
         try {
             await loginUser({ email_or_username: email, password })
+        } catch {
+            setLoadingProvider(null)
+        }
+    }
+
+    const handleSendOtp = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setLoadingProvider("otp")
+        try {
+            await sendSignupOtp(email)
+            setAuthMode("verify_otp")
+            setLoadingProvider(null)
+        } catch {
+            setLoadingProvider(null)
+        }
+    }
+
+    const handleVerifyOtp = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setLoadingProvider("otp")
+        try {
+            const res = await loginWithOtp(email, otpCode)
+            if (res?.needs_setup) {
+                // For new users without setup completed
+                window.location.href = `/auth/setup?token=${res.setup_token}`
+            }
         } catch {
             setLoadingProvider(null)
         }
@@ -87,6 +116,11 @@ export default function LoginPage() {
                         </Button>
                     </motion.div>
 
+                    {/* Microsoft */}
+                    <div className="w-full">
+                        <MicrosoftLoginButton role="user" intent="login" />
+                    </div>
+
                     {/* Divider */}
                     <div className="pt-4">
                         <div className="relative">
@@ -95,62 +129,181 @@ export default function LoginPage() {
                         </div>
                     </div>
 
-                    {/* Email/Password Form */}
-                    <form onSubmit={handleEmailLogin} className="space-y-4 pt-2">
-                        <div className="space-y-2">
-                            <Label className="text-micro text-muted-foreground/80 ml-2">Email Address</Label>
-                            <Input
-                                type="email"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                className="h-12 glass border-border rounded-xl"
-                                placeholder="you@example.com"
-                                disabled={isDisabled}
-                            />
-                        </div>
-                        
-                        <div className="space-y-2">
-                            <div className="flex justify-between items-center ml-2 mr-2">
-                                <Label className="text-micro text-muted-foreground/80">Password</Label>
-                                <Link href="/auth/forgot-password" className="text-[10px] text-muted-foreground hover:text-primary transition-colors">
-                                    Forgot?
-                                </Link>
-                            </div>
-                            <div className="relative">
-                                <Input
-                                    type={showPassword ? "text" : "password"}
-                                    required
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="h-12 glass border-border rounded-xl pr-12"
-                                    placeholder="••••••••"
-                                    disabled={isDisabled}
-                                />
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    className="absolute right-1 top-1 h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-transparent"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    disabled={isDisabled}
-                                >
-                                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                </Button>
-                            </div>
-                        </div>
-
-                        <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className="pt-2">
-                            <Button
-                                type="submit"
-                                variant="premium"
-                                className="w-full h-12 rounded-xl text-sm shadow-premium font-bold tracking-widest uppercase"
-                                disabled={isDisabled || !email || !password}
+                    {/* Dynamic Auth Forms */}
+                    <AnimatePresence mode="wait">
+                        {authMode === "password" && (
+                            <motion.form 
+                                key="password-form"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                onSubmit={handleEmailLogin} 
+                                className="space-y-4 pt-2"
                             >
-                                {loadingProvider === "email" ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "SIGN IN WITH EMAIL"}
-                            </Button>
-                        </motion.div>
-                    </form>
+                                <div className="space-y-2">
+                                    <Label className="text-micro text-muted-foreground/80 ml-2">Email Address</Label>
+                                    <Input
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="h-12 glass border-border rounded-xl"
+                                        placeholder="you@example.com"
+                                        disabled={isDisabled}
+                                    />
+                                </div>
+                                
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center ml-2 mr-2">
+                                        <Label className="text-micro text-muted-foreground/80">Password</Label>
+                                        <Link href="/auth/forgot-password" className="text-[10px] text-muted-foreground hover:text-primary transition-colors">
+                                            Forgot?
+                                        </Link>
+                                    </div>
+                                    <div className="relative">
+                                        <Input
+                                            type={showPassword ? "text" : "password"}
+                                            required
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            className="h-12 glass border-border rounded-xl pr-12"
+                                            placeholder="••••••••"
+                                            disabled={isDisabled}
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            className="absolute right-1 top-1 h-10 w-10 text-muted-foreground hover:text-foreground hover:bg-transparent"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            disabled={isDisabled}
+                                        >
+                                            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className="pt-2">
+                                    <Button
+                                        type="submit"
+                                        variant="premium"
+                                        className="w-full h-12 rounded-xl text-sm shadow-premium font-bold tracking-widest uppercase"
+                                        disabled={isDisabled || !email || !password}
+                                    >
+                                        {loadingProvider === "email" ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "SIGN IN WITH EMAIL"}
+                                    </Button>
+                                </motion.div>
+                                
+                                <div className="text-center pt-2">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setAuthMode("request_otp")}
+                                        className="text-xs text-primary/80 hover:text-primary font-medium transition-colors"
+                                    >
+                                        Sign in with One-Time Password instead
+                                    </button>
+                                </div>
+                            </motion.form>
+                        )}
+
+                        {authMode === "request_otp" && (
+                            <motion.form 
+                                key="request-otp-form"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                onSubmit={handleSendOtp} 
+                                className="space-y-4 pt-2"
+                            >
+                                <div className="space-y-2">
+                                    <Label className="text-micro text-muted-foreground/80 ml-2">Email Address</Label>
+                                    <Input
+                                        type="email"
+                                        required
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        className="h-12 glass border-border rounded-xl"
+                                        placeholder="you@example.com"
+                                        disabled={isDisabled}
+                                    />
+                                </div>
+                                <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className="pt-2">
+                                    <Button
+                                        type="submit"
+                                        variant="premium"
+                                        className="w-full h-12 rounded-xl text-sm shadow-premium font-bold tracking-widest uppercase"
+                                        disabled={isDisabled || !email}
+                                    >
+                                        {loadingProvider === "otp" ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "SEND ONE-TIME PASSWORD"}
+                                    </Button>
+                                </motion.div>
+                                <div className="text-center pt-2">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setAuthMode("password")}
+                                        className="text-xs text-muted-foreground hover:text-foreground font-medium transition-colors"
+                                    >
+                                        Back to Password Login
+                                    </button>
+                                </div>
+                            </motion.form>
+                        )}
+
+                        {authMode === "verify_otp" && (
+                            <motion.form 
+                                key="verify-otp-form"
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 20 }}
+                                onSubmit={handleVerifyOtp} 
+                                className="space-y-4 pt-2"
+                            >
+                                <div className="space-y-2">
+                                    <div className="flex justify-between items-center ml-2 mr-2">
+                                        <Label className="text-micro text-muted-foreground/80">Enter 6-Digit Code</Label>
+                                        <span className="text-[10px] text-primary">Sent to {email}</span>
+                                    </div>
+                                    <Input
+                                        type="text"
+                                        required
+                                        maxLength={6}
+                                        value={otpCode}
+                                        onChange={(e) => setOtpCode(e.target.value)}
+                                        className="h-14 glass border-border rounded-xl text-center text-2xl tracking-[0.5em] font-mono"
+                                        placeholder="••••••"
+                                        disabled={isDisabled}
+                                    />
+                                </div>
+                                <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} className="pt-2">
+                                    <Button
+                                        type="submit"
+                                        variant="premium"
+                                        className="w-full h-12 rounded-xl text-sm shadow-premium font-bold tracking-widest uppercase"
+                                        disabled={isDisabled || otpCode.length < 6}
+                                    >
+                                        {loadingProvider === "otp" ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : "VERIFY & LOGIN"}
+                                    </Button>
+                                </motion.div>
+                                <div className="flex justify-between items-center pt-2 px-2">
+                                    <button 
+                                        type="button"
+                                        onClick={() => setAuthMode("request_otp")}
+                                        className="text-[10px] text-muted-foreground hover:text-foreground font-medium transition-colors"
+                                    >
+                                        Change Email
+                                    </button>
+                                    <button 
+                                        type="button"
+                                        onClick={handleSendOtp}
+                                        className="text-[10px] text-primary/80 hover:text-primary font-medium transition-colors"
+                                        disabled={isDisabled}
+                                    >
+                                        Resend Code
+                                    </button>
+                                </div>
+                            </motion.form>
+                        )}
+                    </AnimatePresence>
                 </div>
             </CardContent>
             <CardFooter className="justify-center pb-8 pt-0 text-micro text-muted-foreground/60">

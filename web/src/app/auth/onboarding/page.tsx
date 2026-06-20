@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Loader2, UserCircle } from "lucide-react";
 import { toast } from "sonner";
 import { userApi } from "@/lib/api/user-api";
+import { API_BASE_URL } from "@/lib/api/api-client";
 
 export default function OnboardingPage() {
     const { user, setAuthSession, token } = useAuth();
@@ -29,12 +30,15 @@ export default function OnboardingPage() {
                 redirectUser(user.role);
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const redirectUser = (role: string) => {
-        if (role === "admin") router.push("/admin");
+        if (role === "super_admin" || role === "admin") router.push("/admin");
         else if (role === "company") router.push("/company/dashboard");
-        else router.push("/user/dashboard");
+        else if (role === "mentor") router.push("/mentor");
+        else if (role === "moderator") router.push("/moderation");
+        else router.push("/feed");
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -60,7 +64,7 @@ export default function OnboardingPage() {
             await userApi.profile.update(updatePayload);
             
             // Re-fetch me
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/auth/me`, {
+            const res = await fetch(`${API_BASE_URL}/auth/me`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const userData = await res.json();

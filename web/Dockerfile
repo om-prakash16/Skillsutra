@@ -1,20 +1,40 @@
-FROM node:20-alpine
+FROM node:20-alpine AS base
 
+# Install dependencies only when needed
+FROM base AS deps
 WORKDIR /app
+COPY package.json package-lock.json* ./
+RUN npm ci
 
-# Install dependencies
-COPY web/package.json web/package-lock.json* ./
-RUN npm ci || npm install
-
-# Copy application code
-COPY web/ .
-COPY .env .
-
-# Build application
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+# Set Next.js telemetry to disabled
+ENV NEXT_TELEMETRY_DISABLED 1
+# Build the Next.js app
 RUN npm run build
 
-# Expose port
-EXPOSE 3000
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
 
-# Start application
-CMD ["npm", "start"]
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy the build output
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]

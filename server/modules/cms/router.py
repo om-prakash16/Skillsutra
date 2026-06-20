@@ -1,141 +1,140 @@
-from fastapi import APIRouter, Depends
-from typing import Dict, Any, Optional, List
-from pydantic import BaseModel
+from fastapi import APIRouter, Depends, HTTPException, Body
+from sqlalchemy.orm import Session
+from sqlalchemy.orm.attributes import flag_modified
+from typing import Dict, Any, List
 import uuid
 
-from core.response import success_response
-from modules.auth.core.guards import require_admin
-from core.db import get_db
+from core.database import get_db_session
+from models.cms import CMSCollection, CMSField, CMSEntry, ContentStatus
+from api.v1.auth_router import get_current_user
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
 router = APIRouter()
 
-# --- Pydantic Models ---
+from core.response import success_response
 
-class SiteContentCreate(BaseModel):
-    section_key: str
-    content_key: str
-    content_value: str
-    metadata: Optional[Dict[str, Any]] = {}
-    is_active: bool = True
-
-class SiteContentUpdate(BaseModel):
-    content_value: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
-    is_active: Optional[bool] = None
-
-class CMSArticleCreate(BaseModel):
-    title: str
-    slug: str
-    excerpt: str
-    content: str
-    category: str = "General"
-    featured_image: Optional[str] = None
-    read_time: str = "5 min"
-    is_published: bool = False
-
-class CMSArticleUpdate(BaseModel):
-    title: Optional[str] = None
-    slug: Optional[str] = None
-    excerpt: Optional[str] = None
-    content: Optional[str] = None
-    category: Optional[str] = None
-    featured_image: Optional[str] = None
-    is_published: Optional[bool] = None
-
-# --- Pages & Banners API (site_content) ---
-
-@router.get("")
-async def get_all_cms_content():
-    """Fetch all active CMS Site Content (Public)."""
-    db = get_db()
-    res = db.table("site_content").select("*").eq("is_active", True).execute()
-    return success_response(data=res.data if res.data else [])
-
-@router.get("/pages")
-async def get_cms_pages(admin=Depends(require_admin)):
-    """Fetch all CMS Site Content (excluding banners)."""
-    db = get_db()
-    res = db.table("site_content").select("*").neq("section_key", "banner").order("updated_at", desc=True).execute()
-    return success_response(data=res.data if res.data else [])
-
-@router.get("/banners")
-async def get_cms_banners(admin=Depends(require_admin)):
-    """Fetch all CMS Banners."""
-    db = get_db()
-    res = db.table("site_content").select("*").eq("section_key", "banner").order("updated_at", desc=True).execute()
-    return success_response(data=res.data if res.data else [])
-
-@router.get("/content/{content_id}")
-async def get_site_content(content_id: str, admin=Depends(require_admin)):
-    db = get_db()
-    res = db.table("site_content").select("*").eq("id", content_id).single().execute()
-    return success_response(data=res.data)
-
-@router.post("/content")
-async def create_site_content(payload: SiteContentCreate, admin=Depends(require_admin)):
-    db = get_db()
-    data = payload.model_dump()
-    data["updated_by"] = admin["id"]
-    res = db.table("site_content").insert(data).execute()
-    return success_response(data=res.data[0] if res.data else {}, message="Content created successfully")
-
-@router.put("/content/{content_id}")
-async def update_site_content(content_id: str, payload: SiteContentUpdate, admin=Depends(require_admin)):
-    db = get_db()
-    update_data = {k: v for k, v in payload.model_dump().items() if v is not None}
-    update_data["updated_at"] = "now()"
-    update_data["updated_by"] = admin["id"]
-    res = db.table("site_content").update(update_data).eq("id", content_id).execute()
-    return success_response(data=res.data[0] if res.data else {}, message="Content updated successfully")
-
-@router.delete("/content/{content_id}")
-async def delete_site_content(content_id: str, admin=Depends(require_admin)):
-    db = get_db()
-    db.table("site_content").delete().eq("id", content_id).execute()
-    return success_response(data=None, message="Content deleted successfully")
-
-# --- Articles API (blog_posts) ---
-
-@router.get("/articles")
-async def get_cms_articles(admin=Depends(require_admin)):
-    """Fetch all CMS Articles."""
-    db = get_db()
-    res = db.table("blog_posts").select("*").order("created_at", desc=True).execute()
-    return success_response(data=res.data if res.data else [])
-
-@router.get("/articles/{article_id}")
-async def get_cms_article(article_id: str, admin=Depends(require_admin)):
-    db = get_db()
-    res = db.table("blog_posts").select("*").eq("id", article_id).single().execute()
-    return success_response(data=res.data)
-
-@router.post("/articles")
-async def create_cms_article(payload: CMSArticleCreate, admin=Depends(require_admin)):
-    db = get_db()
-    data = payload.model_dump()
-    data["author_id"] = admin["id"]
-    data["author_name"] = admin.get("full_name", admin.get("username", "Admin"))
-    if data.get("is_published"):
-        data["published_at"] = "now()"
-    res = db.table("blog_posts").insert(data).execute()
-    return success_response(data=res.data[0] if res.data else {}, message="Article created successfully")
-
-@router.put("/articles/{article_id}")
-async def update_cms_article(article_id: str, payload: CMSArticleUpdate, admin=Depends(require_admin)):
-    db = get_db()
-    update_data = {k: v for k, v in payload.model_dump().items() if v is not None}
-    update_data["updated_at"] = "now()"
-    if update_data.get("is_published"):
-        update_data["published_at"] = "now()"
-    res = db.table("blog_posts").update(update_data).eq("id", article_id).execute()
-    return success_response(data=res.data[0] if res.data else {}, message="Article updated successfully")
-
-@router.delete("/articles/{article_id}")
-async def delete_cms_article(article_id: str, admin=Depends(require_admin)):
-    db = get_db()
-    db.table("blog_posts").delete().eq("id", article_id).execute()
-    return success_response(data=None, message="Article deleted successfully")
-
-@router.get("/taxonomy")
-async def get_cms_taxonomy(admin=Depends(require_admin)):
+@router.get("", tags=["CMS Content"])
+@router.get("/", tags=["CMS Content"], include_in_schema=False)
+async def get_all_legacy_cms():
+    """Stub for legacy CMSContext to prevent 404 errors on the frontend."""
     return success_response(data=[])
+
+# --- Collections API ---
+
+@router.get("/collections", tags=["CMS Schema"])
+async def get_collections(db: AsyncSession = Depends(get_db_session)):
+    """Get all registered dynamic CMS collections."""
+    result = await db.execute(select(CMSCollection))
+    cols = result.scalars().all()
+    return {
+        "success": True, 
+        "data": [{"id": c.id, "name": c.name, "slug": c.slug, "description": c.description, "is_singleton": c.is_singleton} for c in cols]
+    }
+
+@router.post("/collections", tags=["CMS Schema"])
+async def create_collection(payload: Dict[str, Any], db: AsyncSession = Depends(get_db_session)):
+    """Create a new dynamic CMS collection."""
+    col = CMSCollection(
+        name=payload["name"],
+        slug=payload["slug"],
+        description=payload.get("description", ""),
+        is_singleton=payload.get("is_singleton", False)
+    )
+    db.add(col)
+    await db.commit()
+    await db.refresh(col)
+    return {"success": True, "data": {"id": col.id, "name": col.name, "slug": col.slug}}
+
+# --- Fields API ---
+
+@router.get("/collections/{collection_id}/fields", tags=["CMS Schema"])
+async def get_collection_fields(collection_id: str, db: AsyncSession = Depends(get_db_session)):
+    """Get fields for a specific collection."""
+    result = await db.execute(select(CMSField).filter(CMSField.collection_id == collection_id))
+    fields = result.scalars().all()
+    return {
+        "success": True, 
+        "data": [{"id": f.id, "name": f.name, "machine_name": f.machine_name, "field_type": f.field_type, "settings": f.settings} for f in fields]
+    }
+
+@router.post("/collections/{collection_id}/fields", tags=["CMS Schema"])
+async def create_collection_field(collection_id: str, payload: Dict[str, Any], db: AsyncSession = Depends(get_db_session)):
+    """Add a new field to a collection."""
+    field = CMSField(
+        collection_id=collection_id,
+        name=payload["name"],
+        machine_name=payload["machine_name"],
+        field_type=payload["field_type"],
+        settings=payload.get("settings", {}),
+        is_required=payload.get("is_required", False),
+        is_unique=payload.get("is_unique", False)
+    )
+    db.add(field)
+    await db.commit()
+    return {"success": True, "data": {"id": field.id, "machine_name": field.machine_name}}
+
+# --- Generic Headless Entries API ---
+
+@router.get("/entries/{collection_slug}", tags=["CMS Content"])
+async def get_entries(collection_slug: str, db: AsyncSession = Depends(get_db_session)):
+    """Fetch all entries for a given dynamic collection slug."""
+    col_result = await db.execute(select(CMSCollection).filter(CMSCollection.slug == collection_slug))
+    col = col_result.scalars().first()
+    if not col:
+        raise HTTPException(status_code=404, detail="Collection not found")
+        
+    entries_result = await db.execute(select(CMSEntry).filter(CMSEntry.collection_id == col.id))
+    entries = entries_result.scalars().all()
+    
+    # We flatten the response so `data` properties are top-level for standard API consumption
+    results = []
+    for e in entries:
+        flat = {"id": e.id, "status": e.status, "author_id": e.author_id, **(e.data or {})}
+        results.append(flat)
+        
+    return {"success": True, "data": results}
+
+@router.post("/entries/{collection_slug}", tags=["CMS Content"])
+async def create_entry(collection_slug: str, payload: Dict[str, Any] = Body(...), db: AsyncSession = Depends(get_db_session), user: dict = Depends(get_current_user)):
+    """Create a new dynamic entry."""
+    col_result = await db.execute(select(CMSCollection).filter(CMSCollection.slug == collection_slug))
+    col = col_result.scalars().first()
+    if not col:
+        raise HTTPException(status_code=404, detail="Collection not found")
+        
+    # TODO: Add dynamic validation against CMSField definitions here
+    
+    entry = CMSEntry(
+        collection_id=col.id,
+        status=payload.pop("status", ContentStatus.DRAFT.value),
+        author_id=user["id"],
+        data=payload
+    )
+    db.add(entry)
+    await db.commit()
+    await db.refresh(entry)
+    
+    return {"success": True, "data": {"id": entry.id, "status": entry.status, **(entry.data or {})}}
+
+@router.put("/entries/{collection_slug}/{entry_id}", tags=["CMS Content"])
+async def update_entry(collection_slug: str, entry_id: str, payload: Dict[str, Any] = Body(...), db: AsyncSession = Depends(get_db_session)):
+    """Update a dynamic entry."""
+    entry_result = await db.execute(select(CMSEntry).filter(CMSEntry.id == entry_id))
+    entry = entry_result.scalars().first()
+    if not entry:
+        raise HTTPException(status_code=404, detail="Entry not found")
+        
+    if "status" in payload:
+        entry.status = payload.pop("status")
+        
+    # Merge JSONB
+    current_data = entry.data or {}
+    current_data.update(payload)
+    entry.data = current_data
+    
+    # Force SQLAlchemy to detect JSON mutation
+    flag_modified(entry, "data")
+    
+    await db.commit()
+    return {"success": True, "data": {"id": entry.id, "status": entry.status, **(entry.data or {})}}

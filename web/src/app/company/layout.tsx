@@ -2,8 +2,11 @@
 
 import { Sidebar } from "@/components/layout/sidebar"
 import { useRoleGuard } from "@/hooks/useRoleGuard"
-import { Loader2, Building2 } from "lucide-react"
+import { Loader2, Building2, Menu } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
+import { CompanyProvider } from "@/components/providers/company-provider"
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button"
 
 export default function CompanyLayout({
     children,
@@ -57,36 +60,56 @@ export default function CompanyLayout({
     }
 
     return (
-        <div className="flex min-h-screen bg-background text-slate-50 selection:bg-primary/40 overflow-hidden">
-            {/* Ambient Background */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                <div className="absolute top-[10%] left-[-5%] w-[50%] h-[50%] bg-primary/[0.04] blur-[160px] rounded-full" />
-                <div className="absolute bottom-[5%] right-[-10%] w-[60%] h-[60%] bg-blue-500/[0.03] blur-[180px] rounded-full" />
-            </div>
-
-            <Sidebar role="company" className="hidden lg:flex" />
-            
-            <main className="flex-1 w-full pt-16 relative scroll-smooth custom-scrollbar z-10">
-                <div className="sticky top-0 w-full h-8 bg-gradient-to-b from-[#030712] to-transparent z-40 pointer-events-none opacity-60" />
-                
-                <div className="w-full px-4 py-4 md:px-8 md:py-8 max-w-[1600px] mx-auto">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ 
-                                duration: 0.6, 
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                        >
-                            {children}
-                        </motion.div>
-                    </AnimatePresence>
+        <CompanyProvider>
+            <div className="flex min-h-screen bg-background text-slate-50 selection:bg-primary/40 overflow-hidden">
+                {/* Ambient Background */}
+                <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+                    <div className="absolute top-[10%] left-[-5%] w-[50%] h-[50%] bg-primary/[0.04] blur-[160px] rounded-full" />
+                    <div className="absolute bottom-[5%] right-[-10%] w-[60%] h-[60%] bg-blue-500/[0.03] blur-[180px] rounded-full" />
                 </div>
 
-                <div className="sticky bottom-0 w-full h-8 bg-gradient-to-t from-[#030712] to-transparent z-30 pointer-events-none opacity-40" />
-            </main>
-        </div>
+                <Sidebar role="company" className="hidden lg:flex" />
+                
+                <main className="flex-1 w-full pt-0 lg:pt-16 relative scroll-smooth custom-scrollbar z-10 flex flex-col h-screen overflow-y-auto">
+                    {/* Mobile Header */}
+                    <div className="lg:hidden flex items-center justify-between p-4 border-b border-border glass sticky top-0 z-50">
+                        <div className="flex items-center gap-2">
+                            <Building2 className="w-5 h-5 text-primary" />
+                            <span className="font-black tracking-tighter text-gradient">Recruiter Hub</span>
+                        </div>
+                        <Sheet>
+                            <SheetTrigger asChild>
+                                <Button variant="ghost" size="icon" className="shrink-0">
+                                    <Menu className="w-5 h-5" />
+                                </Button>
+                            </SheetTrigger>
+                            <SheetContent side="left" className="p-0 w-72 bg-background border-r border-border">
+                                <Sidebar role="company" variant="mobile" />
+                            </SheetContent>
+                        </Sheet>
+                    </div>
+
+                    <div className="hidden lg:block sticky top-0 w-full h-8 bg-gradient-to-b from-[#030712] to-transparent z-40 pointer-events-none opacity-60" />
+                    
+                    <div className="w-full px-4 py-4 md:px-8 md:py-8 max-w-[1600px] mx-auto">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ 
+                                    duration: 0.6, 
+                                    ease: [0.22, 1, 0.36, 1],
+                                }}
+                            >
+                                {children}
+                            </motion.div>
+                        </AnimatePresence>
+                    </div>
+
+                    <div className="sticky bottom-0 w-full h-8 bg-gradient-to-t from-[#030712] to-transparent z-30 pointer-events-none opacity-40" />
+                </main>
+            </div>
+        </CompanyProvider>
     )
 }

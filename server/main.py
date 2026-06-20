@@ -24,7 +24,8 @@ logger = ProtocolLogger.get_logger("main")
 
 from db.engine import init_db
 
-from core.websocket import manager
+from core.websocket import manager as core_ws_manager
+from modules.chat.ws_manager import manager as chat_ws_manager
 import asyncio
 
 @asynccontextmanager
@@ -33,15 +34,17 @@ async def lifespan(app: FastAPI):
     await init_db()
     
     # Start Redis Pub/Sub WebSocket Backplane listener
-    redis_task = asyncio.create_task(manager.subscribe_to_redis("chat_broadcasts"))
-    # Start WebSocket heartbeat loop to reap ghost connections
-    heartbeat_task = asyncio.create_task(manager.heartbeat_loop())
+    redis_task = asyncio.create_task(core_ws_manager.subscribe_to_redis("chat_broadcasts"))
+    # Start WebSocket heartbeat loops to reap ghost connections
+    heartbeat_task = asyncio.create_task(core_ws_manager.heartbeat_loop())
+    chat_heartbeat_task = asyncio.create_task(chat_ws_manager.heartbeat_loop())
     
     yield
     
     logger.info(f"Shutting down {settings.PROJECT_NAME}...")
     redis_task.cancel()
     heartbeat_task.cancel()
+    chat_heartbeat_task.cancel()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -154,11 +157,12 @@ app.include_router(v1_router, prefix=settings.API_V1_STR)
 
 # --- Instrumentation ---
 try:
-    from prometheus_fastapi_instrumentator import Instrumentator
-    Instrumentator().instrument(app).expose(app)
+    # from prometheus_fastapi_instrumentator import Instrumentator
+    # Instrumentator().instrument(app).expose(app)
     
-    from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-    FastAPIInstrumentor.instrument_app(app)
+    # from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+    # FastAPIInstrumentor.instrument_app(app)
+    pass
 except ImportError:
     pass
 

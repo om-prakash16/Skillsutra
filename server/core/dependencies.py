@@ -5,15 +5,17 @@ from core.exceptions import AuthorizationError, ExternalServiceError
 from modules.auth.core.service import get_current_user, get_optional_current_user
 from core.database import get_db_session
 
+from core.db import get_db as get_db_instance
+
 async def get_db():
-    """Returns the custom database client instance (Legacy)."""
-    if not engine.db_client:
+    """Returns the PostgresAdapter instance for database queries."""
+    adapter = get_db_instance()
+    if not adapter:
         raise ExternalServiceError(
             message="Database connection is unavailable",
             details={"service": "database"}
         )
-    return engine.db_client
-
+    return adapter
 async def get_current_user_id(user: Dict[str, Any] = Depends(get_current_user)) -> str:
     """Returns the ID of the currently authenticated user."""
     user_id = user.get("id")

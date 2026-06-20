@@ -57,10 +57,12 @@ class ProjectResponse(ProjectBase):
         from_attributes = True
 
 class ProfileBase(BaseModel):
+    full_name: Optional[str] = None
     headline: Optional[str] = None
     email: Optional[str] = None
     phone: Optional[str] = None
     about: Optional[str] = None
+    location: Optional[str] = None
     resume_url: Optional[str] = None
     banner_url: Optional[str] = None
     visibility_mode: str = "PUBLIC"

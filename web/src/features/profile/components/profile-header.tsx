@@ -20,11 +20,54 @@ const getBrandConfig = (platform: string) => {
     return { icon: LinkIcon, color: 'bg-primary/10 text-primary hover:bg-primary/20', label: platform };
 };
 
-export function ProfileHeader({ user, socialLinks = [], isEditing, isOwner, onUpdateAvatar, action }: any) {
+export function ProfileHeader({ user, socialLinks = [], isEditing, isOwner, onUpdateAvatar, onUpdateBanner, action }: any) {
   return (
     <div className="relative p-6 md:p-10 glass border-border/50 rounded-[2rem] md:rounded-[3rem] overflow-hidden group">
-      <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50" />
+      {user.banner ? (
+        <div 
+            className="absolute inset-0 bg-cover bg-center z-0 opacity-40 transition-opacity duration-500 group-hover:opacity-50" 
+            style={{ backgroundImage: `url(${user.banner})` }} 
+        />
+      ) : (
+        <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-primary/50 to-transparent opacity-50" />
+      )}
+      <div className="absolute inset-0 bg-background/60 z-0 pointer-events-none" />
       
+      {(isEditing || isOwner) && (
+          <label className="absolute top-6 right-6 z-30 flex items-center gap-2 px-4 py-2 bg-black/60 rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity backdrop-blur-md border border-white/10 hover:bg-black/80">
+              <span className="text-[10px] font-black uppercase tracking-widest text-white">Change Banner</span>
+              <input 
+                  type="file" 
+                  accept="image/*" 
+                  className="hidden" 
+                  onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      const formData = new FormData();
+                      formData.append("file", file);
+                      
+                      const tempUrl = URL.createObjectURL(file);
+                      onUpdateBanner?.(tempUrl);
+                      
+                      try {
+                          const { userApi } = await import("@/lib/api/user-api");
+                          const res = await userApi.profile.uploadFile(formData);
+                          if (res && res.url) {
+                              onUpdateBanner?.(res.url);
+                              try {
+                                  await userApi.profile.update({ profile: { banner_url: res.url } });
+                              } catch (updateErr) {
+                                  console.error("Backend update failed", updateErr);
+                              }
+                          }
+                      } catch (err) {
+                          console.error("Upload failed", err);
+                      }
+                  }} 
+              />
+          </label>
+      )}
+
       <div className="flex flex-col md:flex-row gap-12 md:gap-16 items-start md:items-center relative z-10">
         <div className="relative group/avatar">
             <div className="absolute -inset-4 bg-primary/20 blur-2xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />

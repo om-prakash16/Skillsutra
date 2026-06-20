@@ -1,27 +1,52 @@
-# 'Best Hiring Tool' Project Makefile
+.PHONY: help up down logs build test migrate seed format clean
 
-# Install all dependencies
-install:
-	cd web && npm install
-	cd server && pip install -r requirements.txt
+# Default goal
+help:
+	@echo "SkillSutra Enterprise Management Commands:"
+	@echo ""
+	@echo "  make up         - Start all services (Backend, Frontend, DB, Redis) via Docker Compose"
+	@echo "  make down       - Stop and remove all services"
+	@echo "  make logs       - Tail logs for all services"
+	@echo "  make build      - Rebuild Docker images"
+	@echo "  make test       - Run Pytest (Backend) and Jest (Frontend) suites"
+	@echo "  make migrate    - Run Alembic database migrations"
+	@echo "  make seed       - Seed the database with mock mentors and jobs"
+	@echo "  make clean      - Remove __pycache__, node_modules, and dist folders"
+	@echo ""
 
-# Start both services locally (for development)
-# This uses the specific ports defined: 3011 (Web) and 8011 (Server)
-dev:
-	# Running web on 3000 and server on 8000
-	powershell -Command "Start-Process cmd -ArgumentList '/k cd web && npm run dev'"
-	powershell -Command "Start-Process cmd -ArgumentList '/k cd server && uvicorn main:app --reload --port 8000'"
-
-# Docker commands
-docker-up:
+up:
 	docker-compose up -d
 
-docker-down:
+down:
 	docker-compose down
 
-docker-logs:
+logs:
 	docker-compose logs -f
 
-# Clean up build artifacts
+build:
+	docker-compose build
+
+test:
+	@echo "==> Running Backend Tests (Pytest)..."
+	cd server && pytest tests/
+	@echo "==> Running Frontend Tests (Jest)..."
+	cd web && npm run test
+
+migrate:
+	@echo "==> Upgrading PostgreSQL Database Schema..."
+	cd server && alembic upgrade head
+
+seed:
+	@echo "==> Seeding Development Database..."
+	cd server && python scripts/seed_dummy_data.py
+
+format:
+	@echo "==> Formatting Python Backend..."
+	cd server && black . && isort .
+	@echo "==> Formatting React Frontend..."
+	cd web && npm run lint
+
 clean:
-	rm -rf web/.next web/node_modules server/__pycache__ server/venv
+	find . -type d -name "__pycache__" -exec rm -rf {} +
+	find . -type f -name "*.pyc" -delete
+	rm -rf web/node_modules web/.next

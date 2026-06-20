@@ -110,6 +110,7 @@ export function CommandSearch() {
         if (isAdmin) return [...adminActions, ...staticActions]
         if (isCompany) return [...recruiterActions, ...staticActions]
         return staticActions
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isAdmin, isCompany])
 
     const handleSearch = async (val: string) => {

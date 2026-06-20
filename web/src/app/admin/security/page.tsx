@@ -16,7 +16,7 @@ export default function AdminSecurityDashboard() {
     const fetchSecurityData = async () => {
       try {
         const eventsRes = await api.get('/admin/security-events');
-        setSecurityEvents(eventsRes || []);
+        setSecurityEvents(eventsRes.data || []);
       } catch (err) {
         console.error("Failed to fetch security events", err);
       } finally {
@@ -25,6 +25,16 @@ export default function AdminSecurityDashboard() {
     };
     fetchSecurityData();
   }, []);
+
+  const handleLockdown = async () => {
+    try {
+        await api.post('/admin/lockdown');
+        alert("Platform Lockdown Initiated");
+    } catch (e) {
+        console.error(e);
+        alert("Failed to initiate lockdown");
+    }
+  };
 
   const displayEvents = securityEvents.length > 0 ? securityEvents.map(e => ({
       time: new Date(e.created_at).toLocaleString(),
@@ -55,9 +65,9 @@ export default function AdminSecurityDashboard() {
           </p>
         </div>
         <div className="flex gap-4">
-          <Button size="lg" variant="outline" className="rounded-xl font-bold border-rose-500/50 text-rose-500 hover:bg-rose-500/10">
-            <Lock className="w-5 h-5 mr-2" /> Trigger Lockdown
-          </Button>
+            <Button onClick={handleLockdown} size="lg" variant="outline" className="rounded-xl font-bold border-rose-500/50 text-rose-500 hover:bg-rose-500/10">
+              <Lock className="w-5 h-5 mr-2" /> Trigger Lockdown
+            </Button>
         </div>
       </div>
 

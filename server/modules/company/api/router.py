@@ -4,6 +4,7 @@ from core.response import success_response
 from core.dependencies import get_db, get_current_user_id, get_company_id
 from core.redis import get_redis_client
 import json
+import uuid
 from modules.auth.schemas.models import CompanyCreate, CompanyInvite, ApiKeyCreate
 from modules.activity.service import record_event
 from modules.companies.enterprise_api_service import EnterpriseApiService
@@ -18,7 +19,7 @@ async def get_company_profile(
     """Fetch the company profile for the authenticated user's company."""
     db = await get_db()
     # Find which company this user belongs to
-    member_res = db.table("company_members").select("company_id, company_role").eq("user_id", user_id).execute()
+    member_res = await db.table("company_members").select("company_id, company_role").eq("user_id", user_id).execute()
     if not member_res.data:
         return success_response(data=None, message="No company profile found")
     
@@ -38,7 +39,7 @@ async def get_company_profile(
         pass
 
     # Fetch company details
-    company_res = db.table("companies").select("*").eq("id", company_id).single().execute()
+    company_res = await db.table("companies").select("*").eq("id", company_id).single().execute()
     
     if not company_res.data:
         return success_response(data=None, message="Company not found")
@@ -64,7 +65,7 @@ async def update_company_profile(
     """Update the company profile for the authenticated user's company."""
     db = await get_db()
     # Find which company this user belongs to
-    member_res = db.table("company_members").select("company_id, company_role").eq("user_id", user_id).execute()
+    member_res = await db.table("company_members").select("company_id, company_role").eq("user_id", user_id).execute()
     if not member_res.data:
         from core.exceptions import NotFoundError
         raise NotFoundError("No company profile found")
@@ -78,13 +79,11 @@ async def update_company_profile(
 
     # Update company details
     update_data = {
-        "name": data.get("name"),
+        "company_name": data.get("name"),
         "website": data.get("website"),
-        "description": data.get("description"),
         "industry": data.get("industry"),
-        "company_size": data.get("company_size"),
-        "location": data.get("location"),
-        "about_company": data.get("about_company"),
+        "size": data.get("company_size"),
+        "hq_location": data.get("location"),
     }
     
     if "branding_profile" in data:
@@ -96,7 +95,7 @@ async def update_company_profile(
     update_data = {k: v for k, v in update_data.items() if v is not None}
     
     if update_data:
-        db.table("companies").update(update_data).eq("id", company_id).execute()
+        await db.table("companies").update(update_data).eq("id", company_id).execute()
         
         # Invalidate cache
         try:
@@ -117,8 +116,10 @@ async def create_company(
     db = await get_db()
     
     # 1. Create Company
-    company_resp = db.table("companies").insert({
-        "name": req.name,
+    company_id = str(uuid.uuid4())
+    company_resp = await db.table("companies").insert({
+        "id": company_id,
+        "company_name": req.name,
         "created_by_user_id": user_id,
     }).execute()
 
@@ -129,16 +130,17 @@ async def create_company(
     company = company_resp.data[0]
 
     # 2. Add OWNER membership
-    db.table("company_members").insert({
+    await db.table("company_members").insert({
+        "id": str(uuid.uuid4()),
         "company_id": company["id"],
         "user_id": user_id,
         "company_role": "OWNER",
     }).execute()
 
     # 3. Elevate Platform Role
-    role_row = db.table("roles").select("id").eq("role_name", "COMPANY").single().execute()
+    role_row = await db.table("roles").select("id").eq("role_name", "COMPANY").single().execute()
     if role_row.data:
-        db.table("user_roles").insert({
+        await db.table("user_roles").insert({
             "user_id": user_id,
             "role_id": role_row.data["id"],
         }).execute()
@@ -164,12 +166,13 @@ async def invite_member(
     db = await get_db()
     
     # Check if target exists
-    target = db.table("users").select("id").eq("wallet_address", req.wallet_address).execute()
+    target = await db.table("users").select("id").eq("email", req.email).execute()
     if not target.data:
         from core.exceptions import NotFoundError
         raise NotFoundError("User not found with this wallet address")
 
-    result = db.table("company_members").insert({
+    result = await db.table("company_members").insert({
+        "id": str(uuid.uuid4()),
         "company_id": company_id,
         "user_id": target.data[0]["id"],
         "company_role": req.role,
@@ -183,7 +186,7 @@ async def get_team(
 ):
     """Return all members of the company."""
     db = await get_db()
-    response = db.table("company_members").select("*, users(wallet_address, full_name)").eq("company_id", company_id).execute()
+    response = await db.table("company_members").select("*, users(email, first_name)").eq("company_id", company_id).execute()
     return success_response(data=response.data)
 
 @router.get("/api-keys")

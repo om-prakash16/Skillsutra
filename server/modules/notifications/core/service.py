@@ -20,7 +20,9 @@ class NotificationService:
         if not db:
             return None
 
+        import uuid
         notification_data = {
+            "id": str(uuid.uuid4()),
             "user_id": str(user_id),
             "type": type,
             "title": title,
@@ -30,7 +32,7 @@ class NotificationService:
             "status": "unread",
         }
 
-        response = db.table("notifications").insert(notification_data).execute()
+        response = await db.table("notifications").insert(notification_data).execute()
         
         # Broadcast via WebSocket if the user is connected
         try:
@@ -61,7 +63,9 @@ class NotificationService:
         if not db:
             return None
 
+        import uuid
         log_data = {
+            "id": str(uuid.uuid4()),
             "user_id": str(user_id) if user_id else None,
             "action_type": action_type,
             "entity_type": entity_type,
@@ -71,7 +75,7 @@ class NotificationService:
             "metadata": metadata or {},
         }
 
-        response = db.table("activity_logs").insert(log_data).execute()
+        response = await db.table("activity_logs").insert(log_data).execute()
         return response.data[0] if response.data else None
 
     @staticmethod
@@ -84,7 +88,7 @@ class NotificationService:
         db = get_db()
         if not db:
             return []
-        response = (
+        response = await (
             db.table("notifications")
             .select("*")
             .eq("user_id", str(user_id))
@@ -102,6 +106,6 @@ class NotificationService:
         db = get_db()
         if not db:
             return
-        db.table("notifications").update({"status": "read"}).eq(
+        await db.table("notifications").update({"status": "read"}).eq(
             "id", str(notification_id)
         ).eq("user_id", str(user_id)).execute()

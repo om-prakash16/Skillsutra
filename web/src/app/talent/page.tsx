@@ -1,357 +1,65 @@
 "use client"
 
-import { useState, Suspense } from "react"
-import { useSearchParams, useRouter, usePathname } from "next/navigation"
-import { useQuery } from "@tanstack/react-query"
-import { TalentFilters } from "@/features/talent/components/talent-filters"
-import { TalentCard } from "@/features/talent/components/talent-card"
-import { TalentSkeleton } from "@/features/talent/components/talent-skeleton"
-import { Input } from "@/components/ui/input"
+import React from "react"
+import Link from "next/link"
+import { motion } from "framer-motion"
+import { Code2, Target, Trophy, ArrowRight, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Textarea } from "@/components/ui/textarea"
-import { Search, Filter, SlidersHorizontal, Upload, Loader2, Sparkles, X, FileText } from "lucide-react"
-import { publicApi } from "@/lib/api/public-api"
-import { toast } from "sonner"
 
-// --- Mock API Fetcher ---
-interface FetchParams {
-    query?: string
-    role?: string[]
-    skills?: string[]
-    loc?: string[]
-    exp?: string[]
-    availability?: string[]
-    page?: number
-    limit?: number
-}
-
-const fetchTalentFromApi = async (params: FetchParams) => {
-    const searchParams = new URLSearchParams()
-    if (params.query) searchParams.set("query", params.query)
-    if (params.skills) searchParams.set("skills", params.skills.join(","))
-    if (params.loc) searchParams.set("location", params.loc.join(","))
-    
-    const response = await publicApi.search.candidates(searchParams.toString())
-    
-    // Map backend search results to Talent frontend model
-    const candidates = response?.items || response?.data?.items || response?.candidates || response?.data?.candidates || (Array.isArray(response) ? response : []);
-    const data = (Array.isArray(candidates) ? candidates : []).map((c: any) => ({
-        id: c.user_id || c.id,
-        name: c.full_name || c.username || "Anonymous Node",
-        username: c.username,
-        title: c.headline || "Professional",
-        role: c.primary_role || "Developer",
-        avatar: "", // Add default or fetch from profile
-        location: c.location || "Remote",
-        experience: `${c.experience_years || 0} Years`,
-        experienceLevel: (c.experience_years || 0) > 5 ? "Senior" : "Intermediate",
-        skills: c.skills || [],
-        availability: "Immediate",
-        completion: c.profile_score || 80,
-        verified: c.is_verified || false,
-        match_score: c.match_score
-    }))
-
-    return {
-        data,
-        meta: { total: data.length, totalPages: 1, page: 1, limit: 10 }
-    }
-}
-
-// --- Main Content Component ---
-function TalentContent() {
-    const searchParams = useSearchParams()
-    const router = useRouter()
-    const pathname = usePathname()
-
-    const page = Number(searchParams.get("page")) || 1
-    const query = searchParams.get("query") || ""
-
-    const [isMatching, setIsMatching] = useState(false)
-    const [matchedTalent, setMatchedTalent] = useState<any[] | null>(null)
-    const [jdText, setJdText] = useState("")
-    const [isJdModalOpen, setIsJdModalOpen] = useState(false)
-
-    const updateSearch = (term: string) => {
-        setMatchedTalent(null)
-        const params = new URLSearchParams(searchParams.toString())
-        if (term) params.set("query", term)
-        else params.delete("query")
-        params.set("page", "1")
-        router.replace(`${pathname}?${params.toString()}`, { scroll: false })
-    }
-
-    const performMatch = async (file: File | null, text: string = "") => {
-        setIsMatching(true)
-        setIsJdModalOpen(false)
-        const toastId = toast.loading("AI Foreman initiating AST neural matching...")
-        
-        try {
-            const res = await publicApi.ai.matchByJd(file, text)
-            const mapped = (res.data || []).map((c: any) => ({
-                id: c.user_id || c.id,
-                name: c.full_name || c.username || "Anonymous Node",
-                username: c.username,
-                title: c.headline || "Professional",
-                role: c.primary_role || "Developer",
-                avatar: "",
-                location: c.location || "Remote",
-                experience: `${c.experience_years || 0} Years`,
-                experienceLevel: (c.experience_years || 0) > 5 ? "Senior" : "Intermediate",
-                skills: c.skills || [],
-                availability: "Immediate",
-                completion: c.profile_score || 80,
-                verified: c.is_verified || false,
-                match_score: c.match_score
-            }))
-            setMatchedTalent(mapped)
-            toast.success("Resonance found. Displaying top candidates.", { id: toastId })
-        } catch (err) {
-            toast.error("Forensic match failed. Verify input integrity.", { id: toastId })
-        } finally {
-            setIsMatching(false)
-        }
-    }
-
-    const handleJdMatchFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (e.target.files?.[0]) {
-            performMatch(e.target.files[0])
-        }
-    }
-
-    const { data, isLoading, isError, error } = useQuery({
-        queryKey: ["talent", searchParams.toString()],
-        queryFn: () => fetchTalentFromApi({
-            query: searchParams.get("query") || undefined,
-            role: searchParams.get("role")?.split(",") || undefined,
-            loc: searchParams.get("loc")?.split(",") || undefined,
-            exp: searchParams.get("exp")?.split(",") || undefined,
-            availability: searchParams.get("availability")?.split(",") || undefined,
-            skills: searchParams.get("skills")?.split(",") || undefined,
-            page: page,
-            limit: 9
-        }),
-        enabled: !matchedTalent,
-        staleTime: 5000 
-    })
-
-    const handlePageChange = (newPage: number) => {
-        const params = new URLSearchParams(searchParams.toString())
-        params.set("page", newPage.toString())
-        router.push(`${pathname}?${params.toString()}`, { scroll: true })
-    }
-
+export default function TalentLandingPage() {
     return (
-        <div className="min-h-screen flex flex-col pt-16 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 blur-[150px] -z-10 rounded-full" />
+        <div className="min-h-screen bg-background text-foreground">
             
-            {/* Page Header */}
-            <div className="bg-background/80 backdrop-blur-xl border-b border-border/50 pt-16 pb-12 px-4 sm:px-8 sticky top-16 z-20">
-                <div className="container mx-auto max-w-7xl space-y-10">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
-                        <div className="space-y-4">
-                            <h1 className="text-5xl md:text-6xl font-black font-heading tracking-tighter italic uppercase leading-none">Neural Talent Synthesis</h1>
-                            <div className="flex items-center gap-4">
-                                <div className="h-px w-24 bg-primary" />
-                                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground">Connect with high-resonance verified technical nodes</p>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-6 w-full md:w-auto">
-                            <div className="w-full md:w-[400px] relative group">
-                                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
-                                <Input
-                                    placeholder="Search by Identity, Node, or Skill Stack..."
-                                    className="pl-12 h-14 glass border-border/50 focus:border-primary/30 transition-all rounded-2xl font-bold placeholder:text-muted-foreground/30"
-                                    defaultValue={query}
-                                    onChange={(e) => updateSearch(e.target.value)}
-                                />
-                            </div>
-
-                             <div className="flex items-center gap-3">
-                                 <Sheet>
-                                     <SheetTrigger asChild>
-                                         <Button variant="outline" size="icon" className="lg:hidden h-14 w-14 glass border-border/50 rounded-2xl shrink-0">
-                                             <SlidersHorizontal className="w-5 h-5" />
-                                         </Button>
-                                     </SheetTrigger>
-                                     <SheetContent side="left" className="w-[320px] px-8 pt-16">
-                                         <div className="space-y-8">
-                                             <div className="flex items-center justify-between">
-                                                 <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground">Neural Filters</h3>
-                                                 <SlidersHorizontal className="w-4 h-4 text-muted-foreground/50" />
-                                             </div>
-                                             <TalentFilters />
-                                         </div>
-                                     </SheetContent>
-                                 </Sheet>
-                                 <div className="hidden sm:block h-10 w-px bg-muted/50 mx-2" />
-                                 <Dialog open={isJdModalOpen} onOpenChange={setIsJdModalOpen}>
-                                     <DialogTrigger asChild>
-                                         <Button 
-                                             variant="premium"
-                                             className="h-14 px-8 rounded-2xl shadow-2xl shadow-primary/20 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest"
-                                             disabled={isMatching}
-                                         >
-                                             {isMatching ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                                             Match by Spec (JD)
-                                         </Button>
-                                     </DialogTrigger>
-                                     <DialogContent className="sm:max-w-xl glass border-border rounded-[2.5rem] p-8 max-h-[90vh] overflow-y-auto">
-                                         <DialogHeader>
-                                             <DialogTitle className="text-2xl font-black italic uppercase tracking-tight text-foreground mb-2">Neural JD Match</DialogTitle>
-                                         </DialogHeader>
-                                         <Tabs defaultValue="pdf" className="w-full mt-6">
-                                             <TabsList className="grid w-full grid-cols-2 h-12 glass border-border/50 p-1 rounded-xl mb-6">
-                                                 <TabsTrigger value="pdf" className="rounded-lg text-[10px] font-black uppercase tracking-widest data-[state=active]:bg-primary/20 data-[state=active]:text-primary">PDF Upload</TabsTrigger>
-                                                 <TabsTrigger value="text" className="rounded-lg text-[10px] font-black uppercase tracking-widest data-[state=active]:bg-primary/20 data-[state=active]:text-primary">Paste Text</TabsTrigger>
-                                             </TabsList>
-                                             <TabsContent value="pdf" className="space-y-4">
-                                                 <div 
-                                                    className="border-2 border-dashed border-border rounded-2xl p-10 text-center hover:bg-muted/50 transition-colors cursor-pointer group"
-                                                    onClick={() => document.getElementById("jd-upload")?.click()}
-                                                 >
-                                                     <div className="w-16 h-16 bg-muted/30 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                                                         <Upload className="w-8 h-8 text-muted-foreground/50 group-hover:text-primary transition-colors" />
-                                                     </div>
-                                                     <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground">Click to upload JD PDF</p>
-                                                 </div>
-                                                 <input id="jd-upload" type="file" className="hidden" accept=".pdf" onChange={(e) => handleJdMatchFile(e)} />
-                                             </TabsContent>
-                                             <TabsContent value="text" className="space-y-4">
-                                                 <Textarea 
-                                                     placeholder="Paste your Job Description here..."
-                                                     className="min-h-[200px] max-h-[40vh] overflow-y-auto glass border-border/50 rounded-2xl focus:border-primary/30 transition-all font-mono text-sm resize-none"
-                                                     value={jdText}
-                                                     onChange={(e) => setJdText(e.target.value)}
-                                                 />
-                                                 <Button 
-                                                     variant="premium" 
-                                                     className="w-full h-12 rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center justify-center gap-2"
-                                                     onClick={() => performMatch(null, jdText)}
-                                                     disabled={!jdText.trim()}
-                                                 >
-                                                     <FileText className="w-4 h-4" /> Analyze Text Spec
-                                                 </Button>
-                                             </TabsContent>
-                                         </Tabs>
-                                     </DialogContent>
-                                 </Dialog>
-                             </div>
-                        </div>
+            <section className="pt-20 md:pt-32 pb-20 relative overflow-hidden">
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[100px] -z-10"></div>
+                
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 dark:bg-primary/30 text-primary dark:text-purple-400 font-medium text-sm mb-8">
+                        <Sparkles className="w-4 h-4" /> For Engineers & Creatives
+                    </div>
+                    
+                    <h1 className="text-5xl md:text-7xl font-black tracking-tight mb-8">
+                        Your Skills.<br/>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary">Cryptographically Proven.</span>
+                    </h1>
+                    
+                    <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto">
+                        Stop getting rejected by broken ATS filters. Take challenges, earn your Proof Score, and let top companies compete for you.
+                    </p>
+                    
+                    <div className="flex justify-center items-center gap-4">
+                        <Link href="/auth/register">
+                            <Button size="lg" className="h-14 px-8 text-base font-bold bg-primary hover:bg-primary/80 shadow-xl shadow-primary/20">
+                                Claim Your Profile <ArrowRight className="w-5 h-5 ml-2" />
+                            </Button>
+                        </Link>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <main className="container mx-auto max-w-7xl px-4 sm:px-8 py-12 flex-1 flex flex-col lg:flex-row gap-12">
-                <aside className="hidden lg:block w-80 shrink-0 space-y-10 sticky top-56 h-fit">
-                    <div className="glass p-8 rounded-[2.5rem] border-border/50">
-                        <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground">Neural Filters</h3>
-                            <SlidersHorizontal className="w-4 h-4 text-muted-foreground/50" />
-                        </div>
-                        <TalentFilters />
-                    </div>
-                </aside>
-
-                <div className="flex-1 w-full min-w-0">
-                    {(isLoading || isMatching) ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                            {[1, 2, 3, 4, 5, 6].map((i) => (
-                                <TalentSkeleton key={i} />
-                            ))}
-                        </div>
-                    ) : isError ? (
-                        <div className="text-center py-32 glass rounded-[3rem] border-rose-500/10">
-                            <X className="w-12 h-12 text-rose-500/20 mx-auto mb-4" />
-                            <h3 className="text-xl font-black uppercase tracking-tight text-foreground mb-2">Core Data Retrieval Fault</h3>
-                            <p className="text-[11px] font-black uppercase tracking-widest text-rose-500/50 mb-6">
-                                {error instanceof Error ? error.message : "Network partition detected."}
-                            </p>
-                            <Button onClick={() => window.location.reload()} variant="outline" className="font-black uppercase tracking-widest text-[10px]">
-                                Retry Connection
-                            </Button>
-                        </div>
-                    ) : (matchedTalent || data?.data) && (matchedTalent?.length || 0) > 0 || (data?.data?.length || 0) > 0 ? (
-                        <div className="space-y-12">
-                            {matchedTalent && (
-                                <div className="flex items-center justify-between p-8 glass border-primary/20 rounded-[2.5rem] animate-in fade-in slide-in-from-top-6 duration-700 shadow-2xl shadow-primary/5">
-                                    <div className="flex items-center gap-6">
-                                        <div className="w-16 h-16 bg-primary/20 rounded-2xl flex items-center justify-center shadow-inner">
-                                            <Sparkles className="w-8 h-8 text-primary" />
-                                        </div>
-                                        <div className="space-y-1">
-                                            <h2 className="text-2xl font-black italic uppercase tracking-tight text-foreground">Spec Resonance Match</h2>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Identified {matchedTalent.length} high-fidelity technical intersections.</p>
-                                        </div>
-                                    </div>
-                                    <Button variant="ghost" size="icon" className="h-12 w-12 rounded-2xl hover:bg-muted/50 text-muted-foreground/50" onClick={() => setMatchedTalent(null)}>
-                                        <X className="w-5 h-5" />
-                                    </Button>
-                                </div>
-                            )}
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-                                {(matchedTalent || data?.data)?.map((talent: any) => (
-                                    <TalentCard key={talent.id} talent={talent} />
-                                ))}
-                            </div>
-
-                            {!matchedTalent && (
-                                <div className="pt-12 flex items-center justify-center gap-4">
-                                    <Button
-                                        variant="outline"
-                                        className="h-12 px-6 rounded-xl border-border/50 glass font-black text-[10px] uppercase tracking-widest"
-                                        disabled={page <= 1}
-                                        onClick={() => handlePageChange(page - 1)}
-                                    >
-                                        Previous Cycle
-                                    </Button>
-                                    <div className="px-6 h-12 flex items-center glass rounded-xl border-border/50 text-[10px] font-black uppercase tracking-widest">
-                                        Layer {page} <span className="text-muted-foreground/50 mx-2">/</span> {data?.meta.totalPages || 1}
-                                    </div>
-                                    <Button
-                                        variant="outline"
-                                        className="h-12 px-6 rounded-xl border-border/50 glass font-black text-[10px] uppercase tracking-widest"
-                                        disabled={page >= (data?.meta.totalPages || 1)}
-                                        onClick={() => handlePageChange(page + 1)}
-                                    >
-                                        Next Cycle
-                                    </Button>
-                                </div>
-                            )}
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center py-32 text-center glass border-dashed border-border rounded-[3rem]">
-                            <div className="w-24 h-24 bg-muted/30 rounded-full flex items-center justify-center mb-8 shadow-inner">
-                                <Search className="w-10 h-10 text-muted-foreground/30" />
-                            </div>
-                            <h3 className="text-2xl font-black italic uppercase tracking-tight text-foreground mb-2">No Resonance Detected</h3>
-                            <p className="text-[11px] font-black uppercase tracking-widest text-muted-foreground/50 max-w-sm mb-10">
-                                Current search parameters yielded no high-fidelity intersections.
-                            </p>
-                            <Button
-                                variant="outline"
-                                className="h-12 px-10 rounded-2xl border-border font-black text-[10px] uppercase tracking-[0.2em]"
-                                onClick={() => router.push(pathname)}
+            <section className="py-24 bg-muted/30">
+                <div className="max-w-7xl mx-auto px-4">
+                    <div className="grid md:grid-cols-3 gap-8">
+                        {[
+                            { title: "Take Challenges", desc: "Solve real-world coding problems to prove your capabilities in React, Python, or Go.", icon: Code2 },
+                            { title: "Get Auto-Matched", desc: "Our AI engine automatically pushes your profile to hiring managers who need your exact score.", icon: Target },
+                            { title: "Level Up", desc: "Join communities, find mentors, and track your global rank on the leaderboards.", icon: Trophy }
+                        ].map((feature, i) => (
+                            <motion.div 
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.1 }}
+                                key={i} 
+                                className="bg-card border rounded-2xl p-8"
                             >
-                                RESET NEURAL FILTERS
-                            </Button>
-                        </div>
-                    )}
+                                <feature.icon className="w-10 h-10 text-primary mb-6" />
+                                <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
+                                <p className="text-muted-foreground">{feature.desc}</p>
+                            </motion.div>
+                        ))}
+                    </div>
                 </div>
-            </main>
+            </section>
         </div>
-    )
-}
-
-export default function TalentPage() {
-    return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><TalentSkeleton /></div>}>
-            <TalentContent />
-        </Suspense>
     )
 }

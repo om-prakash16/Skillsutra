@@ -2,6 +2,7 @@ import json
 import asyncio
 import time
 from fastapi import WebSocket
+from fastapi.encoders import jsonable_encoder
 from typing import List, Dict
 from core.logging import ProtocolLogger
 
@@ -64,7 +65,7 @@ class ConnectionManager:
     async def send_personal_message(self, message: dict, user_id: str):
         if user_id in self.user_connections:
             for connection in self.user_connections[user_id]:
-                asyncio.create_task(self._safe_send(connection, json.dumps(message)))
+                asyncio.create_task(self._safe_send(connection, json.dumps(jsonable_encoder(message))))
 
     async def _safe_send(self, connection: WebSocket, message: str):
         try:

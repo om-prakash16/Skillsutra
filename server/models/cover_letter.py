@@ -14,7 +14,7 @@ class CoverLetter(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
     resume_id = Column(UUID(as_uuid=True), ForeignKey('resumes.id', ondelete='SET NULL'), nullable=True)
-    job_id = Column(UUID(as_uuid=True), ForeignKey('jobs.id', ondelete='SET NULL'), nullable=True)
+    job_id = Column(UUID(as_uuid=True), ForeignKey('ats_jobs.id', ondelete='SET NULL'), nullable=True)
     
     title = Column(String, nullable=False) # e.g., "Software Engineer - Stripe"
     content_markdown = Column(Text, nullable=True)
@@ -28,4 +28,4 @@ class CoverLetter(Base):
     # Relationships
     user = relationship("User")
     resume = relationship("Resume")
-    job = relationship("Job")
+    job = relationship("ATSJob")

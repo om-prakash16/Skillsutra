@@ -33,7 +33,12 @@ async def format_legacy_profile(profile_obj, db: AsyncSession):
             "avatar_url": user.avatar_url if user else None,
             "headline": p_dict.get("headline"),
             "about": p_dict.get("about"),
+            "location": p_dict.get("location"),
+            "phone": p_dict.get("phone"),
+            "full_name": p_dict.get("full_name"),
+            "banner_url": p_dict.get("banner_url"),
             "visibility": p_dict.get("visibility_mode"),
+            "github_handle": p_dict.get("github_url").split("/")[-1] if p_dict.get("github_url") else None,
         },
         "skills": [],  # We can implement skill mapping here if needed
         "experiences": p_dict.get("experiences", []),
@@ -77,17 +82,102 @@ async def update_profile_full(
     service = ProfileService(db)
     from schemas.profile import ProfileCreate
     from uuid import UUID
+    from models.user import User
+    from sqlalchemy.future import select
+    from sqlalchemy import update
     
-    # Simple mapping of legacy data to modern ProfileCreate schema
+    # Parse section payloads
     profile_data = data.get("profile", {})
+    github_data = data.get("github", {})
+    settings_data = data.get("settings", {})
+    
+    visibility = settings_data.get("visibility") or profile_data.get("visibility") or "PUBLIC"
+    
     create_schema = ProfileCreate(
+        full_name=profile_data.get("full_name") or (f"{profile_data.get('firstName', '')} {profile_data.get('lastName', '')}".strip() if profile_data.get("firstName") else None),
         headline=profile_data.get("headline"),
         about=profile_data.get("about") or profile_data.get("bio"),
+        location=profile_data.get("location"),
+        phone=profile_data.get("phone"),
         banner_url=profile_data.get("banner_url"),
-        visibility_mode=profile_data.get("visibility", "PUBLIC")
+        resume_url=profile_data.get("resume_url"),
+        visibility_mode=visibility.upper() if isinstance(visibility, str) else "PUBLIC"
     )
     
-    await service.update_profile(UUID(user_id), create_schema)
+    if github_data and github_data.get("username"):
+        create_schema.github_url = f"https://github.com/{github_data.get('username')}"
+    
+    if profile_data.get("avatar_url"):
+        await db.execute(
+            update(User).where(User.id == UUID(user_id)).values(avatar_url=profile_data["avatar_url"])
+        )
+        await db.commit()
+    
+    profile_obj = await service.update_profile(UUID(user_id), create_schema)
+    
+    # Handle relationships
+    if "experiences" in data:
+        from models.profile import Experience
+        from schemas.profile import ExperienceCreate
+        await db.execute(Experience.__table__.delete().where(Experience.profile_id == profile_obj.id))
+        for exp in data["experiences"]:
+            sd = exp.get("start_date") or exp.get("startDate")
+            ed = exp.get("end_date") or exp.get("endDate")
+            if ed == "Present": ed = None
+            if sd and len(sd) == 7: sd += "-01"
+            if sd and len(sd) == 4: sd += "-01-01"
+            if ed and len(ed) == 7: ed += "-01"
+            if ed and len(ed) == 4: ed += "-01-01"
+            
+            try:
+                await service.add_experience(UUID(user_id), ExperienceCreate(
+                    company_name=exp.get("company_name") or exp.get("company") or "Unknown",
+                    title=exp.get("role") or "Unknown",
+                    location=exp.get("location"),
+                    start_date=sd or "2024-01-01",
+                    end_date=ed,
+                    description=exp.get("description")
+                ))
+            except Exception as e:
+                print("Error adding experience:", e)
+                
+    if "education" in data:
+        from models.profile import Education
+        from schemas.profile import EducationCreate
+        await db.execute(Education.__table__.delete().where(Education.profile_id == profile_obj.id))
+        for edu in data["education"]:
+            sd = edu.get("start_date") or edu.get("startYear")
+            ed = edu.get("end_date") or edu.get("endYear")
+            if sd and len(sd) == 4: sd += "-01-01"
+            if ed and len(ed) == 4: ed += "-01-01"
+            
+            try:
+                await service.add_education(UUID(user_id), EducationCreate(
+                    school=edu.get("institution") or "Unknown",
+                    degree=edu.get("degree") or "Unknown",
+                    field_of_study=edu.get("field_of_study") or edu.get("fieldOfStudy"),
+                    start_date=sd or "2024-01-01",
+                    end_date=ed
+                ))
+            except Exception as e:
+                print("Error adding education:", e)
+                
+    if "projects" in data:
+        from models.profile import Project
+        from schemas.profile import ProjectCreate
+        await db.execute(Project.__table__.delete().where(Project.profile_id == profile_obj.id))
+        for proj in data["projects"]:
+            try:
+                await service.add_project(UUID(user_id), ProjectCreate(
+                    title=proj.get("title") or "Unknown Project",
+                    description=proj.get("description"),
+                    url=proj.get("project_url") or proj.get("link"),
+                    github_url=proj.get("github_url") or proj.get("github"),
+                    skills_used=proj.get("stack", [])
+                ))
+            except Exception as e:
+                print("Error adding project:", e)
+                
     return success_response(message="Profile synchronized successfully")
 
 @router.get("/portfolio/{user_code}")

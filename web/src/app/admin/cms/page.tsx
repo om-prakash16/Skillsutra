@@ -1,155 +1,140 @@
 "use client";
-import Link from "next/link";
 
-import { useState, useEffect } from "react";
+import React from "react";
+import { 
+  FileText, Database, Image as ImageIcon, LayoutTemplate, 
+  Search, Link as LinkIcon, BarChart3, TrendingUp, Globe
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { LayoutDashboard, FileText, Flag, Plus, FileEdit, Trash2, Loader2 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { motion } from "framer-motion";
-import { api } from "@/lib/api/api-client";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
 
-export default function AdminCMSDashboard() {
-  const [pages, setPages] = useState([]);
-  const [articles, setArticles] = useState([]);
-  const [banners, setBanners] = useState([]);
-  const [loading, setLoading] = useState(true);
+const mockPublishingTrend = [
+  { day: 'Mon', pages: 12, entries: 45 },
+  { day: 'Tue', pages: 19, entries: 52 },
+  { day: 'Wed', pages: 15, entries: 48 },
+  { day: 'Thu', pages: 28, entries: 70 },
+  { day: 'Fri', pages: 22, entries: 65 },
+  { day: 'Sat', pages: 5, entries: 12 },
+  { day: 'Sun', pages: 8, entries: 20 },
+];
 
-  useEffect(() => {
-    const fetchCMSData = async () => {
-      try {
-        const pagesRes = await api.get('/cms/pages');
-        const articlesRes = await api.get('/cms/articles');
-        const bannersRes = await api.get('/cms/banners');
-        setPages(pagesRes || []);
-        setArticles(articlesRes || []);
-        setBanners(bannersRes || []);
-      } catch (err) {
-        console.error("Failed to fetch CMS data", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCMSData();
-  }, []);
+const mockTraffic = [
+  { month: 'Jan', visitors: 120000 },
+  { month: 'Feb', visitors: 135000 },
+  { month: 'Mar', visitors: 180000 },
+  { month: 'Apr', visitors: 195000 },
+  { month: 'May', visitors: 250000 },
+  { month: 'Jun', visitors: 310000 },
+];
 
-  const cmsSections = [
-    {
-      title: "Pages & Blocks",
-      description: "Manage landing pages, reusable blocks, and sections.",
-      icon: LayoutDashboard,
-      color: "text-indigo-500",
-      bg: "bg-indigo-500/10",
-      href: "/admin/cms/pages",
-      items: pages.length ? pages.map(p => ({ name: p.content_key, status: p.is_active ? 'Published' : 'Draft', updated: p.updated_at ? new Date(p.updated_at).toLocaleDateString() : "Recently" })) : [
-        { name: "Home Page", status: "Published", updated: "2 hrs ago" },
-        { name: "Talent Discovery", status: "Draft", updated: "1 day ago" },
-      ]
-    },
-    {
-      title: "Blog & Editorial",
-      description: "Manage articles, authors, and SEO settings.",
-      icon: FileText,
-      color: "text-emerald-500",
-      bg: "bg-emerald-500/10",
-      href: "/admin/cms/blog",
-      items: articles.length ? articles.map(a => ({ name: a.title, status: a.is_published ? 'Published' : 'Draft', updated: a.updated_at ? new Date(a.updated_at).toLocaleDateString() : "Recently" })) : [
-        { name: "10 Tips for React Devs", status: "Published", updated: "5 hrs ago" },
-      ]
-    },
-    {
-      title: "Banners & Announcements",
-      description: "Control global alerts and promotional banners.",
-      icon: Flag,
-      color: "text-rose-500",
-      bg: "bg-rose-500/10",
-      href: "/admin/cms/banners",
-      items: banners.length ? banners.map(b => ({ name: b.content_key, status: b.is_active ? 'Active' : 'Draft', updated: b.updated_at ? new Date(b.updated_at).toLocaleDateString() : "Recently" })) : [
-        { name: "Summer Hackathon Promo", status: "Active", updated: "1 hr ago" },
-      ]
-    }
-  ];
+export default function CMSDashboardPage() {
+  return (
+    <div className="p-6 max-w-[1600px] mx-auto space-y-6">
+      
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border/50 pb-6">
+        <div>
+          <div className="flex items-center gap-3 mb-1">
+            <div className="p-2 bg-indigo-500/10 rounded-lg">
+              <Globe className="w-6 h-6 text-indigo-500" />
+            </div>
+            <h1 className="text-3xl font-bold tracking-tight">Experience Cloud</h1>
+          </div>
+          <p className="text-muted-foreground text-sm">Centralized headless CMS, dynamic collections, and visual page building.</p>
+        </div>
+      </div>
+
+      {/* KPI Cards Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+        <MetricCard title="Total Pages" value="1,248" icon={FileText} color="blue" />
+        <MetricCard title="Collections" value="24" icon={Database} color="emerald" />
+        <MetricCard title="Entries" value="14.2k" icon={FileText} color="indigo" />
+        <MetricCard title="Media Files" value="8,402" icon={ImageIcon} color="amber" />
+        <MetricCard title="Templates" value="45" icon={LayoutTemplate} color="rose" />
+        <MetricCard title="Active Domains" value="12" icon={Globe} color="blue" />
+        <MetricCard title="Broken Links" value="3" icon={LinkIcon} color="rose" />
+        <MetricCard title="Avg SEO Score" value="94" icon={Search} color="emerald" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        {/* Left Chart: Publishing Velocity */}
+        <Card className="border-border/50 shadow-sm">
+          <CardHeader className="pb-4 border-b border-border/50 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-base flex items-center gap-2"><BarChart3 className="w-4 h-4" /> Publishing Velocity</CardTitle>
+              <CardDescription>Pages vs Content Entries published this week.</CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6 h-[350px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={mockPublishingTrend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} barGap={8}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                <XAxis dataKey="day" stroke="#ffffff40" tick={{fill: '#ffffff60', fontSize: 12}} axisLine={false} tickLine={false} dy={10} />
+                <YAxis stroke="#ffffff40" tick={{fill: '#ffffff60', fontSize: 12}} axisLine={false} tickLine={false} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                  cursor={{fill: '#ffffff05'}}
+                />
+                <Bar dataKey="entries" name="Entries" fill="#6366f1" radius={[4, 4, 0, 0]} maxBarSize={40} />
+                <Bar dataKey="pages" name="Pages" fill="#10b981" radius={[4, 4, 0, 0]} maxBarSize={40} />
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        {/* Right Chart: Content Delivery Traffic */}
+        <Card className="border-border/50 shadow-sm">
+          <CardHeader className="pb-4 border-b border-border/50 flex flex-row items-center justify-between">
+            <div>
+              <CardTitle className="text-base flex items-center gap-2"><TrendingUp className="w-4 h-4" /> Content Delivery Traffic</CardTitle>
+              <CardDescription>Global unique visitors across all tracked domains.</CardDescription>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6 h-[350px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={mockTraffic} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#ffffff10" vertical={false} />
+                <XAxis dataKey="month" stroke="#ffffff40" tick={{fill: '#ffffff60', fontSize: 12}} axisLine={false} tickLine={false} dy={10} />
+                <YAxis stroke="#ffffff40" tick={{fill: '#ffffff60', fontSize: 12}} axisLine={false} tickLine={false} tickFormatter={(val) => `\${val / 1000}k`} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'rgba(0,0,0,0.8)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '8px' }}
+                  formatter={(value: number) => [value.toLocaleString(), "Visitors"]}
+                />
+                <Line type="monotone" dataKey="visitors" stroke="#3b82f6" strokeWidth={3} dot={{r: 4, strokeWidth: 2}} activeDot={{r: 6, strokeWidth: 0}} />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+      </div>
+
+    </div>
+  );
+}
+
+function MetricCard({ title, value, icon: Icon, color = "indigo" }: any) {
+  const colorClasses: Record<string, string> = {
+    indigo: "text-indigo-500 bg-indigo-500/10 border-indigo-500/20",
+    emerald: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
+    blue: "text-blue-500 bg-blue-500/10 border-blue-500/20",
+    amber: "text-amber-500 bg-amber-500/10 border-amber-500/20",
+    rose: "text-rose-500 bg-rose-500/10 border-rose-500/20",
+  };
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 pb-24">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-border/50 pb-8">
-        <div className="space-y-2">
-          <Badge variant="outline" className="glass text-[10px] tracking-widest uppercase font-black mb-2 text-indigo-400 border-indigo-400/30">
-            Content Orchestrator
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-black font-heading tracking-tighter text-foreground">
-            CMS Command Center
-          </h1>
-          <p className="text-muted-foreground text-lg max-w-2xl font-medium">
-            Manage dynamic frontend content, reusable page blocks, and editorial articles.
-          </p>
+    <Card className="border-border/50 shadow-sm bg-card">
+      <CardHeader className="pb-2">
+        <CardTitle className="text-[10px] text-muted-foreground font-medium flex items-center justify-between uppercase tracking-wider">
+          {title}
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="flex items-center justify-between">
+        <div className="text-2xl font-bold">{value}</div>
+        <div className={`p-1.5 rounded-lg border ${colorClasses[color]}`}>
+          <Icon className="w-3.5 h-3.5" />
         </div>
-        <div className="flex gap-4">
-          <Button size="lg" className="rounded-xl font-bold bg-indigo-500 hover:bg-indigo-600 text-white shadow-lg shadow-indigo-500/20">
-            <Plus className="w-5 h-5 mr-2" /> Create Content
-          </Button>
-        </div>
-      </div>
-
-      {/* CMS Sections Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {cmsSections.map((section, idx) => (
-          <motion.div
-            key={section.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
-          >
-            <Card className="glass h-full border-border/50 hover:border-border transition-all duration-300 rounded-[2rem] shadow-xl overflow-hidden group">
-              <CardHeader className="pb-4">
-                <div className="flex items-center gap-4 mb-2">
-                  <div className={`p-3 rounded-2xl ${section.bg}`}>
-                    <section.icon className={`w-6 h-6 ${section.color}`} />
-                  </div>
-                  <CardTitle className="text-xl font-black">{section.title}</CardTitle>
-                </div>
-                <CardDescription className="text-sm font-medium">{section.description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3 mt-4">
-                  {section.items.map((item, i) => (
-                    <div key={i} className="flex items-center justify-between p-3 rounded-xl bg-background/50 border border-border/30 hover:border-border/80 transition-colors group/item">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-sm text-foreground/90">{item.name}</span>
-                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground mt-1">
-                          {item.updated}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline" className={`text-[9px] uppercase tracking-widest font-black ${
-                          item.status === 'Published' || item.status === 'Active' ? 'text-emerald-400 border-emerald-400/30' :
-                          item.status === 'Draft' || item.status === 'Scheduled' ? 'text-amber-400 border-amber-400/30' :
-                          'text-indigo-400 border-indigo-400/30'
-                        }`}>
-                          {item.status}
-                        </Badge>
-                        <div className="flex gap-1 opacity-0 group-hover/item:opacity-100 transition-opacity">
-                            <Button variant="ghost" size="icon" className="h-7 w-7"><FileEdit className="w-3.5 h-3.5 text-muted-foreground" /></Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7"><Trash2 className="w-3.5 h-3.5 text-rose-500/70" /></Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {section.items.length === 0 && (
-                    <div className="text-center py-4 text-sm text-muted-foreground italic">No content found</div>
-                  )}
-                </div>
-                <Link href={section.href}>
-                  <Button variant="outline" className="w-full mt-6 rounded-xl border-dashed border-border/50 text-muted-foreground hover:text-foreground">
-                    View All {section.title}
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
-          </motion.div>
-        ))}
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }

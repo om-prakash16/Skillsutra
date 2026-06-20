@@ -1,76 +1,54 @@
-from sqlalchemy import Column, String, Boolean, JSON, DateTime, ForeignKey, Index
 from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, Integer, JSON, Boolean, ForeignKey, Text, DateTime
 from sqlalchemy.orm import relationship
-import uuid
+from .mixins import EnterpriseMixin
+from database.core import Base
 from datetime import datetime
-from core.database import Base
 
-class NotificationPreference(Base):
-    """
-    Stores complex user preferences for smart notifications using JSONB.
-    """
-    __tablename__ = "notification_preferences"
-
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), primary_key=True)
+class NotificationTemplate(EnterpriseMixin, Base):
+    __tablename__ = "notification_templates"
     
-    # {"email": true, "push": false, "in_app": true, "websocket": true}
-    channels = Column(JSON, default=dict)
+    name = Column(String(255), nullable=False, unique=True) # e.g. "welcome_email", "job_offer_sms"
+    description = Column(String(500), nullable=True)
     
-    # {"jobs": {"roles": ["backend"], "locations": ["remote"]}, "hackathons": true}
-    categories = Column(JSON, default=dict)
+    channel = Column(String(50), nullable=False) # email, sms, in_app, push, webhook
+    subject_template = Column(String(500), nullable=True) # Used for emails
+    body_template = Column(Text, nullable=False) # Can be HTML or Markdown
     
-    # {"start": "22:00", "end": "08:00", "timezone": "UTC"}
-    quiet_hours = Column(JSON, default=dict)
-    
-    # 'IMMEDIATE', 'DAILY_DIGEST', 'WEEKLY_DIGEST'
-    frequency = Column(String(50), default="IMMEDIATE")
-    
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # Required context variables like {{user.first_name}}
+    required_variables = Column(JSON, default=list)
 
-class UserMute(Base):
-    """
-    Tracks specific entities (users, companies, threads) the user has muted.
-    """
-    __tablename__ = "user_mutes"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    target_type = Column(String(50), nullable=False)  # 'COMPANY', 'USER', 'COMMUNITY'
-    target_id = Column(UUID(as_uuid=True), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    __table_args__ = (
-        Index('idx_user_mutes_lookup', 'user_id', 'target_type', 'target_id', unique=True),
-    )
-
-class Notification(Base):
-    """
-    The actual in-app Notification inbox for a user.
-    """
+class Notification(EnterpriseMixin, Base):
     __tablename__ = "notifications"
+    
+    recipient_id = Column(UUID(as_uuid=True), nullable=False, index=True) # references users.id
+    template_id = Column(UUID(as_uuid=True), ForeignKey("notification_templates.id"), nullable=True)
+    
+    channel = Column(String(50), nullable=False)
+    
+    # Rendered content
+    subject = Column(String(500), nullable=True)
+    body = Column(Text, nullable=False)
+    
+    # Optional deep link / action
+    action_url = Column(String(500), nullable=True)
+    
+    status = Column(String(50), default="PENDING") # PENDING, SENT, DELIVERED, FAILED, READ
+    
+    sent_at = Column(DateTime(timezone=True), nullable=True)
+    read_at = Column(DateTime(timezone=True), nullable=True)
+    
+    # Error log or delivery metadata (e.g. message_id from Twilio/SendGrid)
+    delivery_metadata = Column(JSON, default=dict)
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+class NotificationPreference(EnterpriseMixin, Base):
+    __tablename__ = "notification_preferences"
     
-    type = Column(String(50), nullable=False)  # 'JOB_ALERT', 'MENTION', 'APPLICATION_UPDATE', etc.
-    title = Column(String(255), nullable=False)
-    message = Column(String, nullable=False)
-    status = Column(String(50), default="unread")
+    user_id = Column(UUID(as_uuid=True), nullable=False, index=True)
     
-    # Metadata for grouping or filtering (e.g., {"company_id": "..."})
-    notification_metadata = Column("metadata", JSON, default=dict)
+    # e.g. {"marketing_emails": False, "system_alerts": True, "sms_enabled": False}
+    preferences = Column(JSON, default=dict)
     
-    created_at = Column(DateTime, default=datetime.utcnow, index=True)
-
-class PendingDigest(Base):
-    """
-    Stores batched notifications that are waiting to be sent in a daily/weekly digest email.
-    """
-    __tablename__ = "pending_digests"
-
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    
-    notification_data = Column(JSON, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    quiet_hours_start = Column(String(10), nullable=True) # "22:00"
+    quiet_hours_end = Column(String(10), nullable=True) # "08:00"
+    timezone = Column(String(50), default="UTC")

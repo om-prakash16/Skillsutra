@@ -16,14 +16,7 @@ class OAuthAccount(Base):
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
     updated_at = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
 
-class MagicLink(Base):
-    __tablename__ = "magic_links"
 
-    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    email = Column(String, nullable=False, index=True)
-    token_hash = Column(String, unique=True, nullable=False, index=True)
-    expires_at = Column(DateTime(timezone=True), nullable=False)
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
 
 class EmailOTP(Base):
     __tablename__ = "email_otps"

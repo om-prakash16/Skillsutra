@@ -43,7 +43,7 @@ class AuthService:
             username=final_username,
             email=user_in.email,
             password_hash=hashed_pwd,
-            is_active=False
+            is_active=True
         )
         self.db.add(new_user)
         await self.db.flush()
@@ -76,9 +76,6 @@ class AuthService:
             send_email_alert.delay(str(new_user.id), "Welcome to SkillSutra!", "welcome_template", {"username": new_user.username})
         except Exception as e:
             print(f"DEBUG: Failed to enqueue welcome email: {e}")
-            
-        # Send Verification Magic Link
-        await self.send_magic_link(new_user.email, None)
             
         return new_user
 
@@ -159,28 +156,74 @@ class AuthService:
         if not user.is_active:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account disabled or unverified. Please check your email for the verification link.")
 
+        # Check if MFA is enabled
+        from models.iam import MFAMethod
+        mfa_query = select(MFAMethod).where(MFAMethod.user_id == user.id, MFAMethod.is_enabled == True)
+        mfa_res = await self.db.execute(mfa_query)
+        mfa_method = mfa_res.scalars().first()
+
+        if mfa_method:
+            from core.security import create_mfa_token
+            mfa_token = create_mfa_token(subject=user.id)
+            # Returning a dict signals the router that MFA is required
+            return {"requires_mfa": True, "mfa_token": mfa_token}
+
         # Fetch roles to embed in token
         user_roles = [r.role_name for r in user.roles] if getattr(user, 'roles', None) else ["user"]
         primary_role = user_roles[0] if user_roles else "user"
         if "admin" in user_roles:
             primary_role = "admin"
 
-        access_token = create_access_token(subject=user.id, role=primary_role)
-        refresh_token = create_refresh_token(subject=user.id)
-
-        # Store session in Redis
+        from modules.auth.core.session_service import SessionService
         from core.security import REFRESH_TOKEN_EXPIRE_DAYS
-        from datetime import timedelta
-        from core.redis import redis_set
         
-        expires_at = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-        session_data = {
-            "user_id": str(user.id),
-            "device_info": device_info,
-            "ip_address": ip_address,
-            "expires_at": expires_at.isoformat()
-        }
-        await redis_set(f"session:{refresh_token}", session_data, ttl_seconds=REFRESH_TOKEN_EXPIRE_DAYS * 86400)
+        jti = await SessionService.create_session(
+            user_id=str(user.id),
+            ip_address=ip_address,
+            user_agent=device_info,
+            expires_in_seconds=REFRESH_TOKEN_EXPIRE_DAYS * 86400
+        )
+
+        access_token = create_access_token(subject=user.id, role=primary_role, jti=jti)
+        refresh_token = create_refresh_token(subject=user.id, jti=jti)
+
+        return user, access_token, refresh_token
+
+    async def complete_mfa_login(self, user_id: str, code: str, ip_address: str, device_info: str) -> Tuple[User, str, str]:
+        from modules.auth.core.mfa_service import MFAService
+        mfa_service = MFAService(self.db)
+        
+        # Verify either TOTP or Backup Code
+        is_valid = await mfa_service.verify_totp_login(user_id, code)
+        if not is_valid:
+            # Fallback to backup code
+            is_valid = await mfa_service.verify_backup_code(user_id, code, ip_address)
+            
+        if not is_valid:
+            raise HTTPException(status_code=400, detail="Invalid MFA or Backup code.")
+            
+        user_query = select(User).where(User.id == user_id)
+        u_res = await self.db.execute(user_query)
+        user = u_res.scalars().first()
+        
+        user_roles = [r.role_name for r in user.roles] if getattr(user, 'roles', None) else ["user"]
+        primary_role = user_roles[0] if user_roles else "user"
+        if "admin" in user_roles:
+            primary_role = "admin"
+
+        from modules.auth.core.session_service import SessionService
+        from core.security import REFRESH_TOKEN_EXPIRE_DAYS
+        
+        jti = await SessionService.create_session(
+            user_id=str(user.id),
+            ip_address=ip_address,
+            user_agent=device_info,
+            expires_in_seconds=REFRESH_TOKEN_EXPIRE_DAYS * 86400
+        )
+
+        from core.security import create_access_token, create_refresh_token
+        access_token = create_access_token(subject=user.id, role=primary_role, jti=jti)
+        refresh_token = create_refresh_token(subject=user.id, jti=jti)
 
         return user, access_token, refresh_token
 
@@ -210,46 +253,47 @@ class AuthService:
         if "admin" in user_roles:
             primary_role = "admin"
             
-        new_access = create_access_token(subject=user.id, role=primary_role)
-        new_refresh = create_refresh_token(subject=user.id)
-
+        from modules.auth.core.session_service import SessionService
         from core.security import REFRESH_TOKEN_EXPIRE_DAYS
-        from datetime import timedelta
         
-        new_expires_at = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-        new_session_data = {
-            "user_id": str(user.id),
-            "device_info": device_info,
-            "ip_address": ip_address,
-            "expires_at": new_expires_at.isoformat()
-        }
+        # We extract JTI from old refresh token if available, or generate a new one
+        from core.security import decode_token
+        old_payload = decode_token(refresh_token)
+        old_jti = old_payload.get("jti") if old_payload else None
         
-        # Invalidate old session
-        await redis_delete(f"session:{refresh_token}")
-        # Store new session
-        await redis_set(f"session:{new_refresh}", new_session_data, ttl_seconds=REFRESH_TOKEN_EXPIRE_DAYS * 86400)
+        if old_jti:
+            # We are sliding the expiration of the same session
+            pass
+        
+        new_jti = await SessionService.create_session(
+            user_id=str(user.id),
+            ip_address=ip_address,
+            user_agent=device_info,
+            expires_in_seconds=REFRESH_TOKEN_EXPIRE_DAYS * 86400
+        )
+            
+        new_access = create_access_token(subject=user.id, role=primary_role, jti=new_jti)
+        new_refresh = create_refresh_token(subject=user.id, jti=new_jti)
         
         return new_access, new_refresh
 
     async def logout(self, refresh_token: str):
-        from core.redis import redis_delete
-        await redis_delete(f"session:{refresh_token}")
+        from core.security import decode_token
+        from modules.auth.core.session_service import SessionService
+        
+        payload = decode_token(refresh_token)
+        if payload:
+            jti = payload.get("jti")
+            user_id = payload.get("sub")
+            if jti and user_id:
+                await SessionService.revoke_session(user_id, jti)
 
     async def revoke_all_sessions(self, user_id: str):
-        from core.redis import get_redis_client
-        import json
-        redis_client = get_redis_client()
-        # Scan all session keys. In production with many keys, keep a set of sessions per user.
-        # For simplicity, we scan.
-        cursor = b"0"
-        while cursor:
-            cursor, keys = await redis_client.scan(cursor, match="session:*", count=100)
-            for key in keys:
-                data_bytes = await redis_client.get(key)
-                if data_bytes:
-                    session_data = json.loads(data_bytes)
-                    if session_data.get("user_id") == str(user_id):
-                        await redis_client.delete(key)
+        from modules.auth.core.session_service import SessionService
+        sessions = await SessionService.list_active_sessions(str(user_id))
+        for s in sessions:
+            if s.get("jti"):
+                await SessionService.revoke_session(str(user_id), s["jti"])
 
     async def forgot_password(self, email: str) -> bool:
         from models.recovery import PasswordResetToken
@@ -363,108 +407,9 @@ class AuthService:
         
         return True
 
-    async def send_magic_link(self, email: str, request) -> bool:
-        from models.oauth import MagicLink
-        from core.security import generate_secure_token, hash_token
-        from datetime import datetime, timezone, timedelta
-        import os
-        
-        # Generate token
-        raw_token = generate_secure_token(64)
-        hashed_token = hash_token(raw_token)
-        
-        # Save token to DB with 15 mins expiry
-        expires_at = datetime.now(timezone.utc) + timedelta(minutes=15)
-        magic_entry = MagicLink(
-            email=email,
-            token_hash=hashed_token,
-            expires_at=expires_at
-        )
-        self.db.add(magic_entry)
-        await self.db.commit()
-        
-        # Dispatch email
-        from core.email import send_email_async
-        
-        frontend_url = os.getenv("FRONTEND_URL", "http://localhost:3000")
-        magic_link = f"{frontend_url}/auth/verify-magic?token={raw_token}"
-        
-        subject = "Your Magic Login Link - Skillsutra"
-        html = f"""
-        <h2>Your Magic Login Link</h2>
-        <p>Click the button below to securely sign in to your account. This link will expire in 15 minutes.</p>
-        <p><a href="{magic_link}" style="padding: 12px 24px; background-color: #10B981; color: white; font-weight: bold; text-decoration: none; border-radius: 8px; display: inline-block; margin-top: 10px;">Sign In Now</a></p>
-        <p>If the button doesn't work, copy and paste this link into your browser:</p>
-        <p><small>{magic_link}</small></p>
-        """
-        
-        await send_email_async(email, subject, html)
-        print(f"DEBUG Email: Magic login link for {email}: {magic_link}", flush=True)
-        return True
 
-    async def verify_magic_link(self, token: str, ip_address: str, device_info: str) -> dict:
-        from models.oauth import MagicLink
-        from core.security import hash_token, create_access_token, create_refresh_token, create_setup_token
-        from datetime import datetime, timezone
-        import uuid
-        
-        hashed_token = hash_token(token)
-        query = select(MagicLink).where(MagicLink.token_hash == hashed_token)
-        result = await self.db.execute(query)
-        entry = result.scalars().first()
-        
-        if not entry or entry.expires_at < datetime.now(timezone.utc):
-            raise HTTPException(status_code=400, detail="Invalid or expired magic link token")
-            
-        # Get user
-        email = entry.email
-        user_query = select(User).where(User.email == email)
-        user_res = await self.db.execute(user_query)
-        user = user_res.scalars().first()
-        
-        if not user:
-            # Delete token
-            await self.db.delete(entry)
-            await self.db.commit()
-            return {"needs_setup": True, "setup_token": create_setup_token(email), "email": email}
-        elif not user.is_active:
-            user.is_active = True
 
-        # Delete token
-        await self.db.delete(entry)
-        await self.db.commit()
-        await self.db.refresh(user)
-
-        # Generate tokens
-        user_roles = [r.role_name for r in user.roles] if getattr(user, 'roles', None) else ["user"]
-        primary_role = user_roles[0] if user_roles else "user"
-        if "admin" in user_roles:
-            primary_role = "admin"
-            
-        access_token = create_access_token(subject=user.id, role=primary_role)
-        refresh_token = create_refresh_token(subject=user.id)
-        
-        from core.security import REFRESH_TOKEN_EXPIRE_DAYS
-        from datetime import timedelta
-        from core.redis import redis_set
-        
-        expires_at = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-        session_data = {
-            "user_id": str(user.id),
-            "device_info": device_info,
-            "ip_address": ip_address,
-            "expires_at": expires_at.isoformat()
-        }
-        await redis_set(f"session:{refresh_token}", session_data, ttl_seconds=REFRESH_TOKEN_EXPIRE_DAYS * 86400)
-
-        return {
-            "access_token": access_token,
-            "refresh_token": refresh_token,
-            "token_type": "bearer",
-            "needs_setup": False
-        }
-
-    async def complete_magic_setup(self, token: str, password: str, name: str, ip_address: str, device_info: str) -> dict:
+    async def complete_account_setup(self, token: str, password: str, name: str, ip_address: str, device_info: str) -> dict:
         from core.security import decode_token, get_password_hash, create_access_token, create_refresh_token
         from core.username_utils import generate_unique_username
         
@@ -494,7 +439,7 @@ class AuthService:
             is_active=True,
             first_name=name.split(" ")[0] if name else None,
             last_name=" ".join(name.split(" ")[1:]) if name and " " in name else None,
-            account_creation_method="magic_link"
+            account_creation_method="otp"
         )
         self.db.add(user)
         await self.db.flush()
@@ -521,21 +466,19 @@ class AuthService:
         # Log them in
         user_roles = [r.role_name for r in user.roles] if getattr(user, 'roles', None) else ["user"]
         primary_role = user_roles[0] if user_roles else "user"
-        access_token = create_access_token(subject=user.id, role=primary_role)
-        refresh_token = create_refresh_token(subject=user.id)
         
+        from modules.auth.core.session_service import SessionService
         from core.security import REFRESH_TOKEN_EXPIRE_DAYS
-        from datetime import datetime, timezone, timedelta
-        from core.redis import redis_set
         
-        expires_at = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-        session_data = {
-            "user_id": str(user.id),
-            "device_info": device_info,
-            "ip_address": ip_address,
-            "expires_at": expires_at.isoformat()
-        }
-        await redis_set(f"session:{refresh_token}", session_data, ttl_seconds=REFRESH_TOKEN_EXPIRE_DAYS * 86400)
+        jti = await SessionService.create_session(
+            user_id=str(user.id),
+            ip_address=ip_address,
+            user_agent=device_info,
+            expires_in_seconds=REFRESH_TOKEN_EXPIRE_DAYS * 86400
+        )
+        
+        access_token = create_access_token(subject=user.id, role=primary_role, jti=jti)
+        refresh_token = create_refresh_token(subject=user.id, jti=jti)
         
         return {
             "access_token": access_token,

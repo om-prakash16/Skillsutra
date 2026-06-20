@@ -7,7 +7,7 @@ class ChatService:
         sb = get_db()
         if not sb:
             return []
-        resp = sb.table("discussion_rooms").select("*").eq("is_active", True).execute()
+        resp = sb.table("chat_channels").select("*").execute()
         return resp.data if resp.data else []
 
     async def create_room(self, data: Dict[str, Any]) -> Dict[str, Any]:
@@ -25,9 +25,11 @@ class ChatService:
             raise Exception("DB unavailable")
 
         # 1. Save to DB
+        import uuid
+        msg_id = str(uuid.uuid4())
         resp = (
             sb.table("chat_messages")
-            .insert({"room_id": room_id, "user_id": user_id, "content": content})
+            .insert({"id": msg_id, "channel_id": room_id, "user_id": user_id, "content": content})
             .execute()
         )
 

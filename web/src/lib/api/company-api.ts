@@ -17,7 +17,14 @@ export const companyApi = {
                 method: "POST",
                 body: JSON.stringify(data),
             }),
+        verifyDomain: () =>
+            fetchWithAuth("/company/verify-domain", {
+                method: "POST"
+            }),
         get: () => fetchWithAuth("/company/profile"),
+    },
+    dashboard: {
+        getMetrics: () => fetchWithAuth("/company/dashboard-metrics"),
     },
     team: {
         invite: (email: string, role: string) =>

@@ -20,7 +20,7 @@ router = APIRouter(prefix="/social", tags=["Social Networking"])
 # POSTS API
 # ==============================================================================
 
-@router.post("/posts", response_model=PostResponse, status_code=status.HTTP_201_CREATED)
+@router.post("/posts", status_code=status.HTTP_201_CREATED)
 async def create_post(
     post_in: PostCreate,
     current_user: dict = Depends(get_current_user),
@@ -35,6 +35,7 @@ async def create_post(
     db.add(new_post)
     await db.flush()
 
+    media_list = []
     for media_in in post_in.media:
         new_media = PostMedia(
             post_id=new_post.id,
@@ -43,24 +44,26 @@ async def create_post(
             sort_order=media_in.sort_order
         )
         db.add(new_media)
+        media_list.append({
+            "media_url": media_in.media_url,
+            "media_type": media_in.media_type,
+            "sort_order": media_in.sort_order,
+        })
         
     await db.commit()
-    await db.refresh(new_post)
-    
-    # Dispatch background fanout to push post to followers' Redis feeds
-    from modules.ecosystem.tasks import fanout_post_task
-    fanout_post_task.delay(
-        post_id=str(new_post.id),
-        author_id=str(current_user["id"]),
-        post_data={
-            "id": str(new_post.id),
-            "type": "POST",
-            "content": {"text": new_post.content_markdown, "author_id": str(current_user["id"])},
-            "created_at": new_post.created_at.isoformat() if new_post.created_at else None
-        }
-    )
-    
-    return new_post
+
+    # Return a plain dict to avoid MissingGreenlet from lazy-loaded relationships
+    return {
+        "id": str(new_post.id),
+        "author_id": str(new_post.author_id),
+        "content_markdown": new_post.content_markdown,
+        "visibility": new_post.visibility,
+        "likes_count": new_post.likes_count,
+        "comments_count": new_post.comments_count,
+        "reposts_count": new_post.reposts_count,
+        "created_at": new_post.created_at.isoformat() if new_post.created_at else None,
+        "media": media_list,
+    }
 
 from schemas.social import EnrichedPostResponse
 from models.profile import Profile

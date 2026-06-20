@@ -38,7 +38,10 @@ export function ProjectsTab({ data, onSave }: ProjectsTabProps) {
             description: "Description",
             github: "",
             link: "",
-            stack: ["React"]
+            stack: ["React"],
+            isGroup: false,
+            members: "",
+            role_description: ""
         }
         setLocalProjects([newProject, ...localProjects])
     }
@@ -47,13 +50,8 @@ export function ProjectsTab({ data, onSave }: ProjectsTabProps) {
         setLocalProjects(localProjects.filter((p: any) => p.id !== id))
     }
 
-    const handleUpdate = (id: string, field: string, value: string) => {
-        if (field === "stack") {
-            const arr = value.split(",").map(s => s.trim()).filter(Boolean)
-            setLocalProjects(localProjects.map((p: any) => p.id === id ? { ...p, [field]: arr } : p))
-        } else {
-            setLocalProjects(localProjects.map((p: any) => p.id === id ? { ...p, [field]: value } : p))
-        }
+    const handleUpdate = (id: string, field: string, value: any) => {
+        setLocalProjects(localProjects.map((p: any) => p.id === id ? { ...p, [field]: value } : p))
     }
 
     const handleCommitChanges = async () => {
@@ -63,9 +61,12 @@ export function ProjectsTab({ data, onSave }: ProjectsTabProps) {
                 projects: localProjects.map((p: any) => ({
                     title: p.title,
                     description: p.description,
-                    stack: p.stack,
+                    stack: typeof p.stack === "string" ? p.stack.split(",").map((s: string) => s.trim()).filter(Boolean) : p.stack,
                     project_url: p.link,
-                    github_url: p.github
+                    github_url: p.github,
+                    isGroup: p.isGroup || false,
+                    members: typeof p.members === "string" ? p.members.split(",").map((s: string) => s.trim()).filter(Boolean) : (p.members || []),
+                    role_description: p.role_description || ""
                 }))
             })
         }
@@ -228,23 +229,82 @@ export function ProjectsTab({ data, onSave }: ProjectsTabProps) {
                                 )}
                             </CardContent>
                             <CardFooter className="flex flex-col gap-6 px-8 pb-8">
-                                <div className="flex flex-wrap gap-2.5 w-full">
+                                <div className="flex flex-wrap gap-4 w-full">
                                     {isEditing ? (
-                                        <div className="space-y-1 w-full">
-                                            <Label className="text-[9px] font-black uppercase text-muted-foreground ml-1">Tech Nodes (Comma Separated)</Label>
-                                             <Input
-                                                value={project.stack?.join(", ") || ""}
-                                                onChange={(e) => handleUpdate(project.id, 'stack', e.target.value)}
-                                                className="text-xs h-10 glass border-border rounded-xl"
-                                                placeholder="React, TypeScript, Python..."
-                                            />
+                                        <div className="space-y-4 w-full">
+                                            <div className="space-y-1">
+                                                <Label className="text-[9px] font-black uppercase text-muted-foreground ml-1">Tech Nodes (Comma Separated)</Label>
+                                                <Input
+                                                    value={typeof project.stack === "string" ? project.stack : (project.stack?.join(", ") || "")}
+                                                    onChange={(e) => handleUpdate(project.id, 'stack', e.target.value)}
+                                                    className="text-xs h-10 glass border-border rounded-xl"
+                                                    placeholder="React, TypeScript, Python..."
+                                                />
+                                            </div>
+                                            <div className="flex items-center gap-3">
+                                                <Button 
+                                                    type="button" 
+                                                    variant={project.isGroup ? "default" : "outline"} 
+                                                    size="sm" 
+                                                    className="rounded-xl h-9"
+                                                    onClick={() => handleUpdate(project.id, 'isGroup', !project.isGroup)}
+                                                >
+                                                    {project.isGroup ? "Group Project" : "Personal Project"}
+                                                </Button>
+                                            </div>
+                                            {project.isGroup && (
+                                                <div className="grid gap-4 mt-2 p-4 border border-border/50 rounded-xl bg-muted/10">
+                                                    <div className="space-y-1">
+                                                        <Label className="text-[9px] font-black uppercase text-muted-foreground ml-1">Team Members (Comma Separated)</Label>
+                                                        <Input
+                                                            value={typeof project.members === "string" ? project.members : (project.members?.join(", ") || "")}
+                                                            onChange={(e) => handleUpdate(project.id, 'members', e.target.value)}
+                                                            className="text-xs h-10 glass border-border rounded-xl"
+                                                            placeholder="Alice, Bob, Charlie"
+                                                        />
+                                                    </div>
+                                                    <div className="space-y-1">
+                                                        <Label className="text-[9px] font-black uppercase text-muted-foreground ml-1">My Role / Contribution Details</Label>
+                                                        <Textarea
+                                                            value={project.role_description || ""}
+                                                            onChange={(e) => handleUpdate(project.id, 'role_description', e.target.value)}
+                                                            className="text-sm min-h-[80px] glass border-border rounded-xl p-3 leading-relaxed"
+                                                            placeholder="Describe what you worked on specifically..."
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     ) : (
-                                        project.stack.map((tech: any) => (
-                                            <Badge key={tech} variant="outline" className="glass py-1 px-3 text-[9px] font-black uppercase tracking-widest text-muted-foreground border-border rounded-lg group-hover:border-primary/20 group-hover:text-primary/60 transition-colors">
-                                                {tech}
-                                            </Badge>
-                                        ))
+                                        <div className="w-full space-y-4">
+                                            <div className="flex flex-wrap gap-2.5">
+                                                {project.stack.map((tech: any) => (
+                                                    <Badge key={tech} variant="outline" className="glass py-1 px-3 text-[9px] font-black uppercase tracking-widest text-muted-foreground border-border rounded-lg group-hover:border-primary/20 group-hover:text-primary/60 transition-colors">
+                                                        {tech}
+                                                    </Badge>
+                                                ))}
+                                                {project.isGroup && (
+                                                    <Badge variant="default" className="bg-primary/20 text-primary py-1 px-3 text-[9px] font-black uppercase tracking-widest rounded-lg">
+                                                        Group Project
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                            {project.isGroup && (
+                                                <div className="mt-4 w-full text-sm space-y-2 p-4 border border-border/30 rounded-xl bg-muted/5">
+                                                    {project.members && project.members.length > 0 && (
+                                                        <p className="font-bold text-xs uppercase tracking-widest text-foreground">
+                                                            Team Members: <span className="font-normal text-muted-foreground ml-2 capitalize">{Array.isArray(project.members) ? project.members.join(", ") : project.members}</span>
+                                                        </p>
+                                                    )}
+                                                    {project.role_description && (
+                                                        <div>
+                                                            <p className="font-bold text-xs uppercase tracking-widest text-foreground mb-1">My Contribution:</p>
+                                                            <p className="text-muted-foreground italic text-sm leading-relaxed">{project.role_description}</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
                                 

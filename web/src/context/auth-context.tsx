@@ -4,6 +4,8 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { login as apiLogin, signup as apiSignup, refreshSession as apiRefreshSession, logout as apiLogout, me as apiMe, verifyMagicLink, sendSignupOtp as apiSendSignupOtp, verifySignupOtp as apiVerifySignupOtp, completeMagicLinkSetup as apiCompleteMagicSetup } from "@/lib/api/auth-api"
+import { getPostLoginDestination } from "@/lib/auth-utils"
+import { api } from "@/lib/api/api-client"
 
 type UserRole = "user" | "company" | "admin" | "recruiter" | string
 
@@ -30,11 +32,13 @@ interface AuthContextType {
     isAuthenticated: boolean
     signInWithGoogle: (role?: string, intent?: "login" | "register" | "link") => Promise<void>
     signInWithGitHub: (role?: string, intent?: "login" | "register" | "link") => Promise<void>
+    signInWithMicrosoft: (role?: string, intent?: "login" | "register" | "link") => Promise<void>
     loginUser: (data: any) => Promise<void>
     loginWithMagicLink: (token: string) => Promise<any>
     signupUser: (data: any) => Promise<void>
     sendSignupOtp: (email: string, name?: string) => Promise<void>
     verifySignupOtp: (email: string, code: string) => Promise<string>
+    loginWithOtp: (email: string, code: string) => Promise<any>
     completeMagicLinkSetup: (data: any) => Promise<void>
     logout: () => void
     setAuthSession: (user: User, accessToken: string, refreshToken: string) => void
@@ -109,14 +113,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(true)
         localStorage.setItem("requested_role", role)
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1"}/auth/oauth/github/url?intent=${intent}`)
-            const data = await res.json()
-            if (data.url) {
+            const data = await api.get(`/auth/oauth/github/url?intent=${intent}`)
+            if (data && data.url) {
                 window.location.href = data.url
             }
         } catch (error) {
             console.error("Failed to get GitHub auth URL", error)
             toast.error("Failed to initialize GitHub login")
+            setIsLoading(false)
+        }
+    }
+
+    const signInWithMicrosoft = async (role = "user", intent: "login" | "register" | "link" = "login") => {
+        setIsLoading(true)
+        localStorage.setItem("requested_role", role)
+        try {
+            const data = await api.get(`/auth/oauth/microsoft/url?intent=${intent}&role=${role}`)
+            if (data && data.url) {
+                window.location.href = data.url
+            }
+        } catch (error: any) {
+            console.error("Failed to get Microsoft auth URL", error)
+            toast.error("Failed MS login: " + (error?.message || "Unknown error"))
             setIsLoading(false)
         }
     }
@@ -137,12 +155,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             toast.success("Logged in successfully")
             
-            if (realUser?.role === "admin") {
-                router.push("/admin")
-            } else if (realUser?.role === "company") {
-                router.push("/company/dashboard")
+            const destination = getPostLoginDestination(realUser)
+            if (destination) {
+                router.push(destination)
             } else {
-                router.push("/")
+                toast.error("Authentication Error: Role not found. Please contact support.")
             }
         } catch (err: any) {
             toast.error(err.message || "Login failed")
@@ -173,12 +190,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             toast.success("Logged in successfully")
             
-            if (realUser?.role === "admin") {
-                router.push("/admin")
-            } else if (realUser?.role === "company") {
-                router.push("/company/dashboard")
+            const destination = getPostLoginDestination(realUser)
+            if (destination) {
+                router.push(destination)
             } else {
-                router.push("/user/dashboard")
+                toast.error("Authentication Error: Role not found. Please contact support.")
             }
             return result
         } catch (err: any) {
@@ -227,6 +243,42 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }
 
+    const loginWithOtp = async (email: string, code: string) => {
+        setIsLoading(true)
+        try {
+            const res = await apiVerifySignupOtp(email, code)
+            
+            if (res.needs_setup) {
+                setIsLoading(false)
+                return res
+            }
+            
+            localStorage.setItem("accessToken", res.access_token)
+            localStorage.setItem("refreshToken", res.refresh_token)
+            document.cookie = `auth_token=${res.access_token}; path=/; max-age=86400; SameSite=Lax`
+            setToken(res.access_token)
+            
+            const realUser = await apiMe()
+            setUser(realUser)
+            setIsAuthenticated(true)
+            
+            toast.success("Logged in successfully")
+            
+            const destination = getPostLoginDestination(realUser)
+            if (destination) {
+                router.push(destination)
+            } else {
+                toast.error("Authentication Error: Role not found. Please contact support.")
+            }
+            return res
+        } catch (err: any) {
+            toast.error(err.message || "Invalid OTP")
+            throw err
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
     const completeMagicLinkSetup = async (data: any) => {
         setIsLoading(true)
         try {
@@ -242,7 +294,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             setIsAuthenticated(true)
             
             toast.success("Account created successfully")
-            router.push("/user/dashboard")
+            const destination = getPostLoginDestination(realUser)
+            if (destination) {
+                router.push(destination)
+            } else {
+                toast.error("Authentication Error: Role not found. Please contact support.")
+            }
         } catch (err: any) {
             toast.error(err.message || "Setup failed")
             throw err
@@ -286,11 +343,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 isAuthenticated,
                 signInWithGoogle,
                 signInWithGitHub,
+                signInWithMicrosoft,
                 loginUser,
                 loginWithMagicLink,
                 signupUser,
                 sendSignupOtp,
                 verifySignupOtp,
+                loginWithOtp,
                 completeMagicLinkSetup,
                 logout,
                 setAuthSession,

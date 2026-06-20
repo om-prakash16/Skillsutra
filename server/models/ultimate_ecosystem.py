@@ -78,8 +78,8 @@ class ChatMessage(Base):
 # ==========================================
 # NOTION PILLAR (KNOWLEDGE BASE)
 # ==========================================
-class Workspace(Base):
-    __tablename__ = "workspaces"
+class UEWorkspace(Base):
+    __tablename__ = "ue_workspaces"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     name = Column(String, nullable=False)
@@ -91,7 +91,7 @@ class CollaborativeDocument(Base):
     __tablename__ = "collaborative_documents"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    workspace_id = Column(UUID(as_uuid=True), ForeignKey('workspaces.id', ondelete='CASCADE'), nullable=False)
+    workspace_id = Column(UUID(as_uuid=True), ForeignKey('ue_workspaces.id', ondelete='CASCADE'), nullable=False)
     
     title = Column(String, nullable=False)
     content_crdt_state = Column(JSONB, default=dict) # Operational Transformation / CRDT state
@@ -103,7 +103,7 @@ class TaskBoard(Base):
     __tablename__ = "task_boards"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    workspace_id = Column(UUID(as_uuid=True), ForeignKey('workspaces.id', ondelete='CASCADE'), nullable=False)
+    workspace_id = Column(UUID(as_uuid=True), ForeignKey('ue_workspaces.id', ondelete='CASCADE'), nullable=False)
     
     title = Column(String, nullable=False)
     lanes = Column(JSONB, default=list) # e.g. [{"id": "todo", "name": "To Do"}]
