@@ -7,6 +7,7 @@ import { useEffect } from "react"
 import { Loader2, Zap } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { GlobalSearchCommand } from "@/components/admin/GlobalSearchCommand"
+import { PlatformHealthHeader } from "@/components/admin/PlatformHealthHeader"
 
 export default function AdminLayout({
     children,
@@ -80,7 +81,7 @@ export default function AdminLayout({
     }
 
     return (
-        <div className="flex min-h-screen bg-background text-slate-50 selection:bg-primary/40 overflow-hidden">
+        <div className="flex h-full w-full bg-background text-slate-50 selection:bg-primary/40 overflow-hidden">
             {/* Advanced Ambient Background */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
                 {/* Primary Mesh Glow */}
@@ -101,11 +102,10 @@ export default function AdminLayout({
 
             <Sidebar role="admin" className="hidden lg:flex" />
             
-            <main className="flex-1 w-full pt-16 relative scroll-smooth custom-scrollbar z-10">
-                {/* Top dynamic header blur mask */}
-                <div className="sticky top-0 w-full h-12 bg-gradient-to-b from-[#030712] to-transparent z-40 pointer-events-none opacity-80" />
+            <main className="flex-1 w-full pt-20 relative overflow-y-auto scroll-smooth custom-scrollbar z-10 flex flex-col">
+                <PlatformHealthHeader />
                 
-                <div className="w-full px-4 py-8 md:px-12 md:py-16 max-w-[1900px] mx-auto">
+                <div className="w-full px-4 py-8 md:px-12 md:py-16 max-w-[1900px] mx-auto flex-1">
                     <AnimatePresence mode="wait">
                         <motion.div
                             initial={{ opacity: 0, y: 30, scale: 0.98 }}

@@ -43,6 +43,7 @@ from modules.chat.router import router as chat_router
 from modules.messages.router import router as messages_router
 from modules.admin.api.router import router as admin_router
 from modules.admin.api.feature_router import router as feature_router
+from modules.admin.api.secrets_router import router as secrets_router
 from modules.admin.api.db_proxy import router as db_proxy_router
 from modules.users.api.github_integration import router as github_router
 from modules.challenges.router import router as challenges_router
@@ -105,8 +106,9 @@ v1_router.include_router(notifications_router, prefix="/notifications", tags=["N
 v1_router.include_router(analytics_router, prefix="/analytics", tags=["Performance Metrics"])
 v1_router.include_router(chat_router, prefix="/chat", tags=["Direct Communication"])
 v1_router.include_router(messages_router, prefix="/messages", tags=["Direct Messaging"])
-v1_router.include_router(admin_router, prefix="/admin", tags=["Admin Control Panel"])
-v1_router.include_router(feature_router, prefix="/admin/features", tags=["Admin Features"])
+v1_router.include_router(admin_router, prefix="/superadmin", tags=["Super Admin Control Panel"])
+v1_router.include_router(feature_router, prefix="/superadmin/features", tags=["Super Admin Features"])
+v1_router.include_router(secrets_router, prefix="/superadmin/secrets", tags=["Super Admin Secrets"])
 v1_router.include_router(db_proxy_router, prefix="/db", tags=["Database Proxy"])
 v1_router.include_router(integrations_router, prefix="/integrations", tags=["Developer Platforms Sync"])
 v1_router.include_router(github_router, prefix="/github", tags=["GitHub Integration"])

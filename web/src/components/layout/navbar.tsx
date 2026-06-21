@@ -52,7 +52,7 @@ export function Navbar() {
 
     const siteName = getVal("global", "site_name", "SkillProof AI")
 
-    const isDashboard = pathname?.startsWith("/user") || pathname?.startsWith("/company") || pathname?.startsWith("/admin")
+    const isDashboard = pathname?.startsWith("/user") || pathname?.startsWith("/company") || pathname?.startsWith("/superadmin")
 
     return (
         <header
@@ -69,7 +69,7 @@ export function Navbar() {
                 <div className="flex items-center gap-8">
                     {/* Logo */}
                     {!isDashboard && (
-                        <Link href={user ? (['super_admin', 'admin'].includes(user.role) ? '/admin' : user.role === 'company' ? '/company/dashboard' : user.role === 'mentor' ? '/mentor' : user.role === 'moderator' ? '/moderation' : '/feed') : '/'} className="flex items-center gap-3 group shrink-0">
+                        <Link href={user ? (['super_admin', 'admin'].includes(user.role) ? '/superadmin' : user.role === 'company' ? '/company/dashboard' : user.role === 'mentor' ? '/mentor' : user.role === 'moderator' ? '/moderation' : '/feed') : '/'} className="flex items-center gap-3 group shrink-0">
                             <div className="bg-primary/10 p-2 rounded-xl group-hover:bg-primary/20 transition-all shadow-[0_0_20px_hsl(var(--primary)/0.15)] backdrop-blur-md border border-primary/20 shrink-0">
                                 <ShieldCheck className="w-6 h-6 text-primary fill-primary/10" />
                             </div>
@@ -187,13 +187,13 @@ export function Navbar() {
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
                                         <DropdownMenuItem asChild>
-                                            <Link href={user.username ? `/in/${user.username}` : (user.role === 'admin' ? "/admin/profile" : user.role === 'company' ? "/company/profile" : `/in/${user.id}`)} className="cursor-pointer">
+                                            <Link href={user.username ? `/in/${user.username}` : (user.role === 'admin' || user.role === 'super_admin' ? "/superadmin/profile" : user.role === 'company' ? "/company/profile" : `/in/${user.id}`)} className="cursor-pointer">
                                                 <User className="w-4 h-4 mr-2" />
                                                 <span>Profile</span>
                                             </Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href={['super_admin', 'admin'].includes(user.role) ? "/admin" : user.role === 'company' ? "/company/dashboard" : user.role === 'mentor' ? "/mentor" : user.role === 'moderator' ? "/moderation" : "/user/dashboard"} className="cursor-pointer">
+                                            <Link href={['super_admin', 'admin'].includes(user.role) ? "/superadmin" : user.role === 'company' ? "/company/dashboard" : user.role === 'mentor' ? "/mentor" : user.role === 'moderator' ? "/moderation" : "/user/dashboard"} className="cursor-pointer">
                                                 Dashboard
                                             </Link>
                                         </DropdownMenuItem>
@@ -222,7 +222,7 @@ export function Navbar() {
                                             <Link href="/notifications" className="cursor-pointer">Notifications</Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem asChild>
-                                            <Link href={user.role === 'admin' ? "/admin/settings" : user.role === 'company' ? "/company/settings" : "/user/settings"} className="cursor-pointer">
+                                            <Link href={['super_admin', 'admin'].includes(user.role) ? "/superadmin/settings" : user.role === 'company' ? "/company/settings" : "/user/settings"} className="cursor-pointer">
                                                 Settings
                                             </Link>
                                         </DropdownMenuItem>
@@ -300,7 +300,7 @@ export function Navbar() {
                                     </div>
                                 ) : (
                                     <div className="flex flex-col gap-3 mt-4">
-                                        <Link href={user.role === 'admin' ? "/admin" : user.role === 'company' ? "/company/dashboard" : "/user/dashboard"} className="w-full">
+                                        <Link href={['super_admin', 'admin'].includes(user.role) ? "/superadmin" : user.role === 'company' ? "/company/dashboard" : "/user/dashboard"} className="w-full">
                                             <Button className="w-full" variant="outline">Dashboard</Button>
                                         </Link>
                                         <Button className="w-full" variant="destructive" onClick={logout}>Sign Out</Button>

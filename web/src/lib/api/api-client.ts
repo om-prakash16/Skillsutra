@@ -214,19 +214,19 @@ export const api = {
     activity: {
         user: (limit = 20) => fetchWithAuth(`/activity/user?limit=${limit}`),
         company: (limit = 20) => fetchWithAuth(`/activity/company?limit=${limit}`),
-        admin: (limit = 50) => fetchWithAuth(`/activity/admin?limit=${limit}`),
+        admin: (limit = 50) => fetchWithAuth(`/activity/superadmin?limit=${limit}`),
         record: (data: any) => fetchWithAuth("/activity/record", { method: "POST", body: JSON.stringify(data) }),
     },
     analytics: {
         user: () => fetchWithAuth("/analytics/user"),
         company: () => fetchWithAuth("/analytics/company"),
-        admin: () => fetchWithAuth("/analytics/admin"),
+        admin: () => fetchWithAuth("/analytics/superadmin"),
         public: () => fetchWithAuth("/analytics/public"),
     },
     insights: {
         user: () => fetchWithAuth("/analytics/insights/user"),
         company: () => fetchWithAuth("/analytics/insights/company"),
-        admin: () => fetchWithAuth("/analytics/insights/admin"),
+        admin: () => fetchWithAuth("/analytics/insights/superadmin"),
     },
     sync: {
         profile: () => fetchWithAuth("/sync/profile", { method: "POST" }),
@@ -234,37 +234,37 @@ export const api = {
         retry: (type: string) => fetchWithAuth("/sync/retry", { method: "POST", body: JSON.stringify({ entity_type: type }) })
     },
     admin: {
-        getDashboard: () => fetchWithAuth("/admin/dashboard"),
-        getPublicFeatures: () => fetchWithAuth("/admin/features/public"),
-        getUsers: () => fetchWithAuth("/admin/users"),
-        updateUser: (account: string, data: any) => fetchWithAuth(`/admin/users/${account}`, { method: "PATCH", body: JSON.stringify(data) }),
-        getSchema: () => fetchWithAuth("/admin/schema"),
-        createSchema: (data: any) => fetchWithAuth("/admin/schema", { method: "POST", body: JSON.stringify(data) }),
-        updateSchema: (id: string, data: any) => fetchWithAuth(`/admin/schema/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
-        deleteSchema: (id: string) => fetchWithAuth(`/admin/schema/${id}`, { method: "DELETE" }),
-        getFeatures: () => fetchWithAuth("/admin/features"),
-        updateFeature: (data: any) => fetchWithAuth("/admin/features/update", { method: "POST", body: JSON.stringify(data) }),
-        getSettings: () => fetchWithAuth("/admin/settings"),
-        updateSettings: (data: any) => fetchWithAuth("/admin/settings", { method: "POST", body: JSON.stringify(data) }),
-        getBlockchainTransactions: () => fetchWithAuth("/admin/infrastructure/transactions"),
-        getCompanies: () => fetchWithAuth("/admin/companies"),
-        verifyCompany: (id: string) => fetchWithAuth(`/admin/companies/${id}/verify`, { method: "PATCH" }),
-        deleteCompany: (id: string) => fetchWithAuth(`/admin/companies/${id}`, { method: "DELETE" }),
-        getAllJobs: () => fetchWithAuth("/admin/all-jobs"),
-        deleteJob: (id: string) => fetchWithAuth(`/admin/jobs/${id}`, { method: "DELETE" }),
-        getAllApplications: () => fetchWithAuth("/admin/all-applications"),
-        getSkills: () => fetchWithAuth("/admin/skills"),
-        createSkill: (data: any) => fetchWithAuth("/admin/skills", { method: "POST", body: JSON.stringify(data) }),
-        getReports: (params: string) => fetchWithAuth(`/admin/reports?${params}`),
-        resolveReport: (data: any) => fetchWithAuth("/admin/reports/resolve", { method: "PATCH", body: JSON.stringify(data) }),
-        getSubscriptions: () => fetchWithAuth("/admin/subscriptions"),
-        updateSubscription: (id: string, data: any) => fetchWithAuth(`/admin/subscriptions/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
-        getSkillFlags: (status?: string) => fetchWithAuth(`/admin/skill-flags${status ? `?status=${status}` : ""}`),
-        reviewSkillFlag: (id: string, data: any) => fetchWithAuth(`/admin/skill-flags/review/${id}`, { method: "POST", body: JSON.stringify(data) }),
-        getTickets: (status?: string) => fetchWithAuth(`/admin/tickets${status ? `?status=${status}` : ""}`),
-        updateTicket: (id: string, data: any) => fetchWithAuth(`/admin/tickets/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
-        getAuditLogs: () => fetchWithAuth("/admin/audit-logs"),
-        flagUser: (data: any) => fetchWithAuth("/admin/users/flag", { method: "POST", body: JSON.stringify(data) }),
+        getDashboard: () => fetchWithAuth("/superadmin/dashboard"),
+        getPublicFeatures: () => fetchWithAuth("/superadmin/features/public"),
+        getUsers: () => fetchWithAuth("/superadmin/users"),
+        updateUser: (account: string, data: any) => fetchWithAuth(`/superadmin/users/${account}`, { method: "PATCH", body: JSON.stringify(data) }),
+        getSchema: () => fetchWithAuth("/superadmin/schema"),
+        createSchema: (data: any) => fetchWithAuth("/superadmin/schema", { method: "POST", body: JSON.stringify(data) }),
+        updateSchema: (id: string, data: any) => fetchWithAuth(`/superadmin/schema/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+        deleteSchema: (id: string) => fetchWithAuth(`/superadmin/schema/${id}`, { method: "DELETE" }),
+        getFeatures: () => fetchWithAuth("/superadmin/features"),
+        updateFeature: (data: any) => fetchWithAuth("/superadmin/features/update", { method: "POST", body: JSON.stringify(data) }),
+        getSettings: () => fetchWithAuth("/superadmin/settings"),
+        updateSettings: (data: any) => fetchWithAuth("/superadmin/settings", { method: "POST", body: JSON.stringify(data) }),
+        getBlockchainTransactions: () => fetchWithAuth("/superadmin/infrastructure/transactions"),
+        getCompanies: () => fetchWithAuth("/superadmin/companies"),
+        verifyCompany: (id: string) => fetchWithAuth(`/superadmin/companies/${id}/verify`, { method: "PATCH" }),
+        deleteCompany: (id: string) => fetchWithAuth(`/superadmin/companies/${id}`, { method: "DELETE" }),
+        getAllJobs: () => fetchWithAuth("/superadmin/all-jobs"),
+        deleteJob: (id: string) => fetchWithAuth(`/superadmin/jobs/${id}`, { method: "DELETE" }),
+        getAllApplications: () => fetchWithAuth("/superadmin/all-applications"),
+        getSkills: () => fetchWithAuth("/superadmin/skills"),
+        createSkill: (data: any) => fetchWithAuth("/superadmin/skills", { method: "POST", body: JSON.stringify(data) }),
+        getReports: (params: string) => fetchWithAuth(`/superadmin/reports?${params}`),
+        resolveReport: (data: any) => fetchWithAuth("/superadmin/reports/resolve", { method: "PATCH", body: JSON.stringify(data) }),
+        getSubscriptions: () => fetchWithAuth("/superadmin/subscriptions"),
+        updateSubscription: (id: string, data: any) => fetchWithAuth(`/superadmin/subscriptions/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+        getSkillFlags: (status?: string) => fetchWithAuth(`/superadmin/skill-flags${status ? `?status=${status}` : ""}`),
+        reviewSkillFlag: (id: string, data: any) => fetchWithAuth(`/superadmin/skill-flags/review/${id}`, { method: "POST", body: JSON.stringify(data) }),
+        getTickets: (status?: string) => fetchWithAuth(`/superadmin/tickets${status ? `?status=${status}` : ""}`),
+        updateTicket: (id: string, data: any) => fetchWithAuth(`/superadmin/tickets/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
+        getAuditLogs: () => fetchWithAuth("/superadmin/audit-logs"),
+        flagUser: (data: any) => fetchWithAuth("/superadmin/users/flag", { method: "POST", body: JSON.stringify(data) }),
     },
     recruiter: {
         getFunnel: () => fetchWithAuth("/recruiter/analytics/funnel"),
@@ -339,7 +339,7 @@ export const api = {
 // New code should import from these domain modules:
 //   import { userApi } from "@/lib/api/user-api"
 //   import { companyApi } from "@/lib/api/company-api"
-//   import { adminApi } from "@/lib/api/admin-api"
+//   import { adminApi } from "@/lib/api/superadmin-api"
 //   import { publicApi } from "@/lib/api/public-api"
 //   import { authApi } from "@/lib/api/auth-api"
 //
@@ -349,6 +349,6 @@ export const api = {
 export * as authApi from "./auth-api";
 export { userApi } from "./user-api";
 export { companyApi } from "./company-api";
-export { adminApi } from "./admin-api";
+export { adminApi } from "./superadmin-api";
 export { publicApi } from "./public-api";
 export { searchApi } from "./search-api";

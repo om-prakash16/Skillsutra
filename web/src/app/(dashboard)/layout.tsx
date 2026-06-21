@@ -69,7 +69,7 @@ export default function DashboardLayout({
     const showSidebar = isAuthorized && !isLoading;
 
     return (
-        <div className="flex min-h-screen bg-background text-foreground selection:bg-primary/40 overflow-hidden">
+        <div className="flex h-full w-full bg-background text-foreground selection:bg-primary/40 overflow-hidden">
             {/* Ambient Background */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
                 <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/[0.05] blur-[160px] rounded-full" />
@@ -79,7 +79,7 @@ export default function DashboardLayout({
 
             {showSidebar && <Sidebar role={(user?.role as any) || "user"} className="hidden lg:flex" />}
             
-            <main className="flex-1 w-full pt-16 lg:pt-0 relative scroll-smooth custom-scrollbar z-10">
+            <main className="flex-1 w-full pt-20 relative overflow-y-auto scroll-smooth custom-scrollbar z-10">
                 {/* Mobile Header with Hamburger */}
                 {showSidebar && (
                     <div className="lg:hidden fixed top-0 left-0 right-0 h-16 border-b border-border bg-background/80 backdrop-blur-md z-50 flex items-center px-4">

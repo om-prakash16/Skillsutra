@@ -8,3 +8,5 @@ from .workflow import *
 
 from .billing import *
 from .operations import *
+
+from .secrets import Secret

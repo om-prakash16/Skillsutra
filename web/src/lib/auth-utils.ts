@@ -9,16 +9,16 @@ export function getPostLoginDestination(user: any): string | null {
     switch (user.role) {
         case "super_admin":
         case "admin":
-            return "/admin";
+            return "/superadmin";
             
         case "security_admin":
-            return "/admin/security";
+            return "/superadmin/security";
             
         case "support_admin":
-            return "/admin/support";
+            return "/superadmin/support";
             
         case "ai_admin":
-            return "/admin/ai";
+            return "/superadmin/ai";
             
         case "company":
             // If full user object from API

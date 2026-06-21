@@ -7,6 +7,7 @@ import uuid
 from core.database import get_db_session
 from models.cms import CMSCollection, CMSField, CMSEntry, ContentStatus
 from api.v1.auth_router import get_current_user
+from core.authz import RequirePermission
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -33,7 +34,7 @@ async def get_collections(db: AsyncSession = Depends(get_db_session)):
     }
 
 @router.post("/collections", tags=["CMS Schema"])
-async def create_collection(payload: Dict[str, Any], db: AsyncSession = Depends(get_db_session)):
+async def create_collection(payload: Dict[str, Any], db: AsyncSession = Depends(get_db_session), user: dict = Depends(RequirePermission("manage_cms"))):
     """Create a new dynamic CMS collection."""
     col = CMSCollection(
         name=payload["name"],
@@ -59,7 +60,7 @@ async def get_collection_fields(collection_id: str, db: AsyncSession = Depends(g
     }
 
 @router.post("/collections/{collection_id}/fields", tags=["CMS Schema"])
-async def create_collection_field(collection_id: str, payload: Dict[str, Any], db: AsyncSession = Depends(get_db_session)):
+async def create_collection_field(collection_id: str, payload: Dict[str, Any], db: AsyncSession = Depends(get_db_session), user: dict = Depends(RequirePermission("manage_cms"))):
     """Add a new field to a collection."""
     field = CMSField(
         collection_id=collection_id,
@@ -96,7 +97,7 @@ async def get_entries(collection_slug: str, db: AsyncSession = Depends(get_db_se
     return {"success": True, "data": results}
 
 @router.post("/entries/{collection_slug}", tags=["CMS Content"])
-async def create_entry(collection_slug: str, payload: Dict[str, Any] = Body(...), db: AsyncSession = Depends(get_db_session), user: dict = Depends(get_current_user)):
+async def create_entry(collection_slug: str, payload: Dict[str, Any] = Body(...), db: AsyncSession = Depends(get_db_session), user: dict = Depends(RequirePermission("manage_cms"))):
     """Create a new dynamic entry."""
     col_result = await db.execute(select(CMSCollection).filter(CMSCollection.slug == collection_slug))
     col = col_result.scalars().first()
@@ -118,7 +119,7 @@ async def create_entry(collection_slug: str, payload: Dict[str, Any] = Body(...)
     return {"success": True, "data": {"id": entry.id, "status": entry.status, **(entry.data or {})}}
 
 @router.put("/entries/{collection_slug}/{entry_id}", tags=["CMS Content"])
-async def update_entry(collection_slug: str, entry_id: str, payload: Dict[str, Any] = Body(...), db: AsyncSession = Depends(get_db_session)):
+async def update_entry(collection_slug: str, entry_id: str, payload: Dict[str, Any] = Body(...), db: AsyncSession = Depends(get_db_session), user: dict = Depends(RequirePermission("manage_cms"))):
     """Update a dynamic entry."""
     entry_result = await db.execute(select(CMSEntry).filter(CMSEntry.id == entry_id))
     entry = entry_result.scalars().first()

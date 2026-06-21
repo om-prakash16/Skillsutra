@@ -74,7 +74,7 @@ export function GlobalSearchCommand() {
         {results.users.length > 0 && (
           <CommandGroup heading="Users">
             {results.users.map((user, idx) => (
-              <CommandItem key={idx} onSelect={() => onSelect(`/admin/users?search=${user.name}`)}>
+              <CommandItem key={idx} onSelect={() => onSelect(`/superadmin/users?search=${user.name}`)}>
                 <User className="mr-2 h-4 w-4" />
                 <span>{user.name}</span>
               </CommandItem>
@@ -85,7 +85,7 @@ export function GlobalSearchCommand() {
         {results.companies.length > 0 && (
           <CommandGroup heading="Companies">
             {results.companies.map((company, idx) => (
-              <CommandItem key={idx} onSelect={() => onSelect(`/admin/companies?search=${company.name}`)}>
+              <CommandItem key={idx} onSelect={() => onSelect(`/superadmin/companies?search=${company.name}`)}>
                 <Building2 className="mr-2 h-4 w-4" />
                 <span>{company.name}</span>
               </CommandItem>
@@ -96,7 +96,7 @@ export function GlobalSearchCommand() {
         {results.jobs.length > 0 && (
           <CommandGroup heading="Jobs">
             {results.jobs.map((job, idx) => (
-              <CommandItem key={idx} onSelect={() => onSelect(`/admin/jobs?search=${job.name}`)}>
+              <CommandItem key={idx} onSelect={() => onSelect(`/superadmin/jobs?search=${job.name}`)}>
                 <Briefcase className="mr-2 h-4 w-4" />
                 <span>{job.name}</span>
               </CommandItem>
@@ -106,15 +106,15 @@ export function GlobalSearchCommand() {
 
         <CommandSeparator />
         <CommandGroup heading="Quick Links">
-          <CommandItem onSelect={() => onSelect("/admin/security")}>
+          <CommandItem onSelect={() => onSelect("/superadmin/security")}>
             <ShieldAlert className="mr-2 h-4 w-4" />
             <span>Security Center</span>
           </CommandItem>
-          <CommandItem onSelect={() => onSelect("/admin/ai-config")}>
+          <CommandItem onSelect={() => onSelect("/superadmin/ai-config")}>
             <Cpu className="mr-2 h-4 w-4" />
             <span>AI Resonance Config</span>
           </CommandItem>
-          <CommandItem onSelect={() => onSelect("/admin/cms/pages")}>
+          <CommandItem onSelect={() => onSelect("/superadmin/cms/pages")}>
             <FileText className="mr-2 h-4 w-4" />
             <span>CMS Pages</span>
           </CommandItem>

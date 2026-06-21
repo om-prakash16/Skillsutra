@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/context/auth-context";
+import { MainLayoutWrapper } from "@/components/layout/main-layout-wrapper";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { Navbar } from "@/components/layout/navbar";
@@ -72,9 +73,9 @@ export default function RootLayout({
                       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/20 blur-[150px] rounded-full" />
                     </div>
                     <Navbar />
-                    <main className="flex-1 w-full relative min-h-screen pt-20 pb-24 md:pb-0">
+                    <MainLayoutWrapper>
                       {children}
-                    </main>
+                    </MainLayoutWrapper>
                     <Footer />
                     <MobileNav />
                   </CMSProvider>

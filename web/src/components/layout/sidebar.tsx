@@ -1,14 +1,15 @@
+import React from "react"
 "use client"
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import {
     LayoutDashboard, User, Briefcase, Bookmark, Settings, LogOut, Building2, Users, 
     Zap, Code, Brain, Boxes, History, ShieldAlert, Fingerprint, FileText, BarChart3, 
-    Flag, Tags, Globe, Cpu, Activity, ChevronRight, CreditCard, ShieldCheck, Key, 
+    Flag, Tags, Globe, Cpu, Activity, ChevronRight, ChevronDown, CreditCard, ShieldCheck, Key, 
     GraduationCap, Scale, Bell, ToggleRight, Database, LifeBuoy, Mail,
     Star, RefreshCw, AlertTriangle, UserMinus, UserX, Network, Server, Headset,
     Lock, CheckCircle2, MonitorSmartphone, PlayCircle, StarHalf, FileSpreadsheet,
@@ -35,95 +36,95 @@ const adminNavGroups = [
     {
         label: "Dashboard",
         links: [
-            { href: "/admin", label: "Overview", icon: LayoutDashboard, exact: true },
-            { href: "/admin/dashboard/executive", label: "Executive Dashboard", icon: BarChart3 },
-            { href: "/admin/dashboard/activity", label: "Activity Feed", icon: Activity },
-            { href: "/admin/dashboard/quick-actions", label: "Quick Actions", icon: Zap },
-            { href: "/admin/dashboard/favorites", label: "Favorites", icon: Star },
-            { href: "/admin/dashboard/recent", label: "Recent Activity", icon: History },
+            { href: "/superadmin", label: "Overview", icon: LayoutDashboard, exact: true },
+            { href: "/superadmin/dashboard/executive", label: "Executive Dashboard", icon: BarChart3 },
+            { href: "/superadmin/dashboard/activity", label: "Activity Feed", icon: Activity },
+            { href: "/superadmin/dashboard/quick-actions", label: "Quick Actions", icon: Zap },
+            { href: "/superadmin/dashboard/favorites", label: "Favorites", icon: Star },
+            { href: "/superadmin/dashboard/recent", label: "Recent Activity", icon: History },
         ]
     },
     {
         label: "Platform Management",
         links: [
-            { href: "/admin/platform", label: "Overview", icon: LayoutDashboard },
-            { href: "/admin/platform/tenants", label: "Tenants", icon: Building2 },
-            { href: "/admin/platform/organizations", label: "Organizations", icon: Network },
-            { href: "/admin/platform/workspaces", label: "Workspaces", icon: SplitSquareHorizontal },
-            { href: "/admin/platform/domains", label: "Domains", icon: Globe },
-            { href: "/admin/platform/regions", label: "Regions", icon: Map },
-            { href: "/admin/platform/feature-flags", label: "Feature Flags", icon: ToggleRight },
-            { href: "/admin/platform/quotas", label: "Quotas", icon: BarChart3 },
-            { href: "/admin/platform/plans", label: "Plans", icon: CreditCard },
-            { href: "/admin/platform/usage", label: "Usage", icon: Activity },
-            { href: "/admin/platform/maintenance", label: "Maintenance", icon: Wrench },
+            { href: "/superadmin/platform", label: "Overview", icon: LayoutDashboard },
+            { href: "/superadmin/platform/tenants", label: "Tenants", icon: Building2 },
+            { href: "/superadmin/platform/organizations", label: "Organizations", icon: Network },
+            { href: "/superadmin/platform/workspaces", label: "Workspaces", icon: SplitSquareHorizontal },
+            { href: "/superadmin/platform/domains", label: "Domains", icon: Globe },
+            { href: "/superadmin/platform/regions", label: "Regions", icon: Map },
+            { href: "/superadmin/platform/feature-flags", label: "Feature Flags", icon: ToggleRight },
+            { href: "/superadmin/platform/quotas", label: "Quotas", icon: BarChart3 },
+            { href: "/superadmin/platform/plans", label: "Plans", icon: CreditCard },
+            { href: "/superadmin/platform/usage", label: "Usage", icon: Activity },
+            { href: "/superadmin/platform/maintenance", label: "Maintenance", icon: Wrench },
         ]
     },
     {
         label: "Identity & Access",
         links: [
-            { href: "/admin/identity", label: "Dashboard", icon: LayoutDashboard },
-            { href: "/admin/identity/users", label: "Users", icon: Users },
-            { href: "/admin/identity/invitations", label: "Invitations", icon: Mail },
-            { href: "/admin/identity/organizations", label: "Organizations", icon: Building2 },
-            { href: "/admin/identity/groups", label: "User Groups", icon: Users2 },
-            { href: "/admin/identity/roles", label: "Roles", icon: ShieldCheck },
-            { href: "/admin/identity/permissions", label: "Permissions", icon: Key },
-            { href: "/admin/identity/sessions", label: "Sessions", icon: MonitorSmartphone },
-            { href: "/admin/identity/devices", label: "Devices", icon: Cpu },
-            { href: "/admin/identity/api-keys", label: "API Keys", icon: Code },
-            { href: "/admin/identity/oauth", label: "OAuth Apps", icon: Puzzle },
-            { href: "/admin/identity/mfa", label: "MFA", icon: Lock },
-            { href: "/admin/identity/verification", label: "Verification", icon: ShieldCheck },
-            { href: "/admin/identity/login-history", label: "Login History", icon: History },
-            { href: "/admin/identity/security-events", label: "Security Events", icon: ShieldAlert },
-            { href: "/admin/identity/impersonation", label: "Impersonation", icon: Fingerprint },
-            { href: "/admin/identity/audit", label: "Audit Logs", icon: Database },
+            { href: "/superadmin/identity", label: "Dashboard", icon: LayoutDashboard },
+            { href: "/superadmin/identity/users", label: "Users", icon: Users },
+            { href: "/superadmin/identity/invitations", label: "Invitations", icon: Mail },
+            { href: "/superadmin/identity/organizations", label: "Organizations", icon: Building2 },
+            { href: "/superadmin/identity/groups", label: "User Groups", icon: Users2 },
+            { href: "/superadmin/identity/roles", label: "Roles", icon: ShieldCheck },
+            { href: "/superadmin/identity/permissions", label: "Permissions", icon: Key },
+            { href: "/superadmin/identity/sessions", label: "Sessions", icon: MonitorSmartphone },
+            { href: "/superadmin/identity/devices", label: "Devices", icon: Cpu },
+            { href: "/superadmin/identity/api-keys", label: "API Keys", icon: Code },
+            { href: "/superadmin/identity/oauth", label: "OAuth Apps", icon: Puzzle },
+            { href: "/superadmin/identity/mfa", label: "MFA", icon: Lock },
+            { href: "/superadmin/identity/verification", label: "Verification", icon: ShieldCheck },
+            { href: "/superadmin/identity/login-history", label: "Login History", icon: History },
+            { href: "/superadmin/identity/security-events", label: "Security Events", icon: ShieldAlert },
+            { href: "/superadmin/identity/impersonation", label: "Impersonation", icon: Fingerprint },
+            { href: "/superadmin/identity/audit", label: "Audit Logs", icon: Database },
         ]
     },
     {
         label: "Authorization",
         links: [
-            { href: "/admin/authorization", label: "Dashboard", icon: LayoutDashboard },
-            { href: "/admin/authorization/roles", label: "Roles", icon: ShieldCheck },
-            { href: "/admin/authorization/roles/platform", label: "Platform Roles", icon: Globe },
-            { href: "/admin/authorization/roles/tenant", label: "Tenant Roles", icon: Building2 },
-            { href: "/admin/authorization/roles/workspace", label: "Workspace Roles", icon: SplitSquareHorizontal },
-            { href: "/admin/authorization/library", label: "Permission Library", icon: Key },
-            { href: "/admin/authorization/groups", label: "Permission Groups", icon: Users2 },
-            { href: "/admin/authorization/policies", label: "Policies (ABAC)", icon: FileText },
-            { href: "/admin/authorization/templates", label: "Role Templates", icon: Copy },
-            { href: "/admin/authorization/delegation", label: "Delegation", icon: GitMerge },
-            { href: "/admin/authorization/temporary", label: "Temporary Access", icon: Clock },
-            { href: "/admin/authorization/approval-matrix", label: "Approval Matrix", icon: CheckCircle2 },
-            { href: "/admin/authorization/requests", label: "Access Requests", icon: Inbox },
-            { href: "/admin/authorization/features", label: "Feature Access", icon: ToggleRight },
-            { href: "/admin/authorization/resources", label: "Resource Permissions", icon: FolderLock },
-            { href: "/admin/authorization/simulate", label: "Simulate Access", icon: PlayCircle },
-            { href: "/admin/authorization/audit", label: "Audit", icon: History },
+            { href: "/superadmin/authorization", label: "Dashboard", icon: LayoutDashboard },
+            { href: "/superadmin/authorization/roles", label: "Roles", icon: ShieldCheck },
+            { href: "/superadmin/authorization/roles/platform", label: "Platform Roles", icon: Globe },
+            { href: "/superadmin/authorization/roles/tenant", label: "Tenant Roles", icon: Building2 },
+            { href: "/superadmin/authorization/roles/workspace", label: "Workspace Roles", icon: SplitSquareHorizontal },
+            { href: "/superadmin/authorization/library", label: "Permission Library", icon: Key },
+            { href: "/superadmin/authorization/groups", label: "Permission Groups", icon: Users2 },
+            { href: "/superadmin/authorization/policies", label: "Policies (ABAC)", icon: FileText },
+            { href: "/superadmin/authorization/templates", label: "Role Templates", icon: Copy },
+            { href: "/superadmin/authorization/delegation", label: "Delegation", icon: GitMerge },
+            { href: "/superadmin/authorization/temporary", label: "Temporary Access", icon: Clock },
+            { href: "/superadmin/authorization/approval-matrix", label: "Approval Matrix", icon: CheckCircle2 },
+            { href: "/superadmin/authorization/requests", label: "Access Requests", icon: Inbox },
+            { href: "/superadmin/authorization/features", label: "Feature Access", icon: ToggleRight },
+            { href: "/superadmin/authorization/resources", label: "Resource Permissions", icon: FolderLock },
+            { href: "/superadmin/authorization/simulate", label: "Simulate Access", icon: PlayCircle },
+            { href: "/superadmin/authorization/audit", label: "Audit", icon: History },
         ]
     },
     {
         label: "CMS & Experience",
         links: [
-            { href: "/admin/cms", label: "Dashboard", icon: LayoutDashboard },
-            { href: "/admin/cms/pages", label: "Pages", icon: FileText },
-            { href: "/admin/cms/collections", label: "Collections", icon: Database },
-            { href: "/admin/cms/entries", label: "Content Entries", icon: ListTree },
-            { href: "/admin/cms/builder", label: "Visual Builder", icon: MousePointerClick },
-            { href: "/admin/cms/components", label: "Components", icon: Puzzle },
-            { href: "/admin/cms/templates", label: "Templates", icon: LayoutTemplate },
-            { href: "/admin/cms/blocks", label: "Global Blocks", icon: Box },
-            { href: "/admin/cms/navigation", label: "Navigation", icon: LinkIcon },
-            { href: "/admin/cms/media", label: "Media Library", icon: ImageIcon },
-            { href: "/admin/cms/forms", label: "Forms", icon: FormInput },
-            { href: "/admin/cms/popups", label: "Popups", icon: MessageSquare },
-            { href: "/admin/cms/seo", label: "SEO", icon: Search },
-            { href: "/admin/cms/routes", label: "Routes & Slugs", icon: Route },
-            { href: "/admin/cms/themes", label: "Themes", icon: Palette },
-            { href: "/admin/cms/localization", label: "Localization", icon: Globe },
-            { href: "/admin/cms/publishing", label: "Publishing", icon: Send },
-            { href: "/admin/cms/ai", label: "AI Content", icon: Bot },
+            { href: "/superadmin/cms", label: "Dashboard", icon: LayoutDashboard },
+            { href: "/superadmin/cms/pages", label: "Pages", icon: FileText },
+            { href: "/superadmin/cms/collections", label: "Collections", icon: Database },
+            { href: "/superadmin/cms/entries", label: "Content Entries", icon: ListTree },
+            { href: "/superadmin/cms/builder", label: "Visual Builder", icon: MousePointerClick },
+            { href: "/superadmin/cms/components", label: "Components", icon: Puzzle },
+            { href: "/superadmin/cms/templates", label: "Templates", icon: LayoutTemplate },
+            { href: "/superadmin/cms/blocks", label: "Global Blocks", icon: Box },
+            { href: "/superadmin/cms/navigation", label: "Navigation", icon: LinkIcon },
+            { href: "/superadmin/cms/media", label: "Media Library", icon: ImageIcon },
+            { href: "/superadmin/cms/forms", label: "Forms", icon: FormInput },
+            { href: "/superadmin/cms/popups", label: "Popups", icon: MessageSquare },
+            { href: "/superadmin/cms/seo", label: "SEO", icon: Search },
+            { href: "/superadmin/cms/routes", label: "Routes & Slugs", icon: Route },
+            { href: "/superadmin/cms/themes", label: "Themes", icon: Palette },
+            { href: "/superadmin/cms/localization", label: "Localization", icon: Globe },
+            { href: "/superadmin/cms/publishing", label: "Publishing", icon: Send },
+            { href: "/superadmin/cms/ai", label: "AI Content", icon: Bot },
         ]
     },
     {
@@ -132,36 +133,36 @@ const adminNavGroups = [
             {
                 label: "Jobs",
                 links: [
-                    { href: "/admin/jobs", label: "All Jobs", icon: Briefcase },
-                    { href: "/admin/jobs/drafts", label: "Draft Jobs", icon: FileText },
-                    { href: "/admin/jobs/published", label: "Published Jobs", icon: CheckCircle2 },
-                    { href: "/admin/jobs/scheduled", label: "Scheduled Jobs", icon: Calendar },
-                    { href: "/admin/jobs/archived", label: "Archived Jobs", icon: Archive },
+                    { href: "/superadmin/jobs", label: "All Jobs", icon: Briefcase },
+                    { href: "/superadmin/jobs/drafts", label: "Draft Jobs", icon: FileText },
+                    { href: "/superadmin/jobs/published", label: "Published Jobs", icon: CheckCircle2 },
+                    { href: "/superadmin/jobs/scheduled", label: "Scheduled Jobs", icon: Calendar },
+                    { href: "/superadmin/jobs/archived", label: "Archived Jobs", icon: Archive },
                 ]
             },
             {
                 label: "Applications",
                 links: [
-                    { href: "/admin/applications", label: "All Applications", icon: FileSpreadsheet },
-                    { href: "/admin/applications/pipeline", label: "Pipeline", icon: GitMerge },
-                    { href: "/admin/applications/shortlisted", label: "Shortlisted", icon: Star },
-                    { href: "/admin/applications/interviews", label: "Interviews", icon: MessagesSquare },
-                    { href: "/admin/applications/offers", label: "Offers", icon: Award },
-                    { href: "/admin/applications/hired", label: "Hired", icon: CheckCircle2 },
-                    { href: "/admin/applications/rejected", label: "Rejected", icon: UserX },
+                    { href: "/superadmin/applications", label: "All Applications", icon: FileSpreadsheet },
+                    { href: "/superadmin/applications/pipeline", label: "Pipeline", icon: GitMerge },
+                    { href: "/superadmin/applications/shortlisted", label: "Shortlisted", icon: Star },
+                    { href: "/superadmin/applications/interviews", label: "Interviews", icon: MessagesSquare },
+                    { href: "/superadmin/applications/offers", label: "Offers", icon: Award },
+                    { href: "/superadmin/applications/hired", label: "Hired", icon: CheckCircle2 },
+                    { href: "/superadmin/applications/rejected", label: "Rejected", icon: UserX },
                 ]
             },
             {
                 label: "ATS",
                 links: [
-                    { href: "/admin/ats/pool", label: "Talent Pool", icon: Users },
-                    { href: "/admin/ats/requisitions", label: "Requisitions", icon: ClipboardList },
-                    { href: "/admin/ats/skills", label: "Skills Library", icon: GraduationCap },
-                    { href: "/admin/ats/questions", label: "Question Bank", icon: HelpCircle },
-                    { href: "/admin/ats/resumes", label: "Resume Database", icon: FileSpreadsheet },
-                    { href: "/admin/ats/search", label: "Candidate Search", icon: Search },
-                    { href: "/admin/ats/notes", label: "Candidate Notes", icon: FileText },
-                    { href: "/admin/ats/tags", label: "Candidate Tags", icon: Tags },
+                    { href: "/superadmin/ats/pool", label: "Talent Pool", icon: Users },
+                    { href: "/superadmin/ats/requisitions", label: "Requisitions", icon: ClipboardList },
+                    { href: "/superadmin/ats/skills", label: "Skills Library", icon: GraduationCap },
+                    { href: "/superadmin/ats/questions", label: "Question Bank", icon: HelpCircle },
+                    { href: "/superadmin/ats/resumes", label: "Resume Database", icon: FileSpreadsheet },
+                    { href: "/superadmin/ats/search", label: "Candidate Search", icon: Search },
+                    { href: "/superadmin/ats/notes", label: "Candidate Notes", icon: FileText },
+                    { href: "/superadmin/ats/tags", label: "Candidate Tags", icon: Tags },
                 ]
             }
         ]
@@ -172,17 +173,17 @@ const adminNavGroups = [
             {
                 label: "Collaboration",
                 links: [
-                    { href: "/admin/projects/workspace", label: "Workspace Dashboard", icon: LayoutDashboard },
-                    { href: "/admin/projects/board", label: "Sprint Board", icon: Kanban },
-                    { href: "/admin/projects/tasks", label: "My Tasks", icon: CheckSquare },
+                    { href: "/superadmin/projects/workspace", label: "Workspace Dashboard", icon: LayoutDashboard },
+                    { href: "/superadmin/projects/board", label: "Sprint Board", icon: Kanban },
+                    { href: "/superadmin/projects/tasks", label: "My Tasks", icon: CheckSquare },
                 ]
             },
             {
                 label: "Planning",
                 links: [
-                    { href: "/admin/projects/time", label: "Time Tracking", icon: Clock },
-                    { href: "/admin/projects/resources", label: "Resource Workload", icon: Users2 },
-                    { href: "/admin/projects/wiki", label: "Knowledge Base", icon: BookOpen },
+                    { href: "/superadmin/projects/time", label: "Time Tracking", icon: Clock },
+                    { href: "/superadmin/projects/resources", label: "Resource Workload", icon: Users2 },
+                    { href: "/superadmin/projects/wiki", label: "Knowledge Base", icon: BookOpen },
                 ]
             }
         ]
@@ -193,16 +194,16 @@ const adminNavGroups = [
             {
                 label: "Finance & Accounting",
                 links: [
-                    { href: "/admin/erp/dashboard", label: "Executive Dashboard", icon: BarChart3 },
-                    { href: "/admin/erp/finance", label: "General Ledger", icon: Landmark },
+                    { href: "/superadmin/erp/dashboard", label: "Executive Dashboard", icon: BarChart3 },
+                    { href: "/superadmin/erp/finance", label: "General Ledger", icon: Landmark },
                 ]
             },
             {
                 label: "Supply Chain & Ops",
                 links: [
-                    { href: "/admin/erp/procurement", label: "Procurement & Vendors", icon: ShoppingCart },
-                    { href: "/admin/erp/contracts", label: "Contract Management", icon: FileSignature },
-                    { href: "/admin/erp/inventory", label: "Inventory & Assets", icon: Package },
+                    { href: "/superadmin/erp/procurement", label: "Procurement & Vendors", icon: ShoppingCart },
+                    { href: "/superadmin/erp/contracts", label: "Contract Management", icon: FileSignature },
+                    { href: "/superadmin/erp/inventory", label: "Inventory & Assets", icon: Package },
                 ]
             }
         ]
@@ -213,16 +214,16 @@ const adminNavGroups = [
             {
                 label: "Extensions & Apps",
                 links: [
-                    { href: "/admin/ecosystem/marketplace", label: "App Marketplace", icon: Store },
-                    { href: "/admin/ecosystem/integrations", label: "Installed Plugins", icon: Puzzle },
+                    { href: "/superadmin/ecosystem/marketplace", label: "App Marketplace", icon: Store },
+                    { href: "/superadmin/ecosystem/integrations", label: "Installed Plugins", icon: Puzzle },
                 ]
             },
             {
                 label: "Developer Tools",
                 links: [
-                    { href: "/admin/ecosystem/api", label: "API & Webhooks", icon: Webhook },
-                    { href: "/admin/ecosystem/developer", label: "Developer Portal", icon: Terminal },
-                    { href: "/admin/ecosystem/portals", label: "Partner Portals", icon: Globe },
+                    { href: "/superadmin/ecosystem/api", label: "API & Webhooks", icon: Webhook },
+                    { href: "/superadmin/ecosystem/developer", label: "Developer Portal", icon: Terminal },
+                    { href: "/superadmin/ecosystem/portals", label: "Partner Portals", icon: Globe },
                 ]
             }
         ]
@@ -233,26 +234,26 @@ const adminNavGroups = [
             {
                 label: "Core HR",
                 links: [
-                    { href: "/admin/hrms/dashboard", label: "HR Dashboard", icon: LayoutDashboard },
-                    { href: "/admin/hrms/directory", label: "Employee Directory", icon: Users },
-                    { href: "/admin/hrms/org-chart", label: "Organization Chart", icon: Network },
+                    { href: "/superadmin/hrms/dashboard", label: "HR Dashboard", icon: LayoutDashboard },
+                    { href: "/superadmin/hrms/directory", label: "Employee Directory", icon: Users },
+                    { href: "/superadmin/hrms/org-chart", label: "Organization Chart", icon: Network },
                 ]
             },
             {
                 label: "Lifecycle & Time",
                 links: [
-                    { href: "/admin/hrms/onboarding", label: "Onboarding & Offboarding", icon: UserPlus },
-                    { href: "/admin/hrms/attendance", label: "Time & Attendance", icon: Clock },
-                    { href: "/admin/hrms/leave", label: "Leave Center", icon: CalendarOff },
-                    { href: "/admin/hrms/documents", label: "Documents", icon: FileCheck },
+                    { href: "/superadmin/hrms/onboarding", label: "Onboarding & Offboarding", icon: UserPlus },
+                    { href: "/superadmin/hrms/attendance", label: "Time & Attendance", icon: Clock },
+                    { href: "/superadmin/hrms/leave", label: "Leave Center", icon: CalendarOff },
+                    { href: "/superadmin/hrms/documents", label: "Documents", icon: FileCheck },
                 ]
             },
             {
                 label: "Performance & Ops",
                 links: [
-                    { href: "/admin/hrms/performance", label: "Performance & Goals", icon: Target },
-                    { href: "/admin/hrms/assets", label: "Assets", icon: Laptop },
-                    { href: "/admin/hrms/expenses", label: "Expenses", icon: Receipt },
+                    { href: "/superadmin/hrms/performance", label: "Performance & Goals", icon: Target },
+                    { href: "/superadmin/hrms/assets", label: "Assets", icon: Laptop },
+                    { href: "/superadmin/hrms/expenses", label: "Expenses", icon: Receipt },
                 ]
             }
         ]
@@ -260,28 +261,28 @@ const adminNavGroups = [
     {
         label: "Community",
         links: [
-            { href: "/admin/community/feed", label: "Feed", icon: LayoutDashboard },
-            { href: "/admin/community/posts", label: "Posts", icon: FileText },
-            { href: "/admin/community/discussions", label: "Discussions", icon: MessagesSquare },
-            { href: "/admin/community/questions", label: "Questions", icon: HelpCircle },
-            { href: "/admin/community/comments", label: "Comments", icon: MessageSquare },
-            { href: "/admin/community/reports", label: "Reports", icon: AlertOctagon },
-            { href: "/admin/community/polls", label: "Polls", icon: BarChart3 },
-            { href: "/admin/community/events", label: "Events", icon: Calendar },
-            { href: "/admin/community/groups", label: "Groups", icon: Users2 },
-            { href: "/admin/community/mentorship", label: "Mentorship", icon: GraduationCap },
+            { href: "/superadmin/community/feed", label: "Feed", icon: LayoutDashboard },
+            { href: "/superadmin/community/posts", label: "Posts", icon: FileText },
+            { href: "/superadmin/community/discussions", label: "Discussions", icon: MessagesSquare },
+            { href: "/superadmin/community/questions", label: "Questions", icon: HelpCircle },
+            { href: "/superadmin/community/comments", label: "Comments", icon: MessageSquare },
+            { href: "/superadmin/community/reports", label: "Reports", icon: AlertOctagon },
+            { href: "/superadmin/community/polls", label: "Polls", icon: BarChart3 },
+            { href: "/superadmin/community/events", label: "Events", icon: Calendar },
+            { href: "/superadmin/community/groups", label: "Groups", icon: Users2 },
+            { href: "/superadmin/community/mentorship", label: "Mentorship", icon: GraduationCap },
         ]
     },
     {
         label: "Learning",
         links: [
-            { href: "/admin/learning/courses", label: "Courses", icon: BookOpen },
-            { href: "/admin/learning/lessons", label: "Lessons", icon: FileText },
-            { href: "/admin/learning/modules", label: "Modules", icon: Layers },
-            { href: "/admin/learning/quizzes", label: "Quizzes", icon: FileQuestion },
-            { href: "/admin/learning/certificates", label: "Certificates", icon: Award },
-            { href: "/admin/learning/skills", label: "Skills", icon: Zap },
-            { href: "/admin/learning/paths", label: "Learning Paths", icon: Map },
+            { href: "/superadmin/learning/courses", label: "Courses", icon: BookOpen },
+            { href: "/superadmin/learning/lessons", label: "Lessons", icon: FileText },
+            { href: "/superadmin/learning/modules", label: "Modules", icon: Layers },
+            { href: "/superadmin/learning/quizzes", label: "Quizzes", icon: FileQuestion },
+            { href: "/superadmin/learning/certificates", label: "Certificates", icon: Award },
+            { href: "/superadmin/learning/skills", label: "Skills", icon: Zap },
+            { href: "/superadmin/learning/paths", label: "Learning Paths", icon: Map },
         ]
     },
     {
@@ -290,45 +291,45 @@ const adminNavGroups = [
             {
                 label: "Website",
                 links: [
-                    { href: "/admin/cms/pages", label: "Pages", icon: PanelTop },
-                    { href: "/admin/cms/navigation", label: "Navigation", icon: Navigation },
-                    { href: "/admin/cms/header", label: "Header Builder", icon: AlignVerticalSpaceAround },
-                    { href: "/admin/cms/footer", label: "Footer Builder", icon: AlignVerticalSpaceAround },
-                    { href: "/admin/cms/mega-menu", label: "Mega Menu", icon: Layers },
-                    { href: "/admin/cms/landing", label: "Landing Pages", icon: LayoutTemplate },
+                    { href: "/superadmin/cms/pages", label: "Pages", icon: PanelTop },
+                    { href: "/superadmin/cms/navigation", label: "Navigation", icon: Navigation },
+                    { href: "/superadmin/cms/header", label: "Header Builder", icon: AlignVerticalSpaceAround },
+                    { href: "/superadmin/cms/footer", label: "Footer Builder", icon: AlignVerticalSpaceAround },
+                    { href: "/superadmin/cms/mega-menu", label: "Mega Menu", icon: Layers },
+                    { href: "/superadmin/cms/landing", label: "Landing Pages", icon: LayoutTemplate },
                 ]
             },
             {
                 label: "Content",
                 links: [
-                    { href: "/admin/cms/blog", label: "Blog", icon: FileText },
-                    { href: "/admin/cms/categories", label: "Categories", icon: FolderOpen },
-                    { href: "/admin/cms/tags", label: "Tags", icon: Tags },
-                    { href: "/admin/cms/authors", label: "Authors", icon: Users },
-                    { href: "/admin/cms/media", label: "Media Library", icon: ImageIcon },
-                    { href: "/admin/cms/files", label: "File Manager", icon: FileArchive },
+                    { href: "/superadmin/cms/blog", label: "Blog", icon: FileText },
+                    { href: "/superadmin/cms/categories", label: "Categories", icon: FolderOpen },
+                    { href: "/superadmin/cms/tags", label: "Tags", icon: Tags },
+                    { href: "/superadmin/cms/authors", label: "Authors", icon: Users },
+                    { href: "/superadmin/cms/media", label: "Media Library", icon: ImageIcon },
+                    { href: "/superadmin/cms/files", label: "File Manager", icon: FileArchive },
                 ]
             },
             {
                 label: "Builder",
                 links: [
-                    { href: "/admin/cms/components", label: "Components", icon: ToyBrick },
-                    { href: "/admin/cms/sections", label: "Sections", icon: LayoutDashboard },
-                    { href: "/admin/cms/templates", label: "Templates", icon: LayoutTemplate },
-                    { href: "/admin/cms/global", label: "Global Components", icon: Globe },
-                    { href: "/admin/cms/theme", label: "Theme Builder", icon: Palette },
-                    { href: "/admin/cms/tokens", label: "Design Tokens", icon: Type },
+                    { href: "/superadmin/cms/components", label: "Components", icon: ToyBrick },
+                    { href: "/superadmin/cms/sections", label: "Sections", icon: LayoutDashboard },
+                    { href: "/superadmin/cms/templates", label: "Templates", icon: LayoutTemplate },
+                    { href: "/superadmin/cms/global", label: "Global Components", icon: Globe },
+                    { href: "/superadmin/cms/theme", label: "Theme Builder", icon: Palette },
+                    { href: "/superadmin/cms/tokens", label: "Design Tokens", icon: Type },
                 ]
             },
             {
                 label: "SEO",
                 links: [
-                    { href: "/admin/cms/seo", label: "Meta Manager", icon: Search },
-                    { href: "/admin/cms/sitemap", label: "Sitemap", icon: Map },
-                    { href: "/admin/cms/redirects", label: "Redirects", icon: GitMerge },
-                    { href: "/admin/cms/robots", label: "Robots", icon: Settings },
-                    { href: "/admin/cms/schema", label: "Schema", icon: Code },
-                    { href: "/admin/cms/og", label: "Open Graph", icon: Share2 },
+                    { href: "/superadmin/cms/seo", label: "Meta Manager", icon: Search },
+                    { href: "/superadmin/cms/sitemap", label: "Sitemap", icon: Map },
+                    { href: "/superadmin/cms/redirects", label: "Redirects", icon: GitMerge },
+                    { href: "/superadmin/cms/robots", label: "Robots", icon: Settings },
+                    { href: "/superadmin/cms/schema", label: "Schema", icon: Code },
+                    { href: "/superadmin/cms/og", label: "Open Graph", icon: Share2 },
                 ]
             }
         ]
@@ -336,90 +337,90 @@ const adminNavGroups = [
     {
         label: "AI Center",
         links: [
-            { href: "/admin/ai/dashboard", label: "AI Dashboard", icon: Brain },
-            { href: "/admin/ai/models", label: "AI Models", icon: Cpu },
-            { href: "/admin/ai/prompts", label: "AI Prompts", icon: MessageSquare },
-            { href: "/admin/ai/assistants", label: "AI Assistants", icon: User },
-            { href: "/admin/ai/workflows", label: "AI Workflows", icon: GitMerge },
-            { href: "/admin/ai/automation", label: "AI Automation", icon: Zap },
-            { href: "/admin/ai/analytics", label: "AI Analytics", icon: BarChart3 },
-            { href: "/admin/ai/usage", label: "AI Usage", icon: Activity },
-            { href: "/admin/ai/costs", label: "AI Cost Monitor", icon: Banknote },
+            { href: "/superadmin/ai/dashboard", label: "AI Dashboard", icon: Brain },
+            { href: "/superadmin/ai/models", label: "AI Models", icon: Cpu },
+            { href: "/superadmin/ai/prompts", label: "AI Prompts", icon: MessageSquare },
+            { href: "/superadmin/ai/assistants", label: "AI Assistants", icon: User },
+            { href: "/superadmin/ai/workflows", label: "AI Workflows", icon: GitMerge },
+            { href: "/superadmin/ai/automation", label: "AI Automation", icon: Zap },
+            { href: "/superadmin/ai/analytics", label: "AI Analytics", icon: BarChart3 },
+            { href: "/superadmin/ai/usage", label: "AI Usage", icon: Activity },
+            { href: "/superadmin/ai/costs", label: "AI Cost Monitor", icon: Banknote },
         ]
     },
     {
         label: "Marketing",
         links: [
-            { href: "/admin/marketing/campaigns", label: "Campaigns", icon: Megaphone },
-            { href: "/admin/marketing/newsletters", label: "Newsletters", icon: MailCheck },
-            { href: "/admin/marketing/popups", label: "Popups", icon: AlertOctagon },
-            { href: "/admin/marketing/announcements", label: "Announcement Bar", icon: Flag },
-            { href: "/admin/marketing/push", label: "Push Notifications", icon: Bell },
-            { href: "/admin/marketing/sms", label: "SMS", icon: Smartphone },
-            { href: "/admin/marketing/whatsapp", label: "WhatsApp", icon: MessageSquare },
-            { href: "/admin/marketing/emails", label: "Email Campaigns", icon: Mail },
-            { href: "/admin/marketing/referrals", label: "Referral System", icon: Users },
+            { href: "/superadmin/marketing/campaigns", label: "Campaigns", icon: Megaphone },
+            { href: "/superadmin/marketing/newsletters", label: "Newsletters", icon: MailCheck },
+            { href: "/superadmin/marketing/popups", label: "Popups", icon: AlertOctagon },
+            { href: "/superadmin/marketing/announcements", label: "Announcement Bar", icon: Flag },
+            { href: "/superadmin/marketing/push", label: "Push Notifications", icon: Bell },
+            { href: "/superadmin/marketing/sms", label: "SMS", icon: Smartphone },
+            { href: "/superadmin/marketing/whatsapp", label: "WhatsApp", icon: MessageSquare },
+            { href: "/superadmin/marketing/emails", label: "Email Campaigns", icon: Mail },
+            { href: "/superadmin/marketing/referrals", label: "Referral System", icon: Users },
         ]
     },
     {
         label: "Communication",
         links: [
-            { href: "/admin/comm/notifications", label: "Notifications", icon: Bell },
-            { href: "/admin/comm/emails", label: "Email Center", icon: Mail },
-            { href: "/admin/comm/templates", label: "Templates", icon: LayoutTemplate },
-            { href: "/admin/comm/inbox", label: "Inbox", icon: Mail },
-            { href: "/admin/comm/chat", label: "Chat", icon: MessageSquare },
-            { href: "/admin/comm/tickets", label: "Support Tickets", icon: Ticket },
-            { href: "/admin/comm/messages", label: "Contact Messages", icon: MessagesSquare },
+            { href: "/superadmin/comm/notifications", label: "Notifications", icon: Bell },
+            { href: "/superadmin/comm/emails", label: "Email Center", icon: Mail },
+            { href: "/superadmin/comm/templates", label: "Templates", icon: LayoutTemplate },
+            { href: "/superadmin/comm/inbox", label: "Inbox", icon: Mail },
+            { href: "/superadmin/comm/chat", label: "Chat", icon: MessageSquare },
+            { href: "/superadmin/comm/tickets", label: "Support Tickets", icon: Ticket },
+            { href: "/superadmin/comm/messages", label: "Contact Messages", icon: MessagesSquare },
         ]
     },
     {
         label: "Finance",
         links: [
-            { href: "/admin/finance/revenue", label: "Revenue", icon: Landmark },
-            { href: "/admin/finance/payments", label: "Payments", icon: CreditCard },
-            { href: "/admin/finance/transactions", label: "Transactions", icon: Receipt },
-            { href: "/admin/finance/refunds", label: "Refunds", icon: RefreshCw },
-            { href: "/admin/finance/invoices", label: "Invoices", icon: FileText },
-            { href: "/admin/finance/taxes", label: "Taxes", icon: FileSpreadsheet },
-            { href: "/admin/finance/coupons", label: "Coupons", icon: Ticket },
-            { href: "/admin/finance/wallet", label: "Wallet", icon: Wallet },
-            { href: "/admin/finance/payouts", label: "Payouts", icon: Banknote },
+            { href: "/superadmin/finance/revenue", label: "Revenue", icon: Landmark },
+            { href: "/superadmin/finance/payments", label: "Payments", icon: CreditCard },
+            { href: "/superadmin/finance/transactions", label: "Transactions", icon: Receipt },
+            { href: "/superadmin/finance/refunds", label: "Refunds", icon: RefreshCw },
+            { href: "/superadmin/finance/invoices", label: "Invoices", icon: FileText },
+            { href: "/superadmin/finance/taxes", label: "Taxes", icon: FileSpreadsheet },
+            { href: "/superadmin/finance/coupons", label: "Coupons", icon: Ticket },
+            { href: "/superadmin/finance/wallet", label: "Wallet", icon: Wallet },
+            { href: "/superadmin/finance/payouts", label: "Payouts", icon: Banknote },
         ]
     },
     {
         label: "Billing",
         links: [
-            { href: "/admin/billing/plans", label: "Plans", icon: Layers },
-            { href: "/admin/billing/subscriptions", label: "Subscriptions", icon: CreditCard },
-            { href: "/admin/billing/usage", label: "Usage", icon: Activity },
-            { href: "/admin/billing/licenses", label: "Licenses", icon: Key },
-            { href: "/admin/billing/credits", label: "Credits", icon: Star },
-            { href: "/admin/billing/api", label: "API Usage", icon: Code },
+            { href: "/superadmin/billing/plans", label: "Plans", icon: Layers },
+            { href: "/superadmin/billing/subscriptions", label: "Subscriptions", icon: CreditCard },
+            { href: "/superadmin/billing/usage", label: "Usage", icon: Activity },
+            { href: "/superadmin/billing/licenses", label: "Licenses", icon: Key },
+            { href: "/superadmin/billing/credits", label: "Credits", icon: Star },
+            { href: "/superadmin/billing/api", label: "API Usage", icon: Code },
         ]
     },
     {
         label: "Analytics",
         links: [
-            { href: "/admin/analytics/dashboard", label: "Executive Dashboard", icon: BarChart3 },
-            { href: "/admin/analytics/users", label: "Users", icon: Users },
-            { href: "/admin/analytics/companies", label: "Companies", icon: Building2 },
-            { href: "/admin/analytics/jobs", label: "Jobs", icon: Briefcase },
-            { href: "/admin/analytics/revenue", label: "Revenue", icon: Landmark },
-            { href: "/admin/analytics/engagement", label: "Engagement", icon: Activity },
-            { href: "/admin/analytics/traffic", label: "Traffic", icon: Globe },
-            { href: "/admin/analytics/ai", label: "AI Analytics", icon: Brain },
-            { href: "/admin/analytics/reports", label: "Reports", icon: FileText },
-            { href: "/admin/analytics/funnels", label: "Funnels", icon: Filter },
+            { href: "/superadmin/analytics/dashboard", label: "Executive Dashboard", icon: BarChart3 },
+            { href: "/superadmin/analytics/users", label: "Users", icon: Users },
+            { href: "/superadmin/analytics/companies", label: "Companies", icon: Building2 },
+            { href: "/superadmin/analytics/jobs", label: "Jobs", icon: Briefcase },
+            { href: "/superadmin/analytics/revenue", label: "Revenue", icon: Landmark },
+            { href: "/superadmin/analytics/engagement", label: "Engagement", icon: Activity },
+            { href: "/superadmin/analytics/traffic", label: "Traffic", icon: Globe },
+            { href: "/superadmin/analytics/ai", label: "AI Analytics", icon: Brain },
+            { href: "/superadmin/analytics/reports", label: "Reports", icon: FileText },
+            { href: "/superadmin/analytics/funnels", label: "Funnels", icon: Filter },
         ]
     },
     {
         label: "Search",
         links: [
-            { href: "/admin/search/universal", label: "Universal Search", icon: Search },
-            { href: "/admin/search/analytics", label: "Search Analytics", icon: BarChart3 },
-            { href: "/admin/search/index", label: "Search Index", icon: Database },
-            { href: "/admin/search/synonyms", label: "Search Synonyms", icon: Languages },
+            { href: "/superadmin/search/universal", label: "Universal Search", icon: Search },
+            { href: "/superadmin/search/analytics", label: "Search Analytics", icon: BarChart3 },
+            { href: "/superadmin/search/index", label: "Search Index", icon: Database },
+            { href: "/superadmin/search/synonyms", label: "Search Synonyms", icon: Languages },
         ]
     },
     {
@@ -428,22 +429,22 @@ const adminNavGroups = [
             {
                 label: "Security",
                 links: [
-                    { href: "/admin/security/dashboard", label: "Security Dashboard", icon: ShieldCheck },
-                    { href: "/admin/security/threats", label: "Threat Detection", icon: ShieldAlert },
-                    { href: "/admin/security/policies", label: "Security Policies", icon: FileText },
-                    { href: "/admin/security/firewall", label: "Firewall Rules", icon: Server },
-                    { href: "/admin/security/limits", label: "Rate Limits", icon: Activity },
-                    { href: "/admin/security/api", label: "API Security", icon: Code },
+                    { href: "/superadmin/security/dashboard", label: "Security Dashboard", icon: ShieldCheck },
+                    { href: "/superadmin/security/threats", label: "Threat Detection", icon: ShieldAlert },
+                    { href: "/superadmin/security/policies", label: "Security Policies", icon: FileText },
+                    { href: "/superadmin/security/firewall", label: "Firewall Rules", icon: Server },
+                    { href: "/superadmin/security/limits", label: "Rate Limits", icon: Activity },
+                    { href: "/superadmin/security/api", label: "API Security", icon: Code },
                 ]
             },
             {
                 label: "Audit",
                 links: [
-                    { href: "/admin/audit/logs", label: "Audit Logs", icon: Fingerprint },
-                    { href: "/admin/audit/users", label: "User Activity", icon: Users },
-                    { href: "/admin/audit/admins", label: "Admin Activity", icon: Key },
-                    { href: "/admin/audit/api", label: "API Logs", icon: Code },
-                    { href: "/admin/audit/login", label: "Login Logs", icon: History },
+                    { href: "/superadmin/audit/logs", label: "Audit Logs", icon: Fingerprint },
+                    { href: "/superadmin/audit/users", label: "User Activity", icon: Users },
+                    { href: "/superadmin/audit/admins", label: "Admin Activity", icon: Key },
+                    { href: "/superadmin/audit/api", label: "API Logs", icon: Code },
+                    { href: "/superadmin/audit/login", label: "Login Logs", icon: History },
                 ]
             }
         ]
@@ -451,126 +452,126 @@ const adminNavGroups = [
     {
         label: "Automation",
         links: [
-            { href: "/admin/automation/workflows", label: "Workflow Builder", icon: GitMerge },
-            { href: "/admin/automation/tasks", label: "Scheduled Tasks", icon: Calendar },
-            { href: "/admin/automation/queue", label: "Queue Manager", icon: List },
-            { href: "/admin/automation/background", label: "Background Jobs", icon: Cpu },
-            { href: "/admin/automation/webhooks", label: "Webhooks", icon: Webhook },
-            { href: "/admin/automation/integrations", label: "Integrations", icon: ToyBrick },
+            { href: "/superadmin/automation/workflows", label: "Workflow Builder", icon: GitMerge },
+            { href: "/superadmin/automation/tasks", label: "Scheduled Tasks", icon: Calendar },
+            { href: "/superadmin/automation/queue", label: "Queue Manager", icon: List },
+            { href: "/superadmin/automation/background", label: "Background Jobs", icon: Cpu },
+            { href: "/superadmin/automation/webhooks", label: "Webhooks", icon: Webhook },
+            { href: "/superadmin/automation/integrations", label: "Integrations", icon: ToyBrick },
         ]
     },
     {
         label: "Integrations",
         links: [
-            { href: "/admin/integrations/keys", label: "API Keys", icon: Key },
-            { href: "/admin/integrations/oauth", label: "OAuth Apps", icon: Lock },
-            { href: "/admin/integrations/webhooks", label: "Webhooks", icon: Webhook },
-            { href: "/admin/integrations/stripe", label: "Stripe", icon: CreditCard },
-            { href: "/admin/integrations/razorpay", label: "Razorpay", icon: CreditCard },
-            { href: "/admin/integrations/google", label: "Google", icon: Globe },
-            { href: "/admin/integrations/microsoft", label: "Microsoft", icon: LayoutDashboard },
-            { href: "/admin/integrations/slack", label: "Slack", icon: MessageSquare },
-            { href: "/admin/integrations/discord", label: "Discord", icon: MessagesSquare },
-            { href: "/admin/integrations/zapier", label: "Zapier", icon: Zap },
-            { href: "/admin/integrations/n8n", label: "n8n", icon: GitMerge },
+            { href: "/superadmin/integrations/keys", label: "API Keys", icon: Key },
+            { href: "/superadmin/integrations/oauth", label: "OAuth Apps", icon: Lock },
+            { href: "/superadmin/integrations/webhooks", label: "Webhooks", icon: Webhook },
+            { href: "/superadmin/integrations/stripe", label: "Stripe", icon: CreditCard },
+            { href: "/superadmin/integrations/razorpay", label: "Razorpay", icon: CreditCard },
+            { href: "/superadmin/integrations/google", label: "Google", icon: Globe },
+            { href: "/superadmin/integrations/microsoft", label: "Microsoft", icon: LayoutDashboard },
+            { href: "/superadmin/integrations/slack", label: "Slack", icon: MessageSquare },
+            { href: "/superadmin/integrations/discord", label: "Discord", icon: MessagesSquare },
+            { href: "/superadmin/integrations/zapier", label: "Zapier", icon: Zap },
+            { href: "/superadmin/integrations/n8n", label: "n8n", icon: GitMerge },
         ]
     },
     {
         label: "Infrastructure",
         links: [
-            { href: "/admin/infra/health", label: "System Health", icon: Activity },
-            { href: "/admin/infra/monitoring", label: "Monitoring", icon: MonitorSmartphone },
-            { href: "/admin/infra/status", label: "Server Status", icon: Server },
-            { href: "/admin/infra/db", label: "Database", icon: Database },
-            { href: "/admin/infra/redis", label: "Redis", icon: Database },
-            { href: "/admin/infra/storage", label: "Storage", icon: HardDrive },
-            { href: "/admin/infra/cache", label: "Cache", icon: Zap },
-            { href: "/admin/infra/cdn", label: "CDN", icon: Globe },
-            { href: "/admin/infra/queue", label: "Queue", icon: List },
-            { href: "/admin/infra/logs", label: "Logs", icon: FileText },
+            { href: "/superadmin/infra/health", label: "System Health", icon: Activity },
+            { href: "/superadmin/infra/monitoring", label: "Monitoring", icon: MonitorSmartphone },
+            { href: "/superadmin/infra/status", label: "Server Status", icon: Server },
+            { href: "/superadmin/infra/db", label: "Database", icon: Database },
+            { href: "/superadmin/infra/redis", label: "Redis", icon: Database },
+            { href: "/superadmin/infra/storage", label: "Storage", icon: HardDrive },
+            { href: "/superadmin/infra/cache", label: "Cache", icon: Zap },
+            { href: "/superadmin/infra/cdn", label: "CDN", icon: Globe },
+            { href: "/superadmin/infra/queue", label: "Queue", icon: List },
+            { href: "/superadmin/infra/logs", label: "Logs", icon: FileText },
         ]
     },
     {
         label: "Database",
         links: [
-            { href: "/admin/db/tables", label: "Tables", icon: Database },
-            { href: "/admin/db/sql", label: "SQL Console", icon: Code },
-            { href: "/admin/db/backups", label: "Backups", icon: Archive },
-            { href: "/admin/db/restore", label: "Restore", icon: RefreshCw },
-            { href: "/admin/db/migrations", label: "Migrations", icon: GitMerge },
-            { href: "/admin/db/indexes", label: "Indexes", icon: Search },
-            { href: "/admin/db/performance", label: "Performance", icon: Activity },
+            { href: "/superadmin/db/tables", label: "Tables", icon: Database },
+            { href: "/superadmin/db/sql", label: "SQL Console", icon: Code },
+            { href: "/superadmin/db/backups", label: "Backups", icon: Archive },
+            { href: "/superadmin/db/restore", label: "Restore", icon: RefreshCw },
+            { href: "/superadmin/db/migrations", label: "Migrations", icon: GitMerge },
+            { href: "/superadmin/db/indexes", label: "Indexes", icon: Search },
+            { href: "/superadmin/db/performance", label: "Performance", icon: Activity },
         ]
     },
     {
         label: "Assets",
         links: [
-            { href: "/admin/assets/media", label: "Media Library", icon: ImageIcon },
-            { href: "/admin/assets/images", label: "Images", icon: ImageIcon },
-            { href: "/admin/assets/videos", label: "Videos", icon: PlayCircle },
-            { href: "/admin/assets/documents", label: "Documents", icon: FileText },
-            { href: "/admin/assets/icons", label: "Icons", icon: Star },
-            { href: "/admin/assets/fonts", label: "Fonts", icon: Type },
-            { href: "/admin/assets/brand", label: "Brand Assets", icon: Palette },
+            { href: "/superadmin/assets/media", label: "Media Library", icon: ImageIcon },
+            { href: "/superadmin/assets/images", label: "Images", icon: ImageIcon },
+            { href: "/superadmin/assets/videos", label: "Videos", icon: PlayCircle },
+            { href: "/superadmin/assets/documents", label: "Documents", icon: FileText },
+            { href: "/superadmin/assets/icons", label: "Icons", icon: Star },
+            { href: "/superadmin/assets/fonts", label: "Fonts", icon: Type },
+            { href: "/superadmin/assets/brand", label: "Brand Assets", icon: Palette },
         ]
     },
     {
         label: "Localization",
         links: [
-            { href: "/admin/locale/languages", label: "Languages", icon: Languages },
-            { href: "/admin/locale/translations", label: "Translations", icon: FileText },
-            { href: "/admin/locale/currency", label: "Currency", icon: Banknote },
-            { href: "/admin/locale/regions", label: "Regions", icon: Map },
-            { href: "/admin/locale/timezones", label: "Time Zones", icon: Calendar },
+            { href: "/superadmin/locale/languages", label: "Languages", icon: Languages },
+            { href: "/superadmin/locale/translations", label: "Translations", icon: FileText },
+            { href: "/superadmin/locale/currency", label: "Currency", icon: Banknote },
+            { href: "/superadmin/locale/regions", label: "Regions", icon: Map },
+            { href: "/superadmin/locale/timezones", label: "Time Zones", icon: Calendar },
         ]
     },
     {
         label: "Feature Management",
         links: [
-            { href: "/admin/features/flags", label: "Feature Flags", icon: ToggleRight },
-            { href: "/admin/features/experiments", label: "Experiments", icon: FlaskConical },
-            { href: "/admin/features/ab-tests", label: "A/B Tests", icon: SplitSquareHorizontal },
-            { href: "/admin/features/canary", label: "Canary Releases", icon: Activity },
-            { href: "/admin/features/rollouts", label: "Rollouts", icon: GitMerge },
+            { href: "/superadmin/features/flags", label: "Feature Flags", icon: ToggleRight },
+            { href: "/superadmin/features/experiments", label: "Experiments", icon: FlaskConical },
+            { href: "/superadmin/features/ab-tests", label: "A/B Tests", icon: SplitSquareHorizontal },
+            { href: "/superadmin/features/canary", label: "Canary Releases", icon: Activity },
+            { href: "/superadmin/features/rollouts", label: "Rollouts", icon: GitMerge },
         ]
     },
     {
         label: "Marketplace",
         links: [
-            { href: "/admin/marketplace/plugins", label: "Plugins", icon: ToyBrick },
-            { href: "/admin/marketplace/themes", label: "Themes", icon: Palette },
-            { href: "/admin/marketplace/components", label: "Components", icon: LayoutTemplate },
-            { href: "/admin/marketplace/templates", label: "Templates", icon: Layers },
-            { href: "/admin/marketplace/extensions", label: "Extensions", icon: Puzzle },
+            { href: "/superadmin/marketplace/plugins", label: "Plugins", icon: ToyBrick },
+            { href: "/superadmin/marketplace/themes", label: "Themes", icon: Palette },
+            { href: "/superadmin/marketplace/components", label: "Components", icon: LayoutTemplate },
+            { href: "/superadmin/marketplace/templates", label: "Templates", icon: Layers },
+            { href: "/superadmin/marketplace/extensions", label: "Extensions", icon: Puzzle },
         ]
     },
     {
         label: "Developer",
         links: [
-            { href: "/admin/dev/api", label: "API Explorer", icon: Code },
-            { href: "/admin/dev/graphql", label: "GraphQL Playground", icon: Database },
-            { href: "/admin/dev/sdk", label: "SDK", icon: ToyBrick },
-            { href: "/admin/dev/cli", label: "CLI", icon: Code },
-            { href: "/admin/dev/events", label: "Event Logs", icon: Activity },
-            { href: "/admin/dev/settings", label: "Developer Settings", icon: Settings },
+            { href: "/superadmin/dev/api", label: "API Explorer", icon: Code },
+            { href: "/superadmin/dev/graphql", label: "GraphQL Playground", icon: Database },
+            { href: "/superadmin/dev/sdk", label: "SDK", icon: ToyBrick },
+            { href: "/superadmin/dev/cli", label: "CLI", icon: Code },
+            { href: "/superadmin/dev/events", label: "Event Logs", icon: Activity },
+            { href: "/superadmin/dev/settings", label: "Developer Settings", icon: Settings },
         ]
     },
     {
         label: "Support",
         links: [
-            { href: "/admin/support/help", label: "Help Center", icon: HelpCircle },
-            { href: "/admin/support/docs", label: "Documentation", icon: BookOpen },
-            { href: "/admin/support/tickets", label: "Tickets", icon: Ticket },
-            { href: "/admin/support/feedback", label: "Feedback", icon: MessageSquare },
-            { href: "/admin/support/changelog", label: "Changelog", icon: History },
-            { href: "/admin/support/releases", label: "Release Notes", icon: FileText },
+            { href: "/superadmin/support/help", label: "Help Center", icon: HelpCircle },
+            { href: "/superadmin/support/docs", label: "Documentation", icon: BookOpen },
+            { href: "/superadmin/support/tickets", label: "Tickets", icon: Ticket },
+            { href: "/superadmin/support/feedback", label: "Feedback", icon: MessageSquare },
+            { href: "/superadmin/support/changelog", label: "Changelog", icon: History },
+            { href: "/superadmin/support/releases", label: "Release Notes", icon: FileText },
         ]
     },
     {
         label: "System Administration & Observability",
         links: [
-            { href: "/admin/system/observability", label: "Observability Center", icon: Activity },
-            { href: "/admin/system/security", label: "Security Command Center", icon: ShieldAlert },
+            { href: "/superadmin/system/observability", label: "Observability Center", icon: Activity },
+            { href: "/superadmin/system/security", label: "Security Command Center", icon: ShieldAlert },
         ]
     },
     {
@@ -579,40 +580,40 @@ const adminNavGroups = [
             {
                 label: "General",
                 links: [
-                    { href: "/admin/settings/general", label: "General Settings", icon: Settings },
-                    { href: "/admin/settings/branding", label: "Branding", icon: Palette },
-                    { href: "/admin/settings/domain", label: "Domain", icon: Globe },
-                    { href: "/admin/settings/email", label: "Email", icon: Mail },
-                    { href: "/admin/settings/storage", label: "Storage", icon: HardDrive },
+                    { href: "/superadmin/settings/general", label: "General Settings", icon: Settings },
+                    { href: "/superadmin/settings/branding", label: "Branding", icon: Palette },
+                    { href: "/superadmin/settings/domain", label: "Domain", icon: Globe },
+                    { href: "/superadmin/settings/email", label: "Email", icon: Mail },
+                    { href: "/superadmin/settings/storage", label: "Storage", icon: HardDrive },
                 ]
             },
             {
                 label: "Authentication",
                 links: [
-                    { href: "/admin/settings/auth/login", label: "Login", icon: LogIn },
-                    { href: "/admin/settings/auth/sso", label: "SSO", icon: Key },
-                    { href: "/admin/settings/auth/mfa", label: "MFA", icon: ShieldCheck },
-                    { href: "/admin/settings/auth/password", label: "Password Policy", icon: Lock },
+                    { href: "/superadmin/settings/auth/login", label: "Login", icon: LogIn },
+                    { href: "/superadmin/settings/auth/sso", label: "SSO", icon: Key },
+                    { href: "/superadmin/settings/auth/mfa", label: "MFA", icon: ShieldCheck },
+                    { href: "/superadmin/settings/auth/password", label: "Password Policy", icon: Lock },
                 ]
             },
             {
                 label: "System",
                 links: [
-                    { href: "/admin/settings/system/env", label: "Environment", icon: Server },
-                    { href: "/admin/settings/system/backups", label: "Backups", icon: Archive },
-                    { href: "/admin/settings/system/maintenance", label: "Maintenance Mode", icon: Wrench },
-                    { href: "/admin/settings/system/cache", label: "Cache", icon: Zap },
-                    { href: "/admin/settings/system/scheduler", label: "Scheduler", icon: Calendar },
+                    { href: "/superadmin/settings/system/env", label: "Environment", icon: Server },
+                    { href: "/superadmin/settings/system/backups", label: "Backups", icon: Archive },
+                    { href: "/superadmin/settings/system/maintenance", label: "Maintenance Mode", icon: Wrench },
+                    { href: "/superadmin/settings/system/cache", label: "Cache", icon: Zap },
+                    { href: "/superadmin/settings/system/scheduler", label: "Scheduler", icon: Calendar },
                 ]
             },
             {
                 label: "Advanced",
                 links: [
-                    { href: "/admin/settings/advanced/features", label: "Feature Configuration", icon: ToggleRight },
-                    { href: "/admin/settings/advanced/code", label: "Custom Code", icon: Code },
-                    { href: "/admin/settings/advanced/env", label: "Environment Variables", icon: Server },
-                    { href: "/admin/settings/advanced/secrets", label: "Secrets", icon: Key },
-                    { href: "/admin/settings/advanced/licensing", label: "Licensing", icon: FileText },
+                    { href: "/superadmin/settings/advanced/features", label: "Feature Configuration", icon: ToggleRight },
+                    { href: "/superadmin/settings/advanced/code", label: "Custom Code", icon: Code },
+                    { href: "/superadmin/settings/advanced/env", label: "Environment Variables", icon: Server },
+                    { href: "/superadmin/settings/advanced/secrets", label: "Secrets", icon: Key },
+                    { href: "/superadmin/settings/advanced/licensing", label: "Licensing", icon: FileText },
                 ]
             }
         ]
@@ -620,13 +621,13 @@ const adminNavGroups = [
     {
         label: "Account",
         links: [
-            { href: "/admin/account/profile", label: "My Profile", icon: User },
-            { href: "/admin/account/preferences", label: "Preferences", icon: Settings },
-            { href: "/admin/account/notifications", label: "Notifications", icon: Bell },
-            { href: "/admin/account/tokens", label: "API Tokens", icon: Code },
-            { href: "/admin/account/sessions", label: "Sessions", icon: MonitorSmartphone },
-            { href: "/admin/account/activity", label: "Activity", icon: Activity },
-            { href: "/admin/account/logout", label: "Logout", icon: LogOut },
+            { href: "/superadmin/account/profile", label: "My Profile", icon: User },
+            { href: "/superadmin/account/preferences", label: "Preferences", icon: Settings },
+            { href: "/superadmin/account/notifications", label: "Notifications", icon: Bell },
+            { href: "/superadmin/account/tokens", label: "API Tokens", icon: Code },
+            { href: "/superadmin/account/sessions", label: "Sessions", icon: MonitorSmartphone },
+            { href: "/superadmin/account/activity", label: "Activity", icon: Activity },
+            { href: "/superadmin/account/logout", label: "Logout", icon: LogOut },
         ]
     }
 ]
@@ -681,24 +682,55 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
         return pathname === href || pathname.startsWith(href + "/")
     }
 
-    const accentColor = ["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) ? "rose" : "primary"
-    const accentClass = ["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) ? "text-rose-400" : "text-primary"
-    const accentBg = ["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) ? "bg-rose-500/15 border-rose-500/20" : "bg-primary/10 border-primary/20"
-    const accentGlow = ["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) ? "bg-rose-500/10" : "bg-primary/10"
+    const isAdminPath = pathname.startsWith("/superadmin")
+    const showAdminPanel = ["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) && isAdminPath
 
-    const renderAdminNav = () => (
-        <nav className={cn(
-            "flex-1 overflow-y-auto custom-scrollbar",
-            variant === "default" ? "px-4 py-4" : "px-0 py-2"
-        )}>
-            {adminNavGroups.map((group) => (
-                <div key={group.label} className="mb-6">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/50 px-3 mb-3">
-                        {group.label}
-                    </p>
-                    <div className="space-y-1">
-                        {group.links && group.links.map((link) => {
-                            const isActive = isActiveLink(link.href, (link as any).exact)
+    const accentColor = showAdminPanel ? "rose" : "primary"
+    const accentClass = showAdminPanel ? "text-rose-400" : "text-primary"
+    const accentBg = showAdminPanel ? "bg-rose-500/15 border-rose-500/20" : "bg-primary/10 border-primary/20"
+    const accentGlow = showAdminPanel ? "bg-rose-500/10" : "bg-primary/10"
+
+    
+const NavGroup = ({ group, idx, isActiveLink }: { group: any, idx: number, isActiveLink: (href: string, exact?: boolean) => boolean }) => {
+    const [isExpanded, setIsExpanded] = React.useState(true)
+    
+    // Check if any link in this group is active to auto-expand
+    React.useEffect(() => {
+        let hasActive = false;
+        if (group.links) {
+            hasActive = hasActive || group.links.some((l: any) => isActiveLink(l.href, l.exact))
+        }
+        if (group.subGroups) {
+            hasActive = hasActive || group.subGroups.some((sg: any) => sg.links.some((l: any) => isActiveLink(l.href, l.exact)))
+        }
+        if (hasActive) {
+            setIsExpanded(true)
+        }
+    }, [group, isActiveLink])
+
+    return (
+        <div className="mb-6">
+            <div 
+                className="flex items-center justify-between px-3 mb-2 cursor-pointer group/header hover:bg-muted/30 py-1.5 rounded-lg transition-colors"
+                onClick={() => setIsExpanded(!isExpanded)}
+            >
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 group-hover/header:text-muted-foreground transition-colors">
+                    {group.label}
+                </p>
+                <ChevronDown className={cn("w-3 h-3 text-muted-foreground/30 transition-transform duration-200", isExpanded ? "" : "-rotate-90")} />
+            </div>
+            
+            <AnimatePresence initial={false}>
+                {isExpanded && (
+                    <motion.div 
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="space-y-1 overflow-hidden"
+                    >
+                        {group.links && group.links.map((link: any) => {
+                            const isActive = isActiveLink(link.href, link.exact)
                             return (
                                 <Link key={link.href} href={link.href} className="block relative group/item">
                                     <motion.div 
@@ -726,8 +758,8 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                                 </Link>
                             )
                         })}
-                        {group.subGroups && group.subGroups.map((subGroup: any, idx: number) => (
-                            <div key={idx} className="mt-4 mb-2">
+                        {group.subGroups && group.subGroups.map((subGroup: any, sIdx: number) => (
+                            <div key={sIdx} className="mt-4 mb-2">
                                 <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 px-3 mb-2">
                                     {subGroup.label}
                                 </p>
@@ -764,8 +796,20 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                                 </div>
                             </div>
                         ))}
-                    </div>
-                </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </div>
+    )
+}
+
+const renderAdminNav = () => (
+        <nav className={cn(
+            "flex-1 overflow-y-auto custom-scrollbar",
+            variant === "default" ? "px-4 py-4" : "px-0 py-2"
+        )}>
+            {adminNavGroups.map((group, idx) => (
+                <NavGroup key={idx} group={group} idx={idx} isActiveLink={isActiveLink} />
             ))}
         </nav>
     )
@@ -850,23 +894,23 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
             {/* Logo */}
             {variant === "default" && (
                 <div className="px-6 pt-8 pb-6 border-b border-border shrink-0">
-                    <Link href="/" className="flex items-center gap-3 group mb-2">
+                    <Link href="/superadmin" className="flex items-center gap-3 group mb-2">
                         <div className={cn("p-2 rounded-2xl border backdrop-blur-md shadow-lg transition-all duration-300 group-hover:scale-105",
-                            ["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) ? "bg-rose-500/20 border-rose-500/30" : "bg-primary/20 border-primary/30"
+                            showAdminPanel ? "bg-rose-500/20 border-rose-500/30" : "bg-primary/20 border-primary/30"
                         )}>
-                            <ShieldCheck className={cn("w-5 h-5", ["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) ? "text-rose-400" : "text-primary")} />
+                            <ShieldCheck className={cn("w-5 h-5", showAdminPanel ? "text-rose-400" : "text-primary")} />
                         </div>
                         <div>
                             <p className="text-base font-black tracking-tighter text-gradient leading-none">Best Hiring Tool</p>
                             <p className={cn("text-[9px] uppercase tracking-[0.3em] font-black leading-tight mt-1",
-                                ["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) ? "text-rose-500/60" : "text-primary/60"
+                                showAdminPanel ? "text-rose-500/60" : "text-primary/60"
                             )}>
-                                {["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) ? "Admin Terminal" : role === "company" ? "Recruiter Hub" : "Talent Engine"}
+                                {showAdminPanel ? "Admin Terminal" : role === "company" ? "Recruiter Hub" : "Talent Engine"}
                             </p>
                         </div>
                     </Link>
 
-                    {["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) && (
+                    {showAdminPanel && (
                         <div className="flex items-center gap-2 px-2.5 py-1.5 bg-emerald-500/5 border border-emerald-500/10 rounded-lg">
                             <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                             <span className="text-[8px] font-black uppercase tracking-[0.2em] text-emerald-400/70">All Systems Operational</span>
@@ -876,7 +920,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
             )}
 
             {/* Navigation */}
-            {["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) ? renderAdminNav() : renderSimpleNav()}
+            {showAdminPanel ? renderAdminNav() : renderSimpleNav()}
 
             {/* Footer */}
             {variant === "default" && (
@@ -885,7 +929,7 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
                         <div className="flex items-center gap-2.5 px-2.5 py-2 rounded-xl bg-muted/50 border border-border/50 mb-2">
                             <div className={cn(
                                 "w-7 h-7 rounded-lg flex items-center justify-center text-xs font-black shrink-0",
-                                ["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) ? "bg-rose-500/20 text-rose-400" : "bg-primary/20 text-primary"
+                                showAdminPanel ? "bg-rose-500/20 text-rose-400" : "bg-primary/20 text-primary"
                             )}>
                                 {(user.name || user.name || "?").charAt(0).toUpperCase()}
                             </div>

@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { Metadata } from "next";
-import { RenderEngine } from "@/app/admin/cms/builder/core/public-engine";
+import { RenderEngine } from "@/app/superadmin/cms/builder/core/public-engine";
 
 interface PageProps {
   params: {

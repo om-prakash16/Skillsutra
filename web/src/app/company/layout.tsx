@@ -61,7 +61,7 @@ export default function CompanyLayout({
 
     return (
         <CompanyProvider>
-            <div className="flex min-h-screen bg-background text-slate-50 selection:bg-primary/40 overflow-hidden">
+            <div className="flex h-full w-full bg-background text-slate-50 selection:bg-primary/40 overflow-hidden">
                 {/* Ambient Background */}
                 <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
                     <div className="absolute top-[10%] left-[-5%] w-[50%] h-[50%] bg-primary/[0.04] blur-[160px] rounded-full" />
@@ -70,7 +70,7 @@ export default function CompanyLayout({
 
                 <Sidebar role="company" className="hidden lg:flex" />
                 
-                <main className="flex-1 w-full pt-0 lg:pt-16 relative scroll-smooth custom-scrollbar z-10 flex flex-col h-screen overflow-y-auto">
+                <main className="flex-1 w-full pt-20 relative scroll-smooth custom-scrollbar z-10 flex flex-col h-screen overflow-y-auto">
                     {/* Mobile Header */}
                     <div className="lg:hidden flex items-center justify-between p-4 border-b border-border glass sticky top-0 z-50">
                         <div className="flex items-center gap-2">

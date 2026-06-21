@@ -7,87 +7,87 @@ import { fetchWithAuth } from "./api-client";
 
 export const adminApi = {
     // -- User Management --
-    getUsers: () => fetchWithAuth("/admin/users"),
+    getUsers: () => fetchWithAuth("/superadmin/users"),
     updateUser: (account: string, data: any) =>
-        fetchWithAuth(`/admin/users/${account}`, {
+        fetchWithAuth(`/superadmin/users/${account}`, {
             method: "PATCH",
             body: JSON.stringify(data),
         }),
     flagUser: (data: any) =>
-        fetchWithAuth("/admin/users/flag", {
+        fetchWithAuth("/superadmin/users/flag", {
             method: "POST",
             body: JSON.stringify(data),
         }),
 
     // -- Dynamic Schema --
-    getSchema: () => fetchWithAuth("/admin/schema"),
+    getSchema: () => fetchWithAuth("/superadmin/schema"),
     createSchema: (data: any) =>
-        fetchWithAuth("/admin/schema", {
+        fetchWithAuth("/superadmin/schema", {
             method: "POST",
             body: JSON.stringify(data),
         }),
     updateSchema: (id: string, data: any) =>
-        fetchWithAuth(`/admin/schema/${id}`, {
+        fetchWithAuth(`/superadmin/schema/${id}`, {
             method: "PATCH",
             body: JSON.stringify(data),
         }),
     deleteSchema: (id: string) =>
-        fetchWithAuth(`/admin/schema/${id}`, { method: "DELETE" }),
+        fetchWithAuth(`/superadmin/schema/${id}`, { method: "DELETE" }),
 
     // -- Feature Flags --
-    getFeatures: () => fetchWithAuth("/admin/features"),
+    getFeatures: () => fetchWithAuth("/superadmin/features"),
     updateFeature: (data: any) =>
-        fetchWithAuth("/admin/features/update", {
+        fetchWithAuth("/superadmin/features/update", {
             method: "POST",
             body: JSON.stringify(data),
         }),
 
     // -- Platform Settings --
-    getSettings: () => fetchWithAuth("/admin/settings"),
+    getSettings: () => fetchWithAuth("/superadmin/settings"),
     updateSettings: (data: any) =>
-        fetchWithAuth("/admin/settings", {
+        fetchWithAuth("/superadmin/settings", {
             method: "POST",
             body: JSON.stringify(data),
         }),
 
     // -- Company Moderation --
-    getCompanies: () => fetchWithAuth("/admin/companies"),
+    getCompanies: () => fetchWithAuth("/superadmin/companies"),
     verifyCompany: (id: string) =>
-        fetchWithAuth(`/admin/companies/${id}/verify`, { method: "PATCH" }),
+        fetchWithAuth(`/superadmin/companies/${id}/verify`, { method: "PATCH" }),
     deleteCompany: (id: string) =>
-        fetchWithAuth(`/admin/companies/${id}`, { method: "DELETE" }),
+        fetchWithAuth(`/superadmin/companies/${id}`, { method: "DELETE" }),
 
     // -- Job & Application Oversight --
-    getAllJobs: () => fetchWithAuth("/admin/all-jobs"),
+    getAllJobs: () => fetchWithAuth("/superadmin/all-jobs"),
     deleteJob: (id: string) =>
-        fetchWithAuth(`/admin/jobs/${id}`, { method: "DELETE" }),
-    getAllApplications: () => fetchWithAuth("/admin/all-applications"),
+        fetchWithAuth(`/superadmin/jobs/${id}`, { method: "DELETE" }),
+    getAllApplications: () => fetchWithAuth("/superadmin/all-applications"),
 
     // -- Skill Taxonomy --
-    getSkills: () => fetchWithAuth("/admin/skills"),
+    getSkills: () => fetchWithAuth("/superadmin/skills"),
     createSkill: (data: any) =>
-        fetchWithAuth("/admin/skills", {
+        fetchWithAuth("/superadmin/skills", {
             method: "POST",
             body: JSON.stringify(data),
         }),
 
     // -- infrastructure --
     getBlockchainTransactions: () =>
-        fetchWithAuth("/admin/infrastructure/transactions"),
+        fetchWithAuth("/superadmin/infrastructure/transactions"),
 
     // -- Reports & Moderation --
     getReports: (params: string) =>
-        fetchWithAuth(`/admin/reports?${params}`),
+        fetchWithAuth(`/superadmin/reports?${params}`),
     resolveReport: (data: any) =>
-        fetchWithAuth("/admin/reports/resolve", {
+        fetchWithAuth("/superadmin/reports/resolve", {
             method: "PATCH",
             body: JSON.stringify(data),
         }),
 
     // -- Subscriptions --
-    getSubscriptions: () => fetchWithAuth("/admin/subscriptions"),
+    getSubscriptions: () => fetchWithAuth("/superadmin/subscriptions"),
     updateSubscription: (id: string, data: any) =>
-        fetchWithAuth(`/admin/subscriptions/${id}`, {
+        fetchWithAuth(`/superadmin/subscriptions/${id}`, {
             method: "PATCH",
             body: JSON.stringify(data),
         }),
@@ -95,10 +95,10 @@ export const adminApi = {
     // -- Skill Verification Flags --
     getSkillFlags: (status?: string) =>
         fetchWithAuth(
-            `/admin/skill-flags${status ? `?status=${status}` : ""}`
+            `/superadmin/skill-flags${status ? `?status=${status}` : ""}`
         ),
     reviewSkillFlag: (id: string, data: any) =>
-        fetchWithAuth(`/admin/skill-flags/review/${id}`, {
+        fetchWithAuth(`/superadmin/skill-flags/review/${id}`, {
             method: "POST",
             body: JSON.stringify(data),
         }),
@@ -106,22 +106,22 @@ export const adminApi = {
     // -- Support Tickets --
     getTickets: (status?: string) =>
         fetchWithAuth(
-            `/admin/tickets${status ? `?status=${status}` : ""}`
+            `/superadmin/tickets${status ? `?status=${status}` : ""}`
         ),
     updateTicket: (id: string, data: any) =>
-        fetchWithAuth(`/admin/tickets/${id}`, {
+        fetchWithAuth(`/superadmin/tickets/${id}`, {
             method: "PATCH",
             body: JSON.stringify(data),
         }),
 
     // -- Audit Logs --
-    getAuditLogs: () => fetchWithAuth("/admin/audit-logs"),
+    getAuditLogs: () => fetchWithAuth("/superadmin/audit-logs"),
 
     // -- Activity & Analytics --
     activity: (limit = 50) =>
-        fetchWithAuth(`/activity/admin?limit=${limit}`),
-    analytics: () => fetchWithAuth("/analytics/admin"),
-    insights: () => fetchWithAuth("/analytics/insights/admin"),
+        fetchWithAuth(`/activity/superadmin?limit=${limit}`),
+    analytics: () => fetchWithAuth("/analytics/superadmin"),
+    insights: () => fetchWithAuth("/analytics/insights/superadmin"),
 
     // -- CMS --
     cms: {

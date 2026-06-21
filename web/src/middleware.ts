@@ -119,7 +119,7 @@ export async function updateSession(request: NextRequest) {
     || path.startsWith('/u/')
     || path.startsWith('/in/')
 
-  const isAdminRoute = path.startsWith('/admin')
+  const isAdminRoute = path.startsWith('/superadmin')
   const isCompanyRoute = path.startsWith('/company')
   const isUserRoute = path.startsWith('/user')
   const isModerationRoute = path.startsWith('/moderation')
@@ -161,17 +161,17 @@ export async function updateSession(request: NextRequest) {
       if (!ADMIN_ROLES.includes(effectiveRole)) {
         return NextResponse.redirect(new URL(fallbackDestination, request.url));
       }
-      if (path.startsWith('/admin/security') && !['super_admin', 'security_admin'].includes(effectiveRole)) {
-          return NextResponse.redirect(new URL(fallbackDestination, request.url));
+      if (path.startsWith('/superadmin/security') && !['super_admin', 'security_admin'].includes(effectiveRole)) {
+        return NextResponse.redirect(new URL('/user/dashboard', request.url))
       }
-      if (path.startsWith('/admin/support') && !['super_admin', 'admin', 'support_admin'].includes(effectiveRole)) {
-          return NextResponse.redirect(new URL(fallbackDestination, request.url));
+      if (path.startsWith('/superadmin/support') && !['super_admin', 'admin', 'support_admin'].includes(effectiveRole)) {
+        return NextResponse.redirect(new URL('/user/dashboard', request.url))
       }
-      if (path.startsWith('/admin/ai') && !['super_admin', 'ai_admin'].includes(effectiveRole)) {
-          return NextResponse.redirect(new URL(fallbackDestination, request.url));
+      if (path.startsWith('/superadmin/ai') && !['super_admin', 'ai_admin'].includes(effectiveRole)) {
+        return NextResponse.redirect(new URL('/user/dashboard', request.url))
       }
-      if (path === '/admin' && !['super_admin', 'admin'].includes(effectiveRole)) {
-          return NextResponse.redirect(new URL(fallbackDestination, request.url));
+      if (path === '/superadmin' && !['super_admin', 'admin'].includes(effectiveRole)) {
+        return NextResponse.redirect(new URL('/user/dashboard', request.url))
       }
     }
 
