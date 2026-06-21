@@ -5,13 +5,9 @@ import { AuthProvider } from "@/context/auth-context";
 import { MainLayoutWrapper } from "@/components/layout/main-layout-wrapper";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { QueryProvider } from "@/components/providers/query-provider";
-import { Navbar } from "@/components/layout/navbar";
-import { Footer } from "@/components/layout/footer";
-import { MobileNav } from "@/components/layout/mobile-nav";
 import { CMSProvider } from "@/context/cms-context";
 import { API_BASE_URL } from "@/lib/api/api-client";
 import { Toaster } from "@/components/ui/sonner";
-import { SmoothScroll } from "@/components/providers/smooth-scroll";
 
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -67,17 +63,13 @@ export default function RootLayout({
               <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "dummy_client_id"}>
                 <AuthProvider>
                   <CMSProvider>
-                    <SmoothScroll />
                     <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden opacity-20 dark:opacity-40">
                       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 blur-[120px] rounded-full animate-pulse" />
                       <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-secondary/20 blur-[150px] rounded-full" />
                     </div>
-                    <Navbar />
                     <MainLayoutWrapper>
                       {children}
                     </MainLayoutWrapper>
-                    <Footer />
-                    <MobileNav />
                   </CMSProvider>
                 </AuthProvider>
               </GoogleOAuthProvider>

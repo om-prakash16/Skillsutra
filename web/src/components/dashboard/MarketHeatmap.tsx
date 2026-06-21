@@ -50,7 +50,7 @@ export function MarketHeatmap() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/analytics/market-intel`, {
+                const res = await fetch(`/api/v1/analytics/market-intel`, {
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("sp_token")}`
                     }

@@ -15,7 +15,7 @@ class Route(EnterpriseMixin, Base):
     
     # Polymorphic target (what this route actually renders)
     entity_type = Column(String(100), nullable=False) # e.g. "cms_page", "cms_entry", "landing_page"
-    entity_id = Column(UUID(as_uuid=True), nullable=False) # The ID of the target
+    entity_id = Column(UUID(as_uuid=True), nullable=False, index=True) # The ID of the target
     
     # Optional Template override (if resolving a CMS Entry that needs a specific wrapper)
     template_id = Column(UUID(as_uuid=True), nullable=True)
@@ -42,12 +42,12 @@ class NavigationMenu(EnterpriseMixin, Base):
 class NavigationItem(EnterpriseMixin, Base):
     __tablename__ = "navigation_items"
     
-    menu_id = Column(UUID(as_uuid=True), ForeignKey("navigation_menus.id", ondelete="CASCADE"), nullable=False)
-    parent_id = Column(UUID(as_uuid=True), ForeignKey("navigation_items.id", ondelete="CASCADE"), nullable=True)
+    menu_id = Column(UUID(as_uuid=True), ForeignKey("navigation_menus.id", ondelete="CASCADE"), nullable=False, index=True)
+    parent_id = Column(UUID(as_uuid=True), ForeignKey("navigation_items.id", ondelete="CASCADE"), nullable=True, index=True)
     
     label = Column(String(255), nullable=False)
     url = Column(String(500), nullable=True) # Static URL override
-    route_id = Column(UUID(as_uuid=True), ForeignKey("routes.id"), nullable=True) # Dynamic link to Route
+    route_id = Column(UUID(as_uuid=True), ForeignKey("routes.id"), nullable=True, index=True) # Dynamic link to Route
     
     order = Column(Integer, default=0)
     open_in_new_tab = Column(Boolean, default=False)
@@ -117,8 +117,8 @@ class PublishJob(EnterpriseMixin, Base):
     """Tracks background tasks for static site generation or cache invalidation."""
     __tablename__ = "publish_jobs"
     
-    entity_type = Column(String(100), nullable=False)
-    entity_id = Column(UUID(as_uuid=True), nullable=False)
+    entity_type = Column(String(100), nullable=False, index=True)
+    entity_id = Column(UUID(as_uuid=True), nullable=False, index=True)
     
     status = Column(String(50), default="pending") # pending, processing, completed, failed
     error_log = Column(Text, nullable=True)
@@ -127,7 +127,7 @@ class SitemapConfig(EnterpriseMixin, Base):
     """Manages sitemap.xml dynamically per domain."""
     __tablename__ = "sitemap_configs"
     
-    domain_id = Column(UUID(as_uuid=True), ForeignKey("domain_bindings.id"), nullable=True)
+    domain_id = Column(UUID(as_uuid=True), ForeignKey("domain_bindings.id"), nullable=True, index=True)
     
     includes_pages = Column(Boolean, default=True)
     includes_blog = Column(Boolean, default=True)
@@ -139,7 +139,7 @@ class RobotsRule(EnterpriseMixin, Base):
     """Manages robots.txt dynamically per domain."""
     __tablename__ = "robots_rules"
     
-    domain_id = Column(UUID(as_uuid=True), ForeignKey("domain_bindings.id"), nullable=True)
+    domain_id = Column(UUID(as_uuid=True), ForeignKey("domain_bindings.id"), nullable=True, index=True)
     
     user_agent = Column(String(255), default="*")
     allow_paths = Column(JSON, default=list)

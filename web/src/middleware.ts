@@ -119,16 +119,23 @@ export async function updateSession(request: NextRequest) {
     || path.startsWith('/u/')
     || path.startsWith('/in/')
 
-  const isAdminRoute = path.startsWith('/superadmin')
+  const isSuperAdminRoute = path.startsWith('/superadmin')
+  const isAdminRoute = path.startsWith('/admin') || isSuperAdminRoute
   const isCompanyRoute = path.startsWith('/company')
   const isUserRoute = path.startsWith('/user')
   const isModerationRoute = path.startsWith('/moderation')
   const isMentorRoute = path.startsWith('/mentor')
+  const isRecruiterRoute = path.startsWith('/recruiter')
+  const isHRRoute = path.startsWith('/hr')
+  const isFinanceRoute = path.startsWith('/finance')
+  const isEmployeeRoute = path.startsWith('/employee')
+  const isDeveloperRoute = path.startsWith('/developer')
+  const isPartnerRoute = path.startsWith('/partner')
 
   if (isPublicRoute) return response
 
   // ─── AUTHENTICATION GUARD ─────────────────────────────────────────
-  const isProtectedPath = isAdminRoute || isCompanyRoute || isUserRoute || isModerationRoute || isMentorRoute || path.startsWith('/feed') || path.startsWith('/notifications') || path.startsWith('/assessments') || path.startsWith('/messages');
+  const isProtectedPath = isAdminRoute || isCompanyRoute || isUserRoute || isModerationRoute || isMentorRoute || isRecruiterRoute || isHRRoute || isFinanceRoute || isEmployeeRoute || isDeveloperRoute || isPartnerRoute || path.startsWith('/feed') || path.startsWith('/notifications') || path.startsWith('/assessments') || path.startsWith('/messages');
 
   if (!role && isProtectedPath) {
     console.log("[Middleware] Blocked route access. Path:", path, "Role:", role)
@@ -161,18 +168,26 @@ export async function updateSession(request: NextRequest) {
       if (!ADMIN_ROLES.includes(effectiveRole)) {
         return NextResponse.redirect(new URL(fallbackDestination, request.url));
       }
-      if (path.startsWith('/superadmin/security') && !['super_admin', 'security_admin'].includes(effectiveRole)) {
-        return NextResponse.redirect(new URL('/user/dashboard', request.url))
+
+      // If the user is trying to access /superadmin, they MUST be super_admin or a specific global admin
+      if (path.startsWith('/superadmin')) {
+        if (!['super_admin', 'security_admin', 'support_admin', 'ai_admin'].includes(effectiveRole)) {
+            return NextResponse.redirect(new URL('/admin/dashboard', request.url))
+        }
+
+        if (path.startsWith('/superadmin/security') && !['super_admin', 'security_admin'].includes(effectiveRole)) {
+          return NextResponse.redirect(new URL('/superadmin', request.url))
+        }
+        if (path.startsWith('/superadmin/support') && !['super_admin', 'support_admin'].includes(effectiveRole)) {
+          return NextResponse.redirect(new URL('/superadmin', request.url))
+        }
+        if (path.startsWith('/superadmin/ai') && !['super_admin', 'ai_admin'].includes(effectiveRole)) {
+          return NextResponse.redirect(new URL('/superadmin', request.url))
+        }
       }
-      if (path.startsWith('/superadmin/support') && !['super_admin', 'admin', 'support_admin'].includes(effectiveRole)) {
-        return NextResponse.redirect(new URL('/user/dashboard', request.url))
-      }
-      if (path.startsWith('/superadmin/ai') && !['super_admin', 'ai_admin'].includes(effectiveRole)) {
-        return NextResponse.redirect(new URL('/user/dashboard', request.url))
-      }
-      if (path === '/superadmin' && !['super_admin', 'admin'].includes(effectiveRole)) {
-        return NextResponse.redirect(new URL('/user/dashboard', request.url))
-      }
+      
+      // If the user is trying to access /admin, any ADMIN_ROLE is fine (including standard 'admin').
+      // No further block is needed unless we want to lock out super_admin from /admin (we do not).
     }
 
     if (isModerationRoute && !['super_admin', 'admin', 'moderator'].includes(effectiveRole)) {
@@ -180,6 +195,30 @@ export async function updateSession(request: NextRequest) {
     }
 
     if (isMentorRoute && effectiveRole !== 'mentor') {
+        return NextResponse.redirect(new URL(fallbackDestination, request.url));
+    }
+
+    if (isRecruiterRoute && effectiveRole !== 'recruiter' && !ADMIN_ROLES.includes(effectiveRole)) {
+        return NextResponse.redirect(new URL(fallbackDestination, request.url));
+    }
+
+    if (isHRRoute && effectiveRole !== 'hr' && !ADMIN_ROLES.includes(effectiveRole)) {
+        return NextResponse.redirect(new URL(fallbackDestination, request.url));
+    }
+
+    if (isFinanceRoute && effectiveRole !== 'finance' && !ADMIN_ROLES.includes(effectiveRole)) {
+        return NextResponse.redirect(new URL(fallbackDestination, request.url));
+    }
+
+    if (isEmployeeRoute && effectiveRole !== 'employee' && !ADMIN_ROLES.includes(effectiveRole)) {
+        return NextResponse.redirect(new URL(fallbackDestination, request.url));
+    }
+
+    if (isDeveloperRoute && effectiveRole !== 'developer' && !ADMIN_ROLES.includes(effectiveRole)) {
+        return NextResponse.redirect(new URL(fallbackDestination, request.url));
+    }
+
+    if (isPartnerRoute && effectiveRole !== 'partner' && !ADMIN_ROLES.includes(effectiveRole)) {
         return NextResponse.redirect(new URL(fallbackDestination, request.url));
     }
 

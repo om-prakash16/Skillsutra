@@ -39,6 +39,23 @@ from modules.cms.router import router as cms_router
 from modules.notifications.api.router import router as notifications_router
 from modules.identity.api.router import router as identity_router
 from modules.analytics.router import router as analytics_router
+from modules.identity.api.admin_users_router import router as admin_users_router
+from modules.identity.api.admin_orgs_router import router as admin_orgs_router
+from modules.identity.api.admin_roles_router import router as admin_roles_router
+from modules.identity.api.admin_apikeys_router import router as admin_apikeys_router
+from modules.identity.api.admin_sessions_router import router as admin_sessions_router
+from modules.identity.api.admin_invitations_router import router as admin_invitations_router
+from modules.identity.api.admin_teams_router import router as admin_teams_router
+from modules.identity.api.admin_mfa_router import router as admin_mfa_router
+from modules.identity.api.admin_verification_router import router as admin_verification_router
+from modules.identity.api.admin_devices_router import router as admin_devices_router
+from modules.identity.api.admin_oauth_router import router as admin_oauth_router
+from modules.identity.api.admin_service_accounts_router import router as admin_service_accounts_router
+from modules.identity.api.admin_login_history_router import router as admin_login_history_router
+from modules.identity.api.admin_security_events_router import router as admin_security_events_router
+from modules.identity.api.admin_impersonation_router import router as admin_impersonation_router
+from modules.identity.api.admin_audit_router import router as admin_audit_router
+from modules.identity.api.admin_identity_metrics_router import router as admin_identity_metrics_router
 from modules.chat.router import router as chat_router
 from modules.messages.router import router as messages_router
 from modules.admin.api.router import router as admin_router
@@ -93,6 +110,23 @@ v1_router.include_router(auth_router, prefix="/auth", tags=["Authentication"])
 v1_router.include_router(active_sessions_router, prefix="/auth/sessions", tags=["Session Management"])
 v1_router.include_router(mfa_router, prefix="/auth/mfa", tags=["MFA Management"])
 v1_router.include_router(identity_router, prefix="/identity", tags=["Identity"])
+v1_router.include_router(admin_users_router)
+v1_router.include_router(admin_orgs_router)
+v1_router.include_router(admin_roles_router)
+v1_router.include_router(admin_apikeys_router)
+v1_router.include_router(admin_sessions_router)
+v1_router.include_router(admin_invitations_router)
+v1_router.include_router(admin_teams_router)
+v1_router.include_router(admin_mfa_router)
+v1_router.include_router(admin_verification_router)
+v1_router.include_router(admin_devices_router)
+v1_router.include_router(admin_oauth_router)
+v1_router.include_router(admin_service_accounts_router)
+v1_router.include_router(admin_login_history_router)
+v1_router.include_router(admin_security_events_router)
+v1_router.include_router(admin_impersonation_router)
+v1_router.include_router(admin_audit_router)
+v1_router.include_router(admin_identity_metrics_router)
 v1_router.include_router(users_router, prefix="/users", tags=["Users Base"])
 v1_router.include_router(profile_router, prefix="/profile", tags=["Talent Profiles"])
 v1_router.include_router(public_profile_router, prefix="/profiles", tags=["Public Profiles"])
@@ -148,7 +182,9 @@ from modules.collaboration.router import router as collaboration_router
 v1_router.include_router(collaboration_router, prefix="/collaboration", tags=["Collaboration System"])
 
 from modules.delivery.router import router as delivery_router
+from modules.delivery.admin_router import admin_delivery_router
 v1_router.include_router(delivery_router, prefix="/delivery", tags=["Content Delivery & Routing"])
+v1_router.include_router(admin_delivery_router)
 
 from modules.ats.router import router as ats_router
 v1_router.include_router(ats_router, prefix="/ats", tags=["Applicant Tracking System (ATS)"])

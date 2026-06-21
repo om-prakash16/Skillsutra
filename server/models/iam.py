@@ -41,7 +41,8 @@ class APIKey(EnterpriseMixin, Base):
     """
     __tablename__ = "api_keys"
 
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
+    service_account_id = Column(UUID(as_uuid=True), ForeignKey("service_accounts.id", ondelete="CASCADE"), nullable=True)
     
     name = Column(String, nullable=False)
     key_hash = Column(String, nullable=False, unique=True)
@@ -97,5 +98,41 @@ class BackupCode(EnterpriseMixin, Base):
 
     user = relationship("User")
 
+class Invitation(EnterpriseMixin, Base):
+    """
+    Enterprise invitations for joining the platform, an organization, or a specific team.
+    """
+    __tablename__ = "invitations"
 
+    email = Column(String, nullable=False, index=True)
+    status = Column(String, default="pending") # pending, accepted, expired, cancelled, rejected
+    
+    # Target Assignments
+    organization_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id", ondelete="CASCADE"), nullable=True)
+    team_id = Column(UUID(as_uuid=True), ForeignKey("teams.id", ondelete="CASCADE"), nullable=True)
+    role_id = Column(UUID(as_uuid=True), ForeignKey("roles.id", ondelete="SET NULL"), nullable=True)
+    manager_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    
+    token_hash = Column(String, nullable=False, unique=True)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    
+    invited_by_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
 
+class ServiceAccount(EnterpriseMixin, Base):
+    """
+    Dedicated enterprise service identities for machine-to-machine communication,
+    workflow execution, background workers, and automated scripts.
+    """
+    __tablename__ = "service_accounts"
+
+    name = Column(String, nullable=False)
+    description = Column(String, nullable=True)
+    
+    # Target Assignments for scoping
+    organization_id = Column(UUID(as_uuid=True), ForeignKey("organizations.id", ondelete="CASCADE"), nullable=True)
+    workspace_id = Column(UUID(as_uuid=True), ForeignKey("workspaces.id", ondelete="CASCADE"), nullable=True)
+    
+    # Internal role mapped to the service account
+    role_id = Column(UUID(as_uuid=True), ForeignKey("roles.id", ondelete="SET NULL"), nullable=True)
+    
+    is_active = Column(Boolean, default=True)

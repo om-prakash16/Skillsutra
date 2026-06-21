@@ -8,7 +8,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // which queries the `Route` and `SitemapConfig` tables to return all active public paths.
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2000);
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/v1/delivery/sitemap`, {
+    const apiUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+    const res = await fetch(`${apiUrl}/delivery/sitemap`, {
       next: { revalidate: 3600 }, // Cache for 1 hour
       signal: controller.signal
     });

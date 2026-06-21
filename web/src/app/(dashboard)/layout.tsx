@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
+import { AppShell } from "@/components/layout/app-shell"
 
 export default function DashboardLayout({
     children,
@@ -68,56 +69,29 @@ export default function DashboardLayout({
 
     const showSidebar = isAuthorized && !isLoading;
 
-    return (
-        <div className="flex h-full w-full bg-background text-foreground selection:bg-primary/40 overflow-hidden">
-            {/* Ambient Background */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/[0.05] blur-[160px] rounded-full" />
-                <div className="absolute top-[10%] right-[10%] w-[40%] h-[40%] bg-blue-500/[0.03] blur-[140px] rounded-full" />
-                <div className="absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-emerald-500/[0.03] blur-[180px] rounded-full" />
-            </div>
-
-            {showSidebar && <Sidebar role={(user?.role as any) || "user"} className="hidden lg:flex" />}
-            
-            <main className="flex-1 w-full pt-20 relative overflow-y-auto scroll-smooth custom-scrollbar z-10">
-                {/* Mobile Header with Hamburger */}
-                {showSidebar && (
-                    <div className="lg:hidden fixed top-0 left-0 right-0 h-16 border-b border-border bg-background/80 backdrop-blur-md z-50 flex items-center px-4">
-                        <Sheet>
-                            <SheetTrigger asChild>
-                                <Button variant="ghost" size="icon" className="shrink-0 text-foreground">
-                                    <Menu className="h-6 w-6" />
-                                    <span className="sr-only">Toggle navigation</span>
-                                </Button>
-                            </SheetTrigger>
-                            <SheetContent side="left" className="p-0 w-72 bg-background border-border z-[200]">
-                                <Sidebar role={(user?.role as any) || "user"} variant="mobile" />
-                            </SheetContent>
-                        </Sheet>
-                        <div className="ml-4 font-black tracking-widest text-primary uppercase text-[10px]">Dashboard</div>
-                    </div>
-                )}
-
-                <div className="sticky top-0 w-full h-8 bg-gradient-to-b from-background to-transparent z-40 pointer-events-none opacity-60 hidden lg:block" />
-                
-                <div className="w-full px-4 py-4 md:px-8 md:py-8 max-w-[1600px] mx-auto">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ 
-                                duration: 0.6, 
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                        >
-                            {children}
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
-
-                <div className="sticky bottom-0 w-full h-8 bg-gradient-to-t from-background to-transparent z-30 pointer-events-none opacity-40" />
-            </main>
+    const MobileHeader = showSidebar ? (
+        <div className="lg:hidden fixed top-0 left-0 right-0 h-16 border-b border-border bg-background/80 backdrop-blur-md z-50 flex items-center px-4">
+            <Sheet>
+                <SheetTrigger asChild>
+                    <Button variant="ghost" size="icon" className="shrink-0 text-foreground">
+                        <Menu className="h-6 w-6" />
+                        <span className="sr-only">Toggle navigation</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="left" className="p-0 w-72 bg-background border-border z-[200]">
+                    <Sidebar role={(user?.role as any) || "user"} variant="mobile" />
+                </SheetContent>
+            </Sheet>
+            <div className="ml-4 font-black tracking-widest text-primary uppercase text-[10px]">Dashboard</div>
         </div>
+    ) : null;
+
+    return (
+        <AppShell 
+            sidebar={showSidebar ? <Sidebar role={(user?.role as any) || "user"} className="hidden lg:flex" /> : null}
+            header={MobileHeader}
+        >
+            {children}
+        </AppShell>
     )
 }

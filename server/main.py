@@ -156,23 +156,55 @@ from api.v1.router import v1_router
 app.include_router(v1_router, prefix=settings.API_V1_STR)
 
 # --- Instrumentation ---
-try:
-    # from prometheus_fastapi_instrumentator import Instrumentator
-    # Instrumentator().instrument(app).expose(app)
-    
-    # from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-    # FastAPIInstrumentor.instrument_app(app)
-    pass
-except ImportError:
-    pass
+import sys
+if "pytest" not in sys.modules:
+    try:
+        # Disable Prometheus and OpenTelemetry instrumentation temporarily
+        # due to compatibility issues with _IncludedRouter path resolution 
+        # in the current FastAPI/Starlette version.
+        
+        # from prometheus_fastapi_instrumentator import Instrumentator
+        # Instrumentator().instrument(app).expose(app)
+        
+        # from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+        # FastAPIInstrumentor.instrument_app(app)
+        pass
+    except ImportError:
+        logger.warning("Observability libraries not installed. Skipping instrumentation.")
 
 @app.get("/health")
 async def health():
+    # External checks
+    db_status = "ok"
+    redis_status = "ok"
+    try:
+        from database.core import engine
+        from sqlalchemy import text
+        with engine.connect() as conn:
+            conn.execute(text("SELECT 1"))
+    except Exception:
+        db_status = "error"
+        
+    try:
+        import redis.asyncio as redis
+        from core.config import settings
+        redis_url = getattr(settings, "REDIS_URL", f"redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_DB}")
+        r = redis.from_url(redis_url)
+        await r.ping()
+    except Exception:
+        redis_status = "error"
+
+    status = "healthy" if db_status == "ok" and redis_status == "ok" else "degraded"
+
     return {
-        "status": "healthy",
+        "status": status,
         "service": settings.PROJECT_NAME,
         "timestamp": time.time(),
-        "version": settings.PROJECT_VERSION
+        "version": settings.PROJECT_VERSION,
+        "checks": {
+            "database": db_status,
+            "redis": redis_status
+        }
     }
 
 @app.get("/")

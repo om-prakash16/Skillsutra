@@ -27,11 +27,35 @@ class LoginHistory(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     session_id = Column(UUID(as_uuid=True), nullable=True, index=True)
     device_id = Column(String, nullable=True, index=True)
+    jti = Column(String, nullable=True) # JWT ID for revocation correlation
+    trace_id = Column(String, nullable=True) # Distributed tracing
+    
     login_time = Column(DateTime(timezone=True), default=datetime.utcnow, index=True)
+    
+    # Network & Location
     ip_address = Column(String, nullable=True)
+    isp = Column(String, nullable=True)
+    country = Column(String, nullable=True)
+    city = Column(String, nullable=True)
+    timezone = Column(String, nullable=True)
     location_data = Column(JSONB, nullable=True)
-    method = Column(String, nullable=False) # e.g. "password", "google", "magic_link"
+    
+    # Device Fingerprint
+    browser = Column(String, nullable=True)
+    browser_version = Column(String, nullable=True)
+    os = Column(String, nullable=True)
+    device = Column(String, nullable=True)
+    device_fingerprint = Column(String, nullable=True)
+    
+    # Context
+    method = Column(String, nullable=False) # e.g. "password", "google", "magic_link", "service_account"
+    mfa_used = Column(Boolean, default=False)
+    risk_score = Column(Integer, default=0)
+    latency_ms = Column(Integer, nullable=True)
+    
+    # Outcome
     status = Column(String, nullable=False) # "success" or "failure"
+    failure_reason = Column(String, nullable=True)
 
 class SecurityEvent(Base):
     __tablename__ = "security_events"

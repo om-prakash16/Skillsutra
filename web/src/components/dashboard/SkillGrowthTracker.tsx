@@ -62,7 +62,7 @@ export function SkillGrowthTracker() {
     useEffect(() => {
         async function fetchGrowth() {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/analytics/user/growth`, {
+                const res = await fetch(`/api/v1/analytics/user/growth`, {
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("sp_token")}`
                     }

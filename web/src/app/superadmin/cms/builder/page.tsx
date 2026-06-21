@@ -11,10 +11,14 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
+import { useAuth } from "@/context/auth-context";
 
 export default function VisualBuilderPage() {
+  const { user } = useAuth();
   const [deviceMap, setDeviceMap] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [activeRightTab, setActiveRightTab] = useState("styles");
+
+  const canPublish = ["super_admin", "ai_admin"].includes(user?.role as string);
 
   return (
     <div className="flex flex-col h-screen w-full bg-background overflow-hidden absolute inset-0 z-50">
@@ -46,7 +50,11 @@ export default function VisualBuilderPage() {
             <Button variant="ghost" size="icon" className="h-8 w-8 ml-2"><Eye className="w-4 h-4 text-muted-foreground" /></Button>
           </div>
           <Button variant="outline" size="sm" className="h-8"><Play className="w-3.5 h-3.5 mr-2" /> Preview</Button>
-          <Button size="sm" className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white"><Save className="w-3.5 h-3.5 mr-2" /> Publish Changes</Button>
+          {canPublish ? (
+            <Button size="sm" className="h-8 bg-indigo-600 hover:bg-indigo-700 text-white"><Save className="w-3.5 h-3.5 mr-2" /> Publish Changes</Button>
+          ) : (
+            <Button size="sm" className="h-8 bg-orange-500 hover:bg-orange-600 text-white"><Save className="w-3.5 h-3.5 mr-2" /> Request Publish</Button>
+          )}
         </div>
       </header>
 

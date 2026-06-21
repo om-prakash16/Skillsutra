@@ -5,9 +5,9 @@ import { useAuth } from "@/context/auth-context"
 import { useRouter } from "next/navigation"
 import { useEffect } from "react"
 import { Loader2, Zap } from "lucide-react"
-import { motion, AnimatePresence } from "framer-motion"
 import { GlobalSearchCommand } from "@/components/admin/GlobalSearchCommand"
 import { PlatformHealthHeader } from "@/components/admin/PlatformHealthHeader"
+import { AppShell } from "@/components/layout/app-shell"
 
 export default function AdminLayout({
     children,
@@ -21,13 +21,13 @@ export default function AdminLayout({
         if (!isLoading) {
             if (!user) {
                 router.push("/auth/login")
-            } else if (user.role !== "admin" && (user.role as string) !== "super_admin") {
-                router.push("/user/dashboard")
+            } else if (!["super_admin", "security_admin", "support_admin", "ai_admin"].includes(user.role as string)) {
+                router.push("/admin/dashboard")
             }
         }
     }, [user, isLoading, router])
 
-    if (isLoading || !user || (user.role !== "admin" && (user.role as string) !== "super_admin")) {
+    if (isLoading || !user || (!["super_admin", "security_admin", "support_admin", "ai_admin"].includes(user.role as string))) {
         return (
             <div className="flex h-screen w-full flex-col items-center justify-center bg-background text-foreground overflow-hidden relative">
                 {/* Background Glows */}
@@ -81,51 +81,14 @@ export default function AdminLayout({
     }
 
     return (
-        <div className="flex h-full w-full bg-background text-slate-50 selection:bg-primary/40 overflow-hidden">
-            {/* Advanced Ambient Background */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                {/* Primary Mesh Glow */}
-                <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/[0.07] blur-[160px] rounded-full animate-pulse" />
-                
-                {/* Secondary Accent Glow */}
-                <div className="absolute top-[10%] right-[10%] w-[40%] h-[40%] bg-blue-500/[0.03] blur-[140px] rounded-full" />
-                
-                {/* Tertiary Corner Glow */}
-                <div className="absolute bottom-[-10%] right-[-5%] w-[50%] h-[50%] bg-emerald-500/[0.04] blur-[180px] rounded-full" />
-                
-                {/* Subtle Grain Texture Overly */}
-                <div className="absolute inset-0 opacity-[0.15] mix-blend-overlay pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
-                
-                {/* Interactive Light Follow (Conceptual/Static) */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-radial-gradient(circle,transparent_0%,#030712_100%) opacity-40" />
-            </div>
-
-            <Sidebar role="admin" className="hidden lg:flex" />
-            
-            <main className="flex-1 w-full pt-20 relative overflow-y-auto scroll-smooth custom-scrollbar z-10 flex flex-col">
-                <PlatformHealthHeader />
-                
-                <div className="w-full px-4 py-8 md:px-12 md:py-16 max-w-[1900px] mx-auto flex-1">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            initial={{ opacity: 0, y: 30, scale: 0.98 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -20, scale: 1.02 }}
-                            transition={{ 
-                                duration: 1, 
-                                ease: [0.22, 1, 0.36, 1],
-                                opacity: { duration: 0.8 }
-                            }}
-                        >
-                            {children}
-                        </motion.div>
-                    </AnimatePresence>
-                </div>
-
-                {/* Bottom dynamic fade mask */}
-                <div className="sticky bottom-0 w-full h-12 bg-gradient-to-t from-[#030712] to-transparent z-30 pointer-events-none opacity-60" />
-            </main>
+        <>
+            <AppShell 
+                sidebar={<Sidebar role={(user?.role as string) || "super_admin"} className="hidden lg:flex" />}
+                header={<PlatformHealthHeader />}
+            >
+                {children}
+            </AppShell>
             <GlobalSearchCommand />
-        </div>
+        </>
     )
 }

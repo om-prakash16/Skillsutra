@@ -50,7 +50,7 @@ export function CareerRiskPredictor() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/ai/career-risk`, {
+                const res = await fetch(`/api/v1/ai/career-risk`, {
                     headers: {
                         "Authorization": `Bearer ${localStorage.getItem("sp_token")}`
                     }

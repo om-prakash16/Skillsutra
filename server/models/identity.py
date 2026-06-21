@@ -72,3 +72,24 @@ class ProfileView(Base):
     viewer_type = Column(String(20), nullable=False) # ANONYMOUS, USER, RECRUITER
     viewed_at = Column(DateTime, default=datetime.utcnow)
     ip_hash = Column(String, nullable=True) # Hashed IP to prevent spam counting
+
+from models.mixins import EnterpriseMixin
+
+class VerificationRequest(EnterpriseMixin, Base):
+    """
+    Enterprise Verification Requests for Identity & Access.
+    """
+    __tablename__ = "verification_requests"
+
+    user_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
+    
+    verification_type = Column(String, nullable=False) # Email, Phone, Government ID, Company, University
+    status = Column(String, default="pending") # pending, approved, rejected, expired, request_changes
+    
+    document_url = Column(String, nullable=True)
+    metadata_json = Column(JSONB, nullable=True)
+    
+    reviewer_id = Column(UUID(as_uuid=True), ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
+    reviewed_at = Column(DateTime(timezone=True), nullable=True)
+    notes = Column(String, nullable=True)
+

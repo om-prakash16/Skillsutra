@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import Column, String, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, String, DateTime, ForeignKey, Boolean, Integer
 from sqlalchemy.dialects.postgresql import UUID
 from core.database import Base
 
@@ -20,6 +20,11 @@ class Session(Base):
     country = Column(String, nullable=True)
     city = Column(String, nullable=True)
     login_method = Column(String, nullable=True)
+    mfa_used = Column(Boolean, default=False)
+    oauth_provider = Column(String, nullable=True)
+    risk_score = Column(Integer, default=0)
+    jti = Column(String, nullable=True, unique=True, index=True) # JWT ID
+    
     is_active = Column(Boolean, default=True)
 
     expires_at = Column(DateTime(timezone=True), nullable=False)

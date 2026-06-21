@@ -8,7 +8,8 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
     // which queries the `RobotsRule` table to return the dynamically configured robots txt.
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 2000);
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/v1/delivery/robots`, {
+    const apiUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+    const res = await fetch(`${apiUrl}/delivery/robots`, {
       next: { revalidate: 3600 },
       signal: controller.signal
     });

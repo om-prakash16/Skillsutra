@@ -11,15 +11,25 @@ class AuditLog(Base):
     user_id = Column(UUID(as_uuid=True), nullable=True) # Who performed the action
     action = Column(String, nullable=False) # e.g. "USER_BANNED", "JOB_DELETED"
     
-    resource_type = Column(String, nullable=True) # e.g. "USER", "COMPANY", "CMS_PAGE"
-    resource_id = Column(String, nullable=True) 
+    # Multi-tenant scoping
+    organization_id = Column(UUID(as_uuid=True), nullable=True, index=True)
+    workspace_id = Column(UUID(as_uuid=True), nullable=True, index=True)
+    
+    resource_type = Column(String, nullable=True, index=True) # e.g. "USER", "COMPANY", "CMS_PAGE"
+    resource_id = Column(String, nullable=True, index=True) 
+    
+    # Tracing & Correlation
+    trace_id = Column(String, nullable=True, index=True)
+    correlation_id = Column(String, nullable=True, index=True)
+    severity = Column(String, default="INFO")
     
     details = Column(JSONB, default=dict) # The before/after diff or payload
     
     ip_address = Column(String, nullable=True)
     user_agent = Column(String, nullable=True)
+    session_id = Column(UUID(as_uuid=True), nullable=True)
     
-    created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    created_at = Column(DateTime(timezone=True), default=datetime.utcnow, index=True)
 
 class SecurityEvent(Base):
     __tablename__ = "audit_security_events"
@@ -35,3 +45,26 @@ class SecurityEvent(Base):
     event_metadata = Column("metadata", JSONB, default=dict) # e.g. location, device mismatch data
     
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+
+class ImpersonationSession(Base):
+    """
+    Enterprise impersonation tracking with strict audit boundaries.
+    """
+    __tablename__ = "audit_impersonations"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    impersonator_id = Column(UUID(as_uuid=True), nullable=False, index=True) # The Admin
+    target_user_id = Column(UUID(as_uuid=True), nullable=False, index=True) # The user being impersonated
+    
+    reason = Column(String, nullable=False)
+    status = Column(String, default="ACTIVE") # ACTIVE, ENDED, FORCE_TERMINATED
+    
+    # Read-only vs Full-Access mode
+    mode = Column(String, default="READ_ONLY") 
+    
+    started_at = Column(DateTime(timezone=True), default=datetime.utcnow)
+    ended_at = Column(DateTime(timezone=True), nullable=True)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+    
+    ip_address = Column(String, nullable=True)
+

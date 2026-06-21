@@ -1,9 +1,7 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
-
-import { fetchWithAuth } from "./api-client";
+import { fetchWithAuth, API_BASE_URL } from "./api-client";
 
 export async function login(data: any) {
-  const response = await fetch(`${API_URL}/auth/login`, {
+  const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -22,7 +20,7 @@ export async function login(data: any) {
 }
 
 export async function signup(data: any) {
-  const response = await fetch(`${API_URL}/auth/signup`, {
+  const response = await fetch(`${API_BASE_URL}/auth/signup`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -41,7 +39,7 @@ export async function signup(data: any) {
 }
 
 export async function refreshSession(refreshToken: string) {
-  const response = await fetch(`${API_URL}/auth/refresh`, {
+  const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -60,7 +58,7 @@ export async function refreshSession(refreshToken: string) {
 }
 
 export async function logout(refreshToken: string) {
-  await fetch(`${API_URL}/auth/logout`, {
+  await fetch(`${API_BASE_URL}/auth/logout`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -75,7 +73,7 @@ export async function me() {
 }
 
 export async function forgotPassword(email: string) {
-  const response = await fetch(`${API_URL}/auth/forgot-password`, {
+  const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
@@ -88,7 +86,7 @@ export async function forgotPassword(email: string) {
 }
 
 export async function validateResetToken(token: string) {
-  const response = await fetch(`${API_URL}/auth/validate-reset-token?token=${token}`);
+  const response = await fetch(`${API_BASE_URL}/auth/validate-reset-token?token=${token}`);
   let json;
   try { json = await response.json(); } catch(e) {}
   if (!response.ok) throw new Error(json?.detail || "Invalid token");
@@ -96,7 +94,7 @@ export async function validateResetToken(token: string) {
 }
 
 export async function resetPassword(token: string, new_password: string) {
-  const response = await fetch(`${API_URL}/auth/reset-password`, {
+  const response = await fetch(`${API_BASE_URL}/auth/reset-password`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token, new_password }),
@@ -109,7 +107,7 @@ export async function resetPassword(token: string, new_password: string) {
 }
 
 export async function requestMagicLink(email: string) {
-  const response = await fetch(`${API_URL}/auth/magic-link`, {
+  const response = await fetch(`${API_BASE_URL}/auth/magic-link`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
@@ -122,7 +120,7 @@ export async function requestMagicLink(email: string) {
 }
 
 export async function verifyMagicLink(token: string) {
-  const response = await fetch(`${API_URL}/auth/verify-magic`, {
+  const response = await fetch(`${API_BASE_URL}/auth/verify-magic`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token }),
@@ -135,7 +133,7 @@ export async function verifyMagicLink(token: string) {
 }
 
 export async function sendSignupOtp(email: string, name?: string) {
-  const response = await fetch(`${API_URL}/auth/send-otp`, {
+  const response = await fetch(`${API_BASE_URL}/auth/send-otp`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, name }),
@@ -148,7 +146,7 @@ export async function sendSignupOtp(email: string, name?: string) {
 }
 
 export async function verifySignupOtp(email: string, code: string) {
-  const response = await fetch(`${API_URL}/auth/verify-otp`, {
+  const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email, code }),
@@ -161,7 +159,7 @@ export async function verifySignupOtp(email: string, code: string) {
 }
 
 export async function completeMagicLinkSetup(data: any) {
-  const response = await fetch(`${API_URL}/auth/complete-setup`, {
+  const response = await fetch(`${API_BASE_URL}/auth/complete-setup`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),

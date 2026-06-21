@@ -14,7 +14,8 @@ async function resolveRoute(slugArray?: string[]) {
   const path = slugArray ? `/${slugArray.join("/")}` : "/";
   
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"}/api/v1/delivery/resolve?path=${encodeURIComponent(path)}`, {
+    const apiUrl = process.env.INTERNAL_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/api/v1";
+    const res = await fetch(`${apiUrl}/delivery/resolve?path=${encodeURIComponent(path)}`, {
       cache: "no-store", // In production, change to 'force-cache' with ISR or Next.js tags
     });
     

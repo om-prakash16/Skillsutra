@@ -15,7 +15,7 @@ export function FeatureFlagsProvider({ children }: { children: React.ReactNode }
 
   const fetchFlags = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/admin/features/list`);
+      const res = await fetch(`/api/v1/admin/features/list`);
       const data = await res.json();
       const flagMap = (data as any[]).reduce((acc, curr) => ({
         ...acc,

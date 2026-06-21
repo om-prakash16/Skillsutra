@@ -47,7 +47,7 @@ export function MediaLibraryModal({ onSelect, trigger }: MediaLibraryModalProps)
     const toastId = toast.loading("Uploading...");
     
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/media/upload`, {
+      const res = await fetch(`/api/v1/media/upload`, {
         method: 'POST',
         body: formData,
         headers: {

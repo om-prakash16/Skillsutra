@@ -1,5 +1,5 @@
-import React from "react"
 "use client"
+import React from "react"
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -25,6 +25,7 @@ import {
 
 import { useAuth } from "@/context/auth-context"
 import { useCompany } from "@/components/providers/company-provider"
+import { useAppShellStore } from "@/store/app-shell-store"
 
 interface SidebarProps {
     role: "super_admin" | "admin" | "career_professional" | "company" | "mentor" | "moderator" | "user" | string
@@ -32,7 +33,39 @@ interface SidebarProps {
     variant?: "default" | "mobile"
 }
 
+
 const adminNavGroups = [
+    {
+        label: "Platform Admin",
+        links: [
+            { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
+        ]
+    },
+    {
+        label: "CMS & Content",
+        links: [
+            { href: "/admin/cms/pages", label: "Pages", icon: FileText },
+            { href: "/admin/cms/builder", label: "Visual Builder", icon: MousePointerClick },
+            { href: "/admin/cms/blog", label: "Blog", icon: FileText },
+            { href: "/admin/cms/media", label: "Media Library", icon: ImageIcon },
+        ]
+    },
+    {
+        label: "Moderation",
+        links: [
+            { href: "/admin/moderation/users", label: "Users", icon: Users },
+            { href: "/admin/moderation/community", label: "Community Feed", icon: MessagesSquare },
+        ]
+    },
+    {
+        label: "Support",
+        links: [
+            { href: "/admin/support/tickets", label: "Tickets", icon: Ticket },
+        ]
+    }
+]
+
+const superAdminNavGroups = [
     {
         label: "Dashboard",
         links: [
@@ -618,6 +651,28 @@ const adminNavGroups = [
             }
         ]
     },
+
+    {
+        label: "Routing & Delivery",
+        subGroups: [
+            {
+                label: "Traffic Control",
+                links: [
+                    { href: "/superadmin/routing/dashboard", label: "Dashboard", icon: LayoutDashboard },
+                    { href: "/superadmin/routing/routes", label: "Route Manager", icon: Route },
+                    { href: "/superadmin/routing/redirects", label: "Redirects", icon: GitMerge },
+                    { href: "/superadmin/routing/domains", label: "Domains", icon: Globe },
+                ]
+            },
+            {
+                label: "Navigation & SEO",
+                links: [
+                    { href: "/superadmin/routing/navigation", label: "Navigation Menus", icon: Navigation },
+                    { href: "/superadmin/routing/seo", label: "SEO Settings", icon: Search },
+                ]
+            }
+        ]
+    },
     {
         label: "Account",
         links: [
@@ -682,13 +737,18 @@ export function Sidebar({ role, className, variant = "default" }: SidebarProps) 
         return pathname === href || pathname.startsWith(href + "/")
     }
 
-    const isAdminPath = pathname.startsWith("/superadmin")
-    const showAdminPanel = ["super_admin", "admin", "security_admin", "support_admin", "ai_admin"].includes(role) && isAdminPath
+    const isSuperAdminPath = pathname.startsWith("/superadmin")
+    const isStandardAdminPath = pathname.startsWith("/admin") && !isSuperAdminPath
 
-    const accentColor = showAdminPanel ? "rose" : "primary"
-    const accentClass = showAdminPanel ? "text-rose-400" : "text-primary"
-    const accentBg = showAdminPanel ? "bg-rose-500/15 border-rose-500/20" : "bg-primary/10 border-primary/20"
-    const accentGlow = showAdminPanel ? "bg-rose-500/10" : "bg-primary/10"
+    const showSuperAdminPanel = ["super_admin", "security_admin", "support_admin", "ai_admin"].includes(role) && isSuperAdminPath
+    const showAdminPanel = ["super_admin", "admin", "moderator"].includes(role) && isStandardAdminPath
+
+    const isAnyAdmin = showSuperAdminPanel || showAdminPanel
+
+    const accentColor = isAnyAdmin ? "rose" : "primary"
+    const accentClass = isAnyAdmin ? "text-rose-400" : "text-primary"
+    const accentBg = isAnyAdmin ? "bg-rose-500/15 border-rose-500/20" : "bg-primary/10 border-primary/20"
+    const accentGlow = isAnyAdmin ? "bg-rose-500/10" : "bg-primary/10"
 
     
 const NavGroup = ({ group, idx, isActiveLink }: { group: any, idx: number, isActiveLink: (href: string, exact?: boolean) => boolean }) => {
@@ -803,15 +863,38 @@ const NavGroup = ({ group, idx, isActiveLink }: { group: any, idx: number, isAct
     )
 }
 
-const renderAdminNav = () => (
-        <nav className={cn(
-            "flex-1 overflow-y-auto custom-scrollbar",
-            variant === "default" ? "px-4 py-4" : "px-0 py-2"
-        )}>
-            {adminNavGroups.map((group, idx) => (
-                <NavGroup key={idx} group={group} idx={idx} isActiveLink={isActiveLink} />
-            ))}
-        </nav>
+const handleNavWheel = (e: React.WheelEvent<HTMLElement>) => {
+        const target = e.currentTarget
+        const { scrollTop, scrollHeight, clientHeight } = target
+        const atTop = scrollTop <= 0 && e.deltaY < 0
+        const atBottom = scrollTop + clientHeight >= scrollHeight - 1 && e.deltaY > 0
+        if (atTop || atBottom) {
+            e.stopPropagation()
+        }
+    }
+
+    const renderAdminNav = () => (
+        <div className="flex-1 relative overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
+            {/* Top Scroll Shadow */}
+            <div className="absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none opacity-90" />
+            
+            <nav 
+                data-lenis-prevent="true"
+                onWheel={handleNavWheel}
+                className={cn(
+                    "flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative z-0",
+                    variant === "default" ? "px-4 py-4" : "px-0 py-2"
+                )}
+                style={{ minHeight: 0, overscrollBehavior: "contain", contain: "strict" }}
+            >
+                {adminNavGroups.map((group, idx) => (
+                    <NavGroup key={idx} group={group} idx={idx} isActiveLink={isActiveLink} />
+                ))}
+            </nav>
+
+            {/* Bottom Scroll Shadow */}
+            <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-background to-transparent z-10 pointer-events-none opacity-90" />
+        </div>
     )
 
     const { company, role: companyRole, permissions: permArray } = useCompany()
@@ -842,50 +925,74 @@ const renderAdminNav = () => (
         }
         
         return (
-            <nav className={cn(
-                "flex-1 space-y-1 overflow-y-auto custom-scrollbar",
-                variant === "default" ? "px-4 py-6" : "px-0 py-2"
-            )}>
-                {links.map((link) => {
-                    const href = link.href
-                    const isActive = isActiveLink(href, (link as any).exact)
-                    return (
-                        <Link key={link.href} href={href} className="block relative group/item">
-                            <motion.div 
-                                whileTap={{ scale: 0.98 }}
-                                className={cn(
-                                    "flex items-center gap-3 px-3 h-11 rounded-xl transition-colors duration-300 relative overflow-hidden",
-                                    isActive
-                                        ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
-                                        : "text-muted-foreground hover:text-foreground/90 hover:bg-muted/50"
-                                )}
-                            >
-                                {isActive && (
-                                    <motion.div
-                                        layoutId="user-active-bar"
-                                        className="absolute left-0 top-2 bottom-2 w-0.5 bg-primary rounded-r-full"
-                                        transition={{ type: "spring", bounce: 0.15, duration: 0.35 }}
-                                    />
-                                )}
-                                <motion.div whileHover={{ x: 2 }} className="flex items-center gap-3 w-full">
-                                    <link.icon className={cn("w-4.5 h-4.5 shrink-0 transition-transform", isActive ? "text-primary" : "")} />
-                                    <span className={cn("text-sm font-bold tracking-tight", isActive ? "text-foreground" : "")}>{link.label}</span>
+            <div className="flex-1 relative overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
+                {/* Top Scroll Shadow */}
+                <div className="absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none opacity-90" />
+                
+                <nav 
+                    data-lenis-prevent="true"
+                    onWheel={handleNavWheel}
+                    className={cn(
+                        "flex-1 space-y-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative z-0",
+                        variant === "default" ? "px-4 py-6" : "px-0 py-2"
+                    )}
+                    style={{ minHeight: 0, overscrollBehavior: "contain", contain: "strict" }}
+                >
+                    {links.map((link) => {
+                        const href = link.href
+                        const isActive = isActiveLink(href, (link as any).exact)
+                        return (
+                            <Link key={link.href} href={href} className="block relative group/item">
+                                <motion.div 
+                                    whileTap={{ scale: 0.98 }}
+                                    className={cn(
+                                        "flex items-center gap-3 px-3 h-11 rounded-xl transition-colors duration-300 relative overflow-hidden",
+                                        isActive
+                                            ? "bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
+                                            : "text-muted-foreground hover:text-foreground/90 hover:bg-muted/50"
+                                    )}
+                                >
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="user-active-bar"
+                                            className="absolute left-0 top-2 bottom-2 w-0.5 bg-primary rounded-r-full"
+                                            transition={{ type: "spring", bounce: 0.15, duration: 0.35 }}
+                                        />
+                                    )}
+                                    <motion.div whileHover={{ x: 2 }} className="flex items-center gap-3 w-full">
+                                        <link.icon className={cn("w-4.5 h-4.5 shrink-0 transition-transform", isActive ? "text-primary" : "")} />
+                                        <span className={cn("text-sm font-bold tracking-tight", isActive ? "text-foreground" : "")}>{link.label}</span>
+                                    </motion.div>
                                 </motion.div>
-                            </motion.div>
-                        </Link>
-                    )
-                })}
-            </nav>
+                            </Link>
+                        )
+                    })}
+                </nav>
+
+                {/* Bottom Scroll Shadow */}
+                <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-background to-transparent z-10 pointer-events-none opacity-90" />
+            </div>
         )
     }
 
+    const { sidebarWidth, sidebarCollapsed } = useAppShellStore()
+
     return (
-        <aside className={cn(
-            variant === "default"
-                ? "w-64 flex flex-col h-screen sticky top-0 shrink-0 z-50 glass border-r border-border"
-                : "w-full flex flex-col h-full bg-transparent border-none",
-            className
-        )}>
+        <aside 
+            className={cn(
+                variant === "default"
+                    ? "flex flex-col shrink-0 z-50 glass border-r border-border transition-all duration-300 ease-in-out"
+                    : "w-full flex flex-col h-full bg-transparent border-none",
+                className
+            )}
+            style={variant === "default" ? { 
+                width: sidebarCollapsed ? "80px" : `${sidebarWidth}px`,
+                height: "100vh",
+                maxHeight: "100vh",
+                position: "sticky" as const,
+                top: 0,
+            } : undefined}
+        >
             {/* Ambient glow */}
             {variant === "default" && (
                 <div className={cn("absolute top-0 -left-20 w-40 h-40 blur-[120px] pointer-events-none opacity-20", accentGlow)} />

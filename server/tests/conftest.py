@@ -24,7 +24,8 @@ POSTGRES_USER = os.getenv("POSTGRES_USER", "postgres")
 POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "password")
 DB_HOST = get_db_host()
 
-DB_PORT = os.getenv("DB_PORT", "5433")
+default_port = "5432" if DB_HOST == "db" else "5433"
+DB_PORT = os.getenv("DB_PORT", default_port)
 SQLALCHEMY_DATABASE_URL = f"postgresql://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{DB_HOST}:{DB_PORT}/test_db"
 ASYNC_DATABASE_URL = f"postgresql+asyncpg://{POSTGRES_USER}:{POSTGRES_PASSWORD}@{DB_HOST}:{DB_PORT}/test_db"
 

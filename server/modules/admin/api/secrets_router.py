@@ -6,11 +6,11 @@ from typing import List, Dict, Any
 from pydantic import BaseModel, Field
 import uuid
 
-from core.database import get_db
+from database.core import get_db
 from models.user import User
 from models.secrets import Secret
 from models.audit import AuditLog
-from api.dependencies.auth import get_current_user
+from modules.auth.core.service import get_current_user
 from core.encryption import encrypt_secret, decrypt_secret
 
 router = APIRouter()

@@ -1,62 +1,79 @@
-import asyncio
 import logging
-from typing import Callable, Any, Dict, List, Coroutine
+import asyncio
+from typing import Dict, Any, Optional
+from datetime import datetime
+import uuid
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("platform.events")
 
-
-class EventBus:
+class EventDispatcher:
     """
-    A simple, asynchronous event bus for decoupling business logic from side effects.
-    Supports publish/subscribe patterns within the same process.
+    Centralized Event Bus for the Skillsutra Enterprise Operating System.
+    Emits standardized platform events (e.g. entity.created) to trigger:
+    - Audit Logs
+    - Notifications
+    - Workflows
+    - Search Indexing
+    - Analytics
+    - AI Hooks
     """
-
-    _instance = None
-    _subscribers: Dict[str, List[Callable[[Any], Coroutine[Any, Any, None]]]] = {}
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(EventBus, cls).__new__(cls)
-            cls._subscribers = {}
-        return cls._instance
-
-    def subscribe(
-        self, event_name: str, callback: Callable[[Any], Coroutine[Any, Any, None]]
+    def __init__(self):
+        self._subscribers = {}
+        
+    def subscribe(self, event_type: str, callback):
+        if event_type not in self._subscribers:
+            self._subscribers[event_type] = []
+        self._subscribers[event_type].append(callback)
+        
+    async def publish(
+        self, 
+        event_type: str, 
+        entity_type: str, 
+        entity_id: str, 
+        actor_id: Optional[str] = None, 
+        payload: Optional[Dict[str, Any]] = None,
+        tenant_id: Optional[str] = None
     ):
-        """Register an async listener for a specific event."""
-        if event_name not in self._subscribers:
-            self._subscribers[event_name] = []
-        self._subscribers[event_name].append(callback)
-        logger.info(f"Subscribed handler to event: {event_name}")
+        event = {
+            "event_id": str(uuid.uuid4()),
+            "event_type": event_type,
+            "entity_type": entity_type,
+            "entity_id": entity_id,
+            "actor_id": actor_id,
+            "tenant_id": tenant_id,
+            "payload": payload or {},
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        
+        logger.info(f"Emitted Event: {event_type} on {entity_type}/{entity_id} by {actor_id}")
+        
+        if event_type in self._subscribers:
+            for callback in self._subscribers[event_type]:
+                try:
+                    # Fire and forget
+                    asyncio.create_task(callback(event))
+                except Exception as e:
+                    logger.error(f"Error executing event subscriber for {event_type}: {e}")
+                    
+        # Broadcast globally to catch-all (e.g., Audit system)
+        if "*" in self._subscribers:
+            for callback in self._subscribers["*"]:
+                try:
+                    asyncio.create_task(callback(event))
+                except Exception as e:
+                    logger.error(f"Error executing global event subscriber: {e}")
 
-    async def emit(self, event_name: str, data: Any = None):
-        """
-        Trigger an event and all its subscribers.
-        Side effects run asynchronously.
-        """
-        if event_name not in self._subscribers:
-            logger.debug(f"No subscribers for event: {event_name}")
-            return
+# Global Event Bus Instance
+platform_events = EventDispatcher()
 
-        logger.info(f"Emitting event: {event_name}")
-
-        # We use asyncio.create_task for each handler to ensure they run concurrently
-        # and don't block each other or the main flow.
-        for callback in self._subscribers[event_name]:
-            try:
-                asyncio.create_task(self._safe_execute(callback, data, event_name))
-            except Exception as e:
-                logger.error(
-                    f"Failed to schedule event handler for {event_name}: {str(e)}"
-                )
-
-    async def _safe_execute(self, callback: Callable, data: Any, event_name: str):
-        """Helper to ensure individual handler failures don't crash other handlers."""
-        try:
-            await callback(data)
-        except Exception as e:
-            logger.error(f"Error in event handler for {event_name}: {str(e)}")
-
-
-# Singleton instance for global use
-bus = EventBus()
+# Standard Event Types
+class EventTypes:
+    CREATED = "entity.created"
+    UPDATED = "entity.updated"
+    DELETED = "entity.deleted"
+    ARCHIVED = "entity.archived"
+    RESTORED = "entity.restored"
+    APPROVED = "entity.approved"
+    REJECTED = "entity.rejected"
+    EXPORTED = "entity.exported"
+    IMPORTED = "entity.imported"

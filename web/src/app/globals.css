@@ -522,25 +522,49 @@
   .active-click {
     @apply active:scale-98 transition-transform duration-100 ease-premium-out;
   }
+
+  /* Elegant Custom Scrollbar for Glass UIs */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.2);
+    border-radius: 10px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--primary) / 0.5);
+  }
 }
 
-/* Custom Scrollbar */
+/* Global Scrollbar (Fallback) */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: hsl(var(--background));
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: hsl(var(--muted));
+  background: hsl(var(--border));
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: hsl(var(--primary) / 0.5);
+  background: hsl(var(--primary) / 0.4);
 }
 
 /* Selection Color */
@@ -556,4 +580,20 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Sidebar scroll isolation - prevents scroll chaining from sidebar to body */
+aside[style*="100vh"] {
+  overscroll-behavior: contain;
+}
+
+aside[style*="100vh"] nav {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* When body has overflow hidden (set by MainLayoutWrapper on dashboard routes), 
+   ensure the html element is also locked */
+body[style*="overflow: hidden"] {
+  overscroll-behavior: none;
 }
