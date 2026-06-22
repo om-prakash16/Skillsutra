@@ -15,10 +15,13 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { ActionDrawer } from "@/components/superadmin/action-drawer";
 
 export default function SuperAdminDashboard() {
   const [activeTab, setActiveTab] = useState("platform");
   const [cmdOpen, setCmdOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerActionId, setDrawerActionId] = useState<string | null>(null);
 
   // Command Palette listener
   useEffect(() => {
@@ -33,10 +36,10 @@ export default function SuperAdminDashboard() {
   }, []);
 
   const QUICK_ACTIONS = [
-    { label: "Create Tenant", icon: Building2 },
-    { label: "Create Admin", icon: ShieldCheck },
-    { label: "Create User", icon: UserPlus },
-    { label: "Publish Announcement", icon: Send },
+    { id: "create-tenant", label: "Create Tenant", icon: Building2 },
+    { id: "create-platform-admin", label: "Create Admin", icon: ShieldCheck },
+    { id: "create-user", label: "Create User", icon: UserPlus },
+    { id: "publish-announcement", label: "Publish Announcement", icon: Send },
   ];
 
   const ACTIVITY_FEED = [
@@ -99,12 +102,27 @@ export default function SuperAdminDashboard() {
         </div>
         <div className="flex flex-wrap gap-2">
           {QUICK_ACTIONS.map((action, idx) => (
-            <Button key={idx} variant="outline" size="sm" className="h-9">
+            <Button 
+                key={idx} 
+                variant="outline" 
+                size="sm" 
+                className="h-9"
+                onClick={() => {
+                    setDrawerActionId(action.id as any);
+                    setDrawerOpen(true);
+                }}
+            >
               <action.icon className="w-4 h-4 mr-2" /> {action.label}
             </Button>
           ))}
         </div>
       </div>
+
+      <ActionDrawer 
+        open={drawerOpen} 
+        onOpenChange={setDrawerOpen} 
+        actionId={drawerActionId as any} 
+      />
 
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
         

@@ -97,11 +97,11 @@ const superAdminNavGroups = [
         label: "Identity & Access",
         links: [
             { href: "/superadmin/identity", label: "Dashboard", icon: LayoutDashboard },
-            { href: "/superadmin/identity/users", label: "Users", icon: Users },
+            { href: "/superadmin/dashboard/members", label: "Platform Members", icon: Users },
             { href: "/superadmin/identity/invitations", label: "Invitations", icon: Mail },
             { href: "/superadmin/identity/organizations", label: "Organizations", icon: Building2 },
             { href: "/superadmin/identity/groups", label: "User Groups", icon: Users2 },
-            { href: "/superadmin/identity/roles", label: "Roles", icon: ShieldCheck },
+            { href: "/superadmin/dashboard/roles", label: "Role Management", icon: ShieldCheck },
             { href: "/superadmin/identity/permissions", label: "Permissions", icon: Key },
             { href: "/superadmin/identity/sessions", label: "Sessions", icon: MonitorSmartphone },
             { href: "/superadmin/identity/devices", label: "Devices", icon: Cpu },
@@ -873,29 +873,32 @@ const handleNavWheel = (e: React.WheelEvent<HTMLElement>) => {
         }
     }
 
-    const renderAdminNav = () => (
-        <div className="flex-1 relative overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
-            {/* Top Scroll Shadow */}
-            <div className="absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none opacity-90" />
-            
-            <nav 
-                data-lenis-prevent="true"
-                onWheel={handleNavWheel}
-                className={cn(
-                    "flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative z-0",
-                    variant === "default" ? "px-4 py-4" : "px-0 py-2"
-                )}
-                style={{ minHeight: 0, overscrollBehavior: "contain", contain: "strict" }}
-            >
-                {adminNavGroups.map((group, idx) => (
-                    <NavGroup key={idx} group={group} idx={idx} isActiveLink={isActiveLink} />
-                ))}
-            </nav>
+    const renderAdminNav = () => {
+        const groupsToRender = showSuperAdminPanel ? superAdminNavGroups : adminNavGroups;
+        return (
+            <div className="flex-1 relative overflow-hidden flex flex-col" style={{ minHeight: 0 }}>
+                {/* Top Scroll Shadow */}
+                <div className="absolute top-0 left-0 right-0 h-6 bg-gradient-to-b from-background to-transparent z-10 pointer-events-none opacity-90" />
+                
+                <nav 
+                    data-lenis-prevent="true"
+                    onWheel={handleNavWheel}
+                    className={cn(
+                        "flex-1 overflow-y-auto overflow-x-hidden custom-scrollbar relative z-0",
+                        variant === "default" ? "px-4 py-4" : "px-0 py-2"
+                    )}
+                    style={{ minHeight: 0, overscrollBehavior: "contain", contain: "strict" }}
+                >
+                    {groupsToRender.map((group, idx) => (
+                        <NavGroup key={idx} group={group} idx={idx} isActiveLink={isActiveLink} />
+                    ))}
+                </nav>
 
-            {/* Bottom Scroll Shadow */}
-            <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-background to-transparent z-10 pointer-events-none opacity-90" />
-        </div>
-    )
+                {/* Bottom Scroll Shadow */}
+                <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-background to-transparent z-10 pointer-events-none opacity-90" />
+            </div>
+        )
+    }
 
     const { company, role: companyRole, permissions: permArray } = useCompany()
 
@@ -987,8 +990,8 @@ const handleNavWheel = (e: React.WheelEvent<HTMLElement>) => {
             )}
             style={variant === "default" ? { 
                 width: sidebarCollapsed ? "80px" : `${sidebarWidth}px`,
-                height: "100vh",
-                maxHeight: "100vh",
+                height: "100dvh",
+                maxHeight: "100dvh",
                 position: "sticky" as const,
                 top: 0,
             } : undefined}
@@ -1027,7 +1030,7 @@ const handleNavWheel = (e: React.WheelEvent<HTMLElement>) => {
             )}
 
             {/* Navigation */}
-            {showAdminPanel ? renderAdminNav() : renderSimpleNav()}
+            {isAnyAdmin ? renderAdminNav() : renderSimpleNav()}
 
             {/* Footer */}
             {variant === "default" && (

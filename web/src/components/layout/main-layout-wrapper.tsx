@@ -27,9 +27,9 @@ export function MainLayoutWrapper({ children }: { children: React.ReactNode }) {
 
         if (isDashboard) {
             html.style.overflow = "hidden"
-            html.style.height = "100%"
+            html.style.height = "100dvh"
             body.style.overflow = "hidden"
-            body.style.height = "100%"
+            body.style.height = "100dvh"
             html.classList.remove("scroll-smooth")
         } else {
             html.style.overflow = ""
@@ -55,7 +55,7 @@ export function MainLayoutWrapper({ children }: { children: React.ReactNode }) {
             <main className={cn(
                 "w-full relative",
                 isDashboard
-                    ? "h-screen flex flex-col overflow-hidden"
+                    ? "h-[100dvh] flex flex-col overflow-hidden"
                     : "flex-1 min-h-screen pt-20 pb-24 md:pb-0"
             )}>
                 {children}

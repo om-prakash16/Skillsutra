@@ -65,7 +65,7 @@ export function AppShell({ children, sidebar, header }: AppShellProps) {
     }
 
     return (
-        <div className="flex h-screen w-full bg-background text-foreground overflow-hidden isolate relative selection:bg-primary/40">
+        <div className="flex h-[100dvh] w-full bg-background text-foreground overflow-hidden isolate relative selection:bg-primary/40">
             {/* Global Ambient Background - Locked behind the shell */}
             <div className="fixed inset-0 pointer-events-none overflow-hidden z-[-1]">
                 <div className="absolute -top-[20%] -left-[10%] w-[60%] h-[60%] bg-primary/[0.05] blur-[160px] rounded-full" />

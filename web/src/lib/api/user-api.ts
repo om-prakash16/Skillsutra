@@ -8,7 +8,7 @@ import { fetchWithAuth } from "./api-client";
 export const userApi = {
     profile: {
         getSchema: () => fetchWithAuth("/profile/schema"),
-        get: () => fetchWithAuth("/users/"),
+        get: () => fetchWithAuth("/users"),
         update: (data: any) =>
             fetchWithAuth("/users/update", {
                 method: "POST",

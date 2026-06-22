@@ -19,6 +19,7 @@ class Role(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     role_name = Column(String, unique=True, nullable=False)
     description = Column(String, nullable=True)
+    is_template = Column(Boolean, default=False)
     permissions = Column(JSONB, default=list)
     created_at = Column(DateTime(timezone=True), default=datetime.utcnow)
 

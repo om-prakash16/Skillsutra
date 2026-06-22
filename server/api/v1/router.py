@@ -141,6 +141,15 @@ v1_router.include_router(analytics_router, prefix="/analytics", tags=["Performan
 v1_router.include_router(chat_router, prefix="/chat", tags=["Direct Communication"])
 v1_router.include_router(messages_router, prefix="/messages", tags=["Direct Messaging"])
 v1_router.include_router(admin_router, prefix="/superadmin", tags=["Super Admin Control Panel"])
+
+from modules.admin.api.quick_actions import router as quick_actions_router
+v1_router.include_router(quick_actions_router, prefix="/superadmin/quick-actions", tags=["Super Admin Quick Actions"])
+
+from modules.admin.api.roles_router import router as superadmin_roles_router
+from modules.admin.api.members_router import router as superadmin_members_router
+v1_router.include_router(superadmin_roles_router, prefix="/superadmin/roles", tags=["Super Admin Roles"])
+v1_router.include_router(superadmin_members_router, prefix="/superadmin/members", tags=["Super Admin Members"])
+
 v1_router.include_router(feature_router, prefix="/superadmin/features", tags=["Super Admin Features"])
 v1_router.include_router(secrets_router, prefix="/superadmin/secrets", tags=["Super Admin Secrets"])
 v1_router.include_router(db_proxy_router, prefix="/db", tags=["Database Proxy"])

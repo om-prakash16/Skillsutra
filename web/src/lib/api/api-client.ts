@@ -158,7 +158,7 @@ export const api = {
     },
     profile: {
         getSchema: () => fetchWithAuth("/profile/schema"),
-        get: () => fetchWithAuth("/users/"),
+        get: () => fetchWithAuth("/users"),
         update: (data: any) => fetchWithAuth("/users/update", { method: "POST", body: JSON.stringify(data) }),
         uploadFile: (formData: FormData) => fetchWithAuth("/profile/upload-file", { method: "POST", body: formData, headers: { "Content-Type": "multipart/form-data" } })
     },
