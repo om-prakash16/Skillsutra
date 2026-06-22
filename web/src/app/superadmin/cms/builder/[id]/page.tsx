@@ -165,7 +165,7 @@ export default function VisualBuilderPage({ params }: { params: { id: string } }
                       {category.name}
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-4 pt-1">
-                      <Droppable droppableId={`library-${category.name}`} isDropDisabled={true}>
+                      <Droppable droppableId={`library-${category.name}`} isDropDisabled={true} type="ELEMENT">
                         {(provided) => (
                           <div ref={provided.innerRef} {...provided.droppableProps} className="grid grid-cols-2 gap-2">
                             {category.items.map((item, idx) => (
