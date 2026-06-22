@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-
+import { getComponentDefaults } from '../components/builder/registry/defaults';
 
 export interface BuilderElement {
   id: string;
@@ -48,36 +48,16 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   addElement: (type, parentId, index) => {
     const id = `el_${crypto.randomUUID().split('-')[0]}`;
     
-    // Default config based on type
-    let name = type;
-    let props = {};
-    let styles = {};
-
-    switch (type) {
-      case 'Heading':
-        props = { text: 'New Heading', level: 'h2' };
-        break;
-      case 'Paragraph':
-        props = { text: 'This is a new paragraph block. Double click to edit text.' };
-        break;
-      case 'Button':
-        props = { text: 'Click Me', variant: 'default' };
-        break;
-      case 'Section':
-        styles = { padding: '4rem 2rem', width: '100%' };
-        break;
-      case 'Container':
-        styles = { maxWidth: '1200px', margin: '0 auto', width: '100%' };
-        break;
-    }
+    // Get defaults from the central component registry
+    const { props: defaultProps, styles: defaultStyles } = getComponentDefaults(type);
 
     const newElement: BuilderElement = {
       id,
       type,
-      name,
+      name: type,
       parentId,
-      props,
-      styles,
+      props: { ...defaultProps },
+      styles: { ...defaultStyles },
       children: [],
     };
 

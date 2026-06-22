@@ -17,6 +17,7 @@ import { useAuth } from "@/context/auth-context";
 import { DragDropContext, Droppable, Draggable, DropResult } from "@hello-pangea/dnd";
 import { useBuilderStore } from "@/store/builderStore";
 import { BuilderCanvas } from "@/components/builder/BuilderCanvas";
+import { COMPONENT_REGISTRY } from "@/components/builder/registry";
 import { PropertiesPanel } from "@/components/builder/PropertiesPanel";
 
 import { toast } from "sonner";
@@ -82,20 +83,21 @@ export default function VisualBuilderPage({ params }: { params: { id: string } }
 
   const handleDragEnd = (result: DropResult) => {
     const { source, destination, draggableId } = result;
-    if (!destination) return; 
+    if (!destination) return;
 
-    if (source.droppableId.startsWith('library-') && destination.droppableId === 'canvas') {
-      const type = draggableId.split('-').slice(2).join('-'); 
-      addElement(type, null, destination.index);
-    } 
-    else if (source.droppableId.startsWith('library-') && destination.droppableId !== 'canvas') {
-      const type = draggableId.split('-').slice(2).join('-');
-      addElement(type, destination.droppableId, destination.index);
-    }
-    else {
-      const elementId = draggableId;
+    // Dragging from the sidebar component library
+    if (draggableId.startsWith('library-')) {
+      // Format: library-{CategoryName}-{ComponentType}
+      // We need to strip "library-{CategoryName}-" to get the type
+      const parts = draggableId.split('-');
+      // parts[0] = "library", parts[1] = category name, rest = component type
+      const type = parts.slice(2).join('-');
       const newParentId = destination.droppableId === 'canvas' ? null : destination.droppableId;
-      moveElement(elementId, newParentId, destination.index);
+      addElement(type, newParentId, destination.index);
+    } else {
+      // Reordering existing canvas elements
+      const newParentId = destination.droppableId === 'canvas' ? null : destination.droppableId;
+      moveElement(draggableId, newParentId, destination.index);
     }
   };
 
@@ -159,17 +161,18 @@ export default function VisualBuilderPage({ params }: { params: { id: string } }
                 <Input placeholder="Search components..." className="h-8 text-xs bg-muted/50" />
               </div>
               <Accordion type="multiple" defaultValue={["Layout", "Typography"]} className="w-full">
-                {COMPONENT_CATEGORIES.map((category) => (
+                {COMPONENT_REGISTRY.map((category) => (
                   <AccordionItem value={category.name} key={category.name} className="border-b border-border/50">
-                    <AccordionTrigger className="py-3 px-4 text-xs font-semibold hover:no-underline hover:bg-muted/30 uppercase tracking-wider text-muted-foreground">
+                    <AccordionTrigger className="py-3 px-4 text-xs font-semibold hover:no-underline hover:bg-muted/30 uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                      <category.icon className="w-3.5 h-3.5" />
                       {category.name}
                     </AccordionTrigger>
                     <AccordionContent className="px-4 pb-4 pt-1">
                       <Droppable droppableId={`library-${category.name}`} isDropDisabled={true} type="ELEMENT">
                         {(provided) => (
                           <div ref={provided.innerRef} {...provided.droppableProps} className="grid grid-cols-2 gap-2">
-                            {category.items.map((item, idx) => (
-                              <BuilderDraggable key={item.name} icon={item.icon || Box} label={item.name} index={idx} category={category.name} />
+                            {category.components.map((item, idx) => (
+                              <BuilderDraggable key={item.name} icon={item.icon || Box} label={item.name} index={idx} category={category.name} type={item.type} />
                             ))}
                             {provided.placeholder}
                           </div>
@@ -247,8 +250,8 @@ export default function VisualBuilderPage({ params }: { params: { id: string } }
   );
 }
 
-function BuilderDraggable({ icon: Icon, label, index, category }: { icon: any, label: string, index?: number, category?: string }) {
-  const draggableId = category && index !== undefined ? `library-${category}-${label}` : `mock-${label}`;
+function BuilderDraggable({ icon: Icon, label, index, category, type }: { icon: any, label: string, index?: number, category?: string, type?: string }) {
+  const draggableId = category && index !== undefined && type ? `library-${category}-${type}` : `mock-${label}`;
   return (
     <Draggable draggableId={draggableId} index={index || 0} isDragDisabled={!category}>
       {(provided, snapshot) => (
@@ -279,116 +282,4 @@ function LayerNode({ icon: Icon, label, active = false }: { icon: any, label: st
   );
 }
 
-const COMPONENT_CATEGORIES = [
-  {
-    name: "Layout",
-    items: [
-      { name: "Section", icon: LayoutGrid }, { name: "Container", icon: Box }, { name: "Flex", icon: Layers },
-      { name: "Grid", icon: SplitSquareHorizontal }, { name: "Columns", icon: SplitSquareHorizontal }, { name: "Rows", icon: Layers },
-      { name: "Stack", icon: Layers }, { name: "Spacer", icon: Box }, { name: "Divider", icon: Box },
-      { name: "Tabs", icon: Box }, { name: "Accordion", icon: Box }, { name: "Carousel", icon: Box },
-      { name: "Timeline", icon: Box }, { name: "Masonry", icon: LayoutGrid }, { name: "Sidebar", icon: Box },
-      { name: "Drawer", icon: Box }, { name: "Modal", icon: Box }, { name: "Offcanvas", icon: Box },
-      { name: "Sticky Section", icon: Box }, { name: "Hero", icon: LayoutGrid }, { name: "Feature Grid", icon: LayoutGrid },
-      { name: "Pricing", icon: Box }, { name: "FAQ", icon: Box }, { name: "Testimonial", icon: Box },
-      { name: "CTA", icon: Box }, { name: "Footer", icon: Box }, { name: "Header", icon: Box },
-      { name: "Mega Menu", icon: Box }, { name: "Breadcrumb", icon: Box }, { name: "Card", icon: Box }, { name: "List", icon: ListTree }
-    ]
-  },
-  {
-    name: "Typography",
-    items: [
-      { name: "H1", icon: TypeIcon }, { name: "H2", icon: TypeIcon }, { name: "H3", icon: TypeIcon },
-      { name: "H4", icon: TypeIcon }, { name: "H5", icon: TypeIcon }, { name: "H6", icon: TypeIcon },
-      { name: "Paragraph", icon: TypeIcon }, { name: "Small", icon: TypeIcon }, { name: "Caption", icon: TypeIcon },
-      { name: "Display", icon: TypeIcon }, { name: "Quote", icon: TypeIcon }, { name: "Rich Text", icon: TypeIcon },
-      { name: "Markdown", icon: Code }, { name: "Code Block", icon: Code }, { name: "Inline Code", icon: Code },
-      { name: "Highlight", icon: TypeIcon }, { name: "Badge", icon: Box }, { name: "Label", icon: TypeIcon }, { name: "Number", icon: TypeIcon }
-    ]
-  },
-  {
-    name: "Buttons",
-    items: [
-      { name: "Primary Button", icon: MousePointer2 }, { name: "Secondary", icon: MousePointer2 },
-      { name: "Outline", icon: MousePointer2 }, { name: "Ghost", icon: MousePointer2 },
-      { name: "Link", icon: MousePointer2 }, { name: "Icon Button", icon: MousePointer2 },
-      { name: "Floating Button", icon: MousePointer2 }, { name: "Split Button", icon: MousePointer2 },
-      { name: "Dropdown Button", icon: MousePointer2 }, { name: "Toggle Button", icon: MousePointer2 },
-      { name: "FAB", icon: MousePointer2 }, { name: "Button Group", icon: MousePointer2 }
-    ]
-  },
-  {
-    name: "Forms",
-    items: [
-      { name: "Form", icon: Box }, { name: "Input", icon: TypeIcon }, { name: "Textarea", icon: TypeIcon },
-      { name: "Email", icon: TypeIcon }, { name: "Password", icon: TypeIcon }, { name: "Number", icon: TypeIcon },
-      { name: "Phone", icon: TypeIcon }, { name: "OTP", icon: Box }, { name: "Date", icon: Box },
-      { name: "Time", icon: Box }, { name: "Date Range", icon: Box }, { name: "Checkbox", icon: Box },
-      { name: "Radio", icon: Box }, { name: "Toggle", icon: Box }, { name: "Range Slider", icon: Box },
-      { name: "Rating", icon: Box }, { name: "Color Picker", icon: Box }, { name: "File Upload", icon: Box },
-      { name: "Image Upload", icon: ImageIcon2 }, { name: "Signature", icon: Box }, { name: "Search", icon: Box },
-      { name: "Select", icon: Box }, { name: "Multi Select", icon: Box }, { name: "Tag Input", icon: Box },
-      { name: "Autocomplete", icon: Box }, { name: "Combobox", icon: Box }
-    ]
-  },
-  {
-    name: "Media",
-    items: [
-      { name: "Image", icon: ImageIcon2 }, { name: "Video", icon: Play }, { name: "Audio", icon: Play },
-      { name: "Lottie", icon: Play }, { name: "SVG", icon: ImageIcon2 }, { name: "Icon", icon: ImageIcon2 },
-      { name: "Gallery", icon: ImageIcon2 }, { name: "Carousel", icon: ImageIcon2 }, { name: "Lightbox", icon: ImageIcon2 },
-      { name: "Background Video", icon: Play }, { name: "PDF Viewer", icon: Box }, { name: "Map", icon: Box },
-      { name: "QRCode", icon: Box }, { name: "Barcode", icon: Box }
-    ]
-  },
-  {
-    name: "Data",
-    items: [
-      { name: "Table", icon: Box }, { name: "Data Grid", icon: LayoutGrid }, { name: "List", icon: ListTree },
-      { name: "Repeater", icon: Layers }, { name: "Collection List", icon: Database }, { name: "CMS Collection", icon: Database },
-      { name: "API Collection", icon: Database }, { name: "Pagination", icon: Box }, { name: "Filter", icon: Box },
-      { name: "Search", icon: Box }, { name: "Sorting", icon: Box }, { name: "Charts", icon: Activity },
-      { name: "Calendar", icon: Box }, { name: "Timeline", icon: Box }, { name: "Kanban", icon: LayoutGrid },
-      { name: "Statistics", icon: Activity }, { name: "Metric Cards", icon: LayoutGrid }, { name: "Progress", icon: Activity },
-      { name: "Avatar", icon: Box }, { name: "Badge", icon: Box }, { name: "Tags", icon: Box }
-    ]
-  },
-  {
-    name: "Commerce",
-    items: [
-      { name: "Product Grid", icon: ShoppingCart }, { name: "Product Card", icon: ShoppingCart },
-      { name: "Cart", icon: ShoppingCart }, { name: "Checkout", icon: ShoppingCart },
-      { name: "Wishlist", icon: ShoppingCart }, { name: "Reviews", icon: MessageSquare },
-      { name: "Coupon", icon: ShoppingCart }, { name: "Price", icon: ShoppingCart },
-      { name: "Inventory", icon: Database }, { name: "Orders", icon: ShoppingCart },
-      { name: "Subscriptions", icon: ShoppingCart }
-    ]
-  },
-  {
-    name: "Navigation",
-    items: [
-      { name: "Navbar", icon: Box }, { name: "Sidebar", icon: Box }, { name: "Mega Menu", icon: Box },
-      { name: "Footer", icon: Box }, { name: "Tabs", icon: Box }, { name: "Breadcrumb", icon: Box },
-      { name: "Pagination", icon: Box }, { name: "Anchor", icon: Box }, { name: "Scroll Spy", icon: Box },
-      { name: "Search", icon: Box }, { name: "Command Palette", icon: Box }
-    ]
-  },
-  {
-    name: "Marketing",
-    items: [
-      { name: "Popup", icon: Box }, { name: "Announcement Bar", icon: Box }, { name: "Cookie Banner", icon: Box },
-      { name: "Newsletter", icon: MessageSquare }, { name: "Contact Form", icon: MessageSquare },
-      { name: "Countdown", icon: Activity }, { name: "Pricing", icon: Box }, { name: "Testimonials", icon: MessageSquare },
-      { name: "FAQ", icon: MessageSquare }, { name: "Partners", icon: Box }, { name: "Logo Cloud", icon: ImageIcon2 },
-      { name: "CTA", icon: Box }, { name: "Lead Form", icon: Box }, { name: "Referral", icon: Box }
-    ]
-  },
-  {
-    name: "AI",
-    items: [
-      { name: "AI Chat", icon: BrainCircuit }, { name: "AI Search", icon: BrainCircuit }, { name: "AI Prompt", icon: BrainCircuit },
-      { name: "AI Assistant", icon: BrainCircuit }, { name: "AI Recommendation", icon: BrainCircuit },
-      { name: "AI Summary", icon: BrainCircuit }, { name: "AI Form", icon: BrainCircuit }, { name: "AI Workflow", icon: BrainCircuit }
-    ]
-  }
-];
+

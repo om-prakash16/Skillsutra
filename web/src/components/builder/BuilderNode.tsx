@@ -1,6 +1,18 @@
+"use client";
+
 import React from "react";
 import { useBuilderStore } from "@/store/builderStore";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
+import { getComponentRender } from "./registry";
+
+// Container-type elements that can accept dropped children
+const CONTAINER_TYPES = new Set([
+  "Section", "Container", "Box", "Wrapper",
+  "Flex", "Grid", "CSSGrid", "AutoGrid",
+  "Stack", "HorizontalStack", "VerticalStack",
+  "Columns", "Rows", "SplitLayout", "SidebarLayout",
+  "HolyGrailLayout", "Masonry", "BasicCard",
+]);
 
 interface BuilderNodeProps {
   id: string;
@@ -15,67 +27,58 @@ export function BuilderNode({ id, index }: BuilderNodeProps) {
   if (!element) return null;
 
   const isSelected = selectedIds.includes(id);
+  const isContainer = CONTAINER_TYPES.has(element.type);
 
-  // Helper to render the actual React element based on the AST type
-  const renderElementContent = () => {
-    switch (element.type) {
-      case "Section":
-      case "Container":
-      case "Flex":
-      case "Grid":
-      case "Columns":
-      case "Rows":
-      case "Stack":
-        return (
-          <Droppable droppableId={id} type="ELEMENT">
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                style={element.styles}
-                className={`min-h-[100px] border border-dashed transition-colors ${
-                  snapshot.isDraggingOver ? "bg-indigo-50/50 border-indigo-400" : "border-border/40"
-                }`}
-              >
-                {element.children.map((childId, childIdx) => (
-                  <BuilderNode key={childId} id={childId} index={childIdx} />
-                ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        );
+  // Render children recursively
+  const renderedChildren = element.children.map((childId, childIdx) => (
+    <BuilderNode key={childId} id={childId} index={childIdx} />
+  ));
 
-      case "H1":
-      case "H2":
-      case "H3":
-      case "H4":
-      case "H5":
-      case "H6":
-      case "Heading":
-        const HeadingTag = element.type === "Heading" ? (element.props.level || "h2") as any : element.type.toLowerCase();
-        return <HeadingTag style={element.styles}>{element.props.text}</HeadingTag>;
+  // Look up the render function from the central component registry
+  const RegistryRender = getComponentRender(element.type);
 
-      case "Paragraph":
-        return <p style={element.styles}>{element.props.text}</p>;
-
-      case "Primary Button":
-      case "Button":
-        return (
-          <button style={element.styles} className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90">
-            {element.props.text}
-          </button>
-        );
-
-      default:
-        // Generic fallback for unimplemented components
-        return (
-          <div style={element.styles} className="p-4 bg-muted text-muted-foreground border border-border rounded-md flex items-center justify-center">
-            {element.type} Component
-          </div>
-        );
-    }
-  };
+  const elementContent = isContainer ? (
+    // Container types get a Droppable zone for nesting
+    <Droppable droppableId={id} type="ELEMENT">
+      {(provided, snapshot) => (
+        <div
+          ref={provided.innerRef}
+          {...provided.droppableProps}
+          className={`min-h-[60px] transition-colors ${
+            snapshot.isDraggingOver
+              ? "bg-indigo-50/50 outline-dashed outline-2 outline-indigo-400 outline-offset-2"
+              : "outline-dashed outline-1 outline-border/40"
+          }`}
+        >
+          {RegistryRender ? (
+            <RegistryRender props={element.props} styles={element.styles}>
+              {renderedChildren.length > 0 ? renderedChildren : null}
+            </RegistryRender>
+          ) : (
+            <div style={element.styles}>
+              {renderedChildren.length > 0 ? renderedChildren : (
+                <div className="flex items-center justify-center min-h-[60px] text-xs text-muted-foreground/50 italic">
+                  Drop components here
+                </div>
+              )}
+            </div>
+          )}
+          {provided.placeholder}
+        </div>
+      )}
+    </Droppable>
+  ) : RegistryRender ? (
+    // Non-container types just render their component
+    <RegistryRender props={element.props} styles={element.styles} />
+  ) : (
+    // Fallback for unregistered component types
+    <div
+      style={element.styles}
+      className="p-4 bg-muted text-muted-foreground border border-dashed border-border rounded-md flex items-center justify-center text-sm"
+    >
+      <span className="font-mono text-xs">{element.type}</span>
+    </div>
+  );
 
   return (
     <Draggable draggableId={id} index={index}>
@@ -83,21 +86,29 @@ export function BuilderNode({ id, index }: BuilderNodeProps) {
         <div
           ref={provided.innerRef}
           {...provided.draggableProps}
-          {...provided.dragHandleProps}
           onClick={(e) => {
             e.stopPropagation();
             selectElement(id);
           }}
           className={`relative group transition-all outline-none ${
-            isSelected ? "ring-2 ring-indigo-500 ring-offset-1" : "hover:ring-1 ring-indigo-300 ring-offset-1"
-          } ${snapshot.isDragging ? "opacity-50 shadow-xl" : ""}`}
+            isSelected
+              ? "ring-2 ring-inset ring-indigo-500"
+              : "hover:ring-1 hover:ring-inset hover:ring-indigo-300"
+          } ${snapshot.isDragging ? "opacity-60 shadow-2xl scale-[1.01] z-50" : ""}`}
+          style={{ ...provided.draggableProps.style }}
         >
-          {isSelected && (
-            <div className="absolute -top-6 -left-0.5 bg-indigo-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-t-md z-50">
-              {element.type}
-            </div>
-          )}
-          {renderElementContent()}
+          {/* Drag Handle - appears on hover at the top */}
+          <div
+            {...provided.dragHandleProps}
+            className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-full z-50 opacity-0 group-hover:opacity-100 transition-opacity
+              bg-indigo-500 text-white text-[10px] font-bold px-3 py-0.5 rounded-t-md cursor-grab active:cursor-grabbing whitespace-nowrap
+              ${isSelected ? "opacity-100" : ""}
+            `}
+          >
+            {element.type}
+          </div>
+
+          {elementContent}
         </div>
       )}
     </Draggable>
