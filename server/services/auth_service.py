@@ -171,7 +171,9 @@ class AuthService:
         # Fetch roles to embed in token
         user_roles = [r.role_name for r in user.roles] if getattr(user, 'roles', None) else ["user"]
         primary_role = user_roles[0] if user_roles else "user"
-        if "admin" in user_roles:
+        if "super_admin" in user_roles:
+            primary_role = "super_admin"
+        elif "admin" in user_roles:
             primary_role = "admin"
 
         from modules.auth.core.session_service import SessionService
@@ -250,7 +252,9 @@ class AuthService:
         # Generate new tokens
         user_roles = [r.role_name for r in user.roles] if getattr(user, 'roles', None) else ["user"]
         primary_role = user_roles[0] if user_roles else "user"
-        if "admin" in user_roles:
+        if "super_admin" in user_roles:
+            primary_role = "super_admin"
+        elif "admin" in user_roles:
             primary_role = "admin"
             
         from modules.auth.core.session_service import SessionService

@@ -33,6 +33,15 @@ async def lifespan(app: FastAPI):
     logger.info(f"Starting {settings.PROJECT_NAME} v{settings.PROJECT_VERSION}...")
     await init_db()
     
+    # Ensure superadmin always exists
+    try:
+        from scripts.create_super_admin import create_super_admin
+        await create_super_admin()
+        logger.info("Superadmin verification complete.")
+    except Exception as e:
+        logger.error(f"Failed to auto-provision superadmin: {e}")
+    
+    
     # Start Redis Pub/Sub WebSocket Backplane listener
     redis_task = asyncio.create_task(core_ws_manager.subscribe_to_redis("chat_broadcasts"))
     # Start WebSocket heartbeat loops to reap ghost connections

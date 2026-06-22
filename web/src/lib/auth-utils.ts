@@ -8,8 +8,9 @@ export function getPostLoginDestination(user: any): string | null {
 
     switch (user.role) {
         case "super_admin":
-        case "admin":
             return "/superadmin";
+        case "admin":
+            return "/admin/dashboard";
             
         case "security_admin":
             return "/superadmin/security";

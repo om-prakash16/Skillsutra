@@ -9,7 +9,7 @@ class BuilderPageBase(BaseModel):
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
     og_image: Optional[str] = None
-    component_tree: Optional[List[Dict[str, Any]]] = []
+    component_tree: Optional[Dict[str, Any]] = {}
 
 class BuilderPageCreate(BuilderPageBase):
     site_id: UUID
@@ -20,7 +20,7 @@ class BuilderPageUpdate(BaseModel):
     meta_title: Optional[str] = None
     meta_description: Optional[str] = None
     og_image: Optional[str] = None
-    component_tree: Optional[List[Dict[str, Any]]] = None
+    component_tree: Optional[Dict[str, Any]] = None
 
 class BuilderPageResponse(BuilderPageBase):
     id: UUID

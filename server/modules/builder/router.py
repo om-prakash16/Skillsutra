@@ -51,6 +51,14 @@ async def create_page(page: BuilderPageCreate, db: AsyncSession = Depends(get_db
     await db.refresh(db_page)
     return db_page
 
+@router.get("/pages/slug/{slug}", response_model=BuilderPageResponse)
+async def get_page_by_slug(slug: str, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(BuilderPage).where(BuilderPage.slug == slug))
+    db_page = result.scalars().first()
+    if not db_page:
+        raise HTTPException(status_code=404, detail="Page not found")
+    return db_page
+
 @router.get("/pages/{page_id}", response_model=BuilderPageResponse)
 async def get_page(page_id: UUID, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(BuilderPage).where(BuilderPage.id == page_id))

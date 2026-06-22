@@ -8,6 +8,7 @@ import { Loader2, Zap } from "lucide-react"
 import { GlobalSearchCommand } from "@/components/admin/GlobalSearchCommand"
 import { PlatformHealthHeader } from "@/components/admin/PlatformHealthHeader"
 import { AppShell } from "@/components/layout/app-shell"
+import { motion } from "framer-motion"
 
 export default function AdminLayout({
     children,

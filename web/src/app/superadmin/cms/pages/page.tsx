@@ -14,11 +14,11 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import Link from "next/link";
 
 const mockPages = [
-  { id: "P-101", title: "Enterprise Landing Page", slug: "/", type: "Landing Page", author: "Jane Doe", status: "Published", seo: 98, updated: "2 hrs ago" },
-  { id: "P-102", title: "About Us (2024 Redesign)", slug: "/about", type: "Standard Page", author: "John Smith", status: "Draft", seo: 75, updated: "1 day ago" },
-  { id: "P-103", title: "Pricing & Plans", slug: "/pricing", type: "Pricing Page", author: "Jane Doe", status: "Published", seo: 92, updated: "5 days ago" },
-  { id: "P-104", title: "Black Friday Promo", slug: "/promo/bf24", type: "Campaign", author: "Marketing Team", status: "Scheduled", seo: 88, updated: "Just now" },
-  { id: "P-105", title: "Contact Sales", slug: "/contact", type: "Form Page", author: "System", status: "Published", seo: 100, updated: "1 month ago" },
+  { id: "123e4567-e89b-12d3-a456-426614174001", title: "Enterprise Landing Page", slug: "/", type: "Landing Page", author: "Jane Doe", status: "Published", seo: 98, updated: "2 hrs ago" },
+  { id: "123e4567-e89b-12d3-a456-426614174002", title: "About Us (2024 Redesign)", slug: "/about", type: "Standard Page", author: "John Smith", status: "Draft", seo: 75, updated: "1 day ago" },
+  { id: "123e4567-e89b-12d3-a456-426614174003", title: "Pricing & Plans", slug: "/pricing", type: "Pricing Page", author: "Jane Doe", status: "Published", seo: 92, updated: "5 days ago" },
+  { id: "123e4567-e89b-12d3-a456-426614174004", title: "Black Friday Promo", slug: "/promo/bf24", type: "Campaign", author: "Marketing Team", status: "Scheduled", seo: 88, updated: "Just now" },
+  { id: "123e4567-e89b-12d3-a456-426614174005", title: "Contact Sales", slug: "/contact", type: "Form Page", author: "System", status: "Published", seo: 100, updated: "1 month ago" },
 ];
 
 export default function CMSPagesPage() {
@@ -49,7 +49,9 @@ export default function CMSPagesPage() {
           <Button variant="outline" className="text-indigo-600 border-indigo-500/30 hover:bg-indigo-500/10">
             <Bot className="w-4 h-4 mr-2" /> AI Content Generate
           </Button>
-          <Button><Plus className="w-4 h-4 mr-2" /> Create Page</Button>
+          <Link href={`/superadmin/cms/builder/${crypto.randomUUID()}`}>
+            <Button><Plus className="w-4 h-4 mr-2" /> Create Page</Button>
+          </Link>
         </div>
       </div>
 
@@ -64,7 +66,7 @@ export default function CMSPagesPage() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" className="h-9"><Filter className="w-4 h-4 mr-2" /> Filters</Button>
+              <Button variant="outline" size="sm" className="h-9" onClick={() => alert("Filters functionality coming soon")}><Filter className="w-4 h-4 mr-2" /> Filters</Button>
             </div>
           </div>
         </CardHeader>
@@ -89,9 +91,9 @@ export default function CMSPagesPage() {
                         <FileText className="w-4 h-4 text-primary" />
                       </div>
                       <div>
-                        <div className="font-semibold text-sm hover:underline cursor-pointer flex items-center gap-2">
+                        <Link href={`/superadmin/cms/builder/${page.id}`} className="font-semibold text-sm hover:underline cursor-pointer flex items-center gap-2 text-slate-900">
                           {page.title}
-                        </div>
+                        </Link>
                         <div className="text-[11px] text-muted-foreground font-mono mt-0.5 flex items-center gap-1"><Globe className="w-3 h-3" /> {page.slug}</div>
                       </div>
                     </div>
@@ -129,7 +131,9 @@ export default function CMSPagesPage() {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Page Actions</DropdownMenuLabel>
                         <DropdownMenuItem asChild>
-                          <Link href="/admin/cms/builder"><MousePointerClick className="w-4 h-4 mr-2"/> Open in Visual Builder</Link>
+                          <Link href="/superadmin/cms/builder" className="w-full cursor-pointer flex items-center">
+                            <MousePointerClick className="w-4 h-4 mr-2"/> Open in Visual Builder
+                          </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>Edit Settings & SEO</DropdownMenuItem>
                         <DropdownMenuItem>View Live Page</DropdownMenuItem>

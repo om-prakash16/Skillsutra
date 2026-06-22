@@ -166,15 +166,19 @@ async def seed_data():
         job_type = job.pop("job_type")
         location = job.pop("location")
         
-        await db.table("jobs").insert(
+        await db.table("ats_jobs").insert(
             {
                 "id": job_id, 
-                "company_id": company_id, 
-                "description_markdown": desc,
-                "requirements": {"experience_level": experience_level},
-                "logistics": {"salary_range": salary_range, "location": location, "remote_policy": job_type},
-                **job, 
-                "status": "OPEN"
+                "tenant_id": company_id, 
+                "description": desc,
+                "requirements": f"Experience Level: {experience_level}",
+                "salary_min": int(salary_range.split("k")[0].replace("$", "")) * 1000 if "k" in salary_range else 0,
+                "salary_max": int(salary_range.split("-")[1].split("k")[0].strip().replace("$", "")) * 1000 if "-" in salary_range else 0,
+                "title": job["title"],
+                "created_at": job["created_at"],
+                "updated_at": job["created_at"],
+                "version": 1,
+                "status": "published"
             }
         ).execute()
         print(f"  + Added Job: {job['title']}")
